@@ -1,0 +1,72 @@
+version: '3.4'
+
+services:
+
+
+  helios.core:
+    image:  medcase.azurecr.io/helios/helios-core:v0.0.1
+    ports:
+      - "3500:3500"
+      - "3501:3501"
+    networks:
+         v3network:
+            ipv4_address: 10.8.0.8
+
+  helios.authentication:
+    image: medcase.azurecr.io/helios/helios-auth:v0.0.1
+    ports:
+        - "8080:8080"
+        - "8081:8081"
+    environment:
+      - AppConfig__RabbitMQCrf=rabbitmq://10.8.0.5:5672/
+      - AppConfig__RabbitMQUserName=guest
+      - AppConfig__RabbitMQPassword=guest
+    networks:
+         v3network:
+            ipv4_address: 10.8.0.7
+
+  helios.ecrf:
+    image: ${DOCKER_REGISTRY-}heliosecrf
+    build:
+      context: .
+      dockerfile: Helios.eCRF/Dockerfile
+    ports:
+       - "3300:3300"
+       - "3301:3301"
+    environment:
+      - Redis__Host=redis_image
+      - Redis__Password=heliosredis
+    networks:
+        v3network:
+            ipv4_address: 10.8.0.6
+
+  redis_image:
+    image: redis
+    container_name: redis.cache
+    command: redis-server --requirepass heliosredis
+    ports:
+      - 6380:6380
+    networks:
+        v3network:
+          ipv4_address: 10.8.0.2
+
+  rabbitmq:
+      image: rabbitmq:3-management-alpine
+      ports:
+          - 5672:5672
+          - 15672:15672
+      networks:
+         v3network:
+            ipv4_address: 10.8.0.5
+      volumes:
+        - ./volume/rabbitmq:/data
+
+volumes:
+  data-volume:
+networks:
+  v3network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.8.0.0/16
+          gateway: 10.8.0.1

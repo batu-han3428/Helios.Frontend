@@ -1,0 +1,140 @@
+﻿.tdCol {
+    width: 1%;
+    text-align: center;
+}
+
+th, td {
+    white-space: nowrap;
+}
+
+.dataTable > thead > tr > th[class*=nosort]:after {
+    display: none;
+}
+
+[data-toggle="toggle"] {
+    display: none;
+}
+
+.jstree-open > .jstree-anchor > .fa-folder:before {
+    content: "\f07c";
+}
+
+.jstree-default .jstree-icon.none {
+    width: 0;
+}
+
+.DTFC_LeftBodyLiner {
+    overflow-x: hidden;
+}
+
+.customStl {
+    margin: 0;
+}
+
+.tdstl {
+    margin: 0;
+}
+
+.ttlLi {
+    font-weight: bolder;
+}
+
+.chck-permision {
+    margin: 0 auto !important;
+}
+
+.rowgroup {
+    background-color: #ddd;
+    text-align: left !important;
+}
+
+.table-header-rotated thead {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.table-header-rotated {
+    border-collapse: collapse;
+}
+
+.table-header-rotated td {
+    width: 30px;
+}
+
+.table-header-rotated th {
+    padding: 5px 10px;
+}
+
+.table-header-rotated td {
+    text-align: center;
+    padding: 10px 5px;
+    border: 1px solid #ccc;
+}
+
+.table-header-rotated th.rotate {
+    height: 140px;
+    white-space: nowrap;
+}
+
+.table-header-rotated th.rotate > div {
+    -webkit-transform: translate(25px, 51px) rotate(315deg);
+    -ms-transform: translate(25px, 51px) rotate(315deg);
+    transform: translate(25px, 51px) rotate(315deg);
+    width: 30px;
+}
+
+.table-header-rotated th.rotate > div > .span2 > span {
+    padding: 0px;
+    color: #6D6E70;
+    display: block;
+    width: 200px;
+}
+
+.table-header-rotated th.rotate > div > .span2 {
+    border-bottom: 1px solid #ccc;
+    color: #fff;
+    display: block;
+    width: 260px;
+}
+
+.table-header-rotated td.even {
+    background-color: #d7b21733;
+}
+
+.table-header-rotated th.row-header {
+    padding: 0 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.icon-permision {
+    color: #6D6E70;
+}
+
+.lbl-permision {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    margin-right: 5px;
+    width: 140px;
+}
+
+.btn-permision {
+}
+
+.tooltip2 {
+    cursor: pointer;
+}
+
+.tdname {
+    text-align: left !important;
+}
+
+.floatl {
+    float: left;
+}
+
+.floatr {
+    float: right;
+}

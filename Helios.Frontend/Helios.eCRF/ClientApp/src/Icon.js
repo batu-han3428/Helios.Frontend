@@ -1,0 +1,6 @@
+﻿import { library } from '@fortawesome/fontawesome-svg-core'
+import { faCheckSquare, faCoffee, faPlus, faFilePen, faPerson, faMarker, faTrashCan as faSolidTrashCan, faLeftLong, faCaretDown, faCaretRight, faCheck, faEyeSlash, faEye, faDownload, faLocationDot, faUserPlus, faUserGear, faShuffle, faToggleOn, faToggleOff, faHouse, faEnvelope, faMicroscope, faTableCellsLarge, faFlask, faFolderOpen, faClockRotateLeft, faFolderTree, faLockOpen, faLock, faPuzzlePiece, faListUl, faX, faGear, faEllipsisVertical, faBars, faArrowUpFromBracket, faDiagramProject, faGears } from '@fortawesome/free-solid-svg-icons';
+import { faRectangleList, faPaste, faFileLines, faFilePdf, faFileExcel, faTrashCan } from '@fortawesome/free-regular-svg-icons';
+
+
+library.add(faCheckSquare, faCoffee, faPlus, faFilePen, faPerson, faMarker, faTrashCan, faLeftLong, faCaretDown, faCaretRight, faCheck, faEyeSlash, faEye, faDownload, faRectangleList, faLocationDot, faUserPlus, faUserGear, faPaste, faShuffle, faToggleOn, faToggleOff, faHouse, faEnvelope, faMicroscope, faTableCellsLarge, faFileLines, faFlask, faFolderOpen, faClockRotateLeft, faFolderTree, faLockOpen, faLock, faPuzzlePiece, faListUl, faX, faGear, faEllipsisVertical, faBars, faArrowUpFromBracket, faDiagramProject, faFilePdf, faFileExcel, faSolidTrashCan, faGears);

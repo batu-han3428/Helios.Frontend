@@ -1,0 +1,47 @@
+﻿.icon-container {
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.icon {
+    width: 16px;
+    height: 16px;
+    background-color: #6d6e70;
+    mask-size: cover;
+    cursor: pointer;
+}
+
+.icon-update {
+    mask: url('../images/underline-button.png') no-repeat center center;
+    -webkit-mask: url('../images/underline-button.png') no-repeat center center;
+}
+
+.icon-demo {
+    mask: url('../images/curve-arrows.png') no-repeat center center;
+    -webkit-mask: url('../images/curve-arrows.png') no-repeat center center;
+}
+
+.icon-unlock {
+    mask: url('../images/open-padlock.png') no-repeat center center;
+    -webkit-mask: url('../images/open-padlock.png') no-repeat center center;
+}
+
+.icon-lock {
+    mask: url('../images/lock.png') no-repeat center center;
+    -webkit-mask: url('../images/lock.png') no-repeat center center;
+}
+
+.icon-resetpassword {
+    mask: url('../images/reset-password.png') no-repeat center center;
+    -webkit-mask: url('../images/reset-password.png') no-repeat center center;
+}
+
+.icon-live {
+    mask: url('../images/testing-tube.png') no-repeat center center;
+    -webkit-mask: url('../images/testing-tube.png') no-repeat center center;
+}
+
+.icon-delete {
+    mask: url('../images/delete.png') no-repeat center center;
+    -webkit-mask: url('../images/delete.png') no-repeat center center;
+}
