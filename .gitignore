@@ -4,3 +4,4 @@
 
 /.vs
 /Helios.Frontend/.vs/Helios.Frontend/FileContentIndex
+*.suo
