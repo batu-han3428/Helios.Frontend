@@ -5,3 +5,5 @@
 /.vs
 /Helios.Frontend/.vs/Helios.Frontend/FileContentIndex
 *.suo
+/Helios.Frontend/Helios.eCRF/obj
+/Helios.Frontend/obj/Docker
