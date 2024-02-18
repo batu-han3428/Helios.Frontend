@@ -1,0 +1,8 @@
+{
+"SpaProxyServer": {
+"ServerUrl": "https://localhost:44458",
+"LaunchCommand": "npm start",
+"WorkingDirectory": "C:\\Projects\\v3\\Helios.Frontend\\Helios.Frontend\\Helios.eCRF\\ClientApp\\",
+"MaxTimeoutInSeconds": "120"
+}
+}
