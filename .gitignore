@@ -9,3 +9,4 @@
 /Helios.Frontend/obj/Docker
 /Helios.Frontend/obj**
 /Helios.Frontend/Helios.eCRF/bin/Debug/net8.0
+/Helios.Frontend/.vs
