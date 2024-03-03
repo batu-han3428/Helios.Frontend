@@ -18,10 +18,16 @@ services:
     ports:
         - "8080:8080"
         - "8081:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
 
   helios.core:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
-      - "3500:3500"
-      - "3501:3501"
+      - "3500:8080"
+      - "3501:8081"
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
