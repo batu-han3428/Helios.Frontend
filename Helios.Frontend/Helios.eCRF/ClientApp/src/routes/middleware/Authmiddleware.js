@@ -49,7 +49,7 @@ const AuthMiddleware = (props) => {
     };
 
     const getStudy = async (result) => {
-        const apiUrl = API_BASE_URL+`/Study/GetStudy`;
+        const apiUrl = API_BASE_URL+`Study/GetStudy`;
         fetch(apiUrl, {
             method: 'GET',
             headers: {

@@ -274,6 +274,49 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
+
+        private async Task<RestResponse<List<ModuleDTO>>> GetModuleList(List<Int64> moduleIds)
+        {
+            using (var client = CoreServiceClient)
+            {
+                string moduleIdsString = string.Join(",", moduleIds);
+                var req = new RestRequest("CoreModule/GetModuleCollective", Method.Get);
+                req.AddParameter("moduleIds", moduleIdsString);
+                var result = await client.ExecuteAsync<List<ModuleDTO>>(req);
+                return result;
+            }
+        }
+
+        private async Task<ApiResponse<dynamic>> SetStudyModule(List<ModuleDTO> dto)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/SetStudyModule", Method.Post);
+                req.AddHeader("Authorization", UserId);
+                req.AddJsonBody(dto);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> SetStudyModule(List<Int64> moduleIds)
+        {
+            if (moduleIds.Count > 0)
+            {
+                var modules = await GetModuleList(moduleIds);
+
+                if (modules.IsSuccessful && modules.Data.Count > 0)
+                {
+                    return await SetStudyModule(modules.Data);
+                }
+            }
+
+            return new ApiResponse<dynamic>
+            {
+                IsSuccess = false,
+                Message = "Unsuccessful"
+            };
+        }
         #endregion
     }
 }

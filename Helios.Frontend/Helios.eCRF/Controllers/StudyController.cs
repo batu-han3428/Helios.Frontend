@@ -342,6 +342,21 @@ namespace Helios.eCRF.Controllers
 
             return Ok(result);
         }
+
+
+        /// <summary>
+        /// Seçili modul veya modulleri kaydeder
+        /// </summary>
+        /// <param name="moduleIds">module id</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [Authorize(Roles = "TenantAdmin")]
+        public async Task<IActionResult> SetStudyModule(List<Int64> moduleIds)
+        {
+            var result = await _studyService.SetStudyModule(moduleIds);
+
+            return Ok(result);
+        }
         #endregion
     }
 }
