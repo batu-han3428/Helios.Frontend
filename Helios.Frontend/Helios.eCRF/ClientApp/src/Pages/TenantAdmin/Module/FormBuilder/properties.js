@@ -39,12 +39,12 @@ import RangeSliderElementProperties from "../Elements/RangeSliderElement/rangeSl
 import DatagridElementProperties from "../Elements/DatagridElement/datagridElementProperties";
 import TableElementProperties from "../Elements/TableElement/tableElementProperties";
 
-const baseUrl = "https://localhost:7196";
+const baseUrl = "http://localhost:3300";
 
 class Properties extends React.Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
             activeTab: props.ActiveTab,
             showWhereElementPropeties: 0,
@@ -52,7 +52,7 @@ class Properties extends React.Component {
             // General properties
             Id: props.Id,
             ParentId: props.ParentId,
-            TenantId: props.TenantId,
+            TenantId: 2,
             UserId: props.UserId,
             ModuleId: props.ModuleId,
             IsCalcBtn: props.isCalcBtn,
@@ -85,7 +85,7 @@ class Properties extends React.Component {
                 { label: "col-md-11", value: 11 },
                 { label: "col-md-12", value: 12 },
             ],
-            widthSelectedGroup: null,
+            widthSelectedGroup: 0,
 
             // Dependency properties
             DependentSourceFieldId: 0,
@@ -149,8 +149,8 @@ class Properties extends React.Component {
             DatagridAndTableProperties: '',
             RowCount: 0,
             ColumnCount: 0,
-            ColumnIndex: props.ColumnIndex,
-            RowIndex: props.RowIndex,
+            ColumnIndex: props.ColumnIndex == null ? 0 : props.ColumnIndex,
+            RowIndex: props.RowIndex == null ? 0 : props.RowIndex,
 
             // Validation
             RequiredError: 'This value is required',
@@ -705,7 +705,7 @@ class Properties extends React.Component {
         this.state.DependentCondition = data.dependentCondition === 0 ? 3 : data.dependentCondition;
         this.state.DependentAction = data.dependentAction === 0 ? 1 : data.dependentAction;
         this.state.DependentFieldValue = data.dependentFieldValue == "" ? [] : JSON.parse(data.dependentFieldValue);
-        
+
         var rel = JSON.parse(data.relationSourceInputs);
         this.state.IsRelation = data.isRelated;
         this.state.RelationSourceInputs = rel != null ? data.relationSourceInputs : '';
@@ -783,67 +783,75 @@ class Properties extends React.Component {
         }
 
         if (isValid && this.state.IsFormValid) {
+            var bdy = JSON.stringify({
+                Id: this.state.Id,
+                ModuleId: this.state.ModuleId,
+                TenantId: this.state.TenantId,
+                UserId: this.state.UserId,
+                ElementDetailId: this.state.ElementDetailId,
+                ParentId: this.state.ParentId,
+                ElementType: this.state.ElementType,
+                ElementName: this.state.ElementName,
+                Title: this.state.Title,
+                IsTitleHidden: this.state.IsTitleHidden,
+                Order: this.state.Order,
+                Description: this.state.Description,
+                Width: this.state.FieldWidths,
+                IsHidden: this.state.IsHidden,
+                IsRequired: this.state.IsRequired,
+                IsDependent: this.state.IsDependent,
+                IsRelated: this.state.IsRelation,
+                IsReadonly: this.state.IsReadonly,
+                CanMissing: this.state.CanMissing,
+
+                // Elements properties
+                DefaultValue: this.state.DefaultValue,
+                Unit: this.state.Unit,
+                Mask: this.state.Mask,
+                LowerLimit: this.state.LowerLimit,
+                UpperLimit: this.state.UpperLimit,
+                Layout: this.state.Layout,
+                StartDay: this.state.StartDay,
+                EndDay: this.state.EndDay,
+                StartMonth: this.state.StartMonth,
+                EndMonth: this.state.EndMonth,
+                StartYear: this.state.StartYear,
+                EndYear: this.state.EndYear,
+                AddTodayDate: this.state.AddTodayDate,
+                ElementOptions: this.state.SavedTagList != null && this.state.SavedTagList.length > 0 ? JSON.stringify(this.state.SavedTagList) : "",
+                LeftText: this.state.LeftText,
+                RightText: this.state.RightText,
+                CalculationSourceInputs: this.state.CalculationSourceInputs,
+                MainJs: this.state.MainJs,
+                RowCount: this.state.RowCount,
+                ColumnCount: this.state.ColumnCount,
+                DatagridAndTableProperties: this.state.DatagridAndTableProperties == null ? "" : this.state.DatagridAndTableProperties,
+                RowIndex: this.state.RowIndex,
+                ColumnIndex: this.state.ColumnIndex,
+
+                // Dependency properties
+                DependentSourceFieldId: this.state.DependentSourceFieldId == null ? 0 : this.state.DependentSourceFieldId,
+                DependentTargetFieldId: this.state.DependentTargetFieldId == null ? 0 : this.state.DependentTargetFieldId,
+                DependentCondition: this.state.DependentCondition,
+                DependentAction: this.state.DependentAction,
+                DependentFieldValue: this.state.DependentFieldValue.length > 0 ? JSON.stringify(this.state.DependentFieldValue) : "",
+
+                RelationSourceInputs: this.state.RelationSourceInputs,
+                RelationMainJs: this.state.RelationMainJs,
+
+                ChildElements: [],
+                VariableName: ""
+            });
+
+            debugger;
+
             fetch(baseUrl + '/Module/SaveModuleContent', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json, text/plain, */*',
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({
-                    Id: this.state.Id,
-                    ParentId: this.state.ParentId,
-                    ModuleId: this.state.ModuleId,
-                    TenantId: this.state.TenantId,
-                    UserId: this.state.UserId,
-                    ElementDetailId: this.state.ElementDetailId,
-                    ElementType: this.state.ElementType,
-                    ElementName: this.state.ElementName,
-                    Title: this.state.Title,
-                    IsTitleHidden: this.state.IsTitleHidden,
-                    Order: this.state.Order,
-                    Description: this.state.Description,
-                    Width: this.state.FieldWidths,
-                    IsHidden: this.state.IsHidden,
-                    IsRequired: this.state.IsRequired,
-                    IsDependent: this.state.IsDependent,
-                    IsReadonly: this.state.IsReadonly,
-                    IsRelated: this.state.IsRelation,
-                    CanMissing: this.state.CanMissing,
-
-                    // Dependency properties
-                    DependentSourceFieldId: this.state.DependentSourceFieldId == null ? 0 : this.state.DependentSourceFieldId,
-                    DependentTargetFieldId: this.state.DependentTargetFieldId == null ? 0 : this.state.DependentTargetFieldId,
-                    DependentCondition: this.state.DependentCondition,
-                    DependentAction: this.state.DependentAction,
-                    DependentFieldValue: JSON.stringify(this.state.DependentFieldValue),
-
-                    // Elements properties
-                    Unit: this.state.Unit,
-                    //Mask: this.state.Mask,
-                    LowerLimit: this.state.LowerLimit,
-                    UpperLimit: this.state.UpperLimit,
-                    Layout: this.state.Layout,
-                    ElementOptions: this.state.SavedTagList != null ? JSON.stringify(this.state.SavedTagList) : "",
-                    DefaultValue: this.state.DefaultValue,
-                    AddTodayDate: this.state.AddTodayDate,
-                    CalculationSourceInputs: this.state.CalculationSourceInputs,
-                    RelationSourceInputs: this.state.RelationSourceInputs,
-                    MainJs: this.state.MainJs,
-                    RelationMainJs: this.state.RelationMainJs,
-                    StartDay: this.state.StartDay,
-                    EndDay: this.state.EndDay,
-                    StartMonth: this.state.StartMonth,
-                    EndMonth: this.state.EndMonth,
-                    StartYear: this.state.StartYear,
-                    EndYear: this.state.EndYear,
-                    LeftText: this.state.LeftText,
-                    RightText: this.state.RightText,
-                    RowCount: this.state.RowCount,
-                    ColumnCount: this.state.ColumnCount,
-                    DatagridAndTableProperties: this.state.DatagridAndTableProperties,
-                    ColumnIndex: this.state.ColumnIndex,
-                    RowIndex: this.state.RowIndex
-                })
+                body: bdy
             }).then(res => res.json())
                 .then(data => {
                     if (data.isSuccess) {
@@ -863,7 +871,9 @@ class Properties extends React.Component {
                     //}
                 })
                 .catch(error => {
-                    //console.error('Error:', error);
+                    debugger;
+                    console.error('Error:', error);
+                    alert(error)
                 });
         }
         else {

@@ -1,4 +1,5 @@
 ﻿using Helios.Common.DTO;
+using Helios.Common.Enums;
 using Helios.Common.Model;
 using RestSharp;
 
@@ -25,5 +26,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> SetVisits(VisitDTO visitDTO);
         Task<ApiResponse<dynamic>> DeleteVisits(VisitDTO visitDTO);
         Task<ApiResponse<dynamic>> SetVisitPageEPro(VisitDTO visitDTO);
+        Task<RestResponse<List<PermissionModel>>> GetVisitPagePermissionList(PermissionPage pageKey, Int64 studyId, Int64 id);
+        Task<ApiResponse<dynamic>> SetVisitPagePermission(VisitPagePermissionDTO dto);
     }
 }

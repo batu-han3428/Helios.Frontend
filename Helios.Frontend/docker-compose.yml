@@ -4,7 +4,7 @@ services:
 
 
   helios.core:
-    image:  medcase.azurecr.io/helios/helios-core:v0.0.1
+    image:  medcase.azurecr.io/helios/helios-core:v0.0.2
     ports:
       - "3500:3500"
       - "3501:3501"
@@ -13,7 +13,7 @@ services:
             ipv4_address: 10.8.0.8
 
   helios.authentication:
-    image: medcase.azurecr.io/helios/helios-auth:v0.0.1
+    image: medcase.azurecr.io/helios/helios-auth:v0.0.2
     ports:
         - "8080:8080"
         - "8081:8081"

@@ -8,6 +8,7 @@ class TextareaElement extends Component {
         
         this.state = {
             isDisable: props.IsDisable,
+            Value: props.Value,
             defaultValue: props.DefaultValue
         }
     }

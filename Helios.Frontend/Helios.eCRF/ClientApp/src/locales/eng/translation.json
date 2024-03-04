@@ -530,5 +530,7 @@
   "You will not be able to recover this element": "You will not be able to recover this element!",
   "Do you confirm": "Do you confirm?",
   "Warning": "Warning",
-  "Row count": "Row count"
+  "Row count": "Row count",
+  "Today": "Today",
+  "It will be calculated automatically": "*It will be calculated automatically."
 }

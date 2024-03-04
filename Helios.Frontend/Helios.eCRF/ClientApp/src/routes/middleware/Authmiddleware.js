@@ -8,7 +8,7 @@ import { addStudy, loginuser, resetStudy } from "../../store/actions";
 import { layoutTypes } from "../../constants/layout";
 import { onLogin } from "../../helpers/Auth/useAuth";
 import { userRoutes } from "../allRoutes";
-
+import { API_BASE_URL } from "../../constants/endpoints";
 
 const AuthMiddleware = (props) => {
     const dispatch = useDispatch();
@@ -22,7 +22,7 @@ const AuthMiddleware = (props) => {
     var result = null;
 
     const updateJwt = (token, studyId) => {
-        const apiUrl = `http://localhost:3300/Account/UpdateJwt`;
+        const apiUrl = API_BASE_URL+`Account/UpdateJwt`;
         fetch(apiUrl, {
             method: 'POST',
             headers: {
@@ -49,7 +49,7 @@ const AuthMiddleware = (props) => {
     };
 
     const getStudy = async (result) => {
-        const apiUrl = `http://localhost:3300/Study/GetStudy`;
+        const apiUrl = API_BASE_URL+`/Study/GetStudy`;
         fetch(apiUrl, {
             method: 'GET',
             headers: {

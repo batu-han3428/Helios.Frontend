@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
+import { withTranslation } from "react-i18next";
 
 class CalculationElement extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            isDisable: props.IsDisable,
         }
     }
 
@@ -15,9 +15,12 @@ class CalculationElement extends Component {
                 <input
                     className="form-control"
                     type="text"
-                    disabled={this.state.isDisable} />
+                    disabled="disabled" />
+                {/*<label style={{ fontSize: "8pt", textDecoration: 'none' }}>*/}
+                {/*    {this.props.t("It will be calculated automatically")}*/}
+                {/*</label>*/}
             </div>
         )
     }
 };
-export default CalculationElement;
+export default withTranslation()(CalculationElement);

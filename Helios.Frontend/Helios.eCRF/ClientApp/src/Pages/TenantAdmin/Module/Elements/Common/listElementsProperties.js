@@ -20,20 +20,19 @@ import {
     Table,
     TabPane,
     Label
-} from "reactstrap";
+} from "reactstrap";    
 import AccordionComp from '../../../../../components/Common/AccordionComp/AccordionComp';
 import Select from "react-select";
 import ToastComp from '../../../../../components/Common/ToastComp/ToastComp';
 import { withTranslation } from "react-i18next";
 
-const baseUrl = "https://localhost:7196";
+const baseUrl = "http://localhost:3300";
 
 class ListElementsProperties extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = {
-
             Id: 0,
             layoutOptionGroup: [
                 { label: "Vertical", value: 1 },

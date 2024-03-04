@@ -126,7 +126,7 @@ namespace Helios.eCRF.Controllers
         }
 
         [HttpPost]
-        public async Task<ApiResponse<dynamic>> SaveModuleContent(ElementModel model)
+        public ApiResponse<dynamic> SaveModuleContent(ElementModel model)
         {
             var result = new ApiResponse<dynamic>();
 
@@ -142,7 +142,7 @@ namespace Helios.eCRF.Controllers
             }
             else
             {
-                result = await _moduleService.SaveModuleContent(model);
+                result = _moduleService.SaveModuleContent(model).Result;
             }
 
             return result;

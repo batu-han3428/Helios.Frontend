@@ -12,8 +12,16 @@ class RadioElement extends Component {
             isDisable: props.IsDisable,
             layout: props.Layout,
             ElementOptions: JSON.parse(props.ElementOptions),
+            Value: props.Value,
+            selectedOption: null,
         }
+
+        this.handleRadioChange = this.handleRadioChange.bind(this);
     }
+
+    handleRadioChange = (value) => {
+        this.setState({ selectedOption: value });
+    };
 
     render() {
         return (
@@ -24,6 +32,9 @@ class RadioElement extends Component {
                             <Input
                                 type="radio"
                                 className="form-check-input"
+                                checked={this.state.selectedOption === item.id}
+                                value={item.id}
+                                onChange={() => this.handleRadioChange(item.id)}
                                 disabled={this.state.isDisable} />
                             <Label
                                 className="form-check-label"
@@ -41,8 +52,11 @@ class RadioElement extends Component {
                                 <Input
                                     type="radio"
                                     className="form-check-input"
+                                    checked={this.state.selectedOption === item.id}
+                                    value={item.id}
+                                    onChange={() => this.handleRadioChange(item.id)}
                                     id={`radio-${index}`}
-                                    name="radioOptions" 
+                                    name="radioOptions"
                                     disabled={this.state.isDisable} />
                                 <Label
                                     className="form-check-label"

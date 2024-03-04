@@ -1,7 +1,7 @@
 import React, { Component, useState, useContext, Form, FormField, TextBox, ComboBox, CheckBox, LinkButton } from 'react';
 
 function AddOrUpdateModule() {
-    const baseUrl = "https://localhost:7196";
+    const baseUrl = "http://localhost:3300";
 
     const [Name, setName] = useState('');
 
@@ -10,7 +10,6 @@ function AddOrUpdateModule() {
     };
 
     const handleSubmit = (event) => {
-        debugger;
         fetch(baseUrl + '/Module/AddModule?Name=' + Name, {
             method: 'POST',
             //body: Name
@@ -43,7 +42,7 @@ function AddOrUpdateModule() {
                 </div>
             </div>
             <div style={{ float: 'right' }}>
-                    <button type='submit' className='btn btn-primary' onClick={handleSubmit} style={{ width: '100%' }}> Save</button>
+                <button type='submit' className='btn btn-primary' onClick={handleSubmit} style={{ width: '100%' }}> Save</button>
             </div></>
     );
 };

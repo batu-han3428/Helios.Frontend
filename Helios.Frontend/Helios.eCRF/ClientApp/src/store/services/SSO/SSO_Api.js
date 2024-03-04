@@ -1,10 +1,11 @@
 ﻿import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { getLocalStorage } from '../../../helpers/local-storage/localStorageProcess';
+import { API_BASE_URL } from '../../../constants/endpoints';
 
 export const SSOApi = createApi({
     reducerPath: 'SSOApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'https://localhost:7196/',
+        baseUrl: API_BASE_URL,
         prepareHeaders: (headers, { getState }) => {
             let token = getLocalStorage("accessToken");
 
