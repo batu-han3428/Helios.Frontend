@@ -1,9 +1,9 @@
 ﻿using Helios.Common.DTO;
+using Helios.Common.Enums;
 using Helios.Common.Model;
 using Helios.eCRF.Services.Base;
 using Helios.eCRF.Services.Interfaces;
 using RestSharp;
-using System.Runtime.CompilerServices;
 
 namespace Helios.eCRF.Services
 {
@@ -246,6 +246,30 @@ namespace Helios.eCRF.Services
             {
                 var req = new RestRequest("CoreStudy/SetVisitPageEPro", Method.Post);
                 req.AddJsonBody(visitDTO);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
+        public async Task<RestResponse<List<PermissionModel>>> GetVisitPagePermissionList(PermissionPage pageKey, Int64 studyId, Int64 id)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetVisitPagePermissionList", Method.Get);
+                req.AddParameter("pageKey", pageKey);
+                req.AddParameter("studyId", studyId);
+                req.AddParameter("id", id);
+                var result = await client.ExecuteAsync<List<PermissionModel>>(req);
+                return result;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> SetVisitPagePermission(VisitPagePermissionDTO dto)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/SetVisitPagePermission", Method.Post);
+                req.AddJsonBody(dto);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
             }

@@ -22,7 +22,7 @@ import { withTranslation } from "react-i18next";
 import { GetElementNameByKey } from '../Common/utils';
 import './calcStyle.css';
 
-const baseUrl = "https://localhost:7196";
+const baseUrl = "http://localhost:3300";
 
 class CalculationElementProperties extends Component {
     constructor(props) {

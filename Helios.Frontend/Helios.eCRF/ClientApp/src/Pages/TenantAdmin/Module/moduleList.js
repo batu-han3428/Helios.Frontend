@@ -20,14 +20,12 @@ import { startloading, endloading } from '../../../store/loader/actions';
 import { formatDate } from "../../../helpers/format_date";
 import { useDispatch, useSelector } from "react-redux";
 
-let id = 0;
-
 function ModuleList() {
     const userInformation = useSelector(state => state.rootReducer.Login);
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const baseUrl = "https://localhost:7196";
+    const baseUrl = "http://localhost:3300";
 
     const [Name, setName] = useState('');
     const [Id, setId] = useState(0);

@@ -71,10 +71,18 @@ class TableElement extends Component {
             }
         })
 
-        if (result)
-            return <ElementList TenantId={this.state.TenantId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} />
-        else
-            return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleAddElementModal(colIndex + 1, rowIndex + 1)} />;
+        if (this.state.isDisable) {
+            if (result)
+                return <ElementList TenantId={this.state.TenantId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} />
+            else
+                return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleAddElementModal(colIndex + 1, rowIndex + 1)} />;
+        }
+        else {
+            if (result)
+                return <ElementList TenantId={this.state.TenantId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} />
+            else
+                return "";
+        }
     }
 
     render() {

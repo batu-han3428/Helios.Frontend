@@ -8,6 +8,7 @@ class CheckElement extends Component {
             isDisable: props.IsDisable,
             layout: props.Layout,
             ElementOptions: JSON.parse(props.ElementOptions),
+            Value: props.Value
         }
     }
 

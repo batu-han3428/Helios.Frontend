@@ -1,17 +1,17 @@
 ﻿import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { getLocalStorage } from '../../helpers/local-storage/localStorageProcess';
+import { API_BASE_URL } from '../../constants/endpoints';
 
 export const VisitApi = createApi({
     reducerPath: 'visitApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'https://localhost:7196/',
+        baseUrl: API_BASE_URL,
         prepareHeaders: (headers, { getState }) => {
             let token = getLocalStorage("accessToken");
 
             if (token) {
                 headers.set('Authorization', `Bearer ${token}`);
             }
-
             return headers;
         },
     }),
@@ -45,7 +45,14 @@ export const VisitApi = createApi({
             invalidatesTags: ['Visit'],
         }),
         permissionListGet: builder.query({
-            query: (pageKey) => `/Study/GetPermissionList/${pageKey}`,
+            query: (data) => `/Study/GetVisitPagePermissionList/${data.pageKey}/${data.studyId}/${data.id}`,
+        }),
+        visitPagePermissionSet: builder.mutation({
+            query: (data) => ({
+                url: '/Study/SetVisitPagePermission',
+                method: 'POST',
+                body: data,
+            })
         }),
     }),
 });
@@ -60,3 +67,5 @@ export const { useVisitDeleteMutation } = VisitApi;
 export const { useVisitPageEProSetMutation } = VisitApi;
 
 export const { useLazyPermissionListGetQuery } = VisitApi;
+
+export const { useVisitPagePermissionSetMutation } = VisitApi;

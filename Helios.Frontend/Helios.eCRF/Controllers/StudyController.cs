@@ -308,13 +308,38 @@ namespace Helios.eCRF.Controllers
         /// <summary>
         /// Yetkileri listeler
         /// </summary>
-        /// <param name="permissionPage">yetki key</param>
+        /// <param name="pageKey">yetki key</param>
+        /// <param name="studyId">çalışma id</param>
+        /// <param name="id">visit veya page id</param>
         /// <returns>yetki listesi</returns>
-        [HttpGet("{pageKey}")]
+        [HttpGet("{pageKey}/{studyId}/{id}")]
         [Authorize(Roles = "TenantAdmin")]
-        public async Task<IActionResult> GetPermissionList(PermissionPage pageKey)
+        public async Task<IActionResult> GetVisitPagePermissionList(PermissionPage pageKey, Int64 studyId, Int64 id)
         {
-            var result = _cacheService.GetPermissions(pageKey);
+            var result = await _studyService.GetVisitPagePermissionList(pageKey, studyId, id);
+            if (!result.IsSuccessful)
+            {
+                return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+            }
+            var result1 = _cacheService.GetPermissions(pageKey);
+            VisitPagePermissionModel model = new VisitPagePermissionModel();
+            model.PermissionModel = result.Data;
+            model.PermissionRedisModel = result1;
+            return Ok(model);
+        }
+
+
+        /// <summary>
+        /// vizit ya da sayfa yetkilerini günceller
+        /// </summary>
+        /// <param name="dto">yetki bilgileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [Authorize(Roles = "TenantAdmin")]
+        public async Task<IActionResult> SetVisitPagePermission(VisitPagePermissionDTO dto)
+        {
+            var result = await _studyService.SetVisitPagePermission(dto);
+
             return Ok(result);
         }
         #endregion

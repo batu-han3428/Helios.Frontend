@@ -8,8 +8,25 @@ class DropdownElement extends Component {
 
         this.state = {
             isDisable: props.IsDisable,
-            ElementOptions: JSON.parse(props.ElementOptions),
+            orgElementOptions: JSON.parse(props.ElementOptions),
+            Value: props.Value,
+            ElementOptions: [],
         }
+
+        this.fillElementOptions = this.fillElementOptions.bind(this);
+
+        this.fillElementOptions();
+    }
+
+    fillElementOptions() {
+        var optns = [];
+
+        this.state.orgElementOptions.map(item => {
+            var itm = { label: item.tagName, value: item.id };
+            optns.push(itm);
+        });
+
+        this.state.ElementOptions = optns;
     }
 
     render() {

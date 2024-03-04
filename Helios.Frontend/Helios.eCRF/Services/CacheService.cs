@@ -1,15 +1,11 @@
 ﻿using Helios.Common.Enums;
+using Helios.Common.Model;
 using Helios.eCRF.Services.Interfaces;
 using Microsoft.Extensions.Caching.Memory;
 using StackExchange.Redis;
 
 namespace Helios.eCRF.Services
 {
-    public class PermissionInfo
-    {
-        public int Key { get; set; }
-        public string Name { get; set; }
-    }
     public class CacheService: ICacheService
     {
         private readonly IConnectionMultiplexer _redisCache;
@@ -21,11 +17,11 @@ namespace Helios.eCRF.Services
             _localCache = localCache;
         }
 
-        public List<PermissionInfo> GetPermissions(PermissionPage permissionPage)
+        public List<PermissionRedisModel> GetPermissions(PermissionPage permissionPage)
         {
             var localCacheKey = $"permissions:{permissionPage}";
 
-            if (_localCache.TryGetValue(localCacheKey, out List<PermissionInfo> cachedPermissions))
+            if (_localCache.TryGetValue(localCacheKey, out List<PermissionRedisModel> cachedPermissions))
             {
                 return cachedPermissions;
             }
@@ -54,23 +50,29 @@ namespace Helios.eCRF.Services
             }
         }
 
-        private List<PermissionInfo> GetPermissionsFromRedis(PermissionPage pageKey)
+        private List<PermissionRedisModel> GetPermissionsFromRedis(PermissionPage pageKey)
         {
-            var db = _redisCache.GetDatabase();
-
-            RedisValue[] values = db.HashValues($"permissions:{pageKey}");
-
-            List<PermissionInfo> permissions = new List<PermissionInfo>();
-            foreach (var value in values)
+            try
             {
-                var permission = Newtonsoft.Json.JsonConvert.DeserializeObject<PermissionInfo>(value);
-                permissions.Add(permission);
-            }
+                var db = _redisCache.GetDatabase();
+                RedisValue[] values = db.HashValues($"permissions:{pageKey}");
 
-            return permissions;
+                List<PermissionRedisModel> permissions = new List<PermissionRedisModel>();
+                foreach (var value in values)
+                {
+                    var permission = Newtonsoft.Json.JsonConvert.DeserializeObject<PermissionRedisModel>(value);
+                    permissions.Add(permission);
+                }
+
+                return permissions;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
-        private void SetPermissionsToRedis(PermissionPage pageKey, List<PermissionInfo> permissions)
+        private void SetPermissionsToRedis(PermissionPage pageKey, List<PermissionRedisModel> permissions)
         {
             var db = _redisCache.GetDatabase();
 
@@ -80,31 +82,31 @@ namespace Helios.eCRF.Services
             }
         }
 
-        private List<PermissionInfo> GetDefaultPermissions(PermissionPage pageKey)
+        private List<PermissionRedisModel> GetDefaultPermissions(PermissionPage pageKey)
         {
             if (pageKey == PermissionPage.User)
             {
-                return new List<PermissionInfo>
+                return new List<PermissionRedisModel>
                 {
-                    new PermissionInfo { Key = 1, Name = "View Users" },
-                    new PermissionInfo { Key = 2, Name = "Edit Users" }
+                    new PermissionRedisModel { Key = 1, Name = "View Users" },
+                    new PermissionRedisModel { Key = 2, Name = "Edit Users" }
                 };
             }
             else if (pageKey == PermissionPage.Visit)
             {
-                return new List<PermissionInfo>
+                return new List<PermissionRedisModel>
                 {
-                    new PermissionInfo { Key = 3, Name = "Freeze" },
-                    new PermissionInfo { Key = 4, Name = "Lock" },
-                    new PermissionInfo { Key = 5, Name = "Signature" },
-                    new PermissionInfo { Key = 6, Name = "SDV" },
-                    new PermissionInfo { Key = 7, Name = "Query" },
-                    new PermissionInfo { Key = 8, Name = "Verification" },
-                    new PermissionInfo { Key = 9, Name = "SAE Lock" },
+                    new PermissionRedisModel { Key = 3, Name = "Freeze" },
+                    new PermissionRedisModel { Key = 4, Name = "Lock" },
+                    new PermissionRedisModel { Key = 5, Name = "Signature" },
+                    new PermissionRedisModel { Key = 6, Name = "SDV" },
+                    new PermissionRedisModel { Key = 7, Name = "Query" },
+                    new PermissionRedisModel { Key = 8, Name = "Verification" },
+                    new PermissionRedisModel { Key = 9, Name = "SAE Lock" },
                 };
             }
 
-            return new List<PermissionInfo>();
+            return new List<PermissionRedisModel>();
         }
     }
 }

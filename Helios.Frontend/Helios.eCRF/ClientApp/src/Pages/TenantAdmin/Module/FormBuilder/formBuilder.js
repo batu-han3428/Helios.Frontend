@@ -2,15 +2,6 @@ import React, { useState, useEffect } from 'react';
 import {
     Row,
     Col,
-    Card,
-    CardBody,
-    CardTitle,
-    Modal,
-    Container,
-    ModalBody,
-    ModalHeader,
-    ModalFooter,
-    Button,
 } from "reactstrap";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { withTranslation } from "react-i18next";
@@ -23,7 +14,7 @@ const FormBuilder = props => {
     const userInformation = useSelector(state => state.rootReducer.Login);
     const { moduleId } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
-    const baseUrl = "https://localhost:7196";
+    const baseUrl = "http://localhost:3300";
     const dispatch = useDispatch();
 
     const fetchData = () => {
@@ -58,7 +49,7 @@ const FormBuilder = props => {
                         </Row>
                     </div>
                     <div>
-                        <ElementList TenantId={userInformation.TenantId} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true } />
+                        <ElementList TenantId={userInformation.TenantId} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} />
                     </div>
                 </div>
             </div>

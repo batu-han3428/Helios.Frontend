@@ -3,6 +3,7 @@ using Helios.Common.Model;
 using Helios.eCRF.Models;
 using Helios.eCRF.Services.Base;
 using Helios.eCRF.Services.Interfaces;
+using MassTransit.Internals.GraphValidation;
 using Newtonsoft.Json;
 using RestSharp;
 

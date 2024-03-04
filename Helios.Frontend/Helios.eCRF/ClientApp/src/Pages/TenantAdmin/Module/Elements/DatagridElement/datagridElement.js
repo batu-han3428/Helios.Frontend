@@ -14,6 +14,7 @@ import { GetAllElementListForSelect } from '../../FormBuilder/allElementList.js'
 import { GetElementNameByKey } from '../Common/utils.js';
 import Properties from '../../FormBuilder/properties.js';
 import ElementList from '../../FormBuilder/elementList.js';
+import Preview from '../../FormBuilder/preview.js';
 
 class DatagridElement extends Component {
     constructor(props) {
@@ -67,10 +68,19 @@ class DatagridElement extends Component {
             }
         })
 
-        if (result)
-            return <ElementList TenantId={this.state.TenantId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} />
-        else
-            return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleAddElementModal(index + 1)} />;
+        if (this.state.isDisable) {
+            if (result)
+                return <ElementList TenantId={this.state.TenantId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} />
+            else
+                return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleAddElementModal(index + 1)} />;
+        }
+        else {
+            if (result)
+                return <ElementList TenantId={this.state.TenantId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false}/>
+            else
+                return "";
+
+        }
     }
 
     render() {

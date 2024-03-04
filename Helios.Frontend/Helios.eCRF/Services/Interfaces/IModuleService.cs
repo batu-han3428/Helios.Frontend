@@ -1,7 +1,4 @@
 ﻿using Helios.eCRF.Models;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
 using Helios.Common.DTO;
 using Helios.Common.Model;
 

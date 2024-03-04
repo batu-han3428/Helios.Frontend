@@ -2,12 +2,12 @@
 import { getLocalStorage } from '../../helpers/local-storage/localStorageProcess';
 import { SiteLaboratoriesApi } from './SiteLaboratories';
 import { PermissionsApi } from './Permissions';
-
+import { API_BASE_URL } from '../../constants/endpoints';
 
 export const StudyApi = createApi({
     reducerPath: 'studyApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: 'http://localhost:3300/',
+        baseUrl: API_BASE_URL,
         prepareHeaders: (headers, { getState }) => {
             let token = getLocalStorage("accessToken");
 
