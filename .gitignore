@@ -10,3 +10,5 @@
 /Helios.Frontend/obj**
 /Helios.Frontend/Helios.eCRF/bin/Debug/net8.0
 /Helios.Frontend/.vs
+/Helios.Frontend/Helios.eCRF/ClientApp/node_modules/.bin
+/Helios.Frontend/Helios.eCRF/ClientApp/node_modules
