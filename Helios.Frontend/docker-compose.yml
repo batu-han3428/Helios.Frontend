@@ -7,9 +7,7 @@ services:
     image:  medcase.azurecr.io/helios/helios-core:v0.0.3
     ports:
       - "3500:8080"
-      - "3501:8081"
-    environment:
-      - Services__Auth=http://10.8.0.7:8080
+      - "3501:3501"
     networks:
          v3network:
             ipv4_address: 10.8.0.8
@@ -36,7 +34,7 @@ services:
        - "3300:3300"
        - "3301:3301"
     environment:
-      - Redis__Host=redis_image
+      - Redis__Host=redis.cache
       - Redis__Password=heliosredis
     networks:
         v3network:
