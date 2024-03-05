@@ -25,7 +25,7 @@ namespace Helios.eCRF.Services.Base
         }
         
         protected RestClient CoreServiceClient {
-            get { return new RestClient(new Uri("http://10.8.0.8:3500/")); }
+            get { return new RestClient(new Uri("http://10.8.0.8:8080")); }
         }
 
         public void OnServiceInstanceCreated()

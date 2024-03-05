@@ -6,7 +6,7 @@
     <DockerPublishLocally>False</DockerPublishLocally>
     <ProjectGuid>a82c2581-af4f-4159-9c90-7cceb37b1248</ProjectGuid>
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
-    <DockerServiceUrl>{Scheme}://localhost:{ServicePort}</DockerServiceUrl>
+    <DockerServiceUrl>http://localhost:3300/index.html</DockerServiceUrl>
     <DockerServiceName>helios.ecrf</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
