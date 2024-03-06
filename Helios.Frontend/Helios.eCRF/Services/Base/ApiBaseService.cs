@@ -45,5 +45,12 @@ namespace Helios.eCRF.Services.Base
                 TenantId = tenantId != null && tenantId != "" ? Convert.ToInt64(tenantId) : 0;
             }
         }
+
+        protected void AddApiHeaders(RestRequest req)
+        {
+            req.AddHeader("Authorization", UserId);
+            req.AddHeader("StudyId", StudyId);
+            req.AddHeader("TenantId", TenantId);
+        }
     }
 }

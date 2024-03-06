@@ -176,9 +176,9 @@ namespace Helios.eCRF.Controllers
         /// <param name="setPermissionModel">yetki bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        public async Task<IActionResult> SetPermission(SetPermissionModel setPermissionModel)
+        public async Task<IActionResult> SetPermission(StudyUserRolePermissionDTO dto)
         {
-            var result = await _userService.SetPermission(setPermissionModel);
+            var result = await _userService.SetPermission(dto);
             return Ok(result);
         }
 

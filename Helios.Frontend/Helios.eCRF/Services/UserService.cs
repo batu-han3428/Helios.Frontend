@@ -401,12 +401,13 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<ApiResponse<dynamic>> SetPermission(SetPermissionModel setPermissionModel)
+        public async Task<ApiResponse<dynamic>> SetPermission(StudyUserRolePermissionDTO dto)
         {
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreUser/SetPermission", Method.Post);
-                req.AddJsonBody(setPermissionModel);
+                AddApiHeaders(req);
+                req.AddJsonBody(dto);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
             }
