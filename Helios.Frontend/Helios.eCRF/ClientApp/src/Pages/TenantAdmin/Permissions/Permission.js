@@ -80,10 +80,8 @@ const Permission = props => {
     const updatePermission = async (id, name, value) => {
         dispatch(startloading());
         let model = {
-            userid: userInformation.userId,
-            id: id,
-            permissionName: name,
-            value: value,
+            studyRoleId: id,
+            key: value,
         };
         const response = await setPermission(model);
         if (response.data.isSuccess) {
