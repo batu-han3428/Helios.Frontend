@@ -21,11 +21,11 @@ namespace Helios.eCRF.Services.Base
         public string Token { get; set; }
 
         protected RestClient AuthServiceClient {
-            get { return new RestClient(new Uri("http://10.8.0.7:8080")); }
+            get { return new RestClient(new Uri("http://authentication:8080")); }
         }
         
         protected RestClient CoreServiceClient {
-            get { return new RestClient(new Uri("http://10.8.0.8:8080")); }
+            get { return new RestClient(new Uri("http://core:8080")); }
         }
 
         public void OnServiceInstanceCreated()

@@ -58,7 +58,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="ClientApp\.nginx\" />
     <Folder Include="ClientApp\src\Pages\TenantAdmin\Module\Elements\DatagridElement\" />
     <Folder Include="ClientApp\src\Pages\TenantAdmin\Module\Elements\TableElement\" />
     <Folder Include="ClientApp\src\Pages\TenantAdmin\Module\Elements\RangeSliderElement\" />
