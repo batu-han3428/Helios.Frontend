@@ -141,6 +141,7 @@ namespace Helios.eCRF.Services
             {
                 Id = id,
                 UserId = userId,
+                Value = ""
             };
 
             using (var client = CoreServiceClient)
@@ -158,6 +159,7 @@ namespace Helios.eCRF.Services
             {
                 Id = id,
                 UserId = userId,
+                Value = ""
             };
 
             using (var client = CoreServiceClient)
@@ -190,6 +192,23 @@ namespace Helios.eCRF.Services
             {
                 var req = new RestRequest("CoreModule/AddNewTag", Method.Post);
                 req.AddJsonBody(tags);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+        public async Task<ApiResponse<dynamic>> AutoSaveElement(Int64 id, string value)
+        {
+            var model = new ElementShortModel()
+            {
+                Id = id,
+                UserId = 0,
+                Value = ""
+            };
+
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreModule/AutoSaveElement", Method.Post);
+                req.AddJsonBody(model);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
             }

@@ -41,6 +41,8 @@ function Preview() {
     const [tenantId, setTenantId] = useState(0);
     const { moduleId } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
+    const [ElementId, setElementId] = useState(0);
+    const [ElementValue, setElementValue] = useState("");
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -62,6 +64,17 @@ function Preview() {
             });
     }
 
+    const AutoSaveElement = () => {
+        fetch(baseUrl + '/Module/AutoSaveElement?id=' + ElementId + '&value=' + ElementValue, {
+            method: 'POST',
+        }).then(res => res.json())
+            .then(data => {
+            })
+            .catch(error => {
+                //console.error('Error:', error);
+            });
+    }
+
     const renderElementsSwitch = (param) => {
         switch (param.elementType) {
             case 1:
@@ -71,11 +84,14 @@ function Preview() {
                 />;
             case 4:
                 return <NumericElement
+                    Id={param.id} SetElementId={setElementId}
+                    ElementValue={ElementValue} SetElementValue={setElementValue}
                     IsDisable={""}
                     Unit={""}
                     Mask={""}
                     LowerLimit={0}
                     UpperLimit={0}
+                    AutoSaveElement={AutoSaveElement}
                 />;
             case 5:
                 return <TextareaElement

@@ -176,6 +176,12 @@ namespace Helios.eCRF.Controllers
             var result = await _moduleService.AddNewTag(tags);
             return result;
         }
+        [HttpPost]
+        public async Task<ApiResponse<dynamic>> AutoSaveElement(Int64 id, string value)
+        {
+            var result = await _moduleService.AutoSaveElement(id, value);
+            return result;
+        }
 
 
     }

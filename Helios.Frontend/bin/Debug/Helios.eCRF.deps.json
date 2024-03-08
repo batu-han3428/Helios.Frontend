@@ -8,7 +8,7 @@
     ".NETCoreApp,Version=v8.0": {
       "Helios.eCRF/1.0.0": {
         "dependencies": {
-          "Helios.Common": "1.0.0.3",
+          "Helios.Common": "1.0.0.8",
           "MassTransit": "8.1.0",
           "MassTransit.Extensions.DependencyInjection": "7.3.1",
           "Microsoft.AspNetCore.Authentication.JwtBearer": "7.0.11",
@@ -40,7 +40,7 @@
           }
         }
       },
-      "Helios.Common/1.0.0.3": {
+      "Helios.Common/1.0.0.8": {
         "dependencies": {
           "AutoMapper": "13.0.1",
           "Microsoft.AspNetCore.Http": "2.2.2",
@@ -48,8 +48,8 @@
         },
         "runtime": {
           "lib/net8.0/Helios.Common.dll": {
-            "assemblyVersion": "1.0.0.3",
-            "fileVersion": "1.0.0.3"
+            "assemblyVersion": "1.0.0.8",
+            "fileVersion": "1.0.0.8"
           }
         }
       },
@@ -498,12 +498,12 @@
       "path": "automapper/13.0.1",
       "hashPath": "automapper.13.0.1.nupkg.sha512"
     },
-    "Helios.Common/1.0.0.3": {
+    "Helios.Common/1.0.0.8": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-NA7eYWOfJjwblmShtKwKhh+vE3v0IfjD+0eeS+v9hQ6T2LnoVNQCltdcmxuh5MfWfFsj/TxxihB/9Q1EZcWrIw==",
-      "path": "helios.common/1.0.0.3",
-      "hashPath": "helios.common.1.0.0.3.nupkg.sha512"
+      "sha512": "sha512-pYvKFmClWtdfbf0M8pQdk02mm4dqnJvHvdvv9O9U8DhxVEbt0Xwgq/AL/sOPzlZ/NBH49ovsJ2V8BRgmavISLg==",
+      "path": "helios.common/1.0.0.8",
+      "hashPath": "helios.common.1.0.0.8.nupkg.sha512"
     },
     "MassTransit/8.1.0": {
       "type": "package",
