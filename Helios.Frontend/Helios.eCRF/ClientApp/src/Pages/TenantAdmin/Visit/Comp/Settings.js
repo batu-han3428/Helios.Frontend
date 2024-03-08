@@ -65,8 +65,6 @@ const Settings = props => {
             try {
                 dispatch(startloading());
                 let dto = {
-                    userId: userInformation.userId,
-                    studyId: studyInformation.studyId,
                     permissionKeys: selectedRowKeys
                 };
                 if (props.record.type === 'visit') {
