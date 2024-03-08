@@ -10,6 +10,7 @@ import EditableCell from '../Visit/Comp/EditableCell';
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { useApiHelper, visitSettingsItems } from './VisitHelper/Helper';
+import "./visit.css";
 
 const Study = props => {
 
@@ -182,7 +183,9 @@ const Study = props => {
                             </div>                            
                             <Table
                                 components={components}
-                                rowClassName={() => 'editable-row'}
+                                rowClassName={(record, index) => {
+                                    return record.type === "visit" ? 'row-visit-background-color' : record.type === "page" ? 'row-page-background-color' : "row-module-background-color";
+                                }}
                                 bordered
                                 dataSource={dataSource}
                                 columns={columns}

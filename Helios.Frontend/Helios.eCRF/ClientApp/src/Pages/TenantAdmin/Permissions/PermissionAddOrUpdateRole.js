@@ -21,9 +21,6 @@ const PermissionAddOrUpdateRole = props => {
         enableReinitialize: true,
         initialValues: {
             id: props.roleId,
-            userid: props.userId,
-            tenantid: props.tenantId,
-            studyId: props.studyId,
             rolename: props.selectedRole || "",
         },
         validationSchema: Yup.object().shape({

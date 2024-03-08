@@ -173,7 +173,7 @@ namespace Helios.eCRF.Controllers
         /// <summary>
         /// yetki günceller
         /// </summary>
-        /// <param name="setPermissionModel">yetki bilgileri</param>
+        /// <param name="dto">yetki bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
         public async Task<IActionResult> SetPermission(StudyUserRolePermissionDTO dto)

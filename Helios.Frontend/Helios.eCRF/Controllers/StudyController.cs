@@ -347,13 +347,13 @@ namespace Helios.eCRF.Controllers
         /// <summary>
         /// Seçili modul veya modulleri kaydeder
         /// </summary>
-        /// <param name="moduleIds">module id</param>
+        /// <param name="dto">modül/lerin ve sayfa bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
         [Authorize(Roles = "TenantAdmin")]
-        public async Task<IActionResult> SetStudyModule(List<Int64> moduleIds)
+        public async Task<IActionResult> SetStudyModule(SetModuleDTO dto)
         {
-            var result = await _studyService.SetStudyModule(moduleIds);
+            var result = await _studyService.SetStudyModule(dto);
 
             return Ok(result);
         }

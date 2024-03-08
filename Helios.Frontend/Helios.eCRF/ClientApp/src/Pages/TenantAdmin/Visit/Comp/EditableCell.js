@@ -2,8 +2,9 @@
 import { Form, Input, Select, Popconfirm, Dropdown } from 'antd';
 import visitType from '../VisitTypeItems';
 import EditableContext from './EditableContext';
-import { useApiHelper, handleSettings } from '../VisitHelper/Helper';
+import { useApiHelper, handleSettings, handleAddModule } from '../VisitHelper/Helper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useNavigate } from "react-router-dom";
 
 const EditableCell = ({
     title,
@@ -22,6 +23,8 @@ const EditableCell = ({
 }) => {
 
     const form = useContext(EditableContext);
+
+    const navigate = useNavigate();
 
     const { handleDelete } = useApiHelper(dataSource, setDataSource, toastRef);
 
@@ -138,6 +141,26 @@ const EditableCell = ({
         }
         function getItems() {        
             let items = [];
+            if (record.type === 'module' && record.key !== dataSource[dataSource.length - 1].key) {
+                items.push({
+                    key: '4',
+                    label: (
+                        <a onClick={() => navigate("/UnderConstruction")}>{t("Go to module")}</a>
+                    ),
+                    icon: <FontAwesomeIcon icon="fa-solid fa-gears" style={{ color: "#e48181", }} />,
+                    style: { color: "#e48181" },
+                });
+            }
+            if (record.type === 'page' && record.key !== dataSource[dataSource.length - 1].key) {
+                items.push({
+                    key: '2',
+                    label: (
+                        <a onClick={() => handleAddModule(openModal, record, modalRef, toastRef)}>{t("Add module")}</a>
+                    ),
+                    icon: <FontAwesomeIcon icon="fa-solid fa-gears" style={{ color: "#e5f37c", }} />,
+                    style: { color: "#e5f37c" },
+                });
+            }
             if (dataSource.length > 1 && (record.key !== dataSource[dataSource.length - 1].key)) {
                 items.push({
                     key: '1',
