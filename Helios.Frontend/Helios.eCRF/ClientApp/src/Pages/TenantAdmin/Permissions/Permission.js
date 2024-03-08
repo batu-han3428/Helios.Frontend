@@ -77,12 +77,12 @@ const Permission = props => {
 
     const [setPermission] = useSetPermissionMutation();
 
-    const updatePermission = async (id, name, value) => {
+    const updatePermission = async (id, key) => {
         dispatch(startloading());
         let model = {
             studyRoleId: id,
-            key: value,
-        };
+            permissionKey: key,
+        };     
         const response = await setPermission(model);
         if (response.data.isSuccess) {
             toastRef.current.setToast({
@@ -140,9 +140,6 @@ const Permission = props => {
                     dispatch(startloading());
                     var deleteData = {
                         id: id,
-                        userid: userInformation.userId,
-                        tenantid: userInformation.tenantId,
-                        studyId: studyInformation.studyId,
                         roleName: name,
                     };
                     const response = await roleDelete(deleteData);
@@ -264,13 +261,13 @@ const Permission = props => {
                                                     <tbody className="hide hide-hd">
                                                         {permissionItems[key].map(item => {
                                                             return (
-                                                                <tr key={`${key}_${item.name}`}>
+                                                                <tr key={`${key}_${item.key}`}>
                                                                     <td className="tdname">{props.t(item.label)}</td>
                                                                     {roles.map((role, index) => { 
-                                                                        const isPermissionEnabled = role[item.name];
+                                                                        const isPermissionEnabled = role.rolePermissions.includes(item.key);
                                                                             return (
-                                                                                <td key={`${item.name}_${role.id}`} className="subjectPers">
-                                                                                    <input type="checkbox" className="checkbox chck-permision" name="Add" data-userpermissionid="Add_@Model.UserPermissions[i].Id" onChange={(e) => { updatePermission(role.id, item.name, e.target.checked); }} checked={isPermissionEnabled} />
+                                                                                <td key={`${item.key}_${role.id}`} className="subjectPers">
+                                                                                    <input type="checkbox" className="checkbox chck-permision" name="Add" data-userpermissionid="Add_@Model.UserPermissions[i].Id" onChange={(e) => { updatePermission(role.id, item.key); }} checked={isPermissionEnabled} />
                                                                             </td>
                                                                         )
                                                                      })}

@@ -19,6 +19,7 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { formatDate } from "../../../helpers/format_date";
 import { useDispatch, useSelector } from "react-redux";
+import { getLocalStorage } from '../../../helpers/local-storage/localStorageProcess';
 
 function ModuleList() {
     const userInformation = useSelector(state => state.rootReducer.Login);
@@ -142,8 +143,13 @@ function ModuleList() {
     }
 
     const fetchData = () => {
-        fetch(baseUrl + '/Module/GetModuleList?tenantId=' + 2, {
+        let token = getLocalStorage("accessToken");
+        fetch(baseUrl + '/Module/GetModuleList', {
             method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            }
         })
             .then(response => response.json())
             .then(data => {
@@ -166,7 +172,7 @@ function ModuleList() {
         dispatch(startloading());
         fetchData();
         dispatch(endloading());
-    }, [tableData]);
+    }, []);
 
     return (
         <>

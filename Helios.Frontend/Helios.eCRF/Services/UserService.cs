@@ -418,6 +418,7 @@ namespace Helios.eCRF.Services
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreUser/AddOrUpdatePermissionRol", Method.Post);
+                AddApiHeaders(req);
                 req.AddJsonBody(userPermission);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;

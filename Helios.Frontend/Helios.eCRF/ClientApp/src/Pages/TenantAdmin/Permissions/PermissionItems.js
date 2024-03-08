@@ -2,355 +2,355 @@
     Subject: [
         {
             label: "Add",
-            name: "add"
+            key: 100
         },
         {
             label: "View",
-            name: "view"
+            key: 101
         },
         {
             label: "Edit",
-            name: "edit"
+            key: 102
         },
         {
             label: "Archive",
-            name: "archivePatient"
+            key: 103
         },
         {
             label: "Delete",
-            name: "removePatient"
+            key: 104
         },
         {
             label: "Change state",
-            name: "patientStateChange"
+            key: 105
         },
         {
             label: "Randomize",
-            name: "randomize"
+            key: 106
         },
         {
             label: "View randomization",
-            name: "viewRandomization"
+            key: 107
         },
         {
             label: "View e-Consent",
-            name: "eConsentView"
+            key: 108
         },
         {
             label: "Export subject form",
-            name: "exportPatientForm"
+            key: 109
         },
         {
             label: "Signature",
-            name: "sign"
+            key: 110
         },
     ],
     Monitoring: [
         {
             label: "On-site SDV",
-            name: "sdv"
+            key: "sdv"
         },
         {
             label: "Verification",
-            name: "verification"
+            key: "verification"
         },
         {
             label: "Remote SDV",
-            name: "remoteSdv"
+            key: "remoteSdv"
         },
         {
             label: "Query",
-            name: "queryView"
+            key: "queryView"
         },
         {
             label: "Close auto query",
-            name: "autoQueryClosed"
+            key: "autoQueryClosed"
         },
         {
             label: "Lock",
-            name: "lock"
+            key: "lock"
         },
         {
             label: "Unlock",
-            name: "hasPageUnLock"
+            key: "hasPageUnLock"
         },
         {
             label: "Freeze",
-            name: "hasPageFreeze"
+            key: "hasPageFreeze"
         },
         {
             label: "Unfreeze",
-            name: "hasPageUnFreeze"
+            key: "hasPageUnFreeze"
         },
         {
             label: "Lock-Freeze audit trails",
-            name: "seePageActionAudit"
+            key: "seePageActionAudit"
         },
         {
             label: "Input audit trail",
-            name: "inputAuditTrail"
+            key: "inputAuditTrail"
         },
         {
             label: "Missing data",
-            name: "markAsNull"
+            key: "markAsNull"
         },
     ],
     Form: [
         {
             label: "Add multi-form",
-            name: "addMultiVisit"
+            key: "addMultiVisit"
         },
         {
             label: "Archive multi-form",
-            name: "archiveMultiVisit"
+            key: "archiveMultiVisit"
         },
         {
             label: "Remove multi-form",
-            name: "removeMultiVisit"
+            key: "removeMultiVisit"
         },
         {
             label: "Add adverse event",
-            name: "addAdverseEvent"
+            key: "addAdverseEvent"
         },
         {
             label: "Archive adverse event",
-            name: "aeArchive"
+            key: "aeArchive"
         },
         {
             label: "Remove adverse event",
-            name: "aeRemove"
+            key: "aeRemove"
         },
     ],
     "File upload": [
         {
             label: "View",
-            name: "canFileView"
+            key: "canFileView"
         },
         {
             label: "Upload",
-            name: "canFileUpload"
+            key: "canFileUpload"
         },
         {
             label: "Download",
-            name: "canFileDownload"
+            key: "canFileDownload"
         },
         {
             label: "Delete",
-            name: "canFileDeleted"
+            key: "canFileDeleted"
         },
     ],
     "Study document": [
         {
             label: "View",
-            name: "studyFoldersView"
+            key: "studyFoldersView"
         },
     ],
     DashboardOld: [
         {
             label: "Subject state",
-            name: "subjectstate"
+            key: "subjectstate"
         },
         {
             label: "Query status",
-            name: "querystatus"
+            key: "querystatus"
         },
         {
             label: "Randomization",
-            name: "randomization"
+            key: "randomization"
         },
         {
             label: "SDV status",
-            name: "sdvstatus"
+            key: "sdvstatus"
         },
         {
             label: "Total subject number",
-            name: "totalsubjectnumber"
+            key: "totalsubjectnumber"
         },
         {
             label: "Randomization Total subject number by country/ site",
-            name: "randomizationtotalsubjectnumberbycountrysite"
+            key: "randomizationtotalsubjectnumberbycountrysite"
         },
     ],											
     "Data export":[
         {
             label: "Full study report",
-            name: "fullstudyreport"
+            key: "fullstudyreport"
         },
         {
             label: "Study report",
-            name: "studyreports"
+            key: "studyreports"
         },
         {
             label: "Query report",
-            name: "queryreport"
+            key: "queryreport"
         },
         {
             label: "Comment report",
-            name: "commentreport"
+            key: "commentreport"
         },
         {
             label: "Form data report",
-            name: "formdatareport"
+            key: "formdatareport"
         },
         {
             label: "Input audit trail report",
-            name: "inputaudittrailreport"
+            key: "inputaudittrailreport"
         },
         {
             label: "Missing SDV data report",
-            name: "missingsdvdatareport"
+            key: "missingsdvdatareport"
         },
         {
             label: "Missing data report",
-            name: "missingdatareport"
+            key: "missingdatareport"
         },
         {
             label: "Adverse event detail report",
-            name: "adverseeventdetailreport"
+            key: "adverseeventdetailreport"
         },
         {
             label: "Serious adverse event detail report",
-            name: "seriousadverseeventdetailreport"
+            key: "seriousadverseeventdetailreport"
         },
         {
             label: "Form detail report",
-            name: "formdetailreport"
+            key: "formdetailreport"
         },
         {
             label: "Subject state with randomization",
-            name: "subjectstatewithrandomization"
+            key: "subjectstatewithrandomization"
         },
         {
             label: "MRI file report",
-            name: "mrifilereport"
+            key: "mrifilereport"
         },
         {
             label: "Missing data summary report",
-            name: "missingdatasummary"
+            key: "missingdatasummary"
         },
         {
             label: "Randomization audit trail report",
-            name: "randomizationaudittrailreport"
+            key: "randomizationaudittrailreport"
         },
         {
             label: "Randomization treatment group report",
-            name: "randomizationtreatmentgroupreport"
+            key: "randomizationtreatmentgroupreport"
         },
         {
             label: "Custom coding report",
-            name: "customcodingreport"
+            key: "customcodingreport"
         },
         {
             label: "File attachment detail report",
-            name: "fileattachmentdetailreport"
+            key: "fileattachmentdetailreport"
         },
         {
             label: "Metadata report",
-            name: "metadatareport"
+            key: "metadatareport"
         },
         {
             label: "Local lab report",
-            name: "locallabreport"
+            key: "locallabreport"
         },
         {
             label: "Lock/Freeze status report",
-            name: "lockfreezestatusreport"
+            key: "lockfreezestatusreport"
         },
     ],																					
     IWRS:[
         {
             label: "Transfer",
-            name: "iwrsTransfer"
+            key: "iwrsTransfer"
         },
         {
             label: "Receive",
-            name: "iwrsMarkAsRecieved"
+            key: "iwrsMarkAsRecieved"
         },
     ],											
     "Medical coding":[
         {
             label: "Code",
-            name: "canCode"
+            key: "canCode"
         },
     ],
     Dashboard:[
         {
             label: "Dashboard Admin",
-            name: "dashboardBuilderAdmin"
+            key: "dashboardBuilderAdmin"
         },
         {
             label: "Download Pivot",
-            name: "dashboardBuilderPivotExport"
+            key: "dashboardBuilderPivotExport"
         },
         {
             label: "Download Source Data",
-            name: "dashboardBuilderSourceExport"
+            key: "dashboardBuilderSourceExport"
         },
     ],
     TMF:[
         {
             label: "Admin",
-            name: "tmfAdmin"
+            key: "tmfAdmin"
         },
         {
             label: "View & Download",
-            name: "viewdownload"
+            key: "viewdownload"
         },
         {
             label: "Update",
-            name: "update"
+            key: "update"
         },
         {
             label: "Add & Upload",
-            name: "addupload"
+            key: "addupload"
         },
         {
             label: "Add placeholder",
-            name: "addplaceholder"
+            key: "addplaceholder"
         },
         {
             label: "View audit trail",
-            name: "viewaudittrail"
+            key: "viewaudittrail"
         },
         {
             label: "Delete",
-            name: "delete"
+            key: "delete"
         },
         {
             label: "Preview",
-            name: "preview"
+            key: "preview"
         },
         {
             label: "Request",
-            name: "request"
+            key: "request"
         },
         {
             label: "Approve & Reject file",
-            name: "approverejectfile"
+            key: "approverejectfile"
         },
         {
             label: "Comment",
-            name: "comment"
+            key: "comment"
         },
         {
             label: "Quality approval",
-            name: "qualityapproval"
+            key: "qualityapproval"
         },
         {
             label: "History",
-            name: "history"
+            key: "history"
         },
         {
             label: "View file status",
-            name: "viewfilestatus"
+            key: "viewfilestatus"
         },
         {
             label: "Unblinded",
-            name: "unblinded"
+            key: "unblinded"
         },
         {
             label: "Share",
-            name: "share"
+            key: "share"
         },
     ],
 };

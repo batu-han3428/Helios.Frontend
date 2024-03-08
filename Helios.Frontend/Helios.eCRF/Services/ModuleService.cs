@@ -62,19 +62,15 @@ namespace Helios.eCRF.Services
             return module;
         }
 
-        public async Task<List<ModuleModel>> GetModuleList(Int64 tenantId)
+        public async Task<RestResponse<List<ModuleModel>>> GetModuleList()
         {
-            var moduleList = new List<ModuleModel>();
-
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreModule/GetModuleList", Method.Get);
-                req.AddParameter("tenantId", tenantId);
-                var result = await client.ExecuteAsync(req);
-                moduleList = JsonConvert.DeserializeObject<List<ModuleModel>>(result.Content);
+                AddApiHeaders(req);
+                var result = await client.ExecuteAsync<List<ModuleModel>>(req);
+                return result;
             }
-
-            return moduleList;
         }
 
         public async Task<List<ElementModel>> GetModuleAllElements(Int64 id)

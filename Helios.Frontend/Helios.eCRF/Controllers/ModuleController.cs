@@ -8,7 +8,7 @@ namespace Helios.eCRF.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class ModuleController : Controller
+    public class ModuleController : ControllerBase
     {
         private IModuleService _moduleService;
 
@@ -93,11 +93,10 @@ namespace Helios.eCRF.Controllers
         /// </summary>
         /// <returns>modüller</returns>
         [HttpGet]
-        public async Task<List<ModuleModel>> GetModuleList(Int64 tenantId)
+        public async Task<IActionResult> GetModuleList()
         {
-            var result = await _moduleService.GetModuleList(tenantId);
-
-            return result;
+            var result = await _moduleService.GetModuleList();
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
         [HttpGet]

@@ -5,6 +5,7 @@ import i18n from 'i18next';
 import { useLazyVisitListGetQuery, useVisitSetMutation, useVisitDeleteMutation } from "../../../../store/services/Visit";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from 'react';
+import AddModule from '../Comp/AddModule';
 
 export const findItemRecursive = (items, key) => {
     for (const item of items) {
@@ -24,6 +25,13 @@ export const handleSettings = (openModal, record, ref, toastRef) => {
     const title = i18n.t("Settings");
     const buttonText = i18n.t("Save");
     const content = <Settings record={record} refs={ref} toast={toastRef} />;
+    openModal({ title: title, buttonText: buttonText, content: content });
+}
+
+export const handleAddModule = (openModal, record, ref, toastRef) => {
+    const title = i18n.t("Add module");
+    const buttonText = i18n.t("Save");
+    const content = <AddModule record={record} refs={ref} toast={toastRef} />;
     openModal({ title: title, buttonText: buttonText, content: content });
 }
 

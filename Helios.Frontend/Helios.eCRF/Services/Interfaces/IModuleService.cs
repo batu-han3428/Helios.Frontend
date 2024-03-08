@@ -1,6 +1,7 @@
 ﻿using Helios.eCRF.Models;
 using Helios.Common.DTO;
 using Helios.Common.Model;
+using RestSharp;
 
 namespace Helios.eCRF.Services.Interfaces
 {
@@ -10,7 +11,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<bool> UpdateModule(ModuleModel model);
         Task<bool> DeleteModule(ModuleModel model);
         Task<ModuleModel> GetModule(Int64 id);
-        Task<List<ModuleModel>> GetModuleList(Int64 tenantId);
+        Task<RestResponse<List<ModuleModel>>> GetModuleList();
         Task<List<ElementModel>> GetModuleAllElements(Int64 id);
         Task<List<ElementModel>> GetModuleElementsWithChildren(Int64 id);
         Task<ElementModel> GetElementData(Int64 id);

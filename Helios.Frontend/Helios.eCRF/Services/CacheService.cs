@@ -92,7 +92,7 @@ namespace Helios.eCRF.Services
                     new PermissionRedisModel { Key = 2, Name = "Edit Users" }
                 };
             }
-            else if (pageKey == PermissionPage.Visit)
+            else if (pageKey == PermissionPage.Visit || pageKey == PermissionPage.Page)
             {
                 return new List<PermissionRedisModel>
                 {
@@ -101,8 +101,7 @@ namespace Helios.eCRF.Services
                     new PermissionRedisModel { Key = 5, Name = "Signature" },
                     new PermissionRedisModel { Key = 6, Name = "SDV" },
                     new PermissionRedisModel { Key = 7, Name = "Query" },
-                    new PermissionRedisModel { Key = 8, Name = "Verification" },
-                    new PermissionRedisModel { Key = 9, Name = "SAE Lock" },
+                    new PermissionRedisModel { Key = 8, Name = "Verification" }
                 };
             }
 

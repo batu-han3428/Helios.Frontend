@@ -275,13 +275,14 @@ namespace Helios.eCRF.Services
             }
         }
 
-        private async Task<RestResponse<List<ModuleDTO>>> GetModuleList(List<Int64> moduleIds)
+        private async Task<RestResponse<List<ModuleDTO>>> GetModuleList(SetModuleDTO dto)
         {
             using (var client = CoreServiceClient)
             {
-                string moduleIdsString = string.Join(",", moduleIds);
+                string moduleIdsString = string.Join(",", dto.ModuleIds);
                 var req = new RestRequest("CoreModule/GetModuleCollective", Method.Get);
                 req.AddParameter("moduleIds", moduleIdsString);
+                req.AddParameter("pageId", dto.PageId);
                 var result = await client.ExecuteAsync<List<ModuleDTO>>(req);
                 return result;
             }
@@ -292,18 +293,18 @@ namespace Helios.eCRF.Services
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreStudy/SetStudyModule", Method.Post);
-                req.AddHeader("Authorization", UserId);
+                AddApiHeaders(req);
                 req.AddJsonBody(dto);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
             }
         }
 
-        public async Task<ApiResponse<dynamic>> SetStudyModule(List<Int64> moduleIds)
+        public async Task<ApiResponse<dynamic>> SetStudyModule(SetModuleDTO dto)
         {
-            if (moduleIds.Count > 0)
+            if (dto.ModuleIds.Count > 0 && dto.PageId != 0)
             {
-                var modules = await GetModuleList(moduleIds);
+                var modules = await GetModuleList(dto);
 
                 if (modules.IsSuccessful && modules.Data.Count > 0)
                 {

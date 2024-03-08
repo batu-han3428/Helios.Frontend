@@ -131,7 +131,7 @@ const Settings = props => {
 
     useEffect(() => {
         if (props.record && studyInformation.studyId) {
-
+            dispatch(startloading());
             trigger({ pageKey: props.record.type === 'page' ? 2 : 1, studyId: studyInformation.studyId, id: props.record.id });
 
             setRecordEPro(props.record.epro);
@@ -147,6 +147,7 @@ const Settings = props => {
             setPermission(permissionsData.permissionRedisModel);
             setTotalHeight(permissionsData.permissionRedisModel.length * 50);
             setSelectedRowKeys(permissionsData.permissionModel.map(x=>x.permissionName));
+            dispatch(endloading());
         } else if (!isLoading && error) {
             props.toast.current.setToast({
                 message: props.t("An unexpected error occurred."),
@@ -186,7 +187,6 @@ const Settings = props => {
                 children: contentEpro()
             });
             key++;
-            setActiveTab(1);
         } else {
             setActiveTab(2);
         }
@@ -225,6 +225,10 @@ const Settings = props => {
     }
 
     const [activeTab, setActiveTab] = useState(0);
+
+    useEffect(() => {
+        setActiveTab(1);
+    }, []);
 
     const handleTabChange = (key) => {
         const data = items.find(x => x.key === key);
