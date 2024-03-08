@@ -28,7 +28,8 @@ class RadioElement extends Component {
             <>
                 {(this.state.layout === 2 || this.state.layout === 0) && (
                     <div className="mb-3">
-                        {this.state.ElementOptions.map((item, index) => <div className="form-check form-check-inline" key={index}>
+                        {this.state.ElementOptions.map((item, index) =>
+                            <div className="form-check form-check-inline" key={index}>
                             <Input
                                 type="radio"
                                 className="form-check-input"
@@ -55,12 +56,9 @@ class RadioElement extends Component {
                                     checked={this.state.selectedOption === item.id}
                                     value={item.id}
                                     onChange={() => this.handleRadioChange(item.id)}
-                                    id={`radio-${index}`}
-                                    name="radioOptions"
                                     disabled={this.state.isDisable} />
                                 <Label
                                     className="form-check-label"
-                                    htmlFor={`radio-${index}`}
                                 >
                                     {item.tagName}
                                 </Label>

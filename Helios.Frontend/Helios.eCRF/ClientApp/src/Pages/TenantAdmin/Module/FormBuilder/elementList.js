@@ -159,6 +159,7 @@ function ElementList(props) {
                 />;
             case 4:
                 return <NumericElement
+                    Id={param.id}
                     IsDisable={dsbl}
                     Unit={""}
                     Mask={""}

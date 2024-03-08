@@ -5,13 +5,17 @@ class NumericElement extends Component {
         super(props);
 
         this.state = {
+            id: props.Id,
             isDisable: props.IsDisable,
             Unit: props.Unit,
             Mask: props.Mask,
             LowerLimit: props.LowerLimit,
             UpperLimit: props.UpperLimit,
-            Value: props.Value
+            Value: props.ElementValue
         }
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
     }
 
     handleChange = (e) => {
@@ -34,15 +38,24 @@ class NumericElement extends Component {
         });
     };
 
+    handleBlur = async (e) => {
+        //if (e.target.value !== "") {
+        //    await this.props.SetElementId(this.state.id);
+        //    await this.props.SetElementValue(e.target.value);
+        //    this.props.AutoSaveElement();
+        //}
+    };
+
     render() {
         return (
             <div style={{ marginRight: "20px" }} >
                 <input
-                className="form-control"
-                type="number"
-                disabled={this.state.isDisable}
-                value={this.state.Value}
-                onChange={this.handleChange}
+                    className="form-control"
+                    type="number"
+                    disabled={this.state.isDisable}
+                    value={this.state.Value}
+                    onChange={this.handleChange}
+                    onBlur={this.handleBlur}
                 />
             </div>
         )
