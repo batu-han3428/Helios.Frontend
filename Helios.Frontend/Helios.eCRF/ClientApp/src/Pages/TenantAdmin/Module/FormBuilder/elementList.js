@@ -33,6 +33,7 @@ import RangeSliderElement from '../Elements/RangeSliderElement/rangeSliderElemen
 import DatagridElement from '../Elements/DatagridElement/datagridElement.js';
 import TableElement from '../Elements/TableElement/tableElement.js';
 import CalculationElement from '../Elements/CalculationElement/calculationElement.js';
+import AdverseEventElement from '../Elements/AdverseEventElement/adverseEventElement.js';
 import { withTranslation } from "react-i18next";
 import { GetElementNameByKey } from '../Elements/Common/utils.js';
 import { GetAllElementList } from './allElementList.js';
@@ -240,6 +241,11 @@ function ElementList(props) {
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
                 />
+            case 17:
+                return <AdverseEventElement
+                    AdverseEventType={param.adverseEventType} 
+                    IsDisable={isDisable}
+                />
             default:
                 return <TextElement
                     IsDisable={dsbl}
@@ -288,8 +294,16 @@ function ElementList(props) {
         : null;
 
     const elementItems = elements.map((l) =>
-        <Button className="elmlst" id={l.key} key={l.key} onClick={e => togglePropModal(e, l.key, 0, "1")}><i className={l.icon} style={{ color: '#00a8f3' }}></i> &nbsp; {GetElementNameByKey(props, l.key)} </Button>
+        l.key !== 3 ? (/*hidden element doesn't show in formbuilder*/
+            <Button className="elmlst" id={l.key} key={l.key} onClick={e => togglePropModal(e, l.key, 0, "1")}>
+                <i className={l.icon} style={{ color: '#00a8f3' }}></i> &nbsp; {GetElementNameByKey(props, l.key)}
+            </Button>
+        ) : null
     );
+
+    //const elementItems = elements.map((l) =>
+    //    <Button className="elmlst" id={l.key} key={l.key} onClick={e => togglePropModal(e, l.key, 0, "1")}><i className={l.icon} style={{ color: '#00a8f3' }}></i> &nbsp; {GetElementNameByKey(props, l.key)} </Button>
+    //);
 
     return (
         <div>

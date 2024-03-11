@@ -33,6 +33,7 @@ import RangeSliderElement from '../Elements/RangeSliderElement/rangeSliderElemen
 import DatagridElement from '../Elements/DatagridElement/datagridElement.js';
 import TableElement from '../Elements/TableElement/tableElement.js';
 import CalculationElement from '../Elements/CalculationElement/calculationElement.js';
+import AdverseEventElement from '../Elements/AdverseEventElement/adverseEventElement.js';
 import { withTranslation } from "react-i18next";
 
 function Preview() {
@@ -166,6 +167,11 @@ function Preview() {
                     ColumnCount={param.columnCount}
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
+                />
+            case 17:
+                return <AdverseEventElement
+                    AdverseEventType={param.adverseEventType}
+                    IsDisable={false}
                 />
             default:
                 return <TextElement

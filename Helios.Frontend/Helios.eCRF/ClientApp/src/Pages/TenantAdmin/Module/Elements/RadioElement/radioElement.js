@@ -7,7 +7,7 @@ import {
 class RadioElement extends Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
             isDisable: props.IsDisable,
             layout: props.Layout,
@@ -30,19 +30,19 @@ class RadioElement extends Component {
                     <div className="mb-3">
                         {this.state.ElementOptions.map((item, index) =>
                             <div className="form-check form-check-inline" key={index}>
-                            <Input
-                                type="radio"
-                                className="form-check-input"
-                                checked={this.state.selectedOption === item.id}
-                                value={item.id}
-                                onChange={() => this.handleRadioChange(item.id)}
-                                disabled={this.state.isDisable} />
-                            <Label
-                                className="form-check-label"
-                            >
-                                {item.tagName}
-                            </Label>
-                        </div>
+                                <Input
+                                    type="radio"
+                                    className="form-check-input"
+                                    checked={this.state.selectedOption === item.tagValue}
+                                    value={item.tagValue}
+                                    onChange={() => this.handleRadioChange(item.tagValue)}
+                                    disabled={this.state.isDisable} />
+                                <Label
+                                    className="form-check-label"
+                                >
+                                    {item.tagName}
+                                </Label>
+                            </div>
                         )}
                     </div>
                 )}
@@ -53,9 +53,9 @@ class RadioElement extends Component {
                                 <Input
                                     type="radio"
                                     className="form-check-input"
-                                    checked={this.state.selectedOption === item.id}
-                                    value={item.id}
-                                    onChange={() => this.handleRadioChange(item.id)}
+                                    checked={this.state.selectedOption === item.tagValue}
+                                    value={item.tagValue}
+                                    onChange={() => this.handleRadioChange(item.tagValue)}
                                     disabled={this.state.isDisable} />
                                 <Label
                                     className="form-check-label"
