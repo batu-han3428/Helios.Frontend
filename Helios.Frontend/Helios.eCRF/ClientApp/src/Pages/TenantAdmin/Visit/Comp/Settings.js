@@ -4,7 +4,7 @@ import { withTranslation } from "react-i18next";
 import { useDispatch, useSelector } from 'react-redux';
 import { endloading, startloading } from '../../../../store/loader/actions';
 import { Tabs, Table, Checkbox, Typography } from 'antd';
-import { useVisitPageEProSetMutation, useLazyPermissionListGetQuery, useVisitPagePermissionSetMutation } from "../../../../store/services/Visit";
+import { useVisitPageEProSetMutation, useLazyPermissionListGetQuery, useVisitPagePermissionSetMutation, useLazyStudyVisitPermissionsListGetQuery } from "../../../../store/services/Visit";
 
 const Settings = props => {
 
@@ -127,24 +127,36 @@ const Settings = props => {
 
     const [trigger, { data: permissionsData, error, isLoading }] = useLazyPermissionListGetQuery();
 
+    const [triggerPermissionList, { data: permissionsListData, errorPermissionList, isLoadingPermissionList }] = useLazyStudyVisitPermissionsListGetQuery();
+
     useEffect(() => {
         if (props.record && studyInformation.studyId) {
             dispatch(startloading());
-            trigger({ pageKey: props.record.type === 'page' ? 2 : 1, studyId: studyInformation.studyId, id: props.record.id });
-
-            setRecordEPro(props.record.epro);
-
-            if (props.record.type === 'page') {
-                setIsEpro(props.record.epro);
-            }
+            triggerPermissionList();
         }
     }, [props.record, studyInformation.studyId])
 
     useEffect(() => {
+        if (!isLoadingPermissionList && !errorPermissionList && permissionsListData) {
+            setPermission(permissionsListData);
+            setTotalHeight(permissionsListData.length * 50);
+            trigger({ pageKey: props.record.type === 'page' ? 2 : 1, studyId: studyInformation.studyId, id: props.record.id });
+            setRecordEPro(props.record.epro);
+            if (props.record.type === 'page') {
+                setIsEpro(props.record.epro);
+            }
+        } else if (!isLoadingPermissionList && errorPermissionList) {
+            props.toast.current.setToast({
+                message: props.t("An unexpected error occurred."),
+                stateToast: false
+            });
+            dispatch(endloading());
+        }
+    }, [permissionsListData, errorPermissionList, isLoadingPermissionList]);
+
+    useEffect(() => {
         if (!isLoading && !error && permissionsData) {
-            setPermission(permissionsData.permissionRedisModel);
-            setTotalHeight(permissionsData.permissionRedisModel.length * 50);
-            setSelectedRowKeys(permissionsData.permissionModel.map(x=>x.permissionName));
+            setSelectedRowKeys(permissionsData.map(x=>x.permissionName));
             dispatch(endloading());
         } else if (!isLoading && error) {
             props.toast.current.setToast({
