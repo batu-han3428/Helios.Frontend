@@ -34,6 +34,8 @@ import DatagridElement from '../Elements/DatagridElement/datagridElement.js';
 import TableElement from '../Elements/TableElement/tableElement.js';
 import CalculationElement from '../Elements/CalculationElement/calculationElement.js';
 import AdverseEventElement from '../Elements/AdverseEventElement/adverseEventElement.js';
+import HiddenElement from '../Elements/HiddenElement/hiddenElement.js';
+import ConcomittantMedicationElement from '../Elements/ConcomittantMedicationElement/concomittantMedicationElement.js';
 import { withTranslation } from "react-i18next";
 import { GetElementNameByKey } from '../Elements/Common/utils.js';
 import { GetAllElementList } from './allElementList.js';
@@ -158,6 +160,9 @@ function ElementList(props) {
             case 2:
                 return <TextElement IsDisable={dsbl}
                 />;
+            case 3:
+                return <HiddenElement IsDisable={dsbl}
+                />;
             case 4:
                 return <NumericElement
                     Id={param.id}
@@ -225,6 +230,11 @@ function ElementList(props) {
                     RightText={param.rightText}
                     DefaultValue={param.defaultValue}
                 />
+            case 14:
+                return <ConcomittantMedicationElement
+                    IsDisable={isDisable}
+                />
+
             case 15:
                 return <TableElement
                     IsDisable={isDisable}
@@ -294,7 +304,7 @@ function ElementList(props) {
         : null;
 
     const elementItems = elements.map((l) =>
-        l.key !== 3 ? (/*hidden element doesn't show in formbuilder*/
+        l.key !== 3 && l.key!== 14 ? (/*hidden & concomitantd elements don't show in formbuilder*/
             <Button className="elmlst" id={l.key} key={l.key} onClick={e => togglePropModal(e, l.key, 0, "1")}>
                 <i className={l.icon} style={{ color: '#00a8f3' }}></i> &nbsp; {GetElementNameByKey(props, l.key)}
             </Button>

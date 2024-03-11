@@ -39,6 +39,8 @@ import RangeSliderElementProperties from "../Elements/RangeSliderElement/rangeSl
 import DatagridElementProperties from "../Elements/DatagridElement/datagridElementProperties";
 import TableElementProperties from "../Elements/TableElement/tableElementProperties";
 import AdverseEventElementProperties from "../Elements/AdverseEventElement/adverseEventElementProperties";
+import HiddenElementProperties from "../Elements/HiddenElement/hiddenElementProperties";
+import ConcomittantMedicationElementProperties from "../Elements/ConcomittantMedicationElement/concomittantMedicationElementProperties";
 
 const baseUrl = "http://localhost:3300";
 
@@ -247,6 +249,11 @@ class Properties extends React.Component {
                 this.state.showWhereElementPropeties = 0;
                 this.state.fieldWidthsW = "col-md-10";
                 return <TextElementProperties changeUnit={this.changeUnit} Unit={this.state.Unit} />;
+            case 3:
+                this.state.showWhereElementPropeties = 0;
+                this.state.fieldWidthsW = "col-md-10";
+                return <HiddenElementProperties
+                />;
             case 4:
                 this.state.showWhereElementPropeties = 0;
                 this.state.fieldWidthsW = "col-md-10";
@@ -308,6 +315,11 @@ class Properties extends React.Component {
                     changeUpperLimit={this.changeUpperLimit} UpperLimit={this.state.UpperLimit}
                     changeLeftText={this.changeLeftText} LeftText={this.state.LeftText}
                     changeRightText={this.changeRightText} RightText={this.state.RightText}
+                />;
+            case 14:
+                this.state.showWhereElementPropeties = 3;
+                this.state.fieldWidthsW = "col-md-10";
+                return <ConcomittantMedicationElementProperties
                 />;
             case 15:
                 this.state.showWhereElementPropeties = 3;
