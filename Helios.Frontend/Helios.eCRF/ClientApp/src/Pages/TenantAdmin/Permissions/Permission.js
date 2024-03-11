@@ -1,14 +1,11 @@
 ﻿import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef } from "react";
-import {
-    Row, Col, Button
-} from "reactstrap";
+import { Row, Col, Button } from "reactstrap";
 import { withTranslation } from "react-i18next";
-import permissionItems from './PermissionItems';
 import "./Permission.css";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
-import { useLazyRolePermissionListGetQuery, useSetPermissionMutation, useRoleDeleteMutation } from '../../../store/services/Permissions';
+import { useLazyRolePermissionListGetQuery, useSetPermissionMutation, useRoleDeleteMutation, useLazyStudyRolePermissionsListGetQuery } from '../../../store/services/Permissions';
 import { useSelector, useDispatch } from 'react-redux';
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { startloading, endloading } from '../../../store/loader/actions';
@@ -51,14 +48,33 @@ const Permission = props => {
         }));
     };
 
-    const [trigger, { data: resultData, isLoading, isError }] = useLazyRolePermissionListGetQuery();
+    const [triggerPermissionList, { data: permissionList, isLoadingPermission, isErrorPermission }] = useLazyStudyRolePermissionsListGetQuery();
 
     useEffect(() => {
         dispatch(startloading());
-        if (studyInformation.studyId) {
-            trigger(studyInformation.studyId);
+        triggerPermissionList();
+    }, []) 
+
+    const [permissionListData, setPermissionListData] = useState({});
+
+    const [trigger, { data: resultData, isLoading, isError }] = useLazyRolePermissionListGetQuery();
+
+    useEffect(() => {
+        if (!isLoadingPermission && !isErrorPermission && permissionList) {
+            setPermissionListData(permissionList);
+            if (studyInformation.studyId) {
+                trigger(studyInformation.studyId);
+            }
+        } else if (isErrorPermission && !isLoadingPermission) {
+            dispatch(endloading());
+            Swal.fire({
+                title: "",
+                text: props.t("An unexpected error occurred."),
+                icon: "error",
+                confirmButtonText: props.t("OK"),
+            });
         }
-    }, [studyInformation.studyId]) 
+    }, [permissionList, isErrorPermission, isLoadingPermission, studyInformation.studyId]);
 
     useEffect(() => {
         if (!isLoading && !isError && resultData) {
@@ -238,8 +254,8 @@ const Permission = props => {
                                             <th style={{ width: "140px" }} ></th>
                                         </tr>
                                     </thead>
-
-                                    {Object.keys(permissionItems).map(key => {
+                                    
+                                    {Object.keys(permissionListData).map(key => {
                                         return (
                                             <React.Fragment key={key}>
                                                 <tbody>
@@ -253,33 +269,31 @@ const Permission = props => {
                                                             </span>
                                                         </td>
                                                         {roles.map((item, index) => (
-                                                            <td key={`${key}_${item.id}`} className="rowgroup">{String.fromCharCode(8203)}</td> 
+                                                            <td key={`${key}_${item.id}`} className="rowgroup">{String.fromCharCode(8203)}</td>
                                                         ))}
                                                     </tr>
                                                 </tbody>
                                                 {openSections[key] && (
                                                     <tbody className="hide hide-hd">
-                                                        {permissionItems[key].map(item => {
-                                                            return (
-                                                                <tr key={`${key}_${item.key}`}>
-                                                                    <td className="tdname">{props.t(item.label)}</td>
-                                                                    {roles.map((role, index) => { 
-                                                                        const isPermissionEnabled = role.rolePermissions.includes(item.key);
-                                                                            return (
-                                                                                <td key={`${item.key}_${role.id}`} className="subjectPers">
-                                                                                    <input type="checkbox" className="checkbox chck-permision" name="Add" data-userpermissionid="Add_@Model.UserPermissions[i].Id" onChange={(e) => { updatePermission(role.id, item.key); }} checked={isPermissionEnabled} />
-                                                                            </td>
-                                                                        )
-                                                                     })}
-                                                                </tr>
-                                                            )
-                                                        })}
+                                                        {Object.entries(permissionListData[key]).map(([itemKey, itemValue]) => (
+                                                            <tr key={`${key}_${itemValue}`}>
+                                                                <td className="tdname">{props.t(itemKey)}</td>
+                                                                {roles.map((role, index) => {
+                                                                    const isPermissionEnabled = role.rolePermissions.includes(itemValue);
+                                                                    return (
+                                                                        <td key={`${itemValue}_${role.id}`} className="subjectPers">
+                                                                            <input type="checkbox" className="checkbox chck-permision" name={itemKey} data-userpermissionid={`${itemKey}_${role.id}`} onChange={(e) => { updatePermission(role.id, itemValue); }} checked={isPermissionEnabled} />
+                                                                        </td>
+                                                                    )
+                                                                })}
+                                                            </tr>
+                                                        ))}
                                                     </tbody>
                                                 )}
 
                                             </React.Fragment>
                                         );
-                                    })}
+                                    })}                                   
                                 </table>
                             </div>
                         </Col>

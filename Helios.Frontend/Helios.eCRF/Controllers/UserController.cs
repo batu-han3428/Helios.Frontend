@@ -5,6 +5,8 @@ using Helios.eCRF.Models;
 using Helios.eCRF.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel;
+using System.Text.RegularExpressions;
 
 namespace Helios.eCRF.Controllers
 {
@@ -117,6 +119,45 @@ namespace Helios.eCRF.Controllers
         #endregion
 
         #region Permissions
+
+        /// <summary>
+        /// Admin panelinde permissions sayfasındaki yetkileri listeler
+        /// </summary>
+        /// <returns>yetki listesi</returns>
+        [HttpGet]
+        [ResponseCache(Duration = 3600)]
+        public IActionResult GetStudyRolePermissionsList()
+        {
+            try
+            {
+                var enumValues = new Dictionary<string, Dictionary<string, int>>();
+
+                foreach (StudyRolePermission permission in Enum.GetValues(typeof(StudyRolePermission)))
+                {
+                    var descriptionAttribute = permission.GetType().GetField(permission.ToString()).GetCustomAttributes(typeof(DescriptionAttribute), false).FirstOrDefault() as DescriptionAttribute;
+
+                    var groupName = permission.ToString().Split('_')[0];
+                    var permissionKey = descriptionAttribute?.Description ?? permission.ToString();
+                    var permissionValue = (int)permission;
+
+                    groupName = Regex.Replace(groupName, "(?<=[a-z])(?=[A-Z])", " ");
+                    groupName = char.ToUpper(groupName[0]) + groupName.Substring(1);
+                    groupName = Regex.Replace(groupName, "\\s(\\w+)", m => m.Value.ToLower());
+
+                    if (!enumValues.ContainsKey(groupName))
+                    {
+                        enumValues[groupName] = new Dictionary<string, int>();
+                    }
+                    enumValues[groupName][permissionKey] = permissionValue;
+                }
+
+                return Ok(enumValues);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Unsuccessful");
+            }
+        }
 
         /// <summary>
         /// çalışmanın rol ve yetkilerini getirir

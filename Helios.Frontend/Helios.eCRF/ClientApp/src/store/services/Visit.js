@@ -65,6 +65,9 @@ export const VisitApi = createApi({
             }),
             invalidatesTags: ['Visit'],
         }),
+        studyVisitPermissionsListGet: builder.query({
+            query: () => `/Study/GetStudyVisitPermissionsList`
+        }),
     }),
 });
 
@@ -84,3 +87,5 @@ export const { useVisitPagePermissionSetMutation } = VisitApi;
 export const { useLazyModuleListGetQuery } = VisitApi;
 
 export const { useAddStudyModuleSetMutation } = VisitApi;
+
+export const { useLazyStudyVisitPermissionsListGetQuery } = VisitApi;

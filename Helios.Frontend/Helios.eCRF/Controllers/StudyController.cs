@@ -12,12 +12,10 @@ namespace Helios.eCRF.Controllers
     public class StudyController : Controller
     {
         private IStudyService _studyService;
-        private ICacheService _cacheService;
 
-        public StudyController(IStudyService studyService, ICacheService cacheService)
+        public StudyController(IStudyService studyService)
         {
             _studyService = studyService;
-            _cacheService = cacheService;
         }
 
         #region Study
@@ -305,6 +303,30 @@ namespace Helios.eCRF.Controllers
             return Ok(result);
         }
 
+
+        /// <summary>
+        /// Admin panelinde visits sayfasındaki yetkileri listeler
+        /// </summary>
+        /// <returns>yetki listesi</returns>
+        [HttpGet]
+        [ResponseCache(Duration = 3600)]
+        public IActionResult GetStudyVisitPermissionsList()
+        {
+            try
+            {
+                var permissions = Enum.GetValues(typeof(VisitPermission))
+                              .Cast<VisitPermission>()
+                              .Select(p => new { Name = p.ToString(), Key = (int)p })
+                              .ToArray();
+                return Ok(permissions);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Unsuccessful");
+            }
+        }
+
+
         /// <summary>
         /// Yetkileri listeler
         /// </summary>
@@ -317,15 +339,7 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> GetVisitPagePermissionList(PermissionPage pageKey, Int64 studyId, Int64 id)
         {
             var result = await _studyService.GetVisitPagePermissionList(pageKey, studyId, id);
-            if (!result.IsSuccessful)
-            {
-                return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
-            }
-            var result1 = _cacheService.GetPermissions(pageKey);
-            VisitPagePermissionModel model = new VisitPagePermissionModel();
-            model.PermissionModel = result.Data;
-            model.PermissionRedisModel = result1;
-            return Ok(model);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
 
