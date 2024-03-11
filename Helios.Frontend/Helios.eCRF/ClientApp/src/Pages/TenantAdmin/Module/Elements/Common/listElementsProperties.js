@@ -34,6 +34,7 @@ class ListElementsProperties extends Component {
         
         this.state = {
             Id: 0,
+            Layout: props.Layout,
             layoutOptionGroup: [
                 { label: "Vertical", value: 1 },
                 { label: "Horizontal", value: 2 },
@@ -123,7 +124,6 @@ class ListElementsProperties extends Component {
         this.setState({ Layout: selectedOption.value });
         this.state.layoutSelectedGroup = selectedOption;
         this.props.changeLayout(selectedOption.value);
-        this.props.Layout = selectedOption;
     };
 
     updateSavedList = () => {

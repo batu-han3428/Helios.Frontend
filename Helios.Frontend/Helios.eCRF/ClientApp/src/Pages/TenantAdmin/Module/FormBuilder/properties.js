@@ -38,6 +38,9 @@ import FileUploaderElementProperties from "../Elements/FileUploaderElement/fileU
 import RangeSliderElementProperties from "../Elements/RangeSliderElement/rangeSliderElementProperties.js";
 import DatagridElementProperties from "../Elements/DatagridElement/datagridElementProperties";
 import TableElementProperties from "../Elements/TableElement/tableElementProperties";
+import AdverseEventElementProperties from "../Elements/AdverseEventElement/adverseEventElementProperties";
+import HiddenElementProperties from "../Elements/HiddenElement/hiddenElementProperties";
+import ConcomittantMedicationElementProperties from "../Elements/ConcomittantMedicationElement/concomittantMedicationElementProperties";
 
 const baseUrl = "http://localhost:3300";
 
@@ -151,6 +154,7 @@ class Properties extends React.Component {
             ColumnCount: 0,
             ColumnIndex: props.ColumnIndex == null ? 0 : props.ColumnIndex,
             RowIndex: props.RowIndex == null ? 0 : props.RowIndex,
+            AdverseEventType: 1,
 
             // Validation
             RequiredError: 'This value is required',
@@ -220,6 +224,7 @@ class Properties extends React.Component {
         this.changeDatagridAndTableProperties.bind(this);
         this.changeRowCount.bind(this);
         this.changeColumnCount.bind(this);
+        this.changeAdverseEventType.bind(this);
 
         this.changeIsFormValid.bind(this);
     }
@@ -244,6 +249,11 @@ class Properties extends React.Component {
                 this.state.showWhereElementPropeties = 0;
                 this.state.fieldWidthsW = "col-md-10";
                 return <TextElementProperties changeUnit={this.changeUnit} Unit={this.state.Unit} />;
+            case 3:
+                this.state.showWhereElementPropeties = 0;
+                this.state.fieldWidthsW = "col-md-10";
+                return <HiddenElementProperties
+                />;
             case 4:
                 this.state.showWhereElementPropeties = 0;
                 this.state.fieldWidthsW = "col-md-10";
@@ -306,6 +316,11 @@ class Properties extends React.Component {
                     changeLeftText={this.changeLeftText} LeftText={this.state.LeftText}
                     changeRightText={this.changeRightText} RightText={this.state.RightText}
                 />;
+            case 14:
+                this.state.showWhereElementPropeties = 3;
+                this.state.fieldWidthsW = "col-md-10";
+                return <ConcomittantMedicationElementProperties
+                />;
             case 15:
                 this.state.showWhereElementPropeties = 3;
                 this.state.fieldWidthsW = "col-md-10";
@@ -320,6 +335,12 @@ class Properties extends React.Component {
                 return <DatagridElementProperties
                     changeDatagridAndTableProperties={this.changeDatagridAndTableProperties} DatagridAndTableProperties={this.state.DatagridAndTableProperties}
                     changeColumnCount={this.changeColumnCount} ColumnCount={this.state.ColumnCount}
+                />;
+            case 17:
+                this.state.showWhereElementPropeties = 3;
+                this.state.fieldWidthsW = "col-md-10";
+                return <AdverseEventElementProperties
+                    changeAdverseEventType={this.changeAdverseEventType} AdverseEventType={this.state.AdverseEventType} 
                 />;
             default:
                 this.state.showWhereElementPropeties = 0;
@@ -579,6 +600,10 @@ class Properties extends React.Component {
         this.setState({ ColumnCount: newValue });
     };
 
+    changeAdverseEventType = (newValue) => {
+        this.setState({ AdverseEventType: newValue });
+    };
+
     changeIsFormValid = (newValue) => {
         this.setState({ IsFormValid: newValue });
     };
@@ -695,10 +720,11 @@ class Properties extends React.Component {
         this.state.IsRequired = data.isRequired;
         this.state.IsHidden = data.isHidden;
         this.state.CanMissing = data.canMissing;
-        this.state.SavedTagList = data.elementOptions == null ? [] : JSON.parse(data.elementOptions);
+        this.state.SavedTagList = data.elementOptions == null || data.elementOptions === "" ? [] : JSON.parse(data.elementOptions);
         this.state.DatagridAndTableProperties = data.datagridAndTableProperties;
         this.state.RowCount = data.rowCount;
         this.state.ColumnCount = data.columnCount;
+        this.state.AdverseEventType = data.adverseEventType;
         this.state.IsDependent = data.isDependent;
         this.state.DependentSourceFieldId = data.dependentSourceFieldId;
         this.state.DependentTargetFieldId = data.dependentTargetFieldId;
@@ -828,6 +854,7 @@ class Properties extends React.Component {
                 DatagridAndTableProperties: this.state.DatagridAndTableProperties == null ? "" : this.state.DatagridAndTableProperties,
                 RowIndex: this.state.RowIndex,
                 ColumnIndex: this.state.ColumnIndex,
+                AdverseEventType: this.state.AdverseEventType,
 
                 // Dependency properties
                 DependentSourceFieldId: this.state.DependentSourceFieldId == null ? 0 : this.state.DependentSourceFieldId,
@@ -1028,7 +1055,8 @@ class Properties extends React.Component {
                                                                         htmlFor="example-text-input"
                                                                         className="col-md-2 col-form-label"
                                                                     >
-                                                                        {this.props.t("Field width")}                                                                           </label>
+                                                                        {this.props.t("Field width")}
+                                                                    </label>
                                                                     <div className={this.state.fieldWidthsW}>
                                                                         <Select
                                                                             value={this.state.widthSelectedGroup}
@@ -1041,7 +1069,7 @@ class Properties extends React.Component {
                                                             )}
                                                             {this.state.showWhereElementPropeties === 0 && this.renderElementPropertiesSwitch(this.state.ElementType)}
                                                             <Row className="mb-3 ml-0">
-                                                                {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16) &&
+                                                                {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16 && this.state.ElementType !== 17) &&
                                                                     <div className="form-check col-md-6">
                                                                         <input type="checkbox" className="form-check-input" checked={this.state.IsRequired} onChange={this.handleIsRequiredChange} id="isRequired" />
                                                                         <label className="form-check-label" htmlFor="isRequired">{this.props.t("Is required")}</label>
