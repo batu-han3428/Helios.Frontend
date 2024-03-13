@@ -5,6 +5,6 @@ namespace Helios.eCRF.Services.Interfaces
 {
     public interface ICacheService
     {
-        List<PermissionRedisModel> GetPermissions(PermissionPage permissionPage);
+        List<PermissionModel> GetPermissions(PermissionPage permissionPage);
     }
 }

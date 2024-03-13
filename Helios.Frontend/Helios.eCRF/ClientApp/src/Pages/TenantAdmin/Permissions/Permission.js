@@ -12,6 +12,7 @@ import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2'
 import PermissionAddOrUpdateRole from './PermissionAddOrUpdateRole';
 import PermissionShowUsersRole from './PermissionShowUsersRole';
+import PermissionsRole from './PermissionsRole';
 
 const Permission = props => {
 
@@ -138,6 +139,13 @@ const Permission = props => {
         modalRef.current.tog_backdrop();
     };
 
+    const pagePermissionsRole = (id) => {
+        setModalButton(false);
+        setModalTitle(props.t("Page permissions"));
+        setModalContent(<PermissionsRole toast={modalToast} refs={modalContentRef} id={id} />);
+        modalRef.current.tog_backdrop();
+    };
+
     const [roleDelete] = useRoleDeleteMutation();
 
     const deleteRole = (id, name) => {
@@ -191,7 +199,7 @@ const Permission = props => {
 
     return (      
         <React.Fragment>
-            <div className="page-content">
+            <div className="page-content" style={{overflowX: "auto"}}>
                 <div className="container-fluid">
                     <div className="page-title-box">
                         <Row className="align-items-center" style={{ borderBottom: "1px solid black", paddingBottom:"5px" }}>
@@ -234,7 +242,7 @@ const Permission = props => {
                                                                 <label className={item.roleName.length > 35 ? "lbl-permision tooltip2" : "lbl-permision"} title={item.roleName}>
                                                                     {item.roleName}
                                                                 </label>
-                                                                <a title={props.t("Page permissions") } className="tooltip2 btn-permision" >
+                                                                <a onClick={() => { pagePermissionsRole(item.id) }} title={props.t("Page permissions") } className="tooltip2 btn-permision" >
                                                                     <FontAwesomeIcon icon="fa-solid fa-file-pen" style={{ fontSize: "16px", verticalAlign: "middle" }} />
                                                                 </a>
                                                                 <a onClick={() => { showUsersRole(item.id) }} style={{ margin: "5px" }} title={ props.t("Show users") } className="tooltip2 btn-permision">
