@@ -142,10 +142,11 @@ const EditableCell = ({
         function getItems() {        
             let items = [];
             if (record.type === 'module' && record.key !== dataSource[dataSource.length - 1].key) {
+                var vmdlId = (dataSource[dataSource.length - 1].key).split('_')[2];
                 items.push({
                     key: '4',
                     label: (
-                        <a onClick={() => navigate("/UnderConstruction")}>{t("Go to module")}</a>
+                        <a onClick={() => navigate(`/visitFormBuilder/${vmdlId}`)}>{t("Go to module")}</a>
                     ),
                     icon: <FontAwesomeIcon icon="fa-solid fa-gears" style={{ color: "#e48181", }} />,
                     style: { color: "#e48181" },

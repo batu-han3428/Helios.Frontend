@@ -358,5 +358,32 @@ namespace Helios.eCRF.Controllers
             return Ok(result);
         }
         #endregion
+
+        #region Module
+        [HttpGet]
+        //[Authorize(Roles = "TenantAdmin")]
+        public async Task<IActionResult> GetStudyModuleElementsWithChildren(Int64 studyVisitPageModuleId)
+        {
+            var result = await _studyService.GetStudyModuleElementsWithChildren(studyVisitPageModuleId);
+
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
+        [HttpPost]
+        //[Authorize(Roles = "TenantAdmin")]
+        public async Task<ApiResponse<dynamic>> CopyElement(Int64 id, Int64 userId)
+        {
+            var result = await _studyService.CopyElement(id, userId);
+            return result;
+        }
+
+        [HttpPost]
+        //[Authorize(Roles = "TenantAdmin")]
+        public async Task<ApiResponse<dynamic>> DeleteElement(Int64 id, Int64 userId)
+        {
+            var result = await _studyService.DeleteElement(id, userId);
+            return result;
+        }
+        #endregion
     }
 }

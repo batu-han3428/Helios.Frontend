@@ -94,6 +94,7 @@ import StudyList from "../Pages/TenantAdmin/Study/StudyList";
 import LockedList from "../Pages/TenantAdmin/Study/LockedList";
 import AddOrUpdateStudy from "../Pages/TenantAdmin/Study/AddOrUpdateStudy";
 import Study from "../Pages/TenantAdmin/Visit/VisitList";
+import VisitFormBuilder from "../Pages/TenantAdmin/Visit/StudyModule/visitFormBuilder";
 
 //Site & Laboratories
 import Sites from "../Pages/TenantAdmin/SiteLaboratories/Sites";
@@ -140,6 +141,7 @@ const userRoutes = [
     { path: "/lockedlist", component: <LockedList />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/addstudy", component: <AddOrUpdateStudy />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/visits/:studyId", component: <Study />, menuType: "study", roles: ['TenantAdmin'] },
+    { path: "/visitFormBuilder/:studyVisitPageModuleId", component: <VisitFormBuilder />, menuType: "admin", roles: ['TenantAdmin'] },
 
     //sites
     { path: "/sites/:studyId", component: <Sites />, menuType: "study", roles: ['TenantAdmin'] },

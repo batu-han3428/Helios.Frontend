@@ -42,10 +42,11 @@ import { GetAllElementList } from './allElementList.js';
 
 function ElementList(props) {
     const toastRef = useRef();
-    const baseUrl = "http://localhost:3300";
+    const baseUrl = props.FormType === 1 ? "http://localhost:3300/Module" :"http://localhost:3300/Study";
     const [tenantId] = useState(props.TenantId);
     const [moduleId] = useState(props.ModuleId);
     const [isDisable] = useState(props.IsDisable);
+    const [formType] = useState(props.FormType);
     const [elementId, setElementId] = useState(0);
     const [moduleElementList, setModuleElementList] = useState([]);
     const [elements] = useState(GetAllElementList());
@@ -90,7 +91,7 @@ function ElementList(props) {
     };
 
     const copyElement = (e, id) => {
-        fetch(baseUrl + '/Module/CopyElement?id=' + id + '&userId=' + userInformation.userId, {
+        fetch(baseUrl + '/CopyElement?id=' + id + '&userId=' + userInformation.userId, {
             method: 'POST',
         })
             .then(response => response.json())
@@ -128,7 +129,7 @@ function ElementList(props) {
             if (result.isConfirmed) {
                 try {
                     dispatch(startloading());
-                    fetch(baseUrl + '/Module/DeleteElement?id=' + id + '&userId=' + userInformation.userId, {
+                    fetch(baseUrl + '/DeleteElement?id=' + id + '&userId=' + userInformation.userId, {
                         method: 'POST',
                     })
                         .then(response => response.json())
