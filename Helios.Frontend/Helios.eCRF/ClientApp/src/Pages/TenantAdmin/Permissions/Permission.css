@@ -138,3 +138,13 @@ th, td {
 .floatr {
     float: right;
 }
+
+.role-visit-permission-table .ant-table-body {
+    overflow-y: visible !important;
+}
+
+@media (max-width: 500px) {
+    .role-visit-permission-table .ant-table-cell-fix-left {
+        left: unset !important;
+    }
+}

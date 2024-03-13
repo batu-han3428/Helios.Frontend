@@ -436,6 +436,30 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
+
+        public async Task<RestResponse<List<RoleVisitPermissionsModel>>> GetPermissionsVisitList(Int64 roleId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreUser/GetPermissionsVisitList", Method.Get);
+                AddApiHeaders(req);
+                req.AddParameter("roleId", roleId);
+                var result = await client.ExecuteAsync<List<RoleVisitPermissionsModel>>(req);
+                return result;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> SetPermissionsVisitPage(PermissionsRoleVisitPageDTO dto)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreUser/SetPermissionsVisitPage", Method.Post);
+                AddApiHeaders(req);
+                req.AddJsonBody(dto);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
         #endregion
 
         #region Study user

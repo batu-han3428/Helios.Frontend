@@ -248,6 +248,32 @@ namespace Helios.eCRF.Controllers
             var result = await _userService.DeleteRole(userPermission);
             return Ok(result);
         }
+
+
+        /// <summary>
+        /// rolün visit ve sayfa yetkilerini listeler
+        /// </summary>
+        /// <param name="roleId">seçili rol id</param>
+        /// <returns>yetki visit listesi</returns>
+        [HttpGet("{roleId}")]
+        public async Task<IActionResult> GetPermissionsVisitList(Int64 roleId)
+        {
+            var result = await _userService.GetPermissionsVisitList(roleId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
+
+        /// <summary>
+        /// rolün visit veya sayfa yetkisini günceller
+        /// </summary>
+        /// <param name="dto">yetki ve rol bilgileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        public async Task<IActionResult> SetPermissionsVisitPage(PermissionsRoleVisitPageDTO dto)
+        {
+            var result = await _userService.SetPermissionsVisitPage(dto);
+            return Ok(result);
+        }
         #endregion
 
         #region Study User
