@@ -29,5 +29,6 @@ namespace Helios.eCRF.Services.Interfaces
         Task<RestResponse<List<PermissionModel>>> GetVisitPagePermissionList(PermissionPage pageKey, Int64 studyId, Int64 id);
         Task<ApiResponse<dynamic>> SetVisitPagePermission(VisitPagePermissionDTO dto);
         Task<ApiResponse<dynamic>> SetStudyModule(SetModuleDTO dto);
+        Task<ApiResponse<dynamic>> SetVisitRanking(List<VisitDTO> dto);
     }
 }

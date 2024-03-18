@@ -3,17 +3,20 @@ import React, { useState, useEffect, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Table, Row, Col, Switch, Dropdown, Tooltip, Space } from 'antd';
+import { Button, Table, Row, Col, Switch, Dropdown, Tooltip, Space, FloatButton } from 'antd';
 import { CheckOutlined, CloseOutlined, DownOutlined } from '@ant-design/icons';
 import EditableRow from '../Visit/Comp/EditableRow';
 import EditableCell from '../Visit/Comp/EditableCell';
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
-import { useApiHelper, visitSettingsItems } from './VisitHelper/Helper';
+import { getAllKeys, useApiHelper, visitSettingsItems } from './VisitHelper/Helper';
 import "./visit.css";
+import { DndContext } from '@dnd-kit/core';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 const Study = props => {
-
+    
     const modalRef = useRef();
 
     const toastRef = useRef();
@@ -25,9 +28,8 @@ const Study = props => {
     };
 
     const [dataSource, setDataSource] = useState([]);
-    const [editing, setEditing] = useState(false);
 
-    const { handleSave, handleList, studyInformation } = useApiHelper(dataSource, setDataSource, toastRef);
+    const { handleSave, handleList, studyInformation, sensors, onDragEnd, saveRanking, rankingHandle, ranking, editing, editingHandle } = useApiHelper(dataSource, setDataSource, toastRef);
 
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
@@ -84,8 +86,8 @@ const Study = props => {
 
     const components = {
         body: {
-            row: EditableRow,
-            cell: (e) => <EditableCell {...e} openModal={openModal} toastRef={toastRef} t={props.t} setDataSource={setDataSource} dataSource={dataSource} editing={editing} />,
+            row: (props) => <EditableRow {...props} ranking={ranking} />,
+            cell: (e) => <EditableCell {...e} openModal={openModal} toastRef={toastRef} t={props.t} setDataSource={setDataSource} dataSource={dataSource} editing={editing} ranking={ranking} />,
         },
     };
 
@@ -97,11 +99,15 @@ const Study = props => {
 
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     const [allRowsExpanded, setAllRowsExpanded] = useState(true);
+    const [firstExpanded, setFirstExpanded] = useState(true);
 
     useEffect(() => {
-        const allRowKeys = getAllRowKeys(dataSource);
-        setExpandedRowKeys(allRowKeys);
-    }, [dataSource]);
+        if (dataSource && dataSource.length > 0 && firstExpanded) {
+            const allRowKeys = getAllRowKeys(dataSource);
+            setExpandedRowKeys(allRowKeys);
+            setFirstExpanded(false);
+        }
+    }, [dataSource, firstExpanded]);
 
     const getAllRowKeys = (data) => {
         return data.reduce((keys, record) => {
@@ -164,35 +170,50 @@ const Study = props => {
                                         <Button onClick={handleToggleAllRows} icon={<FontAwesomeIcon icon="fa-solid fa-bars" style={{ color: "#3d3d3d", }} />} />
                                     </Tooltip>
                                     {editing &&
-                                        <Dropdown menu={visitSettingsItems()} trigger={['click']} placement="bottomLeft">
-                                            <Button type="default" style={{ marginLeft: "10px" }}>
-                                                <Space>
-                                                    {props.t("Visit settings")}
-                                                    <DownOutlined />
-                                                </Space>
-                                            </Button>
-                                        </Dropdown>
+                                        <>
+                                            <Dropdown menu={visitSettingsItems()} trigger={['click']} placement="bottomLeft">
+                                                <Button type="default" style={{ margin: "0 10px" }}>
+                                                    <Space>
+                                                        {props.t("Visit settings")}
+                                                        <DownOutlined />
+                                                    </Space>
+                                                </Button>
+                                            </Dropdown>
+                                            <Space direction="vertical">
+                                                <Switch checked={ranking} checkedChildren={props.t("Ranking")} unCheckedChildren={props.t("Ranking")} onChange={(checked) => rankingHandle(checked)} />
+                                            </Space>
+                                        {ranking && <FloatButton icon={<CheckOutlined />} type="primary" tooltip={<div>Save</div>} onClick={saveRanking} />}
+                                        </>
                                     }
                                 </div>
                                 <Switch
                                     checkedChildren={<CheckOutlined />}
                                     unCheckedChildren={<CloseOutlined />}
                                     defaultChecked={editing}
-                                    onChange={() => setEditing(!editing)}
+                                    onChange={editingHandle}
+                                    checked={editing}
                                 />
-                            </div>                            
-                            <Table
-                                components={components}
-                                rowClassName={(record, index) => {
-                                    return record.type === "visit" ? 'row-visit-background-color' : record.type === "page" ? 'row-page-background-color' : "row-module-background-color";
-                                }}
-                                bordered
-                                dataSource={dataSource}
-                                columns={columns}
-                                expandedRowKeys={expandedRowKeys}
-                                onExpand={handleExpand}
-                                pagination={false}
-                            />
+                            </div>       
+                            <DndContext sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
+                                <SortableContext
+                                    items={getAllKeys(dataSource)}
+                                    strategy={verticalListSortingStrategy}
+                                >
+                                    <Table
+                                        components={components}
+                                        rowClassName={(record, index) => {
+                                            return record.type === "visit" ? 'row-visit-background-color' : record.type === "page" ? 'row-page-background-color' : "row-module-background-color";
+                                        }}
+                                        bordered
+                                        dataSource={dataSource}
+                                        columns={columns}
+                                        expandedRowKeys={expandedRowKeys}
+                                        onExpand={handleExpand}
+                                        pagination={false}
+                                        scroll={{ x: 'max-content' }}
+                                    />
+                                </SortableContext>
+                            </DndContext>
                         </Col>
                     </Row>
                 </div>

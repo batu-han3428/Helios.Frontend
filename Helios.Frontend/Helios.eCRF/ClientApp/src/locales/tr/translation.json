@@ -387,5 +387,8 @@
   "Add an Adverse Event": "Advers olay ekle",
   "Add an Serious Adverse Event": "Ciddi Advers olay ekle",
   "Concomitant Medication": "Concomitant Medication",
-  "Visits & pages": "Vizitler & sayfalar"
+  "Visits & pages": "Vizitler & sayfalar",
+  "Ranking": "Sıralama",
+  "You have unsaved changes.": "Kaydedilmemiş değişiklikleriniz var.",
+  "You haven't made any changes.": "Herhangi bir değişiklik yapmadınız."
 }

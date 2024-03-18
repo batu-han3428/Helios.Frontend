@@ -319,6 +319,18 @@ namespace Helios.eCRF.Services
                 Message = "Unsuccessful"
             };
         }
+
+        public async Task<ApiResponse<dynamic>> SetVisitRanking(List<VisitDTO> dto)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/SetVisitRanking", Method.Post);
+                AddApiHeaders(req);
+                req.AddJsonBody(dto);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
         #endregion
     }
 }

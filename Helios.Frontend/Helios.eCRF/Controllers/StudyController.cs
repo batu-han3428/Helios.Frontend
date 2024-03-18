@@ -371,6 +371,21 @@ namespace Helios.eCRF.Controllers
 
             return Ok(result);
         }
+
+
+        /// <summary>
+        /// vizit ranking ayarlarını kaydeder
+        /// </summary>
+        /// <param name="dto">visit bilgileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [Authorize(Roles = "TenantAdmin")]
+        public async Task<IActionResult> SetVisitRanking(List<VisitDTO> dto)
+        {
+            var result = await _studyService.SetVisitRanking(dto);
+
+            return Ok(result);
+        }
         #endregion
     }
 }
