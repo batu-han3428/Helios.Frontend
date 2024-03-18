@@ -540,5 +540,8 @@
   "Add an Adverse Event": "Add an Adverse Event",
   "Add an Serious Adverse Event": "Add an Serious Adverse Event",
   "Concomitant Medication": "Concomitant Medication",
-  "Visits & pages": "Visits & pages"
+  "Visits & pages": "Visits & pages",
+  "Ranking": "Ranking",
+  "You have unsaved changes.": "You have unsaved changes.",
+  "You haven't made any changes.": "You haven't made any changes."
 }

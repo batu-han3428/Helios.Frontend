@@ -61,12 +61,14 @@ const PermissionsRole = props => {
 
     useEffect(() => {
         if (permissionsList && !isLoadingP && !isErrorP) {
+            const longestTitleLength = Math.max(...permissionsList.map(data => props.t(data.name).length));
             const newData = permissionsList.map(data => {
                 return {
                     title: props.t(data.name),
                     dataIndex: data.key,
                     key: data.key,
                     align: 'center',
+                    width: longestTitleLength * 10,
                     render: (text, record) => (
                         <Checkbox />
                     ),

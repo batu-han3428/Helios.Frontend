@@ -19,6 +19,7 @@ const EditableCell = ({
     t,
     toastRef,
     openModal,
+    ranking,
     ...restProps
 }) => {
 
@@ -72,73 +73,74 @@ const EditableCell = ({
         const selectedValue = record[dataIndex];
         const inputId = `input_${dataIndex}_${record.key}`;
         const selectId = `select_${dataIndex}_${record.key}`;
-        childNode = editing && dataIndex !== 'visittype' ? (
-            <>
-                {children[0]}
-                <Form.Item
-                    style={{
-                        margin: 0,
-                    }}
-                    name={record.placeholder ? "" : dataIndex}
-                    rules={[
-                        {
-                            required: true,
-                            message: t("This field is required"),
-                        },
-                    ]}
-                >
-                    <Input id={inputId} placeholder={record.placeholder ? record.type === 'page' ? t("Add page") : t("Add visit") : undefined} onPressEnter={save} onBlur={save} />
-                </Form.Item>
-                <Dropdown menu={getItems()} trigger={['click']} placement="bottomLeft">
-                    <div style={{ position: 'absolute', right: 7, top: 22, display: 'flex', alignItems: 'center' }}>
-                        <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                            <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
-                        </a>
-                    </div>
-                </Dropdown>
-            </>
-        ) : (
-            <div
-            className={dataIndex !== 'visittype' ? "editable-cell-value-wrap" : "editable-cell-value-wrap-dropdown"}
-            style={{
-                paddingRight: 24,
-                color: record.placeholder ? '#ccc' : undefined
-            }}>
-                {dataIndex === 'visittype' && children[1] !== undefined && children[1] !== "" ? t(visitType.find(x=>x.value == children[1]).label) : dataIndex === 'name' ?              
-                    <>
-                        {record.placeholder && (
-                            <>
-                                <FontAwesomeIcon icon="fa-solid fa-plus" />
-                                {' '}
-                                {record.type === 'page' ? t("Add page") : t("Add visit")}
-                            </>
-                        )}
-                        {children}
-                    </>
-                : (children)}
-            </div>
-        );
 
-        if (editing && dataIndex === 'visittype' && record.type === "visit") {
-            childNode = (
-                <Form.Item
-                style={{marginBottom:0}}
-                name={dataIndex}
-                rules={[
-                    {
-                        required: record.type === 'visit',
-                        message: t("This field is required"),
-                    },
-                ]}>
-                    <Select
-                        id={selectId}
-                        options={visitType.map(type => ({ label: t(type.label), value: type.value }))}
-                        onChange={save}
-                        value={selectedValue}
-                    />
-                </Form.Item>
+            childNode = !ranking && editing && dataIndex !== 'visittype' ? (
+                <>
+                    {children[0]}
+                    <Form.Item
+                        style={{
+                            margin: 0,
+                        }}
+                        name={record.placeholder ? "" : dataIndex}
+                        rules={[
+                            {
+                                required: true,
+                                message: t("This field is required"),
+                            },
+                        ]}
+                    >
+                        <Input id={inputId} placeholder={record.placeholder ? record.type === 'page' ? t("Add page") : t("Add visit") : undefined} onPressEnter={save} onBlur={save} />
+                    </Form.Item>
+                    <Dropdown menu={getItems()} trigger={['click']} placement="bottomLeft">
+                        <div style={{ position: 'absolute', right: 7, top: 22, display: 'flex', alignItems: 'center' }}>
+                            <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
+                            </a>
+                        </div>
+                    </Dropdown>
+                </>
+            ) : (
+                <div
+                    className={dataIndex !== 'visittype' ? "editable-cell-value-wrap" : "editable-cell-value-wrap-dropdown"}
+                    style={{
+                        paddingRight: 24,
+                        color: record.placeholder ? '#ccc' : undefined
+                    }}>
+                    {dataIndex === 'visittype' && children[1] !== undefined && children[1] !== "" ? t(visitType.find(x => x.value == children[1]).label) : dataIndex === 'name' ?
+                        <>
+                            {record.placeholder && (
+                                <>
+                                    <FontAwesomeIcon icon="fa-solid fa-plus" />
+                                    {' '}
+                                    {record.type === 'page' ? t("Add page") : t("Add visit")}
+                                </>
+                            )}
+                            {children}
+                        </>
+                        : (children)}
+                </div>
             );
-        }
+
+            if (!ranking && editing && dataIndex === 'visittype' && record.type === "visit") {
+                childNode = (
+                    <Form.Item
+                        style={{ marginBottom: 0 }}
+                        name={dataIndex}
+                        rules={[
+                            {
+                                required: record.type === 'visit',
+                                message: t("This field is required"),
+                            },
+                        ]}>
+                        <Select
+                            id={selectId}
+                            options={visitType.map(type => ({ label: t(type.label), value: type.value }))}
+                            onChange={save}
+                            value={selectedValue}
+                        />
+                    </Form.Item>
+                );
+            }
         function getItems() {        
             let items = [];
             if (record.type === 'module' && record.key !== dataSource[dataSource.length - 1].key) {

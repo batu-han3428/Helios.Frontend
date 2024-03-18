@@ -68,6 +68,14 @@ export const VisitApi = createApi({
         studyVisitPermissionsListGet: builder.query({
             query: () => `/Study/GetStudyVisitPermissionsList`
         }),
+        visitRankingSet: builder.mutation({
+            query: (data) => ({
+                url: '/Study/SetVisitRanking',
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['Visit'],
+        }),
     }),
 });
 
@@ -89,3 +97,5 @@ export const { useLazyModuleListGetQuery } = VisitApi;
 export const { useAddStudyModuleSetMutation } = VisitApi;
 
 export const { useLazyStudyVisitPermissionsListGetQuery } = VisitApi;
+
+export const { useVisitRankingSetMutation } = VisitApi;
