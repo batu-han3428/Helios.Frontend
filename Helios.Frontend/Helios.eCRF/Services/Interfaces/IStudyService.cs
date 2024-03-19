@@ -12,7 +12,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> SiteSaveOrUpdate(SiteModel siteModel);
         Task<ApiResponse<dynamic>> SiteDelete(SiteModel siteModel);
         Task<RestResponse<SiteDTO>> GetSite(Int64 siteId);
-        Task<RestResponse<StudyDTO>> GetStudy();
+        Task<RestResponse<StudyDTO>> GetStudy(Int64 studyId);
         Task<ApiResponse<dynamic>> StudySave(StudyModel studyModel);
         Task<ApiResponse<dynamic>> StudyLockOrUnlock(StudyLockDTO studyLockDTO);
         Task<RestResponse<List<EmailTemplateModel>>> GetEmailTemplateList(Int64 studyId);

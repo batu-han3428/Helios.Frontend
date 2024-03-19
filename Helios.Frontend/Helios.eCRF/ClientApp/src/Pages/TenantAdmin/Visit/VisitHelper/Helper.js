@@ -136,92 +136,96 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
         trigger(studyInformation.studyId);
     }
 
-    useEffect(() => {
-        if (!isLoading && !error && visitsData) {
-            const formattedData = [...visitsData].sort((a, b) => a.order - b.order).map((data) => {
-                const visitRow = {
-                    key: data.id.toString(),
-                    id: data.id,
-                    type: 'visit',
-                    name: data.name,
-                    visittype: data.visitType,
-                    order: data.order,
-                    createdat: data.createdAt,
-                    updatedon: data.updatedAt,
-                };
+    const setData = (data) => {
+        const formattedData = [...data].sort((a, b) => a.order - b.order).map((data) => {
+            const visitRow = {
+                key: data.id.toString(),
+                id: data.id,
+                type: 'visit',
+                name: data.name,
+                visittype: data.visitType,
+                order: data.order,
+                createdat: data.createdAt,
+                updatedon: data.updatedAt,
+            };
 
-                const pageRows = data.children ? [...data.children].sort((a, b) => a.order - b.order).map((page, i) => {
-                    const pageRow = {
-                        key: `${data.id}_${i}`,
-                        id: page.id,
-                        parentId: data.id,
-                        type: 'page',
-                        name: page.name,
-                        order: page.order,
-                        epro: page.ePro,
-                        createdat: page.createdAt,
-                        updatedon: page.updatedAt,
-                        ...(page.children && page.children.length > 0 && {
-                            children: [...page.children].sort((a, b) => a.order - b.order).map((module, j) => ({
-                                key: `${data.id}_${page.id}_${j}`,
-                                id: module.id,
-                                parentId: page.id,
-                                type: 'module',
-                                name: module.name,
-                                order: module.order,
-                                createdat: module.createdAt,
-                                updatedon: module.updatedAt,
-                            })),
-                        }),
-                    };
-
-                    return pageRow;
-                }) : [];
-
-                if (visitRow.type === 'visit') {
-                    const lastChildIndex = pageRows.length - 1;
-                    const lastChild = pageRows[lastChildIndex];
-
-                    const emptyPage = {
-                        key: `${data.id}_${lastChild ? lastChild.id : data.id}_empty`,
-                        id: null,
-                        parentId: data.id,
-                        type: 'page',
-                        name: "",
-                        placeholder: true,
-                        order: (parseInt(lastChild ? lastChild.order : 0, 10) || 0) + 1,
-                        createdat: "",
-                        updatedon: "",
-                    };
-
-                    pageRows.push(emptyPage);
-                }
-
-                return {
-                    ...visitRow,
-                    ...(pageRows.length > 0 && {
-                        children: pageRows,
+            const pageRows = data.children ? [...data.children].sort((a, b) => a.order - b.order).map((page, i) => {
+                const pageRow = {
+                    key: `${data.id}_${i}`,
+                    id: page.id,
+                    parentId: data.id,
+                    type: 'page',
+                    name: page.name,
+                    order: page.order,
+                    epro: page.ePro,
+                    createdat: page.createdAt,
+                    updatedon: page.updatedAt,
+                    ...(page.children && page.children.length > 0 && {
+                        children: [...page.children].sort((a, b) => a.order - b.order).map((module, j) => ({
+                            key: `${data.id}_${page.id}_${j}`,
+                            id: module.id,
+                            parentId: page.id,
+                            type: 'module',
+                            name: module.name,
+                            order: module.order,
+                            createdat: module.createdAt,
+                            updatedon: module.updatedAt,
+                        })),
                     }),
                 };
-            });
 
-            const lastRowIndex = formattedData.length;
-            const lastRow = formattedData[lastRowIndex - 1];
+                return pageRow;
+            }) : [];
 
-            const emptyVisit = {
-                key: `new_row_${lastRowIndex + 1}`,
-                id: null,
-                type: 'visit',
-                name: "",
-                placeholder: true,
-                visittype: "",
-                order: (parseInt(lastRow ? lastRow.order : 0, 10) || 0) + 1,
-                createdat: "",
-                updatedon: "",
+            if (visitRow.type === 'visit') {
+                const lastChildIndex = pageRows.length - 1;
+                const lastChild = pageRows[lastChildIndex];
+
+                const emptyPage = {
+                    key: `${data.id}_${lastChild ? lastChild.id : data.id}_empty`,
+                    id: null,
+                    parentId: data.id,
+                    type: 'page',
+                    name: "",
+                    placeholder: true,
+                    order: (parseInt(lastChild ? lastChild.order : 0, 10) || 0) + 1,
+                    createdat: "",
+                    updatedon: "",
+                };
+
+                pageRows.push(emptyPage);
+            }
+
+            return {
+                ...visitRow,
+                ...(pageRows.length > 0 && {
+                    children: pageRows,
+                }),
             };
-            formattedData.push(emptyVisit);
-            syncRankingData(formattedData);
-            setDataSource(formattedData);
+        });
+
+        const lastRowIndex = formattedData.length;
+        const lastRow = formattedData[lastRowIndex - 1];
+
+        const emptyVisit = {
+            key: `new_row_${lastRowIndex + 1}`,
+            id: null,
+            type: 'visit',
+            name: "",
+            placeholder: true,
+            visittype: "",
+            order: (parseInt(lastRow ? lastRow.order : 0, 10) || 0) + 1,
+            createdat: "",
+            updatedon: "",
+        };
+        formattedData.push(emptyVisit);
+        syncRankingData(formattedData);
+        setDataSource(formattedData);
+    };
+
+    useEffect(() => {
+        if (!isLoading && !error && visitsData) {
+            setData(visitsData);
             dispatch(endloading());
         } else if (!isLoading && error) {
             toastRef.current.setToast({
@@ -582,7 +586,8 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
         rankingHandle,
         ranking,
         editing,
-        editingHandle
+        editingHandle,
+        setData
     };
 };
 export function visitSettingsItems() {

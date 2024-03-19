@@ -25,6 +25,7 @@ namespace Helios.eCRF.Extension
             services.AddScoped<IModuleService, ModuleService>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<TimeZoneHelper>();
+            services.AddSignalR();
             return services;
         }
     }

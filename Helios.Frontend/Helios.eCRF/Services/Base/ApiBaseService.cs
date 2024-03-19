@@ -18,6 +18,7 @@ namespace Helios.eCRF.Services.Base
         public Int64 UserId { get; set; }
         public Int64 StudyId { get; set; }
         public Int64 TenantId { get; set; }
+        public string Name { get; set; }
         public string Token { get; set; }
 
         protected RestClient AuthServiceClient {
@@ -40,9 +41,11 @@ namespace Helios.eCRF.Services.Base
                 var userId = token.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
                 var studyId = token.Claims.FirstOrDefault(c => c.Type == "studyId")?.Value;
                 var tenantId = token.Claims.FirstOrDefault(c => c.Type == "tenantId")?.Value;
+                var name = token.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
                 UserId = userId != null && userId != "" ? Convert.ToInt64(userId) : 0;
                 StudyId = studyId != null && studyId != "" ? Convert.ToInt64(studyId) : 0;
                 TenantId = tenantId != null && tenantId != "" ? Convert.ToInt64(tenantId) : 0;
+                Name = name != null && name != "" ? name : "";
             }
         }
 

@@ -1,5 +1,6 @@
 using Helios.eCRF.Extension;
 using Helios.eCRF.Helpers;
+using Helios.eCRF.Hubs;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -33,9 +34,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("MyPolicy", builder =>
     {
-        builder.WithOrigins("https://localhost:44458", "https://localhost:7196", "https://localhost:3000") // Ýzin vermek istediðiniz kök domaini buraya ekleyin
-               .AllowAnyMethod()
-               .AllowAnyHeader();
+        builder.WithOrigins("https://localhost:44458", "https://localhost:7196", "https://localhost:3000")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials();
     });
 });
 
@@ -75,6 +77,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors("MyPolicy");
+
+app.MapHub<LiveDataHub>("/liveDataHub");
 
 app.MapControllers();
 
