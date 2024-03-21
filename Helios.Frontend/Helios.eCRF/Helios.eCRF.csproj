@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Helios.Common" Version="1.0.0.17" />
+    <PackageReference Include="Helios.Common" Version="1.0.0.18" />
     <PackageReference Include="MassTransit" Version="8.1.0" />
     <PackageReference Include="MassTransit.Extensions.DependencyInjection" Version="7.3.1" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.11" />

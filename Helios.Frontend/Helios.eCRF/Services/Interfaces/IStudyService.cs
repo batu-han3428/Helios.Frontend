@@ -1,6 +1,7 @@
 ﻿using Helios.Common.DTO;
 using Helios.Common.Enums;
 using Helios.Common.Model;
+using Helios.eCRF.Models;
 using RestSharp;
 
 namespace Helios.eCRF.Services.Interfaces
@@ -30,5 +31,11 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> SetVisitPagePermission(VisitPagePermissionDTO dto);
         Task<ApiResponse<dynamic>> SetStudyModule(SetModuleDTO dto);
         Task<ApiResponse<dynamic>> SetVisitRanking(List<VisitDTO> dto);
+        Task<RestResponse<List<ElementModel>>> GetStudyModuleElementsWithChildren(Int64 studyVisitPageModuleId);
+        Task<ApiResponse<dynamic>> SaveVisitPageModuleContent(ElementModel model);
+        Task<ApiResponse<dynamic>> CopyElement(Int64 id, Int64 userId);
+        Task<ApiResponse<dynamic>> DeleteElement(Int64 id, Int64 userId);
+        Task<List<ElementModel>> GetVisitPageModuleAllElements(Int64 id);
+        Task<ElementModel> GetVisitPageModuleElementData(Int64 id);
     }
 }

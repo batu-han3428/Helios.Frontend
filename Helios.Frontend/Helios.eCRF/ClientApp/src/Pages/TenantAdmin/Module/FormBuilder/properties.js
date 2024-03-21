@@ -42,7 +42,7 @@ import AdverseEventElementProperties from "../Elements/AdverseEventElement/adver
 import HiddenElementProperties from "../Elements/HiddenElement/hiddenElementProperties";
 import ConcomittantMedicationElementProperties from "../Elements/ConcomittantMedicationElement/concomittantMedicationElementProperties";
 
-const baseUrl = "http://localhost:3300";
+const baseUrl = "http://localhost:3300/";
 
 class Properties extends React.Component {
     constructor(props) {
@@ -58,6 +58,7 @@ class Properties extends React.Component {
             TenantId: 2,
             UserId: props.UserId,
             ModuleId: props.ModuleId,
+            FormType: props.formType,
             IsCalcBtn: props.isCalcBtn,
             ElementDetailId: 0,
             ElementType: props.Type,
@@ -413,8 +414,9 @@ class Properties extends React.Component {
     // #region dependent
     fillDependentFieldList() {
         var depFldOptionGroup = [];
+        var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
 
-        fetch(baseUrl + '/Module/GetModuleAllElements?id=' + this.state.ModuleId, {
+        fetch(url + '/GetModuleAllElements?id=' + this.state.ModuleId, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -680,7 +682,9 @@ class Properties extends React.Component {
 
     getElementData() {
         if (this.state.Id !== 0) {
-            fetch(baseUrl + '/Module/GetElementData?id=' + this.state.Id, {
+            var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
+
+            fetch(url + '/GetElementData?id=' + this.state.Id, {
                 method: 'GET',
             })
                 .then(response => response.json())
@@ -732,7 +736,7 @@ class Properties extends React.Component {
         this.state.DependentAction = data.dependentAction === 0 ? 1 : data.dependentAction;
         this.state.DependentFieldValue = data.dependentFieldValue == "" ? [] : JSON.parse(data.dependentFieldValue);
 
-        var rel = JSON.parse(data.relationSourceInputs);
+        var rel = data.relationSourceInputs !== ""? JSON.parse(data.relationSourceInputs): '';
         this.state.IsRelation = data.isRelated;
         this.state.RelationSourceInputs = rel != null ? data.relationSourceInputs : '';
         this.state.relationElementRows = rel != null ? rel : [];
@@ -798,7 +802,7 @@ class Properties extends React.Component {
             isValid = false;
         }
 
-        if (this.state.IsDependent && this.state.DependentFieldValue === '') {
+        if (this.state.IsDependent && this.state.DependentFieldValue.length === 0) {
             this.setState({ DepFldVlInputClass: "form-control input-tag is-invalid" });
             isValid = false;
         }
@@ -871,8 +875,9 @@ class Properties extends React.Component {
             });
 
             debugger;
+            var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
 
-            fetch(baseUrl + '/Module/SaveModuleContent', {
+            fetch(url + '/SaveModuleContent', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json, text/plain, */*',
@@ -900,7 +905,7 @@ class Properties extends React.Component {
                 .catch(error => {
                     debugger;
                     console.error('Error:', error);
-                    alert(error)
+                    //alert(error)
                 });
         }
         else {

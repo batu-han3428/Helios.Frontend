@@ -42,10 +42,11 @@ import { GetAllElementList } from './allElementList.js';
 
 function ElementList(props) {
     const toastRef = useRef();
-    const baseUrl = "http://localhost:3300";
+    const baseUrl = props.FormType === 1 ? "http://localhost:3300/Module" :"http://localhost:3300/Study";
     const [tenantId] = useState(props.TenantId);
     const [moduleId] = useState(props.ModuleId);
     const [isDisable] = useState(props.IsDisable);
+    const [formType] = useState(props.FormType);
     const [elementId, setElementId] = useState(0);
     const [moduleElementList, setModuleElementList] = useState([]);
     const [elements] = useState(GetAllElementList());
@@ -90,7 +91,7 @@ function ElementList(props) {
     };
 
     const copyElement = (e, id) => {
-        fetch(baseUrl + '/Module/CopyElement?id=' + id + '&userId=' + userInformation.userId, {
+        fetch(baseUrl + '/CopyElement?id=' + id + '&userId=' + userInformation.userId, {
             method: 'POST',
         })
             .then(response => response.json())
@@ -128,7 +129,7 @@ function ElementList(props) {
             if (result.isConfirmed) {
                 try {
                     dispatch(startloading());
-                    fetch(baseUrl + '/Module/DeleteElement?id=' + id + '&userId=' + userInformation.userId, {
+                    fetch(baseUrl + '/DeleteElement?id=' + id + '&userId=' + userInformation.userId, {
                         method: 'POST',
                     })
                         .then(response => response.json())
@@ -287,7 +288,7 @@ function ElementList(props) {
                                     <Button className="actionBtn" id={item.id} onClick={e => togglePropModal(e, 0, item.id, "1", true)}><i className="fas fa-calculator"></i></Button>
                                 )}
                                 <Button className="actionBtn" id={item.id} onClick={e => togglePropModal(e, item.elementType, item.id, "1")}><i className="far fa-edit"></i></Button>
-                                {item.parentId === 0 && (
+                                {(item.parentId === 0 || item.parentId == null) && (
                                     < Button className="actionBtn"><i className="far fa-copy" onClick={e => copyElement(e, item.id)}></i></Button>
                                 )}
                                 <Button className="actionBtn"><i className="fas fa-trash-alt" onClick={e => deleteElement(e, item.id)}></i></Button>
@@ -304,7 +305,7 @@ function ElementList(props) {
         : null;
 
     const elementItems = elements.map((l) =>
-        l.key !== 3 && l.key!== 14 ? (/*hidden & concomitantd elements don't show in formbuilder*/
+        (l.key !== 3 && l.key !== 14) || formType === 2 ? (/*hidden & concomitantd elements don't show in formbuilder*/
             <Button className="elmlst" id={l.key} key={l.key} onClick={e => togglePropModal(e, l.key, 0, "1")}>
                 <i className={l.icon} style={{ color: '#00a8f3' }}></i> &nbsp; {GetElementNameByKey(props, l.key)}
             </Button>
@@ -355,6 +356,7 @@ function ElementList(props) {
                             isCalcBtn={isCalcBtn}
                             ColumnIndex={null}
                             RowIndex={null}
+                            FormType={formType}
                         >
                         </Properties>
                     </ModalBody>

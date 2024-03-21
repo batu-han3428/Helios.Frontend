@@ -5,20 +5,20 @@ import {
 } from "reactstrap";
 import { useNavigate, useLocation, useParams } from "react-router-dom";
 import { withTranslation } from "react-i18next";
-import ElementList from './elementList.js';
-import './formBuilder.css';
+import ElementList from '../../Module/FormBuilder/elementList.js';
+import '../../Module/FormBuilder/formBuilder.css';
 import { useDispatch, useSelector } from "react-redux";
-import { startloading, endloading } from '../../../../store/loader/actions';
+import { startloading, endloading } from '../../../../store/loader/actions.js';
 
-const FormBuilder = props => {
+const VisitFormBuilder = props => {
     const userInformation = useSelector(state => state.rootReducer.Login);
-    const { moduleId } = useParams();
+    const { studyVisitPageModuleId } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
     const baseUrl = "http://localhost:3300";
     const dispatch = useDispatch();
 
     const fetchData = () => {
-        fetch(baseUrl + '/Module/GetModuleElementsWithChildren?id=' + moduleId, {
+        fetch(baseUrl + '/Study/GetStudyModuleElementsWithChildren?studyVisitPageModuleId=' + studyVisitPageModuleId, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -49,7 +49,7 @@ const FormBuilder = props => {
                         </Row>
                     </div>
                     <div>
-                        <ElementList TenantId={userInformation.TenantId} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={1} />
+                        <ElementList TenantId={userInformation.TenantId} ModuleId={studyVisitPageModuleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={2} />
                     </div>
                 </div>
             </div>
@@ -57,5 +57,5 @@ const FormBuilder = props => {
     );
 }
 
-export default withTranslation() (FormBuilder);
+export default withTranslation()(VisitFormBuilder);
 

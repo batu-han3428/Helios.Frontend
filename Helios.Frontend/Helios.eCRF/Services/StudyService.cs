@@ -4,6 +4,7 @@ using Helios.Common.Model;
 using Helios.eCRF.Services.Base;
 using Helios.eCRF.Services.Interfaces;
 using RestSharp;
+using System.Text.Json;
 
 namespace Helios.eCRF.Services
 {
@@ -303,21 +304,120 @@ namespace Helios.eCRF.Services
 
         public async Task<ApiResponse<dynamic>> SetStudyModule(SetModuleDTO dto)
         {
-            if (dto.ModuleIds.Count > 0 && dto.PageId != 0)
-            {
-                var modules = await GetModuleList(dto);
-
-                if (modules.IsSuccessful && modules.Data.Count > 0)
+            //if (dto.ModuleIds.Count > 0 && dto.PageId != 0)
+            //{
+                using (var client = CoreServiceClient)
                 {
-                    return await SetStudyModule(modules.Data);
+                    string moduleIdsString = string.Join(",", dto.ModuleIds);
+                    var req = new RestRequest("CoreStudy/GetModuleCollective", Method.Get);
+                    req.AddParameter("moduleIds", moduleIdsString);
+                    req.AddParameter("pageId", dto.PageId);
+                    var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                    return result.Data;
                 }
+                //var modules = await GetModuleList(dto);
+
+                //if (modules.IsSuccessful && modules.Data.Count > 0)
+                //{
+                //    return await SetStudyModule(modules.Data);
+                //}
+            //}
+
+            //return new ApiResponse<dynamic>
+            //{
+            //    IsSuccess = false,
+            //    Message = "Unsuccessful"
+            //};
+        }
+        #endregion
+
+        #region Module
+        public async Task<RestResponse<List<ElementModel>>> GetStudyModuleElementsWithChildren(Int64 studyVisitPageModuleId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetStudyModuleElementsWithChildren", Method.Get);
+                req.AddParameter("studyModuleId", studyVisitPageModuleId);
+                var result = await client.ExecuteAsync<List<ElementModel>>(req);
+                return result;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> SaveVisitPageModuleContent(ElementModel model)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/SaveVisitPageModuleContent", Method.Post);
+                req.AddJsonBody(model);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> CopyElement(Int64 id, Int64 userId)
+        {
+            var model = new ElementShortModel()
+            {
+                Id = id,
+                UserId = userId,
+                Value = ""
+            };
+
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/CopyElement", Method.Post);
+                req.AddJsonBody(model);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> DeleteElement(Int64 id, Int64 userId)
+        {
+            var model = new ElementShortModel()
+            {
+                Id = id,
+                UserId = userId,
+                Value = ""
+            };
+
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/DeleteElement", Method.Post);
+                req.AddJsonBody(model);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
+        public async Task<List<ElementModel>> GetVisitPageModuleAllElements(Int64 id)
+        {
+            var elements = new List<ElementModel>();
+
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetVisitPageModuleAllElements", Method.Get);
+                req.AddParameter("visitPageModuleId", id);
+                var result = await client.ExecuteAsync(req);
+                elements = JsonSerializer.Deserialize<List<ElementModel>>(result.Content);
             }
 
-            return new ApiResponse<dynamic>
+            return elements;
+        }
+
+        public async Task<ElementModel> GetVisitPageModuleElementData(Int64 id)
+        {
+            var element = new ElementModel();
+
+            using (var client = CoreServiceClient)
             {
-                IsSuccess = false,
-                Message = "Unsuccessful"
-            };
+                var req = new RestRequest("CoreStudy/GetVisitPageModuleElementData", Method.Get);
+                req.AddParameter("id", id);
+                var result = await client.ExecuteAsync(req);
+                element = JsonSerializer.Deserialize<ElementModel>(result.Content);
+            }
+
+            return element;
         }
 
         public async Task<ApiResponse<dynamic>> SetVisitRanking(List<VisitDTO> dto)

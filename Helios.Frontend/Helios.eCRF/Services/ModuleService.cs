@@ -120,8 +120,6 @@ namespace Helios.eCRF.Services
 
         public async Task<ApiResponse<dynamic>> SaveModuleContent(ElementModel model)
         {
-            var response = new ApiResponse<dynamic>();
-
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreModule/SaveModuleContent", Method.Post);
