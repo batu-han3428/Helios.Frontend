@@ -1,8 +1,10 @@
 ﻿using Helios.Common.DTO;
 using Helios.Common.Enums;
 using Helios.Common.Model;
+using Helios.eCRF.Hubs;
 using Helios.eCRF.Services.Base;
 using Helios.eCRF.Services.Interfaces;
+using Microsoft.AspNetCore.SignalR;
 using RestSharp;
 using System.Text.Json;
 
@@ -10,8 +12,10 @@ namespace Helios.eCRF.Services
 {
     public class StudyService : ApiBaseService, IStudyService
     {
-        public StudyService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor) : base(configuration, httpContextAccessor)
+        private readonly IHubContext<LiveDataHub> _liveDataHub;
+        public StudyService(IConfiguration configuration, IHttpContextAccessor httpContextAccessor, IHubContext<LiveDataHub> liveDataHub) : base(configuration, httpContextAccessor)
         {
+            _liveDataHub = liveDataHub;
         }
 
         #region Study
@@ -26,12 +30,12 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<RestResponse<StudyDTO>> GetStudy()
+        public async Task<RestResponse<StudyDTO>> GetStudy(Int64 studyId)
         {
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreStudy/GetStudy", Method.Get);
-                req.AddParameter("studyId", StudyId);
+                req.AddParameter("studyId", studyId);
                 var result = await client.ExecuteAsync<StudyDTO>(req);
                 return result;
             }
@@ -226,6 +230,11 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreStudy/SetVisits", Method.Post);
                 req.AddJsonBody(visitDTO);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                if (result.Data.IsSuccess)
+                {
+                    var data = await GetVisits(StudyId);
+                    await _liveDataHub.Clients.Group("Visit").SendAsync("LiveData", new Dictionary<string, object> { { "data", data }, { "message", Name + " tabloyu güncellendi." } });
+                }
                 return result.Data;
             }
         }
@@ -237,6 +246,11 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreStudy/DeleteVisits", Method.Post);
                 req.AddJsonBody(visitDTO);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                if (result.Data.IsSuccess)
+                {
+                    var data = await GetVisits(StudyId);
+                    await _liveDataHub.Clients.Group("Visit").SendAsync("LiveData", new Dictionary<string, object> { { "data", data }, { "message", Name + " tabloyu güncellendi." } });
+                }
                 return result.Data;
             }
         }
@@ -287,18 +301,6 @@ namespace Helios.eCRF.Services
                 req.AddParameter("pageId", dto.PageId);
                 var result = await client.ExecuteAsync<List<ModuleDTO>>(req);
                 return result;
-            }
-        }
-
-        private async Task<ApiResponse<dynamic>> SetStudyModule(List<ModuleDTO> dto)
-        {
-            using (var client = CoreServiceClient)
-            {
-                var req = new RestRequest("CoreStudy/SetStudyModule", Method.Post);
-                AddApiHeaders(req);
-                req.AddJsonBody(dto);
-                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
-                return result.Data;
             }
         }
 
@@ -428,6 +430,11 @@ namespace Helios.eCRF.Services
                 AddApiHeaders(req);
                 req.AddJsonBody(dto);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                if (result.Data.IsSuccess)
+                {
+                    var data = await GetVisits(StudyId);
+                    await _liveDataHub.Clients.Group("Visit").SendAsync("LiveData", new Dictionary<string, object> { { "data", data }, { "message", Name + " tabloyu güncellendi." } });
+                }
                 return result.Data;
             }
         }

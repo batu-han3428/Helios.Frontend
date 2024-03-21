@@ -14,6 +14,7 @@ import "./visit.css";
 import { DndContext } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import * as signalR from '@microsoft/signalr';
 
 const Study = props => {
     
@@ -29,7 +30,7 @@ const Study = props => {
 
     const [dataSource, setDataSource] = useState([]);
 
-    const { handleSave, handleList, studyInformation, sensors, onDragEnd, saveRanking, rankingHandle, ranking, editing, editingHandle } = useApiHelper(dataSource, setDataSource, toastRef);
+    const { handleSave, handleList, studyInformation, sensors, onDragEnd, saveRanking, rankingHandle, ranking, editing, editingHandle, setData } = useApiHelper(dataSource, setDataSource, toastRef);
 
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
@@ -150,6 +151,37 @@ const Study = props => {
         }
         setAllRowsExpanded(!allRowsExpanded);
     };
+
+    useEffect(() => {
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("http://localhost:3300/liveDataHub")
+            .withAutomaticReconnect({
+                nextRetryDelayInMilliseconds: 30000,
+                maxRetries: 10
+            })
+            .build();
+
+        connection.start()
+            .then(() => {
+                connection.invoke("JoinGroup", "Visit")
+                    .then()
+                    .catch();
+            })
+            .catch();
+
+        connection.on("LiveData", (response) => {
+            setData(response.data.data)
+            toastRef.current.setToast({
+                message: props.t(response.message),
+                stateToast: true,
+                autoHide: false
+            });
+        });
+
+        return () => {
+            connection.stop();
+        };
+    }, []);
 
     return (
         <React.Fragment>

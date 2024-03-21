@@ -26,7 +26,7 @@ export const VisitApi = createApi({
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: ['Visit'],
+            /*invalidatesTags: ['Visit'],*/
         }),
         visitDelete: builder.mutation({
             query: (data) => ({

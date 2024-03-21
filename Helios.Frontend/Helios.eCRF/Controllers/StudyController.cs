@@ -37,12 +37,13 @@ namespace Helios.eCRF.Controllers
         /// <summary>
         /// seçili çalışmanın bilgilerini döner
         /// </summary>
+        /// <param name="studyId">çalışma id</param>
         /// <returns>çalışma bilgileri</returns>
-        [HttpGet]
+        [HttpGet("{studyId}")]
         [Authorize(Roles = "TenantAdmin")]
-        public async Task<IActionResult> GetStudy()
+        public async Task<IActionResult> GetStudy(Int64 studyId)
         {
-            var result = await _studyService.GetStudy();
+            var result = await _studyService.GetStudy(studyId);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
@@ -269,7 +270,7 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> SetVisits(VisitDTO visitDTO)
         {
             var result = await _studyService.SetVisits(visitDTO);
-
+            
             return Ok(result);
         }
 
