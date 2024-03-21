@@ -288,7 +288,7 @@ function ElementList(props) {
                                     <Button className="actionBtn" id={item.id} onClick={e => togglePropModal(e, 0, item.id, "1", true)}><i className="fas fa-calculator"></i></Button>
                                 )}
                                 <Button className="actionBtn" id={item.id} onClick={e => togglePropModal(e, item.elementType, item.id, "1")}><i className="far fa-edit"></i></Button>
-                                {item.parentId === 0 && (
+                                {(item.parentId === 0 || item.parentId == null) && (
                                     < Button className="actionBtn"><i className="far fa-copy" onClick={e => copyElement(e, item.id)}></i></Button>
                                 )}
                                 <Button className="actionBtn"><i className="fas fa-trash-alt" onClick={e => deleteElement(e, item.id)}></i></Button>
@@ -305,7 +305,7 @@ function ElementList(props) {
         : null;
 
     const elementItems = elements.map((l) =>
-        l.key !== 3 && l.key!== 14 ? (/*hidden & concomitantd elements don't show in formbuilder*/
+        (l.key !== 3 && l.key !== 14) || formType === 2 ? (/*hidden & concomitantd elements don't show in formbuilder*/
             <Button className="elmlst" id={l.key} key={l.key} onClick={e => togglePropModal(e, l.key, 0, "1")}>
                 <i className={l.icon} style={{ color: '#00a8f3' }}></i> &nbsp; {GetElementNameByKey(props, l.key)}
             </Button>
@@ -356,6 +356,7 @@ function ElementList(props) {
                             isCalcBtn={isCalcBtn}
                             ColumnIndex={null}
                             RowIndex={null}
+                            FormType={formType}
                         >
                         </Properties>
                     </ModalBody>

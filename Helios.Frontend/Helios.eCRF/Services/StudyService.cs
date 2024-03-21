@@ -4,6 +4,7 @@ using Helios.Common.Model;
 using Helios.eCRF.Services.Base;
 using Helios.eCRF.Services.Interfaces;
 using RestSharp;
+using System.Text.Json;
 
 namespace Helios.eCRF.Services
 {
@@ -342,6 +343,17 @@ namespace Helios.eCRF.Services
             }
         }
 
+        public async Task<ApiResponse<dynamic>> SaveVisitPageModuleContent(ElementModel model)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/SaveVisitPageModuleContent", Method.Post);
+                req.AddJsonBody(model);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
         public async Task<ApiResponse<dynamic>> CopyElement(Int64 id, Int64 userId)
         {
             var model = new ElementShortModel()
@@ -376,6 +388,36 @@ namespace Helios.eCRF.Services
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
             }
+        }
+
+        public async Task<List<ElementModel>> GetVisitPageModuleAllElements(Int64 id)
+        {
+            var elements = new List<ElementModel>();
+
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetVisitPageModuleAllElements", Method.Get);
+                req.AddParameter("visitPageModuleId", id);
+                var result = await client.ExecuteAsync(req);
+                elements = JsonSerializer.Deserialize<List<ElementModel>>(result.Content);
+            }
+
+            return elements;
+        }
+
+        public async Task<ElementModel> GetVisitPageModuleElementData(Int64 id)
+        {
+            var element = new ElementModel();
+
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetVisitPageModuleElementData", Method.Get);
+                req.AddParameter("id", id);
+                var result = await client.ExecuteAsync(req);
+                element = JsonSerializer.Deserialize<ElementModel>(result.Content);
+            }
+
+            return element;
         }
         #endregion
     }

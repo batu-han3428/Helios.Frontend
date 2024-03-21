@@ -370,6 +370,29 @@ namespace Helios.eCRF.Controllers
         }
 
         [HttpPost]
+        public ApiResponse<dynamic> SaveModuleContent(ElementModel model)
+        {
+            var result = new ApiResponse<dynamic>();
+
+            if (model.IsDependent
+                && (model.DependentSourceFieldId == null
+                || model.DependentTargetFieldId == null
+                || model.DependentCondition == 0
+                || model.DependentAction == 0
+                || model.DependentFieldValue == ""))
+            {
+                result.IsSuccess = false;
+                result.Message = "Dependent Error";
+            }
+            else
+            {
+                result = _studyService.SaveVisitPageModuleContent(model).Result;
+            }
+
+            return result;
+        }
+
+        [HttpPost]
         //[Authorize(Roles = "TenantAdmin")]
         public async Task<ApiResponse<dynamic>> CopyElement(Int64 id, Int64 userId)
         {
@@ -382,6 +405,23 @@ namespace Helios.eCRF.Controllers
         public async Task<ApiResponse<dynamic>> DeleteElement(Int64 id, Int64 userId)
         {
             var result = await _studyService.DeleteElement(id, userId);
+            return result;
+        }
+
+        [HttpGet]
+        public async Task<List<ElementModel>> GetModuleAllElements(Int64 id)
+        {
+            var result = await _studyService.GetVisitPageModuleAllElements(id);
+
+            return result;
+        }
+
+        [HttpGet]
+        public async Task<ElementModel> GetElementData(string id)
+        {
+            var elementId = Int64.Parse(id);
+            var result = await _studyService.GetVisitPageModuleElementData(elementId);
+
             return result;
         }
         #endregion

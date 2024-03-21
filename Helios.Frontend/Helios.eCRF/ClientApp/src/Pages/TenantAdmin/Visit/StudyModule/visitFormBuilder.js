@@ -11,7 +11,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../../store/loader/actions.js';
 
 const VisitFormBuilder = props => {
-    debugger;
     const userInformation = useSelector(state => state.rootReducer.Login);
     const { studyVisitPageModuleId } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
