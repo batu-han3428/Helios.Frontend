@@ -234,6 +234,7 @@ function ElementList(props) {
             case 14:
                 return <ConcomittantMedicationElement
                     IsDisable={isDisable}
+                    ButtonText={param.buttonText}
                 />
 
             case 15:

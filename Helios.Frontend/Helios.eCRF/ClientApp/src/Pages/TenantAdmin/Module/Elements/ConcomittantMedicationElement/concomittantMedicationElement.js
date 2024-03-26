@@ -5,9 +5,10 @@ import '../Common/common.css';
 class ConcomittantMedicationElement extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = {
             isDisable: props.IsDisable,
+            ButtonText: props.ButtonText !== null && props.ButtonText !== "" ? props.ButtonText : this.props.t("+ Concomitant Medication")
         }
 
         this.handleValueChange = this.handleValueChange.bind(this);
@@ -19,7 +20,7 @@ class ConcomittantMedicationElement extends Component {
     render() {
         return (
             <div style={{ marginRight: "20px" }} >
-                <input className="btn btn-primary" type="button" value={this.props.t("+ Concomitant Medication")} disabled={this.state.isDisable} />
+                <input className="btn btn-primary" type="button" value={this.state.ButtonText} disabled={this.state.isDisable} />
             </div>
         )
     }

@@ -33,7 +33,7 @@ const VisitFormBuilder = props => {
             .catch(error => {
                 //console.error('Error:', error);
             });
-
+        
         fetch(baseUrl + '/Study/GetStudyPageModule?id=' + studyVisitPageModuleId, {
             method: 'GET',
         })
