@@ -158,6 +158,7 @@ class Properties extends React.Component {
             RowIndex: props.RowIndex == null ? 0 : props.RowIndex,
             AdverseEventType: 1,
             TargetElementId: 0,
+            ButtonText: "",
 
             // Validation
             RequiredError: 'This value is required',
@@ -229,6 +230,7 @@ class Properties extends React.Component {
         this.changeColumnCount.bind(this);
         this.changeAdverseEventType.bind(this);
         this.changeTargetElementId.bind(this);
+        this.changeButtonText.bind(this);
 
         this.changeIsFormValid.bind(this);
     }
@@ -322,10 +324,11 @@ class Properties extends React.Component {
                     changeRightText={this.changeRightText} RightText={this.state.RightText}
                 />;
             case 14:
-                this.state.showWhereElementPropeties = 3;
+                this.state.showWhereElementPropeties = 4;
                 this.state.fieldWidthsW = "col-md-10";
-                return <ConcomittantMedicationElementProperties
-                />;
+                return <ConcomittantMedicationElementProperties StudyId={this.state.StudyId}
+                    TargetElementId={this.state.TargetElementId} changeTargetElementId={this.changeTargetElementId}
+                    ButtonText={this.state.ButtonText} changeButtonText={this.changeButtonText } />;
             case 15:
                 this.state.showWhereElementPropeties = 3;
                 this.state.fieldWidthsW = "col-md-10";
@@ -614,6 +617,10 @@ class Properties extends React.Component {
         this.setState({ TargetElementId: newValue });
     };
 
+    changeButtonText = (newValue) => {
+        this.setState({ ButtonText: newValue });
+    };
+
     changeIsFormValid = (newValue) => {
         this.setState({ IsFormValid: newValue });
     };
@@ -738,6 +745,7 @@ class Properties extends React.Component {
         this.state.ColumnCount = data.columnCount;
         this.state.AdverseEventType = data.adverseEventType;
         this.state.TargetElementId = data.targetElementId === null ? 0 : data.targetElementId;
+        this.state.ButtonText = data.buttonText !== null ? data.buttonText : "";
 
         this.state.IsDependent = data.isDependent;
         this.state.DependentSourceFieldId = data.dependentSourceFieldId;
@@ -870,6 +878,7 @@ class Properties extends React.Component {
                 ColumnIndex: this.state.ColumnIndex,
                 AdverseEventType: this.state.AdverseEventType,
                 TargetElementId: this.state.TargetElementId,
+                ButtonText: this.state.ButtonText,
 
                 // Dependency properties
                 DependentSourceFieldId: this.state.DependentSourceFieldId == null ? 0 : this.state.DependentSourceFieldId,
@@ -1084,7 +1093,7 @@ class Properties extends React.Component {
                                                             )}
                                                             {this.state.ElementType !== 3 &&
                                                                 <Row className="mb-3 ml-0">
-                                                                    {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16 && this.state.ElementType !== 17 && this.state.ElementType !== 3) &&
+                                                                    {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16 && this.state.ElementType !== 17 && this.state.ElementType !== 3 && this.state.ElementType !== 14) &&
                                                                         <div className="form-check col-md-6">
                                                                             <input type="checkbox" className="form-check-input" checked={this.state.IsRequired} onChange={this.handleIsRequiredChange} id="isRequired" />
                                                                             <label className="form-check-label" htmlFor="isRequired">{this.props.t("Is required")}</label>
@@ -1109,7 +1118,7 @@ class Properties extends React.Component {
                                                             {this.state.showWhereElementPropeties === 3 && this.renderElementPropertiesSwitch(this.state.ElementType)}
                                                         </div>
                                                         <div>
-                                                            {this.state.ElementType === 3 && this.renderElementPropertiesSwitch(this.state.ElementType)}
+                                                            {(this.state.ElementType === 3 || this.state.ElementType === 14) && this.renderElementPropertiesSwitch(this.state.ElementType)}
                                                         </div>
                                                     </>
                                                 } />
