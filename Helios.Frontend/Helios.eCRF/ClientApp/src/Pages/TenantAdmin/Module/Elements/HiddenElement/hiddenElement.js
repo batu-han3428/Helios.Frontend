@@ -5,7 +5,6 @@ class HiddenElement extends Component {
         super(props);
 
         this.state = {
-            isDisable: props.IsDisable,
         }
     }
 
@@ -15,7 +14,8 @@ class HiddenElement extends Component {
                 <input
                     className="form-control"
                     type="text"
-                    disabled={this.state.isDisable} />
+                    disabled={"disabled"}
+                    value="Hidden field" />
             </div>
         )
     }

@@ -9,11 +9,16 @@ import ElementList from '../../Module/FormBuilder/elementList.js';
 import '../../Module/FormBuilder/formBuilder.css';
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../../store/loader/actions.js';
+import { decodeToken } from "../../../../helpers/Util/tokenUtil";
+import { getLocalStorage, removeLocalStorage } from '../../../../helpers/local-storage/localStorageProcess.js';
 
 const VisitFormBuilder = props => {
+    let token = getLocalStorage("accessToken");
+    var auth = decodeToken(token);
     const userInformation = useSelector(state => state.rootReducer.Login);
     const { studyVisitPageModuleId } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
+    const [studyPageModuleName, setStudyPageModuleName] = useState('');
     const baseUrl = "http://localhost:3300";
     const dispatch = useDispatch();
 
@@ -27,6 +32,16 @@ const VisitFormBuilder = props => {
             })
             .catch(error => {
                 //console.error('Error:', error);
+            });
+
+        fetch(baseUrl + '/Study/GetStudyPageModule?id=' + studyVisitPageModuleId, {
+            method: 'GET',
+        })
+            .then(response => response.json())
+            .then(data => {
+                setStudyPageModuleName(data.name);
+            })
+            .catch(error => {
             });
     }
 
@@ -44,12 +59,12 @@ const VisitFormBuilder = props => {
                     <div className="page-title-box">
                         <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
                             <Col md={8}>
-                                <h6 className="page-title">{props.t("Form builder")}</h6>
+                                <h6 className="page-title">{studyPageModuleName}</h6>
                             </Col>
                         </Row>
                     </div>
                     <div>
-                        <ElementList TenantId={userInformation.TenantId} ModuleId={studyVisitPageModuleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={2} />
+                        <ElementList TenantId={userInformation.TenantId} ModuleId={studyVisitPageModuleId} StudyId={auth.studyId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={2} />
                     </div>
                 </div>
             </div>

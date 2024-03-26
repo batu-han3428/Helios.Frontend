@@ -42,9 +42,10 @@ import { GetAllElementList } from './allElementList.js';
 
 function ElementList(props) {
     const toastRef = useRef();
-    const baseUrl = props.FormType === 1 ? "http://localhost:3300/Module" :"http://localhost:3300/Study";
+    const baseUrl = props.FormType === 1 ? "http://localhost:3300/Module" : "http://localhost:3300/Study";
     const [tenantId] = useState(props.TenantId);
     const [moduleId] = useState(props.ModuleId);
+    const [studyId] = useState(props.StudyId);
     const [isDisable] = useState(props.IsDisable);
     const [formType] = useState(props.FormType);
     const [elementId, setElementId] = useState(0);
@@ -162,8 +163,7 @@ function ElementList(props) {
                 return <TextElement IsDisable={dsbl}
                 />;
             case 3:
-                return <HiddenElement IsDisable={dsbl}
-                />;
+                return <HiddenElement/>;
             case 4:
                 return <NumericElement
                     Id={param.id}
@@ -238,6 +238,8 @@ function ElementList(props) {
 
             case 15:
                 return <TableElement
+                    StudyId={studyId}
+                    FormType={formType}
                     IsDisable={isDisable}
                     Id={param.id} TenantId={tenantId} ModuleId={moduleId} UserId={0}
                     ColumnCount={param.columnCount} RowCount={param.rowCount}
@@ -246,6 +248,8 @@ function ElementList(props) {
                 />
             case 16:
                 return <DatagridElement
+                    StudyId={studyId}
+                    FormType={formType}
                     IsDisable={isDisable}
                     Id={param.id} TenantId={tenantId} ModuleId={moduleId} UserId={0}
                     ColumnCount={param.columnCount}
@@ -254,7 +258,7 @@ function ElementList(props) {
                 />
             case 17:
                 return <AdverseEventElement
-                    AdverseEventType={param.adverseEventType} 
+                    AdverseEventType={param.adverseEventType}
                     IsDisable={isDisable}
                 />
             default:
@@ -350,6 +354,7 @@ function ElementList(props) {
                             Type={elementType}
                             Id={elementId}
                             TenantId={userInformation.tenantId}
+                            StudyId={studyId}
                             UserId={userInformation.userId}
                             ParentId={0}
                             ActiveTab={activeTab}
