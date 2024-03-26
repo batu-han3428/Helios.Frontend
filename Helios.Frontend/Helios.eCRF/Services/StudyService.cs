@@ -5,6 +5,7 @@ using Helios.eCRF.Hubs;
 using Helios.eCRF.Services.Base;
 using Helios.eCRF.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
+using Newtonsoft.Json;
 using RestSharp;
 using System.Text.Json;
 
@@ -401,7 +402,8 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreStudy/GetVisitPageModuleAllElements", Method.Get);
                 req.AddParameter("visitPageModuleId", id);
                 var result = await client.ExecuteAsync(req);
-                elements = JsonSerializer.Deserialize<List<ElementModel>>(result.Content);
+                //elements = JsonSerializer.Deserialize<List<ElementModel>>(result.Content);
+                elements = JsonConvert.DeserializeObject<List<ElementModel>>(result.Content);
             }
 
             return elements;
@@ -416,10 +418,27 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreStudy/GetVisitPageModuleElementData", Method.Get);
                 req.AddParameter("id", id);
                 var result = await client.ExecuteAsync(req);
-                element = JsonSerializer.Deserialize<ElementModel>(result.Content);
+                //element = JsonSerializer.Deserialize<ElementModel>(result.Content);
+                element = JsonConvert.DeserializeObject<ElementModel>(result.Content);
             }
 
             return element;
+        }
+
+        public async Task<ModuleModel> GetStudyPageModule(Int64 id)
+        {
+            var module = new ModuleModel();
+
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetStudyPageModule", Method.Get);
+                req.AddParameter("id", id);
+                var result = await client.ExecuteAsync(req);
+                //module = JsonSerializer.Deserialize<ModuleModel>(result.Content);
+                module = JsonConvert.DeserializeObject<ModuleModel>(result.Content);
+            }
+
+            return module;
         }
 
         public async Task<ApiResponse<dynamic>> SetVisitRanking(List<VisitDTO> dto)
@@ -437,6 +456,22 @@ namespace Helios.eCRF.Services
                 }
                 return result.Data;
             }
+        }
+
+        public async Task<VisitCollectionModel> GetVisitCollectionInfo(Int64 elementId)
+        {
+            var module = new VisitCollectionModel();
+
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetVisitCollectionInfo", Method.Get);
+                req.AddParameter("elementId", elementId);
+                var result = await client.ExecuteAsync(req);
+                //module = JsonSerializer.Deserialize<VisitCollectionModel>(result.Content);
+                module = JsonConvert.DeserializeObject<VisitCollectionModel>(result.Content);
+            }
+
+            return module;
         }
         #endregion
     }

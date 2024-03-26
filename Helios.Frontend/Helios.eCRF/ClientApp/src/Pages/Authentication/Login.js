@@ -197,7 +197,7 @@ const Login = props => {
                                                     </div>
                                                 </div>
                                                 <div className="col-sm-6 text-end">
-                                                    <button className="btn btn-primary w-md waves-effect waves-light" type="submit">{props.t("Log In")}</button>
+                                                    <button className="btn btn-primary w-md waves-effect waves-light" type="submit">{props.t("Login")}</button>
                                                 </div>
                                             </div>
 

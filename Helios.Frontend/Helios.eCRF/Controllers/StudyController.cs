@@ -252,13 +252,12 @@ namespace Helios.eCRF.Controllers
         /// <param name="studyId">çalışma id</param>
         /// <returns>vizit listesi</returns>
         [HttpGet("{studyId}")]
-        [Authorize(Roles = "TenantAdmin")]
+        //[Authorize(Roles = "TenantAdmin")]
         public async Task<IActionResult> GetVisits(Int64 studyId)
         {
             var result = await _studyService.GetVisits(studyId);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
-
 
         /// <summary>
         /// Visit, page yada module ekler veya günceller
@@ -451,6 +450,22 @@ namespace Helios.eCRF.Controllers
         {
             var elementId = Int64.Parse(id);
             var result = await _studyService.GetVisitPageModuleElementData(elementId);
+
+            return result;
+        }
+
+        [HttpGet]
+        public async Task<ModuleModel> GetStudyPageModule(Int64 id)
+        {
+            var result = await _studyService.GetStudyPageModule(id);
+
+            return result;
+        }
+
+        [HttpGet]
+        public async Task<VisitCollectionModel> GetVisitCollectionInfo(Int64 elementId)
+        {
+            var result = await _studyService.GetVisitCollectionInfo(elementId);
 
             return result;
         }

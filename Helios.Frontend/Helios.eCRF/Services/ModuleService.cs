@@ -5,6 +5,7 @@ using Helios.eCRF.Services.Base;
 using Helios.eCRF.Services.Interfaces;
 using Newtonsoft.Json;
 using RestSharp;
+using System.Text.Json;
 
 namespace Helios.eCRF.Services
 {
@@ -56,6 +57,7 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreModule/GetModule", Method.Get);
                 req.AddParameter("id", id);
                 var result = await client.ExecuteAsync(req);
+                //module = JsonSerializer.Deserialize<ModuleModel>(result.Content);
                 module = JsonConvert.DeserializeObject<ModuleModel>(result.Content);
             }
 
@@ -82,6 +84,7 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreModule/GetModuleAllElements", Method.Get);
                 req.AddParameter("moduleId", id);
                 var result = await client.ExecuteAsync(req);
+                //elements = JsonSerializer.Deserialize<List<ElementModel>>(result.Content);
                 elements = JsonConvert.DeserializeObject<List<ElementModel>>(result.Content);
             }
 
@@ -97,6 +100,7 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreModule/GetModuleElementsWithChildren", Method.Get);
                 req.AddParameter("moduleId", id);
                 var result = await client.ExecuteAsync(req);
+                //elements = JsonSerializer.Deserialize<List<ElementModel>>(result.Content);
                 elements = JsonConvert.DeserializeObject<List<ElementModel>>(result.Content);
             }
 
@@ -112,6 +116,7 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreModule/GetElementData", Method.Get);
                 req.AddParameter("id", id);
                 var result = await client.ExecuteAsync(req);
+                //element = JsonSerializer.Deserialize<ElementModel>(result.Content);
                 element = JsonConvert.DeserializeObject<ElementModel>(result.Content);
             }
 
@@ -174,6 +179,7 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreModule/GetMultipleTagList", Method.Get);
                 req.AddParameter("id", id);
                 var result = await client.ExecuteAsync(req);
+                //tagList = JsonSerializer.Deserialize<List<TagModel>>(result.Content);
                 tagList = JsonConvert.DeserializeObject<List<TagModel>>(result.Content);
             }
 

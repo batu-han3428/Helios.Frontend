@@ -22,7 +22,7 @@ import { withTranslation } from "react-i18next";
 import { GetElementNameByKey } from '../Common/utils';
 import './calcStyle.css';
 
-const baseUrl = "http://localhost:3300";
+const baseUrl = "http://localhost:3300/";
 
 class CalculationElementProperties extends Component {
     constructor(props) {
@@ -32,6 +32,7 @@ class CalculationElementProperties extends Component {
         var inpsCount = props.CalculationSourceInputs !== "" ? JSON.parse(props.CalculationSourceInputs).length : 0;
 
         this.state = {
+            FormType: props.formType,
             elementListOptionGroup: [],
             ModuleId: props.ModuleId,
             Code: props.MainJs,
@@ -79,7 +80,8 @@ class CalculationElementProperties extends Component {
     };
 
     fillAllElementList() {
-        fetch(baseUrl + '/Module/GetModuleAllElements?id=' + this.state.ModuleId, {
+        var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
+        fetch(url + '/GetModuleAllElements?id=' + this.state.ModuleId, {
             method: 'GET',
         })
             .then(response => response.json())

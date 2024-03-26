@@ -14,6 +14,7 @@ const FormBuilder = props => {
     const userInformation = useSelector(state => state.rootReducer.Login);
     const { moduleId } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
+    const [moduleName, setModuleName] = useState('');
     const baseUrl = "http://localhost:3300";
     const dispatch = useDispatch();
 
@@ -24,6 +25,17 @@ const FormBuilder = props => {
             .then(response => response.json())
             .then(data => {
                 setModuleElementList(data);
+            })
+            .catch(error => {
+                //console.error('Error:', error);
+            });
+
+        fetch(baseUrl + '/Module/GetModule?id=' + moduleId, {
+            method: 'GET',
+        })
+            .then(response => response.json())
+            .then(data => {
+                setModuleName(data.name);
             })
             .catch(error => {
                 //console.error('Error:', error);
@@ -44,12 +56,12 @@ const FormBuilder = props => {
                     <div className="page-title-box">
                         <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
                             <Col md={8}>
-                                <h6 className="page-title">{props.t("Form builder")}</h6>
+                                <h6 className="page-title">{moduleName}</h6>
                             </Col>
                         </Row>
                     </div>
                     <div>
-                        <ElementList TenantId={userInformation.TenantId} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={1} />
+                        <ElementList TenantId={userInformation.TenantId} StudyId={0} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={1} />
                     </div>
                 </div>
             </div>
@@ -57,5 +69,5 @@ const FormBuilder = props => {
     );
 }
 
-export default withTranslation() (FormBuilder);
+export default withTranslation()(FormBuilder);
 

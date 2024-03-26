@@ -24,9 +24,11 @@ class DatagridElement extends Component {
             id: props.Id,
             moduleId: props.ModuleId,
             tenantId: props.TenantId,
+            studyId: props.StudyId,
             userId: props.UserId,
             isDisable: props.IsDisable,
             columnCount: props.ColumnCount,
+            FormType: props.FormType,
             datagridAndTableProperties: props.DatagridAndTableProperties !== "" ? JSON.parse(props.DatagridAndTableProperties) : [],
             childElementList: props.ChildElementList.length === 0 ? [] : props.ChildElementList,
             modalState: false,
@@ -70,13 +72,13 @@ class DatagridElement extends Component {
 
         if (this.state.isDisable) {
             if (result)
-                return <ElementList TenantId={this.state.TenantId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} />
+                return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />
             else
                 return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleAddElementModal(index + 1)} />;
         }
         else {
             if (result)
-                return <ElementList TenantId={this.state.TenantId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false}/>
+                return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} FormType={this.state.FormType} />
             else
                 return "";
 
@@ -132,11 +134,14 @@ class DatagridElement extends Component {
                                 Type={this.state.elementType}
                                 Id={0}
                                 TenantId={this.state.tenantId}
+                                StudyId={this.state.studyId}
                                 UserId={this.state.userId}
                                 ParentId={this.state.id}
                                 ActiveTab={"1"}
                                 isCalcBtn={false}
-                                ColumnIndex={this.state.columnIndex}>
+                                ColumnIndex={this.state.columnIndex}
+                                FormType={this.state.FormType}
+                            >
                             </Properties>
                         </div>
                     </ModalBody>

@@ -37,5 +37,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> DeleteElement(Int64 id, Int64 userId);
         Task<List<ElementModel>> GetVisitPageModuleAllElements(Int64 id);
         Task<ElementModel> GetVisitPageModuleElementData(Int64 id);
+        Task<ModuleModel> GetStudyPageModule(Int64 id);
+        Task<VisitCollectionModel> GetVisitCollectionInfo(Int64 elementId);
     }
 }
