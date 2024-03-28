@@ -35,6 +35,7 @@ class ListElementsProperties extends Component {
         this.state = {
             Id: 0,
             Layout: props.Layout,
+            Type: props.Type,
             layoutOptionGroup: [
                 { label: "Vertical", value: 1 },
                 { label: "Horizontal", value: 2 },
@@ -392,22 +393,24 @@ class ListElementsProperties extends Component {
             <div>
                 <AccordionComp title="Option properties" body={
                     <div>
-                        <Row className="mb-3">
-                            <label
-                                htmlFor="example-text-input"
-                                className="col-md-2 col-form-label"
-                            >
-                                {this.props.t("Layout")}
-                            </label>
-                            <div className="col-md-10">
-                                <Select
-                                    value={this.state.layoutSelectedGroup}
-                                    onChange={this.handleLayoutChange}
-                                    options={this.state.layoutOptionGroup}
-                                    placeholder={this.props.t("Select")}
-                                    classNamePrefix="select2-selection" />
-                            </div>
-                        </Row>
+                        {this.state.Type !== 10 && this.state.Type !== 11 &&
+                            <Row className="mb-3">
+                                <label
+                                    htmlFor="example-text-input"
+                                    className="col-md-2 col-form-label"
+                                >
+                                    {this.props.t("Layout")}
+                                </label>
+                                <div className="col-md-10">
+                                    <Select
+                                        value={this.state.layoutSelectedGroup}
+                                        onChange={this.handleLayoutChange}
+                                        options={this.state.layoutOptionGroup}
+                                        placeholder={this.props.t("Select")}
+                                        classNamePrefix="select2-selection" />
+                                </div>
+                            </Row>
+                        }
                         <Row className="mb-3">
                             <label
                                 htmlFor="example-text-input"

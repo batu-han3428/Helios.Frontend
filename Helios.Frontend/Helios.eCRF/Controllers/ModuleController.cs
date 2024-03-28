@@ -67,7 +67,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="model">modül bilgileri</param>
         /// <returns>başarılı başarısız döner</returns>
         [HttpPost]
-        public async Task<bool> DeleteModule(ModuleModel model)
+        public async Task<ApiResponse<dynamic>> DeleteModule(ModuleModel model)
         {
             var result = await _moduleService.DeleteModule(model);
             return result;

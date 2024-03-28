@@ -292,19 +292,6 @@ namespace Helios.eCRF.Services
             }
         }
 
-        private async Task<RestResponse<List<ModuleDTO>>> GetModuleList(SetModuleDTO dto)
-        {
-            using (var client = CoreServiceClient)
-            {
-                string moduleIdsString = string.Join(",", dto.ModuleIds);
-                var req = new RestRequest("CoreModule/GetModuleCollective", Method.Get);
-                req.AddParameter("moduleIds", moduleIdsString);
-                req.AddParameter("pageId", dto.PageId);
-                var result = await client.ExecuteAsync<List<ModuleDTO>>(req);
-                return result;
-            }
-        }
-
         public async Task<ApiResponse<dynamic>> SetStudyModule(SetModuleDTO dto)
         {
             //if (dto.ModuleIds.Count > 0 && dto.PageId != 0)
