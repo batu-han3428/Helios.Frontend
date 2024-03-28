@@ -37,14 +37,14 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<bool> DeleteModule(ModuleModel model)
+        public async Task<ApiResponse<dynamic>> DeleteModule(ModuleModel model)
         {
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreModule/DeleteModule", Method.Post);
                 req.AddJsonBody(model);
-                var result = await client.ExecuteAsync(req);
-                return result.IsSuccessful;
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
             }
         }
 
@@ -84,7 +84,7 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreModule/GetModuleAllElements", Method.Get);
                 req.AddParameter("moduleId", id);
                 var result = await client.ExecuteAsync(req);
-                //elements = JsonSerializer.Deserialize<List<ElementModel>>(result.Content);
+                //elements = System.Text.Json.JsonSerializer.Deserialize<List<ElementModel>>(result.Content);
                 elements = JsonConvert.DeserializeObject<List<ElementModel>>(result.Content);
             }
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     Row,
     Col,
@@ -19,10 +19,16 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { formatDate } from "../../../helpers/format_date";
 import { useDispatch, useSelector } from "react-redux";
+import { decodeToken } from "../../../helpers/Util/tokenUtil";
 import { getLocalStorage } from '../../../helpers/local-storage/localStorageProcess';
+import { withTranslation } from "react-i18next";
+import Swal from 'sweetalert2'
 
-function ModuleList() {
+function ModuleList(props) {
+    let token = getLocalStorage("accessToken");
+    var auth = decodeToken(token);
     const userInformation = useSelector(state => state.rootReducer.Login);
+    const toastRef = useRef();
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -94,7 +100,7 @@ function ModuleList() {
                 },
                 body: JSON.stringify({
                     Id: Id,
-                    TenantId: userInformation.TenantId,
+                    TenantId: auth.tenantId,
                     Name: Name,
                     UserId: userInformation.userId
                 })
@@ -103,6 +109,7 @@ function ModuleList() {
                 .then(response => response.json())
                 .then(data => {
                     tog_large();
+                    window.location.reload();
                     // Handle response from the controller
                 })
                 .catch(error => {
@@ -111,19 +118,60 @@ function ModuleList() {
         }
     };
 
-    const deleteModule = (event, id) => {
-        fetch(baseUrl + '/Module/DeleteModule?id=' + id, {
-            method: 'POST',
+    const deleteModule = (event) => {
+        Swal.fire({
+            title: props.t("You will not be able to recover this element"),
+            text: props.t("Do you confirm"),
+            icon: props.t("Warning"),
+            showCancelButton: true,
+            confirmButtonColor: "#3bbfad",
+            confirmButtonText: props.t("Yes"),
+            cancelButtonText: props.t("Cancel"),
+            closeOnConfirm: false
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    dispatch(startloading());
+                    fetch(baseUrl + '/Module/DeleteModule', {
+                        method: 'POST',
+                        headers: {
+                            'Accept': 'application/json, text/plain, */*',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            Id: event,
+                            TenantId: auth.tenantId,
+                            Name: Name,
+                            UserId: userInformation.userId
+                        })
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            //if (data.isSuccess) {
+                            //    toastRef.current.setToast({
+                            //        message: data.message,
+                            //        stateToast: true
+                            //    });
+                            //} else {
+                            //    toastRef.current.setToast({
+                            //        message: data.message,
+                            //        stateToast: false
+                            //    });
+                            //}
+                            dispatch(endloading());
+                            window.location.reload();
+                        })
+                        .catch(error => {
+                            //console.error('Error:', error);
+                        });
+                } catch (error) {
+                    dispatch(endloading());
+                    Swal.fire('An error occurred', '', 'error');
+                }
+            }
         })
-            .then(response => response.json())
-            .then(data => {
-                // Handle response from the controller
-            })
-            .catch(error => {
-                //console.error('Error:', error);
-            });
-    };
-    
+    }
+
     const data = {
         columns: [
             {
@@ -256,5 +304,5 @@ function ModuleList() {
     );
 }
 
-export default ModuleList;
+export default withTranslation()(ModuleList);
 

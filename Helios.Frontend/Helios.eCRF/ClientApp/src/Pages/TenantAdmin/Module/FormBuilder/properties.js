@@ -59,7 +59,7 @@ class Properties extends React.Component {
             UserId: props.UserId,
             ModuleId: props.ModuleId,
             StudyId: props.StudyId,
-            FormType: props.formType,
+            FormType: props.FormType,
             IsCalcBtn: props.isCalcBtn,
             ElementDetailId: 0,
             ElementType: props.Type,
@@ -256,7 +256,7 @@ class Properties extends React.Component {
                 this.state.fieldWidthsW = "col-md-10";
                 return <TextElementProperties changeUnit={this.changeUnit} Unit={this.state.Unit} />;
             case 3:
-                this.state.showWhereElementPropeties = 4;
+                this.state.showWhereElementPropeties = 3;
                 this.state.fieldWidthsW = "col-md-10";
                 return <HiddenElementProperties StudyId={this.state.StudyId}
                     TargetElementId={this.state.TargetElementId} changeTargetElementId={this.changeTargetElementId} />;
@@ -305,7 +305,7 @@ class Properties extends React.Component {
                 this.state.showWhereElementPropeties = 1;
                 this.state.fieldWidthsW = "col-md-10";
                 return <ListElementsProperties
-                    changeLayout={this.changeLayout} Layout={this.state.Layout}
+                    changeLayout={this.changeLayout} Layout={this.state.Layout} Type={this.state.ElementType}
                     changeSavedTagList={this.changeSavedTagList} SavedTagList={this.state.SavedTagList}
                 />;
             case 12:
@@ -324,7 +324,7 @@ class Properties extends React.Component {
                     changeRightText={this.changeRightText} RightText={this.state.RightText}
                 />;
             case 14:
-                this.state.showWhereElementPropeties = 4;
+                this.state.showWhereElementPropeties = 3;
                 this.state.fieldWidthsW = "col-md-10";
                 return <ConcomittantMedicationElementProperties StudyId={this.state.StudyId}
                     TargetElementId={this.state.TargetElementId} changeTargetElementId={this.changeTargetElementId}
@@ -422,7 +422,7 @@ class Properties extends React.Component {
     fillDependentFieldList() {
         var depFldOptionGroup = [];
         var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
-
+        
         fetch(url + '/GetModuleAllElements?id=' + this.state.ModuleId, {
             method: 'GET',
         })
@@ -756,10 +756,10 @@ class Properties extends React.Component {
 
         var rel = data.relationSourceInputs !== "" ? JSON.parse(data.relationSourceInputs) : '';
         this.state.IsRelation = data.isRelated;
-        this.state.RelationSourceInputs = rel != null ? data.relationSourceInputs : '';
-        this.state.relationElementRows = rel != null ? rel : [];
+        this.state.RelationSourceInputs = rel != null && rel !== "" ? data.relationSourceInputs : '';
+        this.state.relationElementRows = rel != null && rel !== "" ? rel : [];
         this.state.RelationMainJs = data.relationMainJs != null ? data.relationMainJs : '';
-        this.state.inputCounter = rel != null ? rel.length : 0;
+        this.state.inputCounter = rel != null && rel !== "" ? rel.length : 0;
 
         var w = this.state.widthOptionGroup.filter(function (e) {
             if (e.value === data.width)
@@ -1091,20 +1091,21 @@ class Properties extends React.Component {
                                                                     </div>
                                                                 </Row>
                                                             )}
-                                                            {this.state.ElementType !== 3 &&
+                                                            {this.state.showWhereElementPropeties === 0 && this.renderElementPropertiesSwitch(this.state.ElementType)}
                                                                 <Row className="mb-3 ml-0">
                                                                     {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16 && this.state.ElementType !== 17 && this.state.ElementType !== 3 && this.state.ElementType !== 14) &&
                                                                         <div className="form-check col-md-6">
                                                                             <input type="checkbox" className="form-check-input" checked={this.state.IsRequired} onChange={this.handleIsRequiredChange} id="isRequired" />
                                                                             <label className="form-check-label" htmlFor="isRequired">{this.props.t("Is required")}</label>
                                                                         </div>
-                                                                    }
+                                                                }
+                                                                {this.state.ElementType !== 3 &&
                                                                     <div className="form-check col-md-6">
                                                                         <input type="checkbox" className="form-check-input" checked={this.state.IsHidden} onChange={this.handleIsHiddenChange} id="isHidden" />
                                                                         <label className="form-check-label" htmlFor="isHidden">{this.props.t("Is hidden from user")}</label>
                                                                     </div>
+                                                                }
                                                                 </Row>
-                                                            }
                                                             {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 3 && this.state.ElementType !== 7) &&
                                                                 <Row className="mb-3 ml-0">
                                                                     <div className="form-check col-md-6">
@@ -1116,9 +1117,6 @@ class Properties extends React.Component {
                                                         </div>
                                                         <div>
                                                             {this.state.showWhereElementPropeties === 3 && this.renderElementPropertiesSwitch(this.state.ElementType)}
-                                                        </div>
-                                                        <div>
-                                                            {(this.state.ElementType === 3 || this.state.ElementType === 14) && this.renderElementPropertiesSwitch(this.state.ElementType)}
                                                         </div>
                                                     </>
                                                 } />

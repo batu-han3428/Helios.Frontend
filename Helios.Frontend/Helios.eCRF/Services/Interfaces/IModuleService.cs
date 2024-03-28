@@ -9,7 +9,7 @@ namespace Helios.eCRF.Services.Interfaces
     {
         Task<bool> AddModule(ModuleModel model);
         Task<bool> UpdateModule(ModuleModel model);
-        Task<bool> DeleteModule(ModuleModel model);
+        Task<ApiResponse<dynamic>> DeleteModule(ModuleModel model);
         Task<ModuleModel> GetModule(Int64 id);
         Task<RestResponse<List<ModuleModel>>> GetModuleList();
         Task<List<ElementModel>> GetModuleAllElements(Int64 id);
