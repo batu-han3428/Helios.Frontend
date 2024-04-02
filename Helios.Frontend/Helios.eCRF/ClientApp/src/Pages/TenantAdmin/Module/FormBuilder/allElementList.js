@@ -1,16 +1,3 @@
-import TextElement from '../Elements/TextElement/textElement.js';
-import NumericElement from '../Elements/NumericElement/numericElement.js';
-import RadioElement from '../Elements/RadioElement/radioElement.js';
-import CheckElement from '../Elements/CheckElement/checkElement.js';
-import DropdownElement from '../Elements/DropdownElement/dropdownElement.js';
-import DropdownCheckListElement from '../Elements/DropdownCheckListElement/dropdownCheckListElement.js';
-import LabelElement from '../Elements/LabelElement/labelElement.js';
-import DateElement from '../Elements/DateElement/dateElement.js';
-import TextareaElement from '../Elements/TextareaElement/textareaElement.js';
-import FileUploaderElement from '../Elements/FileUploaderElement/fileUploaderElement.js';
-import RangeSliderElement from '../Elements/RangeSliderElement/rangeSliderElement.js';
-import DatagridElement from '../Elements/DatagridElement/datagridElement.js';
-
 const elements = [
     { key: 17, name: 'Adverse event', icon: 'fas fa-heartbeat' },
     { key: 7, name: 'Calculation', icon: 'fas fa-calculator' },

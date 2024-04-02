@@ -23,13 +23,14 @@ import Select from "react-select";
 import classnames from "classnames";
 import { withTranslation } from "react-i18next";
 import ToastComp from '../../../../components/Common/ToastComp/ToastComp';
-import { GetElementNameByKey } from '../Elements/Common/utils.js'
+import { GetElementNameByKey, GetConditionList, GetWidth, GetActionList } from '../Elements/Common/utils.js'
 import CodeMirror from "@uiw/react-codemirror";
 import Swal from 'sweetalert2';
 import AccordionComp from '../../../../components/Common/AccordionComp/AccordionComp';
 import TextElementProperties from '../Elements/TextElement/textElementProperties.js';
 import NumericElementProperties from '../Elements/NumericElement/numericElementProperties.js';
 import ListElementsProperties from '../Elements/Common/listElementsProperties.js';
+import Validation from '../Elements/Common/validation.js';
 import LabelElementProperties from "../Elements/LabelElement/labelElementProperties.js";
 import DateElementProperties from "../Elements/DateElement/dateElementProperties.js";
 import CalculationElementProperties from "../Elements/CalculationElement/calculationElementProperties.js";
@@ -41,6 +42,7 @@ import TableElementProperties from "../Elements/TableElement/tableElementPropert
 import AdverseEventElementProperties from "../Elements/AdverseEventElement/adverseEventElementProperties";
 import HiddenElementProperties from "../Elements/HiddenElement/hiddenElementProperties";
 import ConcomittantMedicationElementProperties from "../Elements/ConcomittantMedicationElement/concomittantMedicationElementProperties";
+import validation from "../Elements/Common/validation.js";
 
 const baseUrl = "http://localhost:3300/";
 
@@ -76,20 +78,7 @@ class Properties extends React.Component {
             IsReadonly: false,
             CanMissing: false,
 
-            widthOptionGroup: [
-                { label: "col-md-1", value: 1 },
-                { label: "col-md-2", value: 2 },
-                { label: "col-md-3", value: 3 },
-                { label: "col-md-4", value: 4 },
-                { label: "col-md-5", value: 5 },
-                { label: "col-md-6", value: 6 },
-                { label: "col-md-7", value: 7 },
-                { label: "col-md-8", value: 8 },
-                { label: "col-md-9", value: 9 },
-                { label: "col-md-10", value: 10 },
-                { label: "col-md-11", value: 11 },
-                { label: "col-md-12", value: 12 },
-            ],
+            widthOptionGroup: GetWidth(),
             widthSelectedGroup: 0,
 
             // Dependency properties
@@ -103,19 +92,9 @@ class Properties extends React.Component {
 
             dependentFieldOptionGroup: [],
             dependentFieldsSelectedGroup: 0,
-            conditionOptionGroup: [
-                { label: "Less", value: 1 },
-                { label: "More", value: 2 },
-                { label: "Equal", value: 3 },
-                { label: "More and equal", value: 4 },
-                { label: "Less and equal", value: 5 },
-                { label: "Not equal", value: 6 },
-            ],
+            conditionOptionGroup: GetConditionList(),
             conditionSelectedGroup: { label: "Equal", value: 3 },
-            actionOptionGroup: [
-                { label: "Show", value: 1 },
-                { label: "Hide", value: 2 },
-            ],
+            actionOptionGroup: GetActionList(),
             actionSelectedGroup: { label: "Show", value: 1 },
             dependentEnabled: true,
 
@@ -160,7 +139,7 @@ class Properties extends React.Component {
             TargetElementId: 0,
             ButtonText: "",
 
-            // Validation
+            // Filed Validation
             RequiredError: 'This value is required',
             ElementNameInputClass: 'form-control',
             DepFldInputClass: '',
@@ -168,7 +147,16 @@ class Properties extends React.Component {
             DepActInputClass: '',
             DepFldVlInputClass: 'form-control input-tag',
 
-            IsFormValid: true
+            IsFormValid: true,
+
+
+            //Validation tab
+            ValidationStatus: false,
+            ValidationContdition: 0,
+            ValidationValue: '',
+            ValidationAction: 0,
+            ValidationMessage: '',
+
         };
 
         this.toastRef = React.createRef();
@@ -233,6 +221,12 @@ class Properties extends React.Component {
         this.changeButtonText.bind(this);
 
         this.changeIsFormValid.bind(this);
+
+        this.changeValidationStatus.bind(this);
+        this.changeValidationContdition.bind(this);
+        this.changeValidationValue.bind(this);
+        this.changeValidationAction.bind(this);
+        this.changeValidationMessage.bind(this);
     }
 
     toggle(tab) {
@@ -328,7 +322,7 @@ class Properties extends React.Component {
                 this.state.fieldWidthsW = "col-md-10";
                 return <ConcomittantMedicationElementProperties StudyId={this.state.StudyId}
                     TargetElementId={this.state.TargetElementId} changeTargetElementId={this.changeTargetElementId}
-                    ButtonText={this.state.ButtonText} changeButtonText={this.changeButtonText } />;
+                    ButtonText={this.state.ButtonText} changeButtonText={this.changeButtonText} />;
             case 15:
                 this.state.showWhereElementPropeties = 3;
                 this.state.fieldWidthsW = "col-md-10";
@@ -422,7 +416,7 @@ class Properties extends React.Component {
     fillDependentFieldList() {
         var depFldOptionGroup = [];
         var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
-        
+
         fetch(url + '/GetModuleAllElements?id=' + this.state.ModuleId, {
             method: 'GET',
         })
@@ -623,6 +617,26 @@ class Properties extends React.Component {
 
     changeIsFormValid = (newValue) => {
         this.setState({ IsFormValid: newValue });
+    };
+
+    changeValidationStatus = (newValue) => {
+        this.setState({ ValidationStatus: newValue });
+    };
+
+    changeValidationContdition = (newValue) => {
+        this.setState({ ValidationContdition: newValue });
+    };
+
+    changeValidationValue = (newValue) => {
+        this.setState({ ValidationValue: newValue });
+    };
+
+    changeValidationAction = (newValue) => {
+        this.setState({ ValidationAction: newValue });
+    };
+
+    changeValidationMessage = (newValue) => {
+        this.setState({ ValidationMessage: newValue });
     };
 
     removeDependentFieldValueTag = (i) => {
@@ -891,7 +905,13 @@ class Properties extends React.Component {
                 RelationMainJs: this.state.RelationMainJs,
 
                 ChildElements: [],
-                VariableName: ""
+                VariableName: "",
+
+                // Validation
+                ValidationActionType: this.state.ValidationAction,
+                ValidationCondition: this.state.ValidationContdition,
+                ValidationValue: this.state.ValidationValue,
+                ValidationMessage: this.state.ValidationMessage
             });
 
             debugger;
@@ -1092,12 +1112,12 @@ class Properties extends React.Component {
                                                                 </Row>
                                                             )}
                                                             {this.state.showWhereElementPropeties === 0 && this.renderElementPropertiesSwitch(this.state.ElementType)}
-                                                                <Row className="mb-3 ml-0">
-                                                                    {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16 && this.state.ElementType !== 17 && this.state.ElementType !== 3 && this.state.ElementType !== 14) &&
-                                                                        <div className="form-check col-md-6">
-                                                                            <input type="checkbox" className="form-check-input" checked={this.state.IsRequired} onChange={this.handleIsRequiredChange} id="isRequired" />
-                                                                            <label className="form-check-label" htmlFor="isRequired">{this.props.t("Is required")}</label>
-                                                                        </div>
+                                                            <Row className="mb-3 ml-0">
+                                                                {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16 && this.state.ElementType !== 17 && this.state.ElementType !== 3 && this.state.ElementType !== 14) &&
+                                                                    <div className="form-check col-md-6">
+                                                                        <input type="checkbox" className="form-check-input" checked={this.state.IsRequired} onChange={this.handleIsRequiredChange} id="isRequired" />
+                                                                        <label className="form-check-label" htmlFor="isRequired">{this.props.t("Is required")}</label>
+                                                                    </div>
                                                                 }
                                                                 {this.state.ElementType !== 3 &&
                                                                     <div className="form-check col-md-6">
@@ -1105,7 +1125,7 @@ class Properties extends React.Component {
                                                                         <label className="form-check-label" htmlFor="isHidden">{this.props.t("Is hidden from user")}</label>
                                                                     </div>
                                                                 }
-                                                                </Row>
+                                                            </Row>
                                                             {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 3 && this.state.ElementType !== 7) &&
                                                                 <Row className="mb-3 ml-0">
                                                                     <div className="form-check col-md-6">
@@ -1327,23 +1347,14 @@ class Properties extends React.Component {
                                         <>
                                             <TabPane tabId="3">
                                                 <Row>
-                                                    <Col sm="12">
-                                                        <CardText className="mb-0">
-                                                            Etsy mixtape wayfarers, ethical wes anderson tofu
-                                                            before they sold out mcsweeney's organic lomo
-                                                            retro fanny pack lo-fi farm-to-table readymade.
-                                                            Messenger bag gentrify pitchfork tattooed craft
-                                                            beer, iphone skateboard locavore carles etsy
-                                                            salvia banksy hoodie helvetica. DIY synth PBR
-                                                            banksy irony. Leggings gentrify squid 8-bit cred
-                                                            pitchfork. Williamsburg banh mi whatever
-                                                            gluten-free, carles pitchfork biodiesel fixie etsy
-                                                            retro mlkshk vice blog. Scenester cred you
-                                                            probably haven't heard of them, vinyl craft beer
-                                                            blog stumptown. Pitchfork sustainable tofu synth
-                                                            chambray yr.
-                                                        </CardText>
-                                                    </Col>
+                                                    <Validation StudyId={this.state.StudyId}
+                                                        ValidationStatus={this.state.ValidationStatus} changeValidationStatus={this.changeValidationStatus}
+                                                        ValidationContdition={this.state.ValidationContdition} changeValidationContdition={this.changeValidationContdition}
+                                                        ValidationValue={this.state.ValidationValue} changeValidationValue={this.changeValidationValue}
+                                                        ValidationAction={this.state.ValidationAction} changeValidationAction={this.changeValidationAction}
+                                                        ValidationMessage={this.state.ValidationMessage} changeValidationMessage={this.changeValidationMessage}
+                                                        changeIsFormValid={this.changeF}
+                                                    />
                                                 </Row>
                                             </TabPane>
                                             <TabPane tabId="4">

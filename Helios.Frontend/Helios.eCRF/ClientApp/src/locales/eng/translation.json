@@ -546,5 +546,9 @@
   "You haven't made any changes.": "You haven't made any changes.",
   "Page list": "Page list",
   "Input list": "Input list",
-  "Button text": "Button text"
+  "Button text": "Button text",
+  "Trigger a validation message when data is entered into the field.": "Trigger a validation message when data is entered into the field.",
+  "Add message": "Add message",
+  "Exclusion message": "Exclusion message",
+  "If the field is": "If the field is"
 }

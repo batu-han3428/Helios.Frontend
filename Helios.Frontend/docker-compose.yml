@@ -3,29 +3,29 @@ version: '3.4'
 services:
 
 
-  helios.core:
-    image:  medcase.azurecr.io/helios/helios-core:v0.0.3
-    ports:
-      - "3500:8080"
-      - "3501:3501"
-    networks:
-      v3network:
-        aliases:
-          - core
+  # helios.core:
+  #   image:  medcase.azurecr.io/helios/helios-core:v0.0.3
+  #   ports:
+  #     - "3500:8080"
+  #     - "3501:3501"
+  #   networks:
+  #     v3network:
+  #       aliases:
+  #         - core
 
-  helios.authentication:
-    image: medcase.azurecr.io/helios/helios-auth:v0.0.3
-    ports:
-        - "8080:8080"
-        - "8081:8081"
-    environment:
-      - AppConfig__RabbitMQCrf=rabbitmq://rabbitmq:5672/
-      - AppConfig__RabbitMQUserName=guest
-      - AppConfig__RabbitMQPassword=guest
-    networks:
-      v3network:
-        aliases:
-          - authentication
+  # helios.authentication:
+  #   image: medcase.azurecr.io/helios/helios-auth:v0.0.3
+  #   ports:
+  #       - "8080:8080"
+  #       - "8081:8081"
+  #   environment:
+  #     - AppConfig__RabbitMQCrf=rabbitmq://rabbitmq:5672/
+  #     - AppConfig__RabbitMQUserName=guest
+  #     - AppConfig__RabbitMQPassword=guest
+  #   networks:
+  #     v3network:
+  #       aliases:
+  #         - authentication
 
   helios.ecrf:
     image: ${DOCKER_REGISTRY-}heliosecrf
@@ -51,15 +51,15 @@ services:
     networks:
       - v3network
 
-  rabbitmq:
-    image: rabbitmq:3-management-alpine
-    ports:
-    - 5672:5672
-    - 15672:15672
-    networks:
-    - v3network
-    volumes:
-    - ./volume/rabbitmq:/data
+  # rabbitmq:
+  #   image: rabbitmq:3-management-alpine
+  #   ports:
+  #   - 5672:5672
+  #   - 15672:15672
+  #   networks:
+  #   - v3network
+  #   volumes:
+  #   - ./volume/rabbitmq:/data
 
 volumes:
   data-volume:
