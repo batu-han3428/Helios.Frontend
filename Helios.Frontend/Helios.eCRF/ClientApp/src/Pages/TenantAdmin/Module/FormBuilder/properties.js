@@ -42,7 +42,6 @@ import TableElementProperties from "../Elements/TableElement/tableElementPropert
 import AdverseEventElementProperties from "../Elements/AdverseEventElement/adverseEventElementProperties";
 import HiddenElementProperties from "../Elements/HiddenElement/hiddenElementProperties";
 import ConcomittantMedicationElementProperties from "../Elements/ConcomittantMedicationElement/concomittantMedicationElementProperties";
-import validation from "../Elements/Common/validation.js";
 
 const baseUrl = "http://localhost:3300/";
 
@@ -151,11 +150,7 @@ class Properties extends React.Component {
 
 
             //Validation tab
-            ValidationStatus: false,
-            ValidationContdition: 0,
-            ValidationValue: '',
-            ValidationAction: 0,
-            ValidationMessage: '',
+            ValidationList: [],
 
         };
 
@@ -222,11 +217,7 @@ class Properties extends React.Component {
 
         this.changeIsFormValid.bind(this);
 
-        this.changeValidationStatus.bind(this);
-        this.changeValidationContdition.bind(this);
-        this.changeValidationValue.bind(this);
-        this.changeValidationAction.bind(this);
-        this.changeValidationMessage.bind(this);
+        this.changeValidationList.bind(this);
     }
 
     toggle(tab) {
@@ -619,24 +610,8 @@ class Properties extends React.Component {
         this.setState({ IsFormValid: newValue });
     };
 
-    changeValidationStatus = (newValue) => {
-        this.setState({ ValidationStatus: newValue });
-    };
-
-    changeValidationContdition = (newValue) => {
-        this.setState({ ValidationContdition: newValue });
-    };
-
-    changeValidationValue = (newValue) => {
-        this.setState({ ValidationValue: newValue });
-    };
-
-    changeValidationAction = (newValue) => {
-        this.setState({ ValidationAction: newValue });
-    };
-
-    changeValidationMessage = (newValue) => {
-        this.setState({ ValidationMessage: newValue });
+    changeValidationList = (newValue) => {
+        this.setState({ ValidationList: newValue });
     };
 
     removeDependentFieldValueTag = (i) => {
@@ -808,6 +783,8 @@ class Properties extends React.Component {
         if (data.isDependent) {
             this.setState({ dependentEnabled: false });
         }
+
+        this.state.ValidationList = data.validationList;
     }
 
     handleSaveModuleContent(e) {
@@ -908,10 +885,8 @@ class Properties extends React.Component {
                 VariableName: "",
 
                 // Validation
-                ValidationActionType: this.state.ValidationAction,
-                ValidationCondition: this.state.ValidationContdition,
-                ValidationValue: this.state.ValidationValue,
-                ValidationMessage: this.state.ValidationMessage
+                HasValidation: this.state.ValidationList.length > 0 ? true : false,
+                ValidationList: this.state.ValidationList.length > 0 ? JSON.stringify(this.state.ValidationList) : ""
             });
 
             debugger;
@@ -1345,17 +1320,15 @@ class Properties extends React.Component {
                                     </TabPane>
                                     {this.state.showWhereElementPropeties !== 2 &&
                                         <>
-                                            <TabPane tabId="3">
+                                        <TabPane tabId="3">
+                                            {this.state.activeTab === '3' && (
                                                 <Row>
                                                     <Validation StudyId={this.state.StudyId}
-                                                        ValidationStatus={this.state.ValidationStatus} changeValidationStatus={this.changeValidationStatus}
-                                                        ValidationContdition={this.state.ValidationContdition} changeValidationContdition={this.changeValidationContdition}
-                                                        ValidationValue={this.state.ValidationValue} changeValidationValue={this.changeValidationValue}
-                                                        ValidationAction={this.state.ValidationAction} changeValidationAction={this.changeValidationAction}
-                                                        ValidationMessage={this.state.ValidationMessage} changeValidationMessage={this.changeValidationMessage}
-                                                        changeIsFormValid={this.changeF}
+                                                        ValidationList={this.state.ValidationList} changeValidationList={this.changeValidationList}
+                                                        changeIsFormValid={this.changeIsFormValid}
                                                     />
                                                 </Row>
+                                            )}
                                             </TabPane>
                                             <TabPane tabId="4">
                                                 <Row>
