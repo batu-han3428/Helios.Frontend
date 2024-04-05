@@ -31,6 +31,7 @@ class DatagridElement extends Component {
             FormType: props.FormType,
             datagridAndTableProperties: props.DatagridAndTableProperties !== "" ? JSON.parse(props.DatagridAndTableProperties) : [],
             childElementList: props.ChildElementList.length === 0 ? [] : props.ChildElementList,
+            tableRows: [],
             modalState: false,
             elementListOptionGroup: GetAllElementListForSelect(16),
             elementListSelectedGroup: null,
@@ -42,6 +43,7 @@ class DatagridElement extends Component {
         this.toggleAddElementModal = this.toggleAddElementModal.bind(this);
         this.handleElementListChange = this.handleElementListChange.bind(this);
         this.getTdContent = this.getTdContent.bind(this);
+        this.handleAddAnother = this.handleAddAnother.bind(this);
     }
 
     toggleAddElementModal = (columnIndex) => {
@@ -85,6 +87,16 @@ class DatagridElement extends Component {
         }
     }
 
+    handleAddAnother = () => {
+        const newRow = [...Array(this.state.columnCount)].map((_, columnIndex) => (
+            <td key={columnIndex}>{this.getTdContent(columnIndex)}</td>
+        ));
+
+        this.setState((prevState) => ({
+            tableRows: [...prevState.tableRows, <tr key={prevState.tableRows.length}>{newRow}</tr>],
+        }));
+    };
+
     render() {
         return (
             <div className="table-responsive mb-3">
@@ -104,9 +116,18 @@ class DatagridElement extends Component {
                                 </td>
                             ))}
                         </tr>
+                        {this.state.tableRows}
                     </tbody>
                 </Table>
-
+                {!this.state.isDisable &&
+                    <Row>
+                        <div>
+                            <Button color="primary" onClick={this.handleAddAnother} className='mt-1'>
+                                {"+ " + this.props.t("Add another")}
+                            </Button>
+                        </div>
+                    </Row>
+                }
                 <Modal isOpen={this.state.modalState} toggle={this.toggleAddElementModal} size="md">
                     <ModalHeader className="mt-0" toggle={this.toggleAddElementModal}>{this.props.t("Add a child input")}</ModalHeader>
                     <ModalBody>

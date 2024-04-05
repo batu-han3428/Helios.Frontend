@@ -27,12 +27,12 @@ const baseUrl = "http://localhost:3300/";
 class CalculationElementProperties extends Component {
     constructor(props) {
         super(props);
-
+        
         var inps = props.CalculationSourceInputs !== "" ? JSON.parse(props.CalculationSourceInputs) : [];
         var inpsCount = props.CalculationSourceInputs !== "" ? JSON.parse(props.CalculationSourceInputs).length : 0;
 
         this.state = {
-            FormType: props.formType,
+            FormType: props.FormType,
             elementListOptionGroup: [],
             ModuleId: props.ModuleId,
             Code: props.MainJs,
