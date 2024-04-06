@@ -543,5 +543,6 @@
   "Visits & pages": "Visits & pages",
   "Ranking": "Ranking",
   "You have unsaved changes.": "You have unsaved changes.",
-  "You haven't made any changes.": "You haven't made any changes."
+  "You haven't made any changes.": "You haven't made any changes.",
+  "There is no element in the module you want to add. Please add element first.": "There is no element in the module you want to add. Please add element first."
 }

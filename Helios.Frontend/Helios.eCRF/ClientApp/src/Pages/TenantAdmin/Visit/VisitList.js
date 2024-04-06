@@ -15,10 +15,13 @@ import { DndContext } from '@dnd-kit/core';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import * as signalR from '@microsoft/signalr';
+import { useParams } from 'react-router-dom';
 
 const Study = props => {
-    
+
     const modalRef = useRef();
+
+    const modalContentRef = useRef();
 
     const toastRef = useRef();
 
@@ -30,7 +33,7 @@ const Study = props => {
 
     const [dataSource, setDataSource] = useState([]);
 
-    const { handleSave, handleList, studyInformation, sensors, onDragEnd, saveRanking, rankingHandle, ranking, editing, editingHandle, setData } = useApiHelper(dataSource, setDataSource, toastRef);
+    const { handleSave, handleList, studyInformation, sensors, onDragEnd, saveRanking, rankingHandle, ranking, editing, editingHandle, setData, setEditing } = useApiHelper(dataSource, setDataSource, toastRef);
 
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
@@ -183,6 +186,12 @@ const Study = props => {
         };
     }, []);
 
+    const { studyId } = useParams();
+
+    useEffect(() => {
+        setEditing(false);
+    }, [studyId]);
+
     return (
         <React.Fragment>
             <div className="page-content">
@@ -201,9 +210,9 @@ const Study = props => {
                                     <Tooltip title={allRowsExpanded ? props.t("Collapse all") : props.t("Expand all")}>
                                         <Button onClick={handleToggleAllRows} icon={<FontAwesomeIcon icon="fa-solid fa-bars" style={{ color: "#3d3d3d", }} />} />
                                     </Tooltip>
-                                    {editing &&
+                                    {editing && studyInformation.isDemo &&
                                         <>
-                                            <Dropdown menu={visitSettingsItems()} trigger={['click']} placement="bottomLeft">
+                                            <Dropdown menu={visitSettingsItems(openModal, studyInformation.studyId, studyInformation.equivalentStudyId, modalContentRef, toastRef, modalRef)} trigger={['click']} placement="bottomLeft">
                                                 <Button type="default" style={{ margin: "0 10px" }}>
                                                     <Space>
                                                         {props.t("Visit settings")}
@@ -218,13 +227,15 @@ const Study = props => {
                                         </>
                                     }
                                 </div>
-                                <Switch
-                                    checkedChildren={<CheckOutlined />}
-                                    unCheckedChildren={<CloseOutlined />}
-                                    defaultChecked={editing}
-                                    onChange={editingHandle}
-                                    checked={editing}
-                                />
+                                {studyInformation.isDemo && 
+                                    <Switch
+                                        checkedChildren={<CheckOutlined />}
+                                        unCheckedChildren={<CloseOutlined />}
+                                        defaultChecked={editing}
+                                        onChange={editingHandle}
+                                        checked={editing}
+                                        />
+                                }
                             </div>       
                             <DndContext sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
                                 <SortableContext

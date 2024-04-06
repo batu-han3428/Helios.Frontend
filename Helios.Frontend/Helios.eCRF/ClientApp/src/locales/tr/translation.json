@@ -390,5 +390,6 @@
   "Visits & pages": "Vizitler & sayfalar",
   "Ranking": "Sıralama",
   "You have unsaved changes.": "Kaydedilmemiş değişiklikleriniz var.",
-  "You haven't made any changes.": "Herhangi bir değişiklik yapmadınız."
+  "You haven't made any changes.": "Herhangi bir değişiklik yapmadınız.",
+  "There is no element in the module you want to add. Please add element first.": "Eklemek istediğiniz modülde element yoktur. Lütfen önce element ekleyiniz."
 }

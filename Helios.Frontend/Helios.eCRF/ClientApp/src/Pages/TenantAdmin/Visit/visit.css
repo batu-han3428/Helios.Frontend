@@ -3,9 +3,14 @@
 }
 
 .row-page-background-color {
-    background-color: #b0c2e5 !important;
+    background-color: #d3d3d3 !important;
 }
 
 .row-module-background-color {
     background-color: white !important;
+}
+
+.deleted-row {
+    text-decoration: line-through;
+    color: red;
 }

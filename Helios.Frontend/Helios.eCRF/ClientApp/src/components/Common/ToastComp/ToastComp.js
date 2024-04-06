@@ -3,45 +3,28 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const ToastComp = forwardRef((props, ref) => {
+    const [toastMessages, setToastMessages] = useState([]);
 
-    const [showToast, setShowToast] = useState(false);
-    const [message, setMessage] = useState("");
-    const [autoHide, setAutoHide] = useState(true);
-    const [stateToast, setStateToast] = useState(true);
+    useEffect(() => {
+        if (toastMessages.length > 0) {
+            toastMessages.forEach((toastMessage) => {
+                if (toastMessage.stateToast) {
+                    toast.success(toastMessage.message, { autoClose: toastMessage.autoHide });
+                } else {
+                    toast.error(toastMessage.message, { autoClose: toastMessage.autoHide });
+                }
+            });
+            setToastMessages([]);
+        }
+    }, [toastMessages]);
 
     const setToast = useCallback((toast) => {
-        if (toast.message !== undefined) {
-            setMessage(toast.message);
-        }
-        if (toast.autoHide !== undefined) {
-            setAutoHide(toast.autoHide);
-        }
-        if (toast.stateToast !== undefined) {
-            setStateToast(toast.stateToast);
-        }
-
-        setShowToast(true);
+        setToastMessages(prevToastMessages => [...prevToastMessages, toast]);
     }, []);
 
     useImperativeHandle(ref, () => ({
         setToast: setToast
     }), [setToast]);
-
-    useEffect(() => {
-        if (showToast) {
-            if (stateToast) {
-                toast.success(message, {
-                    autoClose: autoHide
-                });
-            } else {
-                toast.error(message, {
-                    autoClose: autoHide
-                });
-            }
-            setShowToast(false);
-        }
-    }, [showToast, stateToast, message, autoHide]);
-
 
     return (
         <ToastContainer />
