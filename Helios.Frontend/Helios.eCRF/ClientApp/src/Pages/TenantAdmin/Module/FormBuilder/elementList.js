@@ -290,7 +290,7 @@ function ElementList(props) {
                                     <Button className="actionBtn" id={item.id} onClick={e => togglePropModal(e, item.elementType, item.id, "2")}><i className="fas fa-project-diagram"></i></Button>
                                 )}
                                 {item.elementType === 7 /*calculated*/ && (
-                                    <Button className="actionBtn" id={item.id} onClick={e => togglePropModal(e, 0, item.id, "1", true)}><i className="fas fa-calculator"></i></Button>
+                                    <Button className="actionBtn" id={item.id} onClick={e => togglePropModal(e, 7, item.id, "1", true)}><i className="fas fa-calculator"></i></Button>
                                 )}
                                 <Button className="actionBtn" id={item.id} onClick={e => togglePropModal(e, item.elementType, item.id, "1")}><i className="far fa-edit"></i></Button>
                                 {(item.parentId === 0 || item.parentId == null) && (
