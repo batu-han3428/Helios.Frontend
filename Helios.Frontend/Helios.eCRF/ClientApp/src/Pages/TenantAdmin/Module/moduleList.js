@@ -28,8 +28,6 @@ function ModuleList(props) {
     let token = getLocalStorage("accessToken");
     var auth = decodeToken(token);
     const userInformation = useSelector(state => state.rootReducer.Login);
-    const toastRef = useRef();
-
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const baseUrl = "http://localhost:3300";
@@ -37,7 +35,7 @@ function ModuleList(props) {
     const [Name, setName] = useState('');
     const [Id, setId] = useState(0);
     const [NameClass, setNameClass] = useState('form-control');
-    const [RequiredError, setRequiredError] = useState('This value is required');
+    const [RequiredError] = useState('This value is required');
     const [modal_large, setmodal_large] = useState(false);
     const [tableData, setTableData] = useState([]);
 
@@ -64,7 +62,7 @@ function ModuleList(props) {
     };
 
     const tog_large = (e, id) => {
-        if (id != "" && id != undefined) {
+        if (id !== "" && id !== undefined) {
             setId(id);
             fetch(baseUrl + '/Module/GetModule?id=' + id, {
                 method: 'GET',
@@ -87,7 +85,7 @@ function ModuleList(props) {
     };
 
     const handleSubmit = (e) => {
-        if (Name == "") {
+        if (Name === "") {
             setNameClass("is-invalid form-control");
             e.preventDefault();
         }
@@ -216,11 +214,26 @@ function ModuleList(props) {
             });
     }
 
-    useEffect(() => {
-        dispatch(startloading());
+    const handleRowDoubleClick = (rowId) => {
+        navigateToFormBuilder(rowId)
+    };
+
+    const renderRows = () => {
         fetchData();
-        dispatch(endloading());
-    }, []);
+        
+        return data.rows.map((row) => (
+            <tr key={row.id} onDoubleClick={() => handleRowDoubleClick(row.id)}>
+                <td>{row.name}</td>
+                <td>{row.actions}</td>
+            </tr>
+        ));
+    };
+
+    //useEffect(() => {
+    //    dispatch(startloading());
+    //    fetchData();
+    //    dispatch(endloading());
+    //}, []);
 
     return (
         <>
@@ -274,22 +287,28 @@ function ModuleList(props) {
                             <Col className="col-12">
                                 <Card>
                                     <CardBody>
-                                        <table className="table table-hover mb-0">
+                                        <MDBDataTable
+                                            paginationLabel={[props.t("Previous"), props.t("Next")]}
+                                            entriesLabel={props.t("Show entries")}
+                                            searchLabel={props.t("Search")}
+                                            noRecordsFoundLabel={props.t("No matching records found")}
+                                            hover
+                                            responsive
+                                            striped
+                                            bordered
+                                            data={data}
+                                        >
                                             <thead>
                                                 <tr>
-                                                    <th>Module Name</th>
-                                                    <th>Actions</th>
+                                                    {data.columns.map((col) => (
+                                                        <th key={col.field}>{col.label}</th>
+                                                    ))}
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                {tableData.map((rowData, rowIndex) => (
-                                                    <tr key={rowIndex} onDoubleClick={() => navigateToFormBuilder(rowData.id)}>
-                                                        <td>{rowData.name}</td>
-                                                        <td>{getActions(rowData.id)}</td>
-                                                    </tr>
-                                                ))}
+                                                {renderRows()}
                                             </tbody>
-                                        </table>
+                                        </MDBDataTable>
                                     </CardBody>
                                 </Card>
                             </Col>
@@ -297,9 +316,6 @@ function ModuleList(props) {
                     </div>
                 </div>
             </React.Fragment>
-
-
-
         </>
     );
 }

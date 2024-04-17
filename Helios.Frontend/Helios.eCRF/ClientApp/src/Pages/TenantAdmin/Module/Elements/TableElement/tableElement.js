@@ -29,7 +29,7 @@ class TableElement extends Component {
             columnCount: props.ColumnCount,
             rowCount: props.RowCount,
             FormType: props.FormType,
-            datagridAndTableProperties: props.DatagridAndTableProperties !== "" ? JSON.parse(props.DatagridAndTableProperties) : [],
+            datagridAndTableProperties: props.DatagridAndTableProperties !== "" && props.DatagridAndTableProperties !== null ? JSON.parse(props.DatagridAndTableProperties) : [],
             childElementList: props.ChildElementList.length === 0 ? [] : props.ChildElementList,
             modalState: false,
             elementListOptionGroup: GetAllElementListForSelect(16),
@@ -72,7 +72,7 @@ class TableElement extends Component {
                 cld.push(item);
             }
         })
-
+        debugger;
         if (this.state.isDisable) {
             if (result)
                 return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />
@@ -146,6 +146,8 @@ class TableElement extends Component {
                                 ColumnIndex={this.state.columnIndex}
                                 RowIndex={this.state.rowIndex}
                                 FormType={this.state.FormType}
+                                Dispatch={this.props.Dispatch}
+                                SetPropModal={this.props.SetPropModal}
                             >
                             </Properties>
                         </div>
