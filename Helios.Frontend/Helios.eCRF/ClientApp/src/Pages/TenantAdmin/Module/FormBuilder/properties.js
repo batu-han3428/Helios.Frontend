@@ -26,6 +26,7 @@ import ToastComp from '../../../../components/Common/ToastComp/ToastComp';
 import { GetElementNameByKey, GetConditionList, GetWidth, GetActionList } from '../Elements/Common/utils.js'
 import CodeMirror from "@uiw/react-codemirror";
 import Swal from 'sweetalert2';
+import { startloading, endloading } from '../../../../store/loader/actions';
 import AccordionComp from '../../../../components/Common/AccordionComp/AccordionComp';
 import TextElementProperties from '../Elements/TextElement/textElementProperties.js';
 import NumericElementProperties from '../Elements/NumericElement/numericElementProperties.js';
@@ -52,6 +53,7 @@ class Properties extends React.Component {
         this.state = {
             activeTab: props.ActiveTab,
             showWhereElementPropeties: 0,
+            dispatch: props.Dispatch,
 
             // General properties
             Id: props.Id,
@@ -148,13 +150,13 @@ class Properties extends React.Component {
 
             IsFormValid: true,
 
-
             //Validation tab
             ValidationList: [],
 
         };
 
         this.toastRef = React.createRef();
+        this.setShowToast.bind(this);
         this.fillDependentFieldList();
         this.getElementData();
 
@@ -218,6 +220,10 @@ class Properties extends React.Component {
         this.changeIsFormValid.bind(this);
 
         this.changeValidationList.bind(this);
+    }
+
+    setShowToast() {
+        this.state.showToast = false;
     }
 
     toggle(tab) {
@@ -406,6 +412,7 @@ class Properties extends React.Component {
     // #region dependent
     fillDependentFieldList() {
         var depFldOptionGroup = [];
+        var relFldOptionGroup = [];
         var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
 
         fetch(url + '/GetModuleAllElements?id=' + this.state.ModuleId, {
@@ -416,15 +423,16 @@ class Properties extends React.Component {
                 data.map(item => {
                     var itm = { label: item.elementName + " - " + GetElementNameByKey(this.props, item.elementType), value: item.id };
 
-                    //if (item.id != this.state.Id) {
-                    depFldOptionGroup.push(itm);
-                    //}
+                    if (item.id != this.state.Id) {
+                        depFldOptionGroup.push(itm);
+                    }
+
+                    relFldOptionGroup.push(itm);
                 });
 
                 this.state.dependentFieldOptionGroup = depFldOptionGroup;
-                this.state.relationFieldOptionGroup = depFldOptionGroup;
 
-                if (this.state.Id != 0) {
+                if (this.state.Id !== 0 && this.state.Id !== undefined) {
                     var t = this.state.DependentSourceFieldId;
 
                     var f = this.state.dependentFieldOptionGroup.filter(function (e) {
@@ -434,6 +442,16 @@ class Properties extends React.Component {
 
                     this.state.dependentFieldsSelectedGroup = f;
                 }
+                else {
+                    const newItem = {
+                        label: GetElementNameByKey(this.props, this.state.ElementType) + ' - ' + GetElementNameByKey(this.props, this.state.ElementType),
+                        value: 0,
+                    };
+
+                    relFldOptionGroup.push(newItem);
+                }
+
+                this.state.relationFieldOptionGroup = relFldOptionGroup;
             })
             .catch(error => {
                 //console.error('Error:', error);
@@ -885,12 +903,13 @@ class Properties extends React.Component {
                 VariableName: "",
 
                 // Validation
-                HasValidation: this.state.ValidationList.length > 0 ? true : false,
+                HasValidation: this.state.ValidationList !== "[]" && this.state.ValidationList.length > 0 ? true : false,
                 ValidationList: this.state.ValidationList.length > 0 ? JSON.stringify(this.state.ValidationList) : ""
             });
 
             debugger;
             var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
+            this.state.dispatch(startloading());
 
             fetch(url + '/SaveModuleContent', {
                 method: 'POST',
@@ -899,27 +918,44 @@ class Properties extends React.Component {
                     'Content-Type': 'application/json'
                 },
                 body: bdy
-            }).then(res => res.json())
+            }).then(res => {
+                return res.json()
+            })
                 .then(data => {
-                    if (data.isSuccess) {
-                        Swal.fire(data.message, '', 'success');
-                    } else {
-                        Swal.fire(data.message, '', 'error');
-                        console.log(data.message);
-                    };
                     //if (data.isSuccess) {
-                    //    this.state.toastMessage = data.message;
-                    //    this.state.stateToast = true;
-                    //    this.state.showToast = true;
+                    //    Swal.fire(data.message, '', 'success');
+                    //window.location.reload();
                     //} else {
-                    //    this.state.toastMessage = data.message;
-                    //    this.state.stateToast = false;
-                    //    this.state.showToast = true;
-                    //}
+                    //    Swal.fire(data.message, '', 'error');
+                    //    console.log(data.message);
+                    //};                  
+
+                    this.state.dispatch(startloading());
+
+                    if (data.isSuccess) {
+                        this.toastRef.current.setToast({
+                            message: data.message,
+                            stateToast: true
+                        });
+
+                        if (this.state.ElementType === 1 || this.state.ElementType === 8 || this.state.ElementType === 15 || this.state.ElementType === 16)//label, radio button, table, datagrid need to reload page
+                            window.location.reload();
+                        else
+                            this.props.SetPropModal(false);
+                    } else {
+                        this.toastRef.current.setToast({
+                            message: data.message,
+                            stateToast: false
+                        });
+                    }
                 })
                 .catch(error => {
-                    console.error('Error:', error);
-                    //alert(error)
+                    //console.error('Error:', error);
+                    //alert(error);
+                    //this.toastRef.current.setToast({
+                    //    message: error,
+                    //    stateToast: false
+                    //});
                 });
         }
         else {
@@ -927,315 +963,215 @@ class Properties extends React.Component {
         }
     }
 
-    componentDidMount() {
-        // Add an event listener for keydown on the form element
-        document.getElementById('formBuilder').addEventListener('keydown', (event) => {
-            if (event.key === 'Enter') {
-                event.preventDefault(); // Prevent Enter key from submitting the form
-            }
-        });
-    }
+    //componentDidMount() {
+    //    // Add an event listener for keydown on the form element
+    //    document.getElementById('formBuilder').addEventListener('keydown', (event) => {
+    //        if (event.key === 'Enter') {
+    //            event.preventDefault(); // Prevent Enter key from submitting the form
+    //        }
+    //    });
+    //}
 
     render() {
         return (
             <div>
                 {/*<ElementBase>*/}
-                <form id="formBuilder" onSubmit={this.handleSaveModuleContent}>
-                    <Col lg={12}>
-                        <Card>
-                            <CardBody>
-                                <Nav tabs>
-                                    <NavItem>
-                                        <NavLink
-                                            style={{ cursor: "pointer" }}
-                                            className={classnames({
-                                                active: this.state.activeTab === "1",
-                                            })}
-                                            onClick={() => {
-                                                this.toggle("1");
-                                            }}
-                                        >
-                                            {this.props.t("General")}
-                                        </NavLink>
-                                    </NavItem>
-                                    <NavItem>
-                                        <NavLink
-                                            style={{ cursor: "pointer" }}
-                                            className={classnames({
-                                                active: this.state.activeTab === "2",
-                                            })}
-                                            onClick={() => {
-                                                this.toggle("2");
-                                            }}
-                                        >
-                                            {this.props.t("Dependency")}
-                                        </NavLink>
-                                    </NavItem>
-                                    {this.state.showWhereElementPropeties !== 2 &&
-                                        <>
-                                            <NavItem>
-                                                <NavLink
-                                                    style={{ cursor: "pointer" }}
-                                                    className={classnames({
-                                                        active: this.state.activeTab === "3",
-                                                    })}
-                                                    onClick={() => {
-                                                        this.toggle("3");
-                                                    }}
-                                                >
-                                                    {this.props.t("Validation")}
-                                                </NavLink>
-                                            </NavItem><NavItem>
-                                                <NavLink
-                                                    style={{ cursor: "pointer" }}
-                                                    className={classnames({
-                                                        active: this.state.activeTab === "4",
-                                                    })}
-                                                    onClick={() => {
-                                                        this.toggle("4");
-                                                    }}
-                                                >
-                                                    {this.props.t("Metadata")}
-                                                </NavLink>
-                                            </NavItem>
-                                        </>
-                                    }
-                                </Nav>
+                {/*<form id="formBuilder" onSubmit={this.handleSaveModuleContent}>*/}
+                <Col lg={12}>
+                    <Card>
+                        <CardBody>
+                            <Nav tabs>
+                                <NavItem>
+                                    <NavLink
+                                        style={{ cursor: "pointer" }}
+                                        className={classnames({
+                                            active: this.state.activeTab === "1",
+                                        })}
+                                        onClick={() => {
+                                            this.toggle("1");
+                                        }}
+                                    >
+                                        {this.props.t("General")}
+                                    </NavLink>
+                                </NavItem>
+                                <NavItem>
+                                    <NavLink
+                                        style={{ cursor: "pointer" }}
+                                        className={classnames({
+                                            active: this.state.activeTab === "2",
+                                        })}
+                                        onClick={() => {
+                                            this.toggle("2");
+                                        }}
+                                    >
+                                        {this.props.t("Dependency")}
+                                    </NavLink>
+                                </NavItem>
+                                {this.state.showWhereElementPropeties !== 2 &&
+                                    <>
+                                        <NavItem>
+                                            <NavLink
+                                                style={{ cursor: "pointer" }}
+                                                className={classnames({
+                                                    active: this.state.activeTab === "3",
+                                                })}
+                                                onClick={() => {
+                                                    this.toggle("3");
+                                                }}
+                                            >
+                                                {this.props.t("Validation")}
+                                            </NavLink>
+                                        </NavItem><NavItem>
+                                            <NavLink
+                                                style={{ cursor: "pointer" }}
+                                                className={classnames({
+                                                    active: this.state.activeTab === "4",
+                                                })}
+                                                onClick={() => {
+                                                    this.toggle("4");
+                                                }}
+                                            >
+                                                {this.props.t("Metadata")}
+                                            </NavLink>
+                                        </NavItem>
+                                    </>
+                                }
+                            </Nav>
 
-                                <TabContent activeTab={this.state.activeTab} className="p-3 text-muted">
-                                    <TabPane tabId="1">
-                                        <Row>
-                                            <Col sm="12">
-                                                {this.state.showWhereElementPropeties === 2 && this.renderElementPropertiesSwitch(this.state.ElementType)}
-                                                {this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 3 &&
-                                                    <Row className="mb-3">
-                                                        <label
-                                                            htmlFor="example-text-input"
-                                                            className="col-md-2 col-form-label"
-                                                        >
-                                                            {this.props.t("Title")}
-                                                        </label>
-                                                        <div className="col-md-10">
-                                                            <input
-                                                                value={this.state.Title}
-                                                                onChange={this.handleTitleChange}
-                                                                className="form-control"
-                                                                type="text"
-                                                                placeholder={this.props.t("Title")}
-
-                                                            />
-                                                        </div>
-                                                    </Row>
-                                                }
+                            <TabContent activeTab={this.state.activeTab} className="p-3 text-muted">
+                                <TabPane tabId="1">
+                                    <Row>
+                                        <Col sm="12">
+                                            {this.state.showWhereElementPropeties === 2 && this.renderElementPropertiesSwitch(this.state.ElementType)}
+                                            {this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 3 &&
                                                 <Row className="mb-3">
                                                     <label
                                                         htmlFor="example-text-input"
                                                         className="col-md-2 col-form-label"
                                                     >
-                                                        {this.props.t("Input name")}
+                                                        {this.props.t("Title")}
                                                     </label>
                                                     <div className="col-md-10">
                                                         <input
-                                                            value={this.state.ElementName}
-                                                            onChange={this.handleElementNameChange}
-                                                            className={this.state.ElementNameInputClass}
+                                                            value={this.state.Title}
+                                                            onChange={this.handleTitleChange}
+                                                            className="form-control"
                                                             type="text"
-                                                            placeholder={this.props.t("Input name")}
+                                                            placeholder={this.props.t("Title")}
+
                                                         />
-                                                        <div type="invalid" className="invalid-feedback">{this.state.RequiredError}</div>
                                                     </div>
                                                 </Row>
-                                                {this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 3 &&
-                                                    <Row className="mb-3">
-                                                        <label
-                                                            htmlFor="example-text-input"
-                                                            className="col-md-2 col-form-label"
-                                                        >
-                                                            {this.props.t("Description")}
-                                                        </label>
-                                                        <div className="col-md-10">
-                                                            <input
-                                                                value={this.state.Description}
-                                                                onChange={this.handleDescriptionChange}
-                                                                className="form-control"
-                                                                type="text"
-                                                                placeholder={this.props.t("Description")}
-                                                            />
-                                                        </div>
-                                                    </Row>
-                                                }
-                                                <AccordionComp title="Advanced options" isOpened={this.state.IsCalcBtn} body={
-                                                    <>
-                                                        <div>
-                                                            {/*<FieldWidths changeFieldWidth={this.changeFieldWidth} Width={this.state.FieldWidths}></FieldWidths>*/}
-                                                            {this.state.ElementType !== 16 && this.state.ElementType !== 3 && (
-                                                                <Row className="mb-3">
-                                                                    <label
-                                                                        htmlFor="example-text-input"
-                                                                        className="col-md-2 col-form-label"
-                                                                    >
-                                                                        {this.props.t("Field width")}
-                                                                    </label>
-                                                                    <div className={this.state.fieldWidthsW}>
-                                                                        <Select
-                                                                            value={this.state.widthSelectedGroup}
-                                                                            onChange={this.handleWidthChange}
-                                                                            options={this.state.widthOptionGroup}
-                                                                            placeholder={this.props.t("Select")}
-                                                                            classNamePrefix="select2-selection" />
-                                                                    </div>
-                                                                </Row>
-                                                            )}
-                                                            {this.state.showWhereElementPropeties === 0 && this.renderElementPropertiesSwitch(this.state.ElementType)}
-                                                            <Row className="mb-3 ml-0">
-                                                                {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16 && this.state.ElementType !== 17 && this.state.ElementType !== 3 && this.state.ElementType !== 14) &&
-                                                                    <div className="form-check col-md-6">
-                                                                        <input type="checkbox" className="form-check-input" checked={this.state.IsRequired} onChange={this.handleIsRequiredChange} id="isRequired" />
-                                                                        <label className="form-check-label" htmlFor="isRequired">{this.props.t("Is required")}</label>
-                                                                    </div>
-                                                                }
-                                                                {this.state.ElementType !== 3 &&
-                                                                    <div className="form-check col-md-6">
-                                                                        <input type="checkbox" className="form-check-input" checked={this.state.IsHidden} onChange={this.handleIsHiddenChange} id="isHidden" />
-                                                                        <label className="form-check-label" htmlFor="isHidden">{this.props.t("Is hidden from user")}</label>
-                                                                    </div>
-                                                                }
+                                            }
+                                            <Row className="mb-3">
+                                                <label
+                                                    htmlFor="example-text-input"
+                                                    className="col-md-2 col-form-label"
+                                                >
+                                                    {this.props.t("Input name")}
+                                                </label>
+                                                <div className="col-md-10">
+                                                    <input
+                                                        value={this.state.ElementName}
+                                                        onChange={this.handleElementNameChange}
+                                                        className={this.state.ElementNameInputClass}
+                                                        type="text"
+                                                        placeholder={this.props.t("Input name")}
+                                                    />
+                                                    <div type="invalid" className="invalid-feedback">{this.state.RequiredError}</div>
+                                                </div>
+                                            </Row>
+                                            {this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 3 &&
+                                                <Row className="mb-3">
+                                                    <label
+                                                        htmlFor="example-text-input"
+                                                        className="col-md-2 col-form-label"
+                                                    >
+                                                        {this.props.t("Description")}
+                                                    </label>
+                                                    <div className="col-md-10">
+                                                        <input
+                                                            value={this.state.Description}
+                                                            onChange={this.handleDescriptionChange}
+                                                            className="form-control"
+                                                            type="text"
+                                                            placeholder={this.props.t("Description")}
+                                                        />
+                                                    </div>
+                                                </Row>
+                                            }
+                                            <AccordionComp title="Advanced options" isOpened={this.state.IsCalcBtn} body={
+                                                <>
+                                                    <div>
+                                                        {/*<FieldWidths changeFieldWidth={this.changeFieldWidth} Width={this.state.FieldWidths}></FieldWidths>*/}
+                                                        {this.state.ElementType !== 16 && this.state.ElementType !== 3 && (
+                                                            <Row className="mb-3">
+                                                                <label
+                                                                    htmlFor="example-text-input"
+                                                                    className="col-md-2 col-form-label"
+                                                                >
+                                                                    {this.props.t("Field width")}
+                                                                </label>
+                                                                <div className={this.state.fieldWidthsW}>
+                                                                    <Select
+                                                                        value={this.state.widthSelectedGroup}
+                                                                        onChange={this.handleWidthChange}
+                                                                        options={this.state.widthOptionGroup}
+                                                                        placeholder={this.props.t("Select")}
+                                                                        classNamePrefix="select2-selection" />
+                                                                </div>
                                                             </Row>
-                                                            {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 3 && this.state.ElementType !== 7) &&
-                                                                <Row className="mb-3 ml-0">
-                                                                    <div className="form-check col-md-6">
-                                                                        <input type="checkbox" className="form-check-input" checked={this.state.CanMissing} onChange={this.handleCanMissingChange} id="canMissing" />
-                                                                        <label className="form-check-label" htmlFor="canMissing">{this.props.t("Can be missing")}</label>
-                                                                    </div>
-                                                                </Row>
+                                                        )}
+                                                        {this.state.showWhereElementPropeties === 0 && this.renderElementPropertiesSwitch(this.state.ElementType)}
+                                                        <Row className="mb-3 ml-0">
+                                                            {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16 && this.state.ElementType !== 17 && this.state.ElementType !== 3 && this.state.ElementType !== 14) &&
+                                                                <div className="form-check col-md-6">
+                                                                    <input type="checkbox" className="form-check-input" checked={this.state.IsRequired} onChange={this.handleIsRequiredChange} id="isRequired" />
+                                                                    <label className="form-check-label" htmlFor="isRequired">{this.props.t("Is required")}</label>
+                                                                </div>
                                                             }
-                                                        </div>
-                                                        <div>
-                                                            {this.state.showWhereElementPropeties === 3 && this.renderElementPropertiesSwitch(this.state.ElementType)}
-                                                        </div>
-                                                    </>
-                                                } />
-                                                <div>
-                                                    {this.state.showWhereElementPropeties === 1 && this.renderElementPropertiesSwitch(this.state.ElementType)}
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                    </TabPane>
-                                    <TabPane tabId="2">
-                                        <Row>
-                                            <Col sm="12">
-                                                <div className="mb-3">
-                                                    <Label className="form-label mb-3 d-flex">Is dependent</Label>
-                                                    <div className="form-check form-check-inline">
-                                                        <Input
-                                                            type="radio"
-                                                            value="1"
-                                                            className="form-check-input"
-                                                            checked={this.state.IsDependent === true}
-                                                            onChange={this.handleIsDependentChange}
-                                                        />
-                                                        <Label
-                                                            className="form-check-label"
-                                                        >
-                                                            {this.props.t("Yes")}
-                                                        </Label>
+                                                            {this.state.ElementType !== 3 &&
+                                                                <div className="form-check col-md-6">
+                                                                    <input type="checkbox" className="form-check-input" checked={this.state.IsHidden} onChange={this.handleIsHiddenChange} id="isHidden" />
+                                                                    <label className="form-check-label" htmlFor="isHidden">{this.props.t("Is hidden from user")}</label>
+                                                                </div>
+                                                            }
+                                                        </Row>
+                                                        {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 3 && this.state.ElementType !== 7) &&
+                                                            <Row className="mb-3 ml-0">
+                                                                <div className="form-check col-md-6">
+                                                                    <input type="checkbox" className="form-check-input" checked={this.state.CanMissing} onChange={this.handleCanMissingChange} id="canMissing" />
+                                                                    <label className="form-check-label" htmlFor="canMissing">{this.props.t("Can be missing")}</label>
+                                                                </div>
+                                                            </Row>
+                                                        }
                                                     </div>
-                                                    <div className="form-check form-check-inline">
-                                                        <Input
-                                                            type="radio"
-                                                            value="0"
-                                                            className="form-check-input"
-                                                            checked={this.state.IsDependent === false}
-                                                            onChange={this.handleIsDependentChange}
-                                                        />
-                                                        <Label
-                                                            className="form-check-label"
-                                                        >
-                                                            {this.props.t("No")}
-                                                        </Label>
+                                                    <div>
+                                                        {this.state.showWhereElementPropeties === 3 && this.renderElementPropertiesSwitch(this.state.ElementType)}
                                                     </div>
-                                                </div>
-                                            </Col>
-                                        </Row>
-                                        {this.state.IsDependent === true && (
-                                            <>
-                                                <Row>
-                                                    <Col sm="12">
-                                                        <div className="mb-3">
-                                                            <Label>{this.props.t("Dependent field")}</Label>
-                                                            <Select
-                                                                value={this.state.dependentFieldsSelectedGroup}
-                                                                onChange={this.handleDependentFieldChange}
-                                                                options={this.state.dependentFieldOptionGroup}
-                                                                classNamePrefix="select2-selection"
-                                                                placeholder={this.props.t("Select")}
-                                                                className={this.state.DepFldInputClass}
-                                                                isDisabled={this.state.dependentEnabled} />
-                                                        </div>
-                                                    </Col>
-                                                </Row>
-                                                <Row>
-                                                    <Col sm="4">
-                                                        <div className="mb-3">
-                                                            <Label>{this.props.t("Dependency condition")}</Label>
-                                                            <Select
-                                                                value={this.state.conditionSelectedGroup}
-                                                                onChange={this.handleDependentConditionChange}
-                                                                options={this.state.conditionOptionGroup}
-                                                                classNamePrefix="select2-selection"
-                                                                placeholder={this.props.t("Select")}
-                                                                className={this.state.DepConInputClass}
-                                                                isDisabled={this.state.dependentEnabled} />
-                                                        </div>
-                                                    </Col>
-                                                    <Col sm="4">
-                                                        <div className="mb-3">
-                                                            <Label>{this.props.t("Dependency action")}</Label>
-                                                            <Select
-                                                                value={this.state.actionSelectedGroup}
-                                                                onChange={this.handleDependentActionChange}
-                                                                options={this.state.actionOptionGroup}
-                                                                classNamePrefix="select2-selection"
-                                                                placeholder={this.props.t("Select")}
-                                                                className={this.state.DepActInputClass}
-                                                                isDisabled={this.state.dependentEnabled} />
-                                                        </div>
-                                                    </Col>
-                                                    <Col sm="4">
-                                                        <label
-                                                            htmlFor="example-text-input"
-                                                            className="col-md-12 col-form-label"
-                                                        >
-                                                            {this.props.t("Dependent filed value")}
-                                                        </label>
-                                                        <div className={this.state.DepFldVlInputClass}>
-                                                            <div className="input-tag__tags">
-                                                                {this.state.DependentFieldValue.map((tag, i) => (
-                                                                    <p key={tag}>
-                                                                        {tag}
-                                                                        <button type="button" style={{ background: 'none' }} onClick={() => { this.removeDependentFieldValueTag(i); }}>+</button>
-                                                                    </p>
-                                                                ))}
-                                                                <p className="input-tag__tags__input"><input type="text" style={{ width: this.state.wth + 'px' }} onKeyDown={this.dependentFieldValueInputKeyDown} onKeyUp={this.inputKeyUp} ref={c => { this.tagInput = c; }} /></p>
-                                                            </div>
-                                                        </div>
-                                                    </Col>
-                                                </Row>
-                                            </>
-                                        )}
-                                        <Row>
+                                                </>
+                                            } />
+                                            <div>
+                                                {this.state.showWhereElementPropeties === 1 && this.renderElementPropertiesSwitch(this.state.ElementType)}
+                                            </div>
+                                        </Col>
+                                    </Row>
+                                </TabPane>
+                                <TabPane tabId="2">
+                                    <Row>
+                                        <Col sm="12">
                                             <div className="mb-3">
-                                                <Label className="form-label mb-3 d-flex">{this.props.t("Is related")}</Label>
+                                                <Label className="form-label mb-3 d-flex">Is dependent</Label>
                                                 <div className="form-check form-check-inline">
                                                     <Input
                                                         type="radio"
                                                         value="1"
                                                         className="form-check-input"
-                                                        checked={this.state.IsRelation === true}
-                                                        onChange={this.handleIsRelationChange}
+                                                        checked={this.state.IsDependent === true}
+                                                        onChange={this.handleIsDependentChange}
                                                     />
                                                     <Label
-                                                        className="form-check-label" htmlFor="relatedRadioInline"
+                                                        className="form-check-label"
                                                     >
                                                         {this.props.t("Yes")}
                                                     </Label>
@@ -1245,81 +1181,181 @@ class Properties extends React.Component {
                                                         type="radio"
                                                         value="0"
                                                         className="form-check-input"
-                                                        checked={this.state.IsRelation === false}
-                                                        onChange={this.handleIsRelationChange}
+                                                        checked={this.state.IsDependent === false}
+                                                        onChange={this.handleIsDependentChange}
                                                     />
                                                     <Label
-                                                        className="form-check-label" htmlFor="customRadioInline2"
+                                                        className="form-check-label"
                                                     >
                                                         {this.props.t("No")}
                                                     </Label>
                                                 </div>
                                             </div>
-                                        </Row>
-                                        {this.state.IsRelation === true && (
-                                            <Row className="mb-3">
-                                                <div className={this.state.RelFldVlInputClass}>
-                                                    <Table className="table table-hover mb-0">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>{this.props.t("Source input name")}</th>
-                                                                <th>{this.props.t("Variable name")}</th>
-                                                                <th>{this.props.t("Action")}</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            {this.state.relationElementRows.map((row, index) => (
-                                                                <tr key={index}>
-                                                                    <td>
-                                                                        <Select
-                                                                            value={row.relationFieldsSelectedGroup}
-                                                                            onChange={(e) => this.handleRelationInputChange(index, 'relationFieldsSelectedGroup', e)}
-                                                                            options={this.state.relationFieldOptionGroup}
-                                                                            classNamePrefix="select2-selection"
-                                                                            className="form-control"
-                                                                            placeholder={this.props.t("Select")}
-                                                                        />
-                                                                    </td>
-                                                                    <td>
-                                                                        <input
-                                                                            style={{ fontSize: '8pt' }}
-                                                                            value={row.variableName}
-                                                                            className={`form-control ${this.isRelationVariableNameDuplicate(index) ? 'is-invalid' : ''}`}
-                                                                            type="text"
-                                                                            placeholder="Variable name"
-                                                                            onChange={(e) => this.handleRelationInputChange(index, 'variableName', e.target.value)}
-                                                                        />
-                                                                    </td>
-                                                                    <td>
-                                                                        <Button className="actionBtn" onClick={() => this.removeRelationRow(index)}>
-                                                                            <i className="far fa-trash-alt"></i>
-                                                                        </Button>
-                                                                    </td>
-                                                                </tr>
-                                                            ))}
-                                                        </tbody>
-                                                    </Table>
-                                                    <Button color="success" onClick={this.addRelationRow} className='mt-1'>
-                                                        {this.props.t("Add another")}
-                                                    </Button>
-                                                </div>
-                                                <div style={{ border: "#eee 1px solid", borderRadius: '5px' }}>
-                                                    <div style={{ borderBottom: '#eee 1px solid' }}>
-                                                        <label>
-                                                            {this.props.t("Javascript editor")}
-                                                        </label>
-                                                    </div>
-                                                    <CodeMirror
-                                                        value={this.state.RelationMainJs}
-                                                        onChange={this.changeRelationMainJs}
-                                                        height="100px"
-                                                    />
-                                                </div>
-                                            </Row>
-                                        )}
-                                    </TabPane>
-                                    {this.state.showWhereElementPropeties !== 2 &&
+                                        </Col>
+                                    </Row>
+                                    {this.state.IsDependent === true && (
                                         <>
+                                            <Row>
+                                                <Col sm="12">
+                                                    <div className="mb-3">
+                                                        <Label>{this.props.t("Dependent field")}</Label>
+                                                        <Select
+                                                            value={this.state.dependentFieldsSelectedGroup}
+                                                            onChange={this.handleDependentFieldChange}
+                                                            options={this.state.dependentFieldOptionGroup}
+                                                            classNamePrefix="select2-selection"
+                                                            placeholder={this.props.t("Select")}
+                                                            className={this.state.DepFldInputClass}
+                                                            isDisabled={this.state.dependentEnabled} />
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                            <Row>
+                                                <Col sm="4">
+                                                    <div className="mb-3">
+                                                        <Label>{this.props.t("Dependency condition")}</Label>
+                                                        <Select
+                                                            value={this.state.conditionSelectedGroup}
+                                                            onChange={this.handleDependentConditionChange}
+                                                            options={this.state.conditionOptionGroup}
+                                                            classNamePrefix="select2-selection"
+                                                            placeholder={this.props.t("Select")}
+                                                            className={this.state.DepConInputClass}
+                                                            isDisabled={this.state.dependentEnabled} />
+                                                    </div>
+                                                </Col>
+                                                <Col sm="4">
+                                                    <div className="mb-3">
+                                                        <Label>{this.props.t("Dependency action")}</Label>
+                                                        <Select
+                                                            value={this.state.actionSelectedGroup}
+                                                            onChange={this.handleDependentActionChange}
+                                                            options={this.state.actionOptionGroup}
+                                                            classNamePrefix="select2-selection"
+                                                            placeholder={this.props.t("Select")}
+                                                            className={this.state.DepActInputClass}
+                                                            isDisabled={this.state.dependentEnabled} />
+                                                    </div>
+                                                </Col>
+                                                <Col sm="4">
+                                                    <label
+                                                        htmlFor="example-text-input"
+                                                        className="col-md-12 col-form-label"
+                                                    >
+                                                        {this.props.t("Dependent filed value")}
+                                                    </label>
+                                                    <div className={this.state.DepFldVlInputClass}>
+                                                        <div className="input-tag__tags">
+                                                            {this.state.DependentFieldValue.map((tag, i) => (
+                                                                <p key={tag}>
+                                                                    {tag}
+                                                                    <button type="button" style={{ background: 'none' }} onClick={() => { this.removeDependentFieldValueTag(i); }}>+</button>
+                                                                </p>
+                                                            ))}
+                                                            <p className="input-tag__tags__input"><input type="text" style={{ width: this.state.wth + 'px' }} onKeyDown={this.dependentFieldValueInputKeyDown} onKeyUp={this.inputKeyUp} ref={c => { this.tagInput = c; }} /></p>
+                                                        </div>
+                                                    </div>
+                                                </Col>
+                                            </Row>
+                                        </>
+                                    )}
+                                    <Row>
+                                        <div className="mb-3">
+                                            <Label className="form-label mb-3 d-flex">{this.props.t("Is related")}</Label>
+                                            <div className="form-check form-check-inline">
+                                                <Input
+                                                    type="radio"
+                                                    value="1"
+                                                    className="form-check-input"
+                                                    checked={this.state.IsRelation === true}
+                                                    onChange={this.handleIsRelationChange}
+                                                />
+                                                <Label
+                                                    className="form-check-label" htmlFor="relatedRadioInline"
+                                                >
+                                                    {this.props.t("Yes")}
+                                                </Label>
+                                            </div>
+                                            <div className="form-check form-check-inline">
+                                                <Input
+                                                    type="radio"
+                                                    value="0"
+                                                    className="form-check-input"
+                                                    checked={this.state.IsRelation === false}
+                                                    onChange={this.handleIsRelationChange}
+                                                />
+                                                <Label
+                                                    className="form-check-label" htmlFor="customRadioInline2"
+                                                >
+                                                    {this.props.t("No")}
+                                                </Label>
+                                            </div>
+                                        </div>
+                                    </Row>
+                                    {this.state.IsRelation === true && (
+                                        <Row className="mb-3">
+                                            <div className={this.state.RelFldVlInputClass}>
+                                                <Table className="table table-hover mb-0">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>{this.props.t("Source input name")}</th>
+                                                            <th>{this.props.t("Variable name")}</th>
+                                                            <th>{this.props.t("Action")}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {this.state.relationElementRows.map((row, index) => (
+                                                            <tr key={index}>
+                                                                <td>
+                                                                    <Select
+                                                                        value={row.relationFieldsSelectedGroup}
+                                                                        onChange={(e) => this.handleRelationInputChange(index, 'relationFieldsSelectedGroup', e)}
+                                                                        options={this.state.relationFieldOptionGroup}
+                                                                        classNamePrefix="select2-selection"
+                                                                        className="form-control"
+                                                                        placeholder={this.props.t("Select")}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <input
+                                                                        style={{ fontSize: '8pt' }}
+                                                                        value={row.variableName}
+                                                                        className={`form-control ${this.isRelationVariableNameDuplicate(index) ? 'is-invalid' : ''}`}
+                                                                        type="text"
+                                                                        placeholder="Variable name"
+                                                                        onChange={(e) => this.handleRelationInputChange(index, 'variableName', e.target.value)}
+                                                                    />
+                                                                </td>
+                                                                <td>
+                                                                    <Button className="actionBtn" onClick={() => this.removeRelationRow(index)}>
+                                                                        <i className="far fa-trash-alt"></i>
+                                                                    </Button>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </Table>
+                                                <Button color="success" onClick={this.addRelationRow} className='mt-1'>
+                                                    {this.props.t("Add another")}
+                                                </Button>
+                                            </div>
+                                            <div style={{ border: "#eee 1px solid", borderRadius: '5px' }}>
+                                                <div style={{ borderBottom: '#eee 1px solid' }}>
+                                                    <label>
+                                                        {this.props.t("Javascript editor")}
+                                                    </label>
+                                                </div>
+                                                <CodeMirror
+                                                    value={this.state.RelationMainJs}
+                                                    onChange={this.changeRelationMainJs}
+                                                    height="100px"
+                                                />
+                                            </div>
+                                        </Row>
+                                    )}
+                                </TabPane>
+                                {this.state.showWhereElementPropeties !== 2 &&
+                                    <>
                                         <TabPane tabId="3">
                                             {this.state.activeTab === '3' && (
                                                 <Row>
@@ -1329,36 +1365,36 @@ class Properties extends React.Component {
                                                     />
                                                 </Row>
                                             )}
-                                            </TabPane>
-                                            <TabPane tabId="4">
-                                                <Row>
-                                                    <Col sm="12">
-                                                        <CardText className="mb-0">
-                                                            Trust fund seitan letterpress, keytar raw denim
-                                                            keffiyeh etsy art party before they sold out
-                                                            master cleanse gluten-free squid scenester freegan
-                                                            cosby sweater. Fanny pack portland seitan DIY, art
-                                                            party locavore wolf cliche high life echo park
-                                                            Austin. Cred vinyl keffiyeh DIY salvia PBR, banh
-                                                            mi before they sold out farm-to-table VHS viral
-                                                            locavore cosby sweater. Lomo wolf viral, mustache
-                                                            readymade thundercats keffiyeh craft beer marfa
-                                                            ethical. Wolf salvia freegan, sartorial keffiyeh
-                                                            echo park vegan.
-                                                        </CardText>
-                                                    </Col>
-                                                </Row>
-                                            </TabPane>
-                                        </>
-                                    }
-                                </TabContent>
-                            </CardBody>
-                        </Card>
-                        <div style={{ float: 'right' }}>
-                            <input className="btn btn-primary" type="submit" value={this.props.t("Save")} />
-                        </div>
-                    </Col>
-                </form>
+                                        </TabPane>
+                                        <TabPane tabId="4">
+                                            <Row>
+                                                <Col sm="12">
+                                                    <CardText className="mb-0">
+                                                        Trust fund seitan letterpress, keytar raw denim
+                                                        keffiyeh etsy art party before they sold out
+                                                        master cleanse gluten-free squid scenester freegan
+                                                        cosby sweater. Fanny pack portland seitan DIY, art
+                                                        party locavore wolf cliche high life echo park
+                                                        Austin. Cred vinyl keffiyeh DIY salvia PBR, banh
+                                                        mi before they sold out farm-to-table VHS viral
+                                                        locavore cosby sweater. Lomo wolf viral, mustache
+                                                        readymade thundercats keffiyeh craft beer marfa
+                                                        ethical. Wolf salvia freegan, sartorial keffiyeh
+                                                        echo park vegan.
+                                                    </CardText>
+                                                </Col>
+                                            </Row>
+                                        </TabPane>
+                                    </>
+                                }
+                            </TabContent>
+                        </CardBody>
+                    </Card>
+                    <div style={{ float: 'right' }}>
+                        <input className="btn btn-primary" type="button" onClick={this.handleSaveModuleContent} value={this.props.t("Save")} />
+                    </div>
+                </Col>
+                {/*</form>*/}
                 <ToastComp
                     ref={this.toastRef}
                 />

@@ -29,7 +29,7 @@ class DatagridElement extends Component {
             isDisable: props.IsDisable,
             columnCount: props.ColumnCount,
             FormType: props.FormType,
-            datagridAndTableProperties: props.DatagridAndTableProperties !== "" ? JSON.parse(props.DatagridAndTableProperties) : [],
+            datagridAndTableProperties: props.DatagridAndTableProperties !== "" && props.DatagridAndTableProperties !== null ? JSON.parse(props.DatagridAndTableProperties) : [],
             childElementList: props.ChildElementList.length === 0 ? [] : props.ChildElementList,
             tableRows: [],
             modalState: false,
@@ -162,6 +162,8 @@ class DatagridElement extends Component {
                                 isCalcBtn={false}
                                 ColumnIndex={this.state.columnIndex}
                                 FormType={this.state.FormType}
+                                Dispatch={this.props.Dispatch}
+                                SetPropModal={this.props.SetPropModal}
                             >
                             </Properties>
                         </div>

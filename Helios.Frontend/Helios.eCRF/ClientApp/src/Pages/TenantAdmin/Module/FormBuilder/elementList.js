@@ -130,24 +130,26 @@ function ElementList(props) {
             if (result.isConfirmed) {
                 try {
                     dispatch(startloading());
+
                     fetch(baseUrl + '/DeleteElement?id=' + id + '&userId=' + userInformation.userId, {
                         method: 'POST',
                     })
                         .then(response => response.json())
                         .then(data => {
                             if (data.isSuccess) {
-                                dispatch(endloading());
                                 Swal.fire(data.message, '', 'success');
                             } else {
-                                dispatch(endloading());
                                 Swal.fire(data.message, '', 'error');
                             }
                         })
                         .catch(error => {
                             //console.error('Error:', error);
+                        })
+                        .finally(() => {
+                            dispatch(endloading());
                         });
                 } catch (error) {
-                    dispatch(endloading());
+                    //dispatch(endloading());
                     Swal.fire('An error occurred', '', 'error');
                 }
             }
@@ -163,7 +165,7 @@ function ElementList(props) {
                 return <TextElement IsDisable={dsbl}
                 />;
             case 3:
-                return <HiddenElement/>;
+                return <HiddenElement />;
             case 4:
                 return <NumericElement
                     Id={param.id}
@@ -246,6 +248,8 @@ function ElementList(props) {
                     ColumnCount={param.columnCount} RowCount={param.rowCount}
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
+                    Dispatch={dispatch}
+                    SetPropModal={setpropModal}
                 />
             case 16:
                 return <DatagridElement
@@ -256,6 +260,8 @@ function ElementList(props) {
                     ColumnCount={param.columnCount}
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
+                    Dispatch={dispatch}
+                    SetPropModal={setpropModal}
                 />
             case 17:
                 return <AdverseEventElement
@@ -363,6 +369,8 @@ function ElementList(props) {
                             ColumnIndex={null}
                             RowIndex={null}
                             FormType={formType}
+                            Dispatch={dispatch}
+                            SetPropModal={setpropModal}
                         >
                         </Properties>
                     </ModalBody>

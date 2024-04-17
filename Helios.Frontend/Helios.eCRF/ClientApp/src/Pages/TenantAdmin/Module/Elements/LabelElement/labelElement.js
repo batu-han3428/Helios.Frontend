@@ -11,9 +11,7 @@ class LabelElement extends Component {
 
     render() {
         return (
-            <div style={{ marginRight: "20px", textAlign: 'Left', borderRadius:'5px' }} >
-                <div dangerouslySetInnerHTML={{ __html: this.state.Title }} />
-            </div>
+            <div dangerouslySetInnerHTML={{ __html: this.state.Title }} />
         )
     }
 };

@@ -7,11 +7,11 @@ import {
 class RadioElement extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = {
             isDisable: props.IsDisable,
             layout: props.Layout,
-            ElementOptions: JSON.parse(props.ElementOptions),
+            ElementOptions:props.ElementOptions !== null && props.ElementOptions !== undefined && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
             selectedOption: null,
         }

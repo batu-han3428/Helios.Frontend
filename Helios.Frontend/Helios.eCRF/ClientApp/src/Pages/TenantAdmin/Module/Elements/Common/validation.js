@@ -24,7 +24,7 @@ import { withTranslation } from "react-i18next";
 class Validation extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = {
             StudyId: props.StudyId,
             IsNew: true,
