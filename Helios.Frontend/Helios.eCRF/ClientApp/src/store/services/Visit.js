@@ -76,6 +76,17 @@ export const VisitApi = createApi({
             }),
             invalidatesTags: ['Visit'],
         }),
+        transferDataGet: builder.query({
+            query: (data) => `/Study/GetTransferData/${data.demoStudyId}/${data.activeStudyId}`,
+            keepUnusedDataFor: 0,
+        }),
+        transferDataSet: builder.mutation({
+            query: (data) => ({
+                url: '/Study/SetTransferData',
+                method: 'POST',
+                body: data,
+            }),
+        }),
     }),
 });
 
@@ -99,3 +110,7 @@ export const { useAddStudyModuleSetMutation } = VisitApi;
 export const { useLazyStudyVisitPermissionsListGetQuery } = VisitApi;
 
 export const { useVisitRankingSetMutation } = VisitApi;
+
+export const { useLazyTransferDataGetQuery } = VisitApi;
+
+export const { useTransferDataSetMutation } = VisitApi;

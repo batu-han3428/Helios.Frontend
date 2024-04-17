@@ -9,6 +9,7 @@ import AddModule from '../Comp/AddModule';
 import { PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import Swal from 'sweetalert2';
 import { arrayMove } from '@dnd-kit/sortable';
+import TransferData from '../Comp/TransferData';
 
 export const findItemRecursive = (items, key) => {
     for (const item of items) {
@@ -587,16 +588,24 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
         ranking,
         editing,
         editingHandle,
-        setData
+        setData,
+        setEditing
     };
 };
-export function visitSettingsItems() {
+
+const handleTransferData = (openModal, studyId, activeStudyId, ref, toastRef, modalRef) => {
+    const content = <TransferData studyId={studyId} activeStudyId={activeStudyId} refs={ref} toast={toastRef} modalRef={modalRef} />;
+    openModal({ title: "Data Transfer", buttonText: "Save Transfer", content: content });
+};
+
+export function visitSettingsItems(openModal, studyId, activeStudyId, ref, toastRef, modalRef) {
     let items = [];
     items.push({
         label: i18n.t('Transfer data to active study'),
         key: '1',
         icon: <FontAwesomeIcon icon="fa-solid fa-arrow-up-from-bracket" style={{ color: "#6fce7a", }} />,
         style: { color: "#6fce7a" },
+        onClick: () => handleTransferData(openModal, studyId, activeStudyId, ref, toastRef, modalRef)
     });
     items.push({
         label: i18n.t('Relation'),

@@ -397,5 +397,6 @@
   "Trigger a validation message when data is entered into the field.": "Alana veri girildiğinde bir doğrulama mesajı tetikleyin.",
   "Add message": "Mesaj ekle",
   "Exclusion message": "Hariç tutma mesajı",
-  "If the field is": "Alan ise"
+  "If the field is": "Alan ise",
+  "There is no element in the module you want to add. Please add element first.": "Eklemek istediğiniz modülde element yoktur. Lütfen önce element ekleyiniz."
 }

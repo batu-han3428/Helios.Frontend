@@ -229,6 +229,7 @@ namespace Helios.eCRF.Services
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreStudy/SetVisits", Method.Post);
+                AddApiHeaders(req);
                 req.AddJsonBody(visitDTO);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 if (result.Data.IsSuccess)
@@ -318,6 +319,30 @@ namespace Helios.eCRF.Services
             //    IsSuccess = false,
             //    Message = "Unsuccessful"
             //};
+        }
+
+        public async Task<RestResponse<List<VisitModel>>> GetTransferData(Int64 demoStudyId, Int64 activeStudyId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetTransferData", Method.Get);
+                req.AddParameter("demoStudyId", demoStudyId);
+                req.AddParameter("activeStudyId", activeStudyId);
+                var result = await client.ExecuteAsync<List<VisitModel>>(req);
+                return result;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> SetTransferData(List<TransferDataDTO> dto)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/SetTransferData", Method.Post);
+                AddApiHeaders(req);
+                req.AddJsonBody(dto);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
         }
         #endregion
 

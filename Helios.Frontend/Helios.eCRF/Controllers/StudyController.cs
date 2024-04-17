@@ -386,6 +386,35 @@ namespace Helios.eCRF.Controllers
 
             return Ok(result);
         }
+
+
+        /// <summary>
+        /// active study ve demo study arasındaki farkları gösterir
+        /// </summary>
+        /// <param name="demoStudyId">demo çalışma id</param>
+        /// <param name="activeStudyId">active çalışma id</param>
+        /// <returns>visit listesi</returns>
+        [HttpGet("{demoStudyId}/{activeStudyId}")]
+        public async Task<IActionResult> GetTransferData(Int64 demoStudyId, Int64 activeStudyId)
+        {
+            var result = await _studyService.GetTransferData(demoStudyId, activeStudyId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
+
+        /// <summary>
+        /// active study ile demo study arasındaki seçili farkları kaydeder
+        /// </summary>
+        /// <param name="dto">visit bilgileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [Authorize(Roles = "TenantAdmin")]
+        public async Task<IActionResult> SetTransferData(List<TransferDataDTO> dto)
+        {
+            var result = await _studyService.SetTransferData(dto);
+
+            return Ok(result);
+        }
         #endregion
 
         #region Module

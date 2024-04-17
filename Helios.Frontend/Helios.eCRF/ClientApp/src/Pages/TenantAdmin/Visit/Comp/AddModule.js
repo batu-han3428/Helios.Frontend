@@ -19,18 +19,34 @@ const AddModule = props => {
                 dispatch(endloading());
                 return false;
             }
-            const response = await addStudyModuleSet({moduleIds: selectedRowKeys, pageId: props.record.id});
+            const response = await addStudyModuleSet({ moduleIds: selectedRowKeys, pageId: props.record.id });
             if (response.data.isSuccess) {
                 props.toast.current.setToast({
                     message: props.t(response.data.message),
                     stateToast: true
                 });
+                if (response.data.values !== null) {
+                    props.toast.current.setToast({
+                        message: props.t("There is no element in the module you want to add. Please add element first.") + "\n" + response.data.values,
+                        stateToast: false,
+                        autoHide: false
+                    });
+                }
                 dispatch(endloading());
             } else {
-                props.toast.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: false
-                });
+                if (response.data.message !== "") {
+                    props.toast.current.setToast({
+                        message: props.t(response.data.message),
+                        stateToast: false
+                    });
+                }
+                if (response.data.values !== null) {
+                    props.toast.current.setToast({
+                        message: props.t("There is no element in the module you want to add. Please add element first.") + "\n" + response.data.values,
+                        stateToast: false,
+                        autoHide: false
+                    });
+                }
                 dispatch(endloading());
             }
         } catch (e) {
