@@ -43,6 +43,10 @@ const Study = props => {
         setModalTitle(data.title);
         setModalButtonText(data.buttonText);
         setModalContent(data.content);
+        toggleModal();
+    }
+
+    const toggleModal = () => {
         modalRef.current.tog_backdrop();
     }
 
@@ -91,7 +95,7 @@ const Study = props => {
     const components = {
         body: {
             row: (props) => <EditableRow {...props} ranking={ranking} />,
-            cell: (e) => <EditableCell {...e} openModal={openModal} toastRef={toastRef} t={props.t} setDataSource={setDataSource} dataSource={dataSource} editing={editing} ranking={ranking} />,
+            cell: (e) => <EditableCell {...e} toggleModal={toggleModal} openModal={openModal} toastRef={toastRef} t={props.t} setDataSource={setDataSource} dataSource={dataSource} editing={editing} ranking={ranking} />,
         },
     };
 

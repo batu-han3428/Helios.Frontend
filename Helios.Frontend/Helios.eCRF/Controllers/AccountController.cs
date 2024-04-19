@@ -131,7 +131,7 @@ namespace Helios.eCRF.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [Authorize(Roles = "TenantAdmin, StudyUser")]
         public IActionResult UpdateJwt(JwtDTO jwtDTO)
         {
             var result = authService.UpdateJwt(jwtDTO);
