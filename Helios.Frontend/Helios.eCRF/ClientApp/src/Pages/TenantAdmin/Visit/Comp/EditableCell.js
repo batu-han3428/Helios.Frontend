@@ -20,6 +20,7 @@ const EditableCell = ({
     toastRef,
     openModal,
     ranking,
+    toggleModal,
     ...restProps
 }) => {
 
@@ -157,7 +158,7 @@ const EditableCell = ({
                 items.push({
                     key: '2',
                     label: (
-                        <a onClick={() => handleAddModule(openModal, record, modalRef, toastRef)}>{t("Add module")}</a>
+                        <a onClick={() => handleAddModule(openModal, record, modalRef, toastRef, toggleModal)}>{t("Add module")}</a>
                     ),
                     icon: <FontAwesomeIcon icon="fa-solid fa-gears" style={{ color: "#e5f37c", }} />,
                     style: { color: "#e5f37c" },

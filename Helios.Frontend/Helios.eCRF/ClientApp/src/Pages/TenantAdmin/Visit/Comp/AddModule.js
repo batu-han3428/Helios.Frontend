@@ -33,6 +33,7 @@ const AddModule = props => {
                     });
                 }
                 dispatch(endloading());
+                props.toggleModal();
             } else {
                 if (response.data.message !== "") {
                     props.toast.current.setToast({
@@ -66,6 +67,7 @@ const AddModule = props => {
         {
             title: props.t("Module name"),
             dataIndex: 'name',
+            ellipsis: true,
         },
         {
             title: props.t("Created on"),

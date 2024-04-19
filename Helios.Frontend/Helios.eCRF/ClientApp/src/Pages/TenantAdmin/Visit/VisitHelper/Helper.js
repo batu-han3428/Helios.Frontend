@@ -32,10 +32,10 @@ export const handleSettings = (openModal, record, ref, toastRef) => {
     openModal({ title: title, buttonText: buttonText, content: content });
 }
 
-export const handleAddModule = (openModal, record, ref, toastRef) => {
+export const handleAddModule = (openModal, record, ref, toastRef, toggleModal) => {
     const title = i18n.t("Add module");
     const buttonText = i18n.t("Save");
-    const content = <AddModule record={record} refs={ref} toast={toastRef} />;
+    const content = <AddModule record={record} refs={ref} toast={toastRef} toggleModal={toggleModal} />;
     openModal({ title: title, buttonText: buttonText, content: content });
 }
 
