@@ -50,7 +50,7 @@ const VisitFormBuilder = props => {
         dispatch(startloading());
         fetchData();
         dispatch(endloading());
-    });
+    },[]);
 
     return (
         <div style={({ height: "100vh" }, { display: "flex" })} >
