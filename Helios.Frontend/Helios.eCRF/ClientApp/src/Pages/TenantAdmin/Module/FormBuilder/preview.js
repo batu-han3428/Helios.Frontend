@@ -79,9 +79,13 @@ function Preview() {
     const renderElementsSwitch = (param) => {
         switch (param.elementType) {
             case 1:
-                return <LabelElement Title={param.title} />;
+                return <LabelElement
+                    Id={param.id}
+                    Title={param.title} />;
             case 2:
-                return <TextElement IsDisable={""}
+                return <TextElement
+                    Id={param.id}
+                    IsDisable={""}
                 />;
             case 4:
                 return <NumericElement
@@ -96,11 +100,13 @@ function Preview() {
                 />;
             case 5:
                 return <TextareaElement
+                    Id={param.id}
                     IsDisable={false}
                     DefaultValue={param.defaultValue}
                 />
             case 6:
                 return <DateElement
+                    Id={param.id}
                     Title={param.title}
                     IsRequired={param.isRequired}
                     IsDisable={false}
@@ -112,39 +118,46 @@ function Preview() {
                     StartYear={param.startYear}
                     EndYear={param.endYear}
                     DefaultValue={param.defaultValue}
-                    IsPreview={true }
+                    IsPreview={true}
                 />
             case 7:
                 return <CalculationElement
+                    Id={param.id}
                 />
             case 8:
                 return <RadioElement
+                    Id={param.id}
                     IsDisable={""}
                     Layout={param.layout}
                     ElementOptions={param.elementOptions}
                 />
             case 9:
                 return <CheckElement
+                    Id={param.id}
                     IsDisable={""}
                     Layout={param.layout}
                     ElementOptions={param.elementOptions}
                 />
             case 10:
                 return <DropdownElement
+                    Id={param.id}
                     IsDisable={false}
                     ElementOptions={param.elementOptions}
                 />
             case 11:
                 return <DropdownCheckListElement
+                    Id={param.id}
                     IsDisable={false}
                     ElementOptions={param.elementOptions}
                 />
             case 12:
                 return <FileUploaderElement
+                    Id={param.id}
                     IsDisable={false}
                 />
             case 13:
                 return <RangeSliderElement
+                    Id={param.id}
                     IsDisable={false}
                     LowerLimit={param.lowerLimit}
                     UpperLimit={param.upperLimit}
@@ -170,11 +183,13 @@ function Preview() {
                 />
             case 17:
                 return <AdverseEventElement
+                    Id={param.id}
                     AdverseEventType={param.adverseEventType}
                     IsDisable={false}
                 />
             default:
                 return <TextElement
+                    Id={param.id}
                     IsDisable={""}
                 />;
         }

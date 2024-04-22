@@ -753,7 +753,7 @@ class Properties extends React.Component {
         this.state.AdverseEventType = data.adverseEventType;
         this.state.TargetElementId = data.targetElementId === null ? 0 : data.targetElementId;
         this.state.ButtonText = data.buttonText !== null ? data.buttonText : "";
-
+        
         this.state.IsDependent = data.isDependent;
         this.state.DependentSourceFieldId = data.dependentSourceFieldId;
         this.state.DependentTargetFieldId = data.dependentTargetFieldId;
@@ -814,7 +814,7 @@ class Properties extends React.Component {
             isValid = false;
         }
 
-        if (this.state.IsDependent && (this.state.DependentSourceFieldId === 0 || this.state.DependentTargetFieldId === 0)) {
+        if (this.state.IsDependent && (this.state.DependentSourceFieldId === 0)) {
             this.setState({ DepFldInputClass: "form-control is-invalid" });
             isValid = false;
         }
@@ -938,16 +938,18 @@ class Properties extends React.Component {
                             stateToast: true
                         });
 
-                        if (this.state.ElementType === 1 || this.state.ElementType === 8 || this.state.ElementType === 15 || this.state.ElementType === 16)//label, radio button, table, datagrid need to reload page
+                        //if (this.state.ElementType === 1 || this.state.ElementType === 8 || this.state.ElementType === 15 || this.state.ElementType === 16)//label, radio button, table, datagrid need to reload page
                             window.location.reload();
-                        else
-                            this.props.SetPropModal(false);
+                        //else
+                        //    this.props.SetPropModal(false);
                     } else {
                         this.toastRef.current.setToast({
                             message: data.message,
                             stateToast: false
                         });
                     }
+                    this.state.dispatch(endloading());
+
                 })
                 .catch(error => {
                     //console.error('Error:', error);

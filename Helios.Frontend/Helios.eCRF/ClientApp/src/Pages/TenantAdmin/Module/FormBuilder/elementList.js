@@ -103,6 +103,7 @@ function ElementList(props) {
                         stateToast: true
                     });
                     dispatch(endloading());
+                    window.location.reload();
                 } else {
                     toastRef.current.setToast({
                         message: data.message,
@@ -138,6 +139,7 @@ function ElementList(props) {
                         .then(data => {
                             if (data.isSuccess) {
                                 Swal.fire(data.message, '', 'success');
+                                window.location.reload();
                             } else {
                                 Swal.fire(data.message, '', 'error');
                             }
