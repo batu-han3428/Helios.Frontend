@@ -127,6 +127,8 @@ import AddOrUpdateTenant from "../Pages/SystemAdmin/Tenants/AddOrUpdateTenant.js
 //System admin users
 import ListTenantAndSystemAdmin from "../Pages/SystemAdmin/Users/ListTenantAndSystemAdmin";
 
+//Subject
+import PatientList from "../Pages/Subject/Patient/PatientList";
 
 const userRoutes = [
 
@@ -236,9 +238,12 @@ const userRoutes = [
     { path: "/ui-offcanvas", component: <UiOffcanvas />, menuType: "admin", roles: ['TenantAdmin'] },
 
 
+    //Subject
+    { path: "/patientlist", component: <PatientList />, menuType: "sso", roles: ['StudyUser'] },
+
     // this route should be at the end of all other routes
     { path: "/", roles: ["TenantAdmin"], redirect: "/studylist", menuType: "admin" },
-    { path: "/", roles: ["StudyUser"], redirect: "/UnderConstruction", menuType: "sso" },
+    { path: "/", roles: ["StudyUser"], redirect: "/patientlist", menuType: "sso" },
     { path: "/", roles: ["SuperAdmin"], redirect: "/add-system-admin", menuType: "superadmin" },
     { path: "/", roles: ["SystemAdmin"], redirect: "/tenants", menuType: "systemadmin" },
 ];
