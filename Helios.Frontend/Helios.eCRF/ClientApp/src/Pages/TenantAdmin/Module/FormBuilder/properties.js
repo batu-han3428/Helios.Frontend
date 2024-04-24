@@ -283,6 +283,7 @@ class Properties extends React.Component {
                 this.state.showWhereElementPropeties = 3;
                 this.state.fieldWidthsW = "col-md-6";
                 return <CalculationElementProperties
+                    Id={this.state.Id}
                     FormType={this.state.FormType}
                     ModuleId={this.state.ModuleId}
                     changeMainJs={this.changeMainJs} MainJs={this.state.MainJs}
@@ -661,6 +662,8 @@ class Properties extends React.Component {
             const newRows = [...prevState.relationElementRows];
             newRows.splice(index, 1);
             return { relationElementRows: newRows };
+        }, () => {
+            this.state.RelationSourceInputs = JSON.stringify(this.state.relationElementRows);
         });
     };
 

@@ -148,15 +148,17 @@ class ListElementsProperties extends Component {
     };
 
     toggleNewTagModal = (e, isEdit) => {
-        this.state.rows = [];
-        this.state.tagKey = '';
-        this.state.tagKeyInpCls = 'form-control';
-        this.state.operationType = e;
-        this.state.modalState = !(this.state.modalState);
-        this.state.tagAddDisableStatus = false;
-        this.state.tagAddDisplayStatus = "block";
-        this.state.tagKeyDisableStatus = e == 0 || isEdit;
-        this.state.isEdit = isEdit;
+        this.setState(prevState => ({
+            rows : [],
+            tagKey : '',
+            tagKeyInpCls : 'form-control',
+            operationType: e,
+            modalState: !prevState.modalState,
+            tagAddDisableStatus : false,
+            tagAddDisplayStatus : "block",
+            tagKeyDisableStatus : e === 0 || isEdit,
+            isEdit : isEdit,
+        }));
     };
 
     handleTagKeyChange(e) {

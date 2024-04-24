@@ -219,9 +219,7 @@ function ModuleList(props) {
     };
 
     const renderRows = () => {
-        fetchData();
-        
-        return data.rows.map((row) => (
+        return tableData.map((row) => (
             <tr key={row.id} onDoubleClick={() => handleRowDoubleClick(row.id)}>
                 <td>{row.name}</td>
                 <td>{row.actions}</td>
@@ -229,11 +227,11 @@ function ModuleList(props) {
         ));
     };
 
-    //useEffect(() => {
-    //    dispatch(startloading());
-    //    fetchData();
-    //    dispatch(endloading());
-    //}, []);
+    useEffect(() => {
+        dispatch(startloading());
+        fetchData();
+        dispatch(endloading());
+    }, []);
 
     return (
         <>

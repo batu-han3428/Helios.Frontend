@@ -27,11 +27,12 @@ const baseUrl = "http://localhost:3300/";
 class CalculationElementProperties extends Component {
     constructor(props) {
         super(props);
-        
+
         var inps = props.CalculationSourceInputs !== "" ? JSON.parse(props.CalculationSourceInputs) : [];
         var inpsCount = props.CalculationSourceInputs !== "" ? JSON.parse(props.CalculationSourceInputs).length : 0;
 
         this.state = {
+            Id: props.Id,
             FormType: props.FormType,
             elementListOptionGroup: [],
             ModuleId: props.ModuleId,
@@ -90,15 +91,21 @@ class CalculationElementProperties extends Component {
                     label: item.elementName + " - " + GetElementNameByKey(this.props, item.elementType),
                     value: item.id,
                 }));
+                
+                if (this.state.Id === 0 || this.state.Id === undefined) {
+                    const newItem = {
+                        label: "calculated - calculated",
+                        value: 0,
+                    };
 
-                const newItem = {
-                    label: "calculated - calculated",
-                    value: 0,
-                };
+                    const newArray = [...allElements, newItem];
+                    this.state.elementListOptionGroup = newArray;
+                }
+                else {
+                    this.state.elementListOptionGroup = allElements;
 
-                const newArray = [...allElements, newItem];
-                this.state.elementListOptionGroup = newArray;
-
+                }
+                
                 if (this.state.inputCounter === 0) {
                     this.addRow();
                 }
