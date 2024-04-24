@@ -675,7 +675,9 @@ class Properties extends React.Component {
             relationElementRows: [...prevState.relationElementRows, {
                 relationFieldsSelectedGroup: this.state.relationFieldOptionGroup[0], variableName: 'A' + this.state.inputCounter
             }],
-        }));
+        }), () => {
+            this.state.RelationSourceInputs = JSON.stringify(this.state.relationElementRows);
+        });
     };
 
     handleRelationInputChange = (index, fieldName, value) => {
