@@ -46,20 +46,26 @@ class TableElement extends Component {
     }
 
     toggleAddElementModal = (columnIndex, rowIndex) => {
-        this.state.modalState = !(this.state.modalState);
-        this.state.columnIndex = columnIndex;
-        this.state.rowIndex = rowIndex;
+        this.setState(prevState => ({
+            modalState: !prevState.modalState,
+            columnIndex: columnIndex,
+            rowIndex: rowIndex
+        }));
     };
 
     handleElementListChange = (e) => {
-        this.state.modalState = !(this.state.modalState);
-        this.state.propertiesModalState = !(this.state.propertiesModalState);
-        this.state.elementType = e.value;
-        this.state.elementName = GetElementNameByKey(this.props, e.value) + " " + this.props.t("Properties");
+        this.setState(prevState => ({
+            modalState: !prevState.modalState,
+            propertiesModalState: !prevState.propertiesModalState,
+            elementType: e.value,
+            elementName: GetElementNameByKey(this.props, e.value) + " " + this.props.t("Properties")
+        }));
     };
 
     togglePropertiesModal = () => {
-        this.state.propertiesModalState = !(this.state.propertiesModalState);
+        this.setState(prevState => ({
+            propertiesModalState: !prevState.propertiesModalState
+        }));
     };
 
     getTdContent(colIndex, rowIndex) {
@@ -72,7 +78,7 @@ class TableElement extends Component {
                 cld.push(item);
             }
         })
-        debugger;
+        
         if (this.state.isDisable) {
             if (result)
                 return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />

@@ -32,7 +32,7 @@ class DatagridElement extends Component {
             datagridAndTableProperties: props.DatagridAndTableProperties !== "" && props.DatagridAndTableProperties !== null ? JSON.parse(props.DatagridAndTableProperties) : [],
             childElementList: props.ChildElementList.length === 0 ? [] : props.ChildElementList,
             tableRows: [],
-            modalState: false,
+            dgrdModalState: false,
             elementListOptionGroup: GetAllElementListForSelect(16),
             elementListSelectedGroup: null,
             elementName: "",
@@ -40,26 +40,32 @@ class DatagridElement extends Component {
             columnIndex: 0
         }
 
-        this.toggleAddElementModal = this.toggleAddElementModal.bind(this);
+        this.toggleDgrdAddElementModal = this.toggleDgrdAddElementModal.bind(this);
         this.handleElementListChange = this.handleElementListChange.bind(this);
         this.getTdContent = this.getTdContent.bind(this);
         this.handleAddAnother = this.handleAddAnother.bind(this);
     }
 
-    toggleAddElementModal = (columnIndex) => {
-        this.state.modalState = !(this.state.modalState);
-        this.state.columnIndex = columnIndex;
+    toggleDgrdAddElementModal = (columnIndex) => {
+        this.setState(prevState => ({
+            dgrdModalState: !prevState.dgrdModalState,
+            columnIndex: columnIndex
+        }));
     };
 
     handleElementListChange = (e) => {
-        this.state.modalState = !(this.state.modalState);
-        this.state.propertiesModalState = !(this.state.propertiesModalState);
-        this.state.elementType = e.value;
-        this.state.elementName = GetElementNameByKey(this.props, e.value) + " " + this.props.t("Properties");
+        this.setState(prevState => ({
+            dgrdModalState: !prevState.dgrdModalState,
+            propertiesdgrdModalState: !prevState.propertiesdgrdModalState,
+            elementType: e.value,
+            elementName: GetElementNameByKey(this.props, e.value) + " " + this.props.t("Properties")
+        }));
     };
 
     togglePropertiesModal = () => {
-        this.state.propertiesModalState = !(this.state.propertiesModalState);
+        this.setState(prevState => ({
+            propertiesdgrdModalState: !prevState.propertiesdgrdModalState
+        }));
     };
 
     getTdContent(index) {
@@ -76,7 +82,7 @@ class DatagridElement extends Component {
             if (result)
                 return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />
             else
-                return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleAddElementModal(index + 1)} />;
+                return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleDgrdAddElementModal(index + 1)} />;
         }
         else {
             if (result)
@@ -128,8 +134,8 @@ class DatagridElement extends Component {
                         </div>
                     </Row>
                 }
-                <Modal isOpen={this.state.modalState} toggle={this.toggleAddElementModal} size="md">
-                    <ModalHeader className="mt-0" toggle={this.toggleAddElementModal}>{this.props.t("Add a child input")}</ModalHeader>
+                <Modal isOpen={this.state.dgrdModalState} toggle={this.toggleDgrdAddElementModal} size="md">
+                    <ModalHeader className="mt-0" toggle={this.toggleDgrdAddElementModal}>{this.props.t("Add a child input")}</ModalHeader>
                     <ModalBody>
                         <div>
                             <Row className="mb-3">
@@ -146,7 +152,7 @@ class DatagridElement extends Component {
                     </ModalBody>
                 </Modal>
 
-                <Modal isOpen={this.state.propertiesModalState} toggle={this.togglePropertiesModal} size="lg">
+                <Modal isOpen={this.state.propertiesdgrdModalState} toggle={this.togglePropertiesModal} size="lg">
                     <ModalHeader className="mt-0" toggle={this.togglePropertiesModal}>{this.state.elementName}</ModalHeader>
                     <ModalBody>
                         <div>
