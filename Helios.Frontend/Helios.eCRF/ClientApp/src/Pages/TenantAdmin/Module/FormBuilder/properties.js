@@ -105,7 +105,7 @@ class Properties extends React.Component {
             RelationMainJs: '',
             RelationSourceInputs: '',
             relationElementRows: [],
-            inputCounter: 0,
+            inputCounter: 1,
             relationFieldOptionGroup: [],
             relationFieldsSelectedGroup: 0,
             fieldWidthsW: "",
@@ -160,7 +160,7 @@ class Properties extends React.Component {
         this.fillDependentFieldList();
         this.getElementData();
 
-        this.toggle = this.toggle.bind(this);
+        this.toggleActiveTab = this.toggleActiveTab.bind(this);
         this.handleSaveModuleContent = this.handleSaveModuleContent.bind(this);
         this.getElementData = this.getElementData.bind(this);
         this.fillDependentFieldList = this.fillDependentFieldList.bind(this);
@@ -184,7 +184,6 @@ class Properties extends React.Component {
         this.handleDependentFieldChange = this.handleDependentFieldChange.bind(this);
         this.handleDependentConditionChange = this.handleDependentConditionChange.bind(this);
         this.handleDependentActionChange = this.handleDependentActionChange.bind(this);
-        this.handleRelationFieldChange = this.handleRelationFieldChange.bind(this);
         this.addRelationRow = this.addRelationRow.bind(this);
         this.handleRelationInputChange = this.handleRelationInputChange.bind(this);
         this.isRelationVariableNameDuplicate = this.isRelationVariableNameDuplicate.bind(this);
@@ -223,10 +222,12 @@ class Properties extends React.Component {
     }
 
     setShowToast() {
-        this.state.showToast = false;
+        this.setState({
+            showToast: false,
+        });
     }
 
-    toggle(tab) {
+    toggleActiveTab(tab) {
         if (this.state.activeTab !== tab) {
             this.setState({
                 activeTab: tab,
@@ -431,17 +432,21 @@ class Properties extends React.Component {
                     relFldOptionGroup.push(itm);
                 });
 
-                this.state.dependentFieldOptionGroup = depFldOptionGroup;
+                this.setState({
+                    dependentFieldOptionGroup: depFldOptionGroup,
+                });
 
                 if (this.state.Id !== 0 && this.state.Id !== undefined) {
                     var t = this.state.DependentSourceFieldId;
 
                     var f = this.state.dependentFieldOptionGroup.filter(function (e) {
-                        if (e.value == t)
+                        if (e.value === t)
                             return e;
                     });
 
-                    this.state.dependentFieldsSelectedGroup = f;
+                    this.setState({
+                        dependentFieldsSelectedGroup: f,
+                    });
                 }
                 else {
                     const newItem = {
@@ -452,7 +457,9 @@ class Properties extends React.Component {
                     relFldOptionGroup.push(newItem);
                 }
 
-                this.state.relationFieldOptionGroup = relFldOptionGroup;
+                this.setState({
+                    relationFieldOptionGroup: relFldOptionGroup,
+                });
             })
             .catch(error => {
                 //console.error('Error:', error);
@@ -460,32 +467,42 @@ class Properties extends React.Component {
     }
 
     handleDependentFieldChange(e) {
-        this.setState({ DependentSourceFieldId: e.value });
-        this.setState({ DependentTargetFieldId: this.state.Id });
-        this.state.dependentFieldsSelectedGroup = e;
-        this.state.DepFldInputClass = '';
+        this.setState({
+            DependentSourceFieldId: e.value,
+            DependentTargetFieldId: this.state.Id,
+            dependentFieldsSelectedGroup: e,
+            DepFldInputClass: ''
+        });
     };
 
     handleDependentConditionChange(selectedOption) {
-        this.setState({ DependentCondition: selectedOption.value });
-        this.state.conditionSelectedGroup = selectedOption;
-        this.state.DepConInputClass = '';
+        this.setState({
+            DependentCondition: selectedOption.value,
+            conditionSelectedGroup: selectedOption,
+            DepConInputClass: ''
+        });
     };
 
     handleDependentActionChange(e) {
-        this.setState({ DependentAction: e.value });
-        this.state.actionSelectedGroup = e;
-        this.state.DepActInputClass = '';
+        this.setState({
+            DependentAction: e.value,
+            actionSelectedGroup: e,
+            DepActInputClass: ''
+        });
     };
 
     handleDependentFieldSelectGroup = (selectedGroup) => {
-        this.state.dependentFieldsSelectedGroup = selectedGroup;
+        this.setState({
+            dependentFieldsSelectedGroup: selectedGroup,
+        });
     };
 
     handleIsDependentChange = (e) => {
-        this.state.IsDependent = e.target.value == "1" ? true : false;
+        this.setState({
+            IsDependent: e.target.value === "1" ? true : false,
+        });
 
-        if (e.target.value == "1") {
+        if (e.target.value === "1") {
             this.setState({ dependentEnabled: false });
         }
         else {
@@ -493,33 +510,21 @@ class Properties extends React.Component {
             this.setState({ dependentFieldsSelectedGroup: 0 });
             this.setState({ conditionSelectedGroup: { label: "Equal", value: 3 } });
             this.setState({ actionSelectedGroup: { label: "Show", value: 1 } });
-            //this.setState({ DependentFieldValue: '' });
         }
     }
 
     // #end region dependent
 
     handleIsRelationChange = (e) => {
-        this.state.IsRelation = e.target.value == "1" ? true : false;
+        this.setState({ IsRelation: e.target.value === "1" ? true : false });
 
-        if (e.target.value == "1") {
+        if (e.target.value === "1") {
             this.setState({ relationEnabled: false });
         }
         else {
             this.setState({ relationEnabled: true });
         }
     }
-
-    handleRelationFieldChange(e) {
-        //this.setState({ DependentSourceFieldId: e.value });
-        //this.setState({ DependentTargetFieldId: this.state.Id });
-        //this.state.dependentFieldsSelectedGroup = e;
-        //this.state.DepFldInputClass = '';
-    };
-
-    //changeFieldWidth = (newValue) => {
-    //    this.setState({ FieldWidths: newValue });
-    //};
 
     changeUnit = (newValue) => {
         this.setState({ Unit: newValue });
@@ -641,17 +646,20 @@ class Properties extends React.Component {
 
     dependentFieldValueInputKeyDown = (e) => {
         const val = e.target.value;
-        this.state.wth = this.state.wth + 10;
+        this.setState({ wth: this.state.wth + 10 });
 
         if (e.key === 'Enter' && val) {
             if (this.state.DependentFieldValue.find(tag => tag.toLowerCase() === val.toLowerCase())) {
                 return;
             }
 
-            this.setState({ DependentFieldValue: [...this.state.DependentFieldValue, val] });
+            this.setState({
+                DependentFieldValue: [...this.state.DependentFieldValue, val],
+                wth: 10,
+                DepFldVlInputClass: "form-control input-tag"
+            });
+
             this.tagInput.value = null;
-            this.state.wth = 10;
-            this.state.DepFldVlInputClass = "form-control input-tag";
         } else if (e.key === 'Backspace' && !val) {
             this.removeDependentFieldValueTag(this.state.DependentFieldValue.length - 1);
         }
@@ -663,20 +671,22 @@ class Properties extends React.Component {
             newRows.splice(index, 1);
             return { relationElementRows: newRows };
         }, () => {
-            this.state.RelationSourceInputs = JSON.stringify(this.state.relationElementRows);
+            this.setState({ RelationSourceInputs: JSON.stringify(this.state.relationElementRows) });
         });
     };
 
     addRelationRow = () => {
-        this.state.RelFldVlInputClass = 'table-responsive mb-3';
-        this.state.inputCounter = this.state.inputCounter + 1;
+        this.setState({
+            RelFldVlInputClass: 'table-responsive mb-3',
+            inputCounter: this.state.inputCounter + 1
+        });
 
         this.setState((prevState) => ({
             relationElementRows: [...prevState.relationElementRows, {
                 relationFieldsSelectedGroup: this.state.relationFieldOptionGroup[0], variableName: 'A' + this.state.inputCounter
             }],
         }), () => {
-            this.state.RelationSourceInputs = JSON.stringify(this.state.relationElementRows);
+            this.setState({ RelationSourceInputs: JSON.stringify(this.state.relationElementRows) });
         });
     };
 
@@ -698,7 +708,7 @@ class Properties extends React.Component {
                 }
             }
 
-            this.state.IsFormValid = isVal;
+            this.setState({ IsFormValid: isVal });
         });
     };
 
@@ -728,57 +738,62 @@ class Properties extends React.Component {
     }
 
     fillElementProperties(data) {
-        this.state.Title = data.title;
-        this.state.ElementName = data.elementName;
-        this.state.Description = data.description;
-        this.state.ElementType = data.elementType;
-        this.state.FieldWidths = data.width;
-        this.state.Unit = data.unit != null ? data.unit : "";
-        this.state.Mask = data.mask != null ? data.mask : "";
-        this.state.LowerLimit = data.lowerLimit != null ? data.lowerLimit : "";
-        this.state.UpperLimit = data.upperLimit != null ? data.upperLimit : "";
-        this.state.Layout = data.layout;
-        this.state.DefaultValue = data.defaultValue;
-        this.state.AddTodayDate = data.addTodayDate;
-        this.state.CalculationSourceInputs = data.calculationSourceInputs;
-        this.state.MainJs = data.mainJs;
-        this.state.StartDay = data.startDay;
-        this.state.EndDay = data.endDay;
-        this.state.StartMonth = data.startMonth;
-        this.state.EndMonth = data.startMonth;
-        this.state.StartYear = data.startYear;
-        this.state.EndYear = data.endYear;
-        this.state.IsRequired = data.isRequired;
-        this.state.IsHidden = data.isHidden;
-        this.state.CanMissing = data.canMissing;
-        this.state.SavedTagList = data.elementOptions == null || data.elementOptions === "" ? [] : JSON.parse(data.elementOptions);
-        this.state.DatagridAndTableProperties = data.datagridAndTableProperties;
-        this.state.RowCount = data.rowCount;
-        this.state.ColumnCount = data.columnCount;
-        this.state.AdverseEventType = data.adverseEventType;
-        this.state.TargetElementId = data.targetElementId === null ? 0 : data.targetElementId;
-        this.state.ButtonText = data.buttonText !== null ? data.buttonText : "";
-        
-        this.state.IsDependent = data.isDependent;
-        this.state.DependentSourceFieldId = data.dependentSourceFieldId;
-        this.state.DependentTargetFieldId = data.dependentTargetFieldId;
-        this.state.DependentCondition = data.dependentCondition === 0 ? 3 : data.dependentCondition;
-        this.state.DependentAction = data.dependentAction === 0 ? 1 : data.dependentAction;
-        this.state.DependentFieldValue = data.dependentFieldValue == "" ? [] : JSON.parse(data.dependentFieldValue);
+        this.setState({
+            Title: data.title,
+            ElementName: data.elementName,
+            Description: data.description,
+            ElementType: data.elementType,
+            FieldWidths: data.width,
+            Unit: data.unit != null ? data.unit : "",
+            Mask: data.mask != null ? data.mask : "",
+            LowerLimit: data.lowerLimit != null ? data.lowerLimit : "",
+            UpperLimit: data.upperLimit != null ? data.upperLimit : "",
+            Layout: data.layout,
+            DefaultValue: data.defaultValue,
+            AddTodayDate: data.addTodayDate,
+            CalculationSourceInputs: data.calculationSourceInputs,
+            MainJs: data.mainJs,
+            StartDay: data.startDay,
+            EndDay: data.endDay,
+            StartMonth: data.startMonth,
+            EndMonth: data.startMonth,
+            StartYear: data.startYear,
+            EndYear: data.endYear,
+            IsRequired: data.isRequired,
+            IsHidden: data.isHidden,
+            CanMissing: data.canMissing,
+            SavedTagList: data.elementOptions == null || data.elementOptions === "" ? [] : JSON.parse(data.elementOptions),
+            DatagridAndTableProperties: data.datagridAndTableProperties,
+            RowCount: data.rowCount,
+            ColumnCount: data.columnCount,
+            AdverseEventType: data.adverseEventType,
+            TargetElementId: data.targetElementId === null ? 0 : data.targetElementId,
+            ButtonText: data.buttonText !== null ? data.buttonText : "",
+
+            IsDependent: data.isDependent,
+            DependentSourceFieldId: data.dependentSourceFieldId,
+            DependentTargetFieldId: data.dependentTargetFieldId,
+            DependentCondition: data.dependentCondition === 0 ? 3 : data.dependentCondition,
+            DependentAction: data.dependentAction === 0 ? 1 : data.dependentAction,
+            DependentFieldValue: data.dependentFieldValue == "" ? [] : JSON.parse(data.dependentFieldValue),
+        });
 
         var rel = data.relationSourceInputs !== "" ? JSON.parse(data.relationSourceInputs) : '';
-        this.state.IsRelation = data.isRelated;
-        this.state.RelationSourceInputs = rel != null && rel !== "" ? data.relationSourceInputs : '';
-        this.state.relationElementRows = rel != null && rel !== "" ? rel : [];
-        this.state.RelationMainJs = data.relationMainJs != null ? data.relationMainJs : '';
-        this.state.inputCounter = rel != null && rel !== "" ? rel.length : 0;
+
+        this.setState({
+            IsRelation: data.isRelated,
+            RelationSourceInputs: rel != null && rel !== "" ? data.relationSourceInputs : '',
+            relationElementRows: rel != null && rel !== "" ? rel : [],
+            RelationMainJs: data.relationMainJs != null ? data.relationMainJs : '',
+            inputCounter: rel != null && rel !== "" ? rel.length : 0,
+        });
 
         var w = this.state.widthOptionGroup.filter(function (e) {
             if (e.value === data.width)
                 return e;
         });
 
-        this.state.widthSelectedGroup = w;
+        this.setState({ widthSelectedGroup: w });
 
         var t = this.state.DependentSourceFieldId;
 
@@ -787,27 +802,27 @@ class Properties extends React.Component {
                 return e;
         });
 
-        this.state.dependentFieldsSelectedGroup = f;
+        this.setState({ dependentFieldsSelectedGroup: f });
 
         var cn = this.state.conditionOptionGroup.filter(function (e) {
             if (e.value === data.dependentCondition)
                 return e;
         });
 
-        this.state.conditionSelectedGroup = cn.length === 0 ? { label: "Equal", value: 3 } : cn;
+        this.setState({ conditionSelectedGroup: cn.length === 0 ? { label: "Equal", value: 3 } : cn });
 
         var ac = this.state.actionOptionGroup.filter(function (e) {
             if (e.value === data.dependentAction)
                 return e;
         });
 
-        this.state.actionSelectedGroup = ac.length === 0 ? { label: "Show", value: 1 } : ac;
+        this.setState({ actionSelectedGroup: ac.length === 0 ? { label: "Show", value: 1 } : ac });
 
         if (data.isDependent) {
             this.setState({ dependentEnabled: false });
         }
 
-        this.state.ValidationList = data.validationList;
+        this.setState({ ValidationList: data.validationList });
     }
 
     handleSaveModuleContent(e) {
@@ -944,7 +959,7 @@ class Properties extends React.Component {
                         });
 
                         //if (this.state.ElementType === 1 || this.state.ElementType === 8 || this.state.ElementType === 15 || this.state.ElementType === 16)//label, radio button, table, datagrid need to reload page
-                            window.location.reload();
+                        window.location.reload();
                         //else
                         //    this.props.SetPropModal(false);
                     } else {
@@ -995,7 +1010,7 @@ class Properties extends React.Component {
                                             active: this.state.activeTab === "1",
                                         })}
                                         onClick={() => {
-                                            this.toggle("1");
+                                            this.toggleActiveTab("1");
                                         }}
                                     >
                                         {this.props.t("General")}
@@ -1008,7 +1023,7 @@ class Properties extends React.Component {
                                             active: this.state.activeTab === "2",
                                         })}
                                         onClick={() => {
-                                            this.toggle("2");
+                                            this.toggleActiveTab("2");
                                         }}
                                     >
                                         {this.props.t("Dependency")}
@@ -1023,7 +1038,7 @@ class Properties extends React.Component {
                                                     active: this.state.activeTab === "3",
                                                 })}
                                                 onClick={() => {
-                                                    this.toggle("3");
+                                                    this.toggleActiveTab("3");
                                                 }}
                                             >
                                                 {this.props.t("Validation")}
@@ -1035,7 +1050,7 @@ class Properties extends React.Component {
                                                     active: this.state.activeTab === "4",
                                                 })}
                                                 onClick={() => {
-                                                    this.toggle("4");
+                                                    this.toggleActiveTab("4");
                                                 }}
                                             >
                                                 {this.props.t("Metadata")}
