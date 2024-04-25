@@ -1144,7 +1144,7 @@ class Properties extends React.Component {
                                                                 </div>
                                                             </Row>
                                                         )}
-                                                        {this.state.showWhereElementPropeties === 0 && this.renderElementPropertiesSwitch(this.state.ElementType)}
+                                                        {this.state.showWhereElementPropeties === 0 && this.state.ElementType !== 7 && this.renderElementPropertiesSwitch(this.state.ElementType)}
                                                         <Row className="mb-3 ml-0">
                                                             {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16 && this.state.ElementType !== 17 && this.state.ElementType !== 3 && this.state.ElementType !== 14) &&
                                                                 <div className="form-check col-md-6">
@@ -1169,7 +1169,7 @@ class Properties extends React.Component {
                                                         }
                                                     </div>
                                                     <div>
-                                                        {this.state.showWhereElementPropeties === 3 && this.renderElementPropertiesSwitch(this.state.ElementType)}
+                                                        {(this.state.showWhereElementPropeties === 3 || this.state.ElementType === 7) && this.renderElementPropertiesSwitch(this.state.ElementType)}
                                                     </div>
                                                 </>
                                             } />
