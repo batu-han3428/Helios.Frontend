@@ -129,7 +129,6 @@ class ListElementsProperties extends Component {
         var tgOptionGroup = [];
 
         if (this.state.Id == 0) {
-            console.log('if')
             fetch(baseUrl + '/Module/GetMultipleTagList?id=' + this.state.Id, {
                 method: 'GET',
             })
@@ -143,7 +142,7 @@ class ListElementsProperties extends Component {
                         tgOptionGroup.push(itm);
 
                     });
-                    console.log(tgOptionGroup)
+
                     this.setState({ TagListOptionGroup: tgOptionGroup });
                 })
                 .catch(error => {
