@@ -120,7 +120,7 @@ class ListElementsProperties extends Component {
         .catch(error => {
             this.toastRef.current.setToast({
                 message: t("An unexpected error occurred."),
-                stateToast: data.isSuccess ? true : false
+                stateToast: false
             });    
         });
     };
