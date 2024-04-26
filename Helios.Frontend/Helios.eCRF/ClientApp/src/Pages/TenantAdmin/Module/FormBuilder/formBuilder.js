@@ -51,11 +51,11 @@ const FormBuilder = props => {
 
     return (
         <div style={({ height: "100vh" }, { display: "flex" })} >
-            <div className="page-content">
+            <div className="page-content" style={{ width:"100%"} }>
                 <div className="container-fluid">
                     <div className="page-title-box">
                         <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
-                            <Col md={8}>
+                            <Col md={12}>
                                 <h6 className="page-title">{moduleName}</h6>
                             </Col>
                         </Row>

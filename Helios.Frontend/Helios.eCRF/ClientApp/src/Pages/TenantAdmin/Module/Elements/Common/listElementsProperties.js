@@ -25,6 +25,9 @@ import AccordionComp from '../../../../../components/Common/AccordionComp/Accord
 import Select from "react-select";
 import ToastComp from '../../../../../components/Common/ToastComp/ToastComp';
 import { withTranslation } from "react-i18next";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { getLocalStorage } from '../../../../../helpers/local-storage/localStorageProcess';
+import { API_BASE_URL } from '../../../../../constants/endpoints';
 
 const baseUrl = "http://localhost:3300";
 
@@ -92,6 +95,36 @@ class ListElementsProperties extends Component {
         this.state.showToast = false;
     }
 
+    handleRemoveOption = (optionValue) => {
+        const { t } = this.props;
+        fetch(API_BASE_URL + `Module/RemoveMultipleTagList?id=${optionValue}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${getLocalStorage("accessToken")}` 
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            this.toastRef.current.setToast({
+                message: t(data.message),
+                stateToast: data.isSuccess? true:false
+            });               
+            this.getMultipleTagList();
+        })
+        .catch(error => {
+            this.toastRef.current.setToast({
+                message: t("An unexpected error occurred."),
+                stateToast: data.isSuccess ? true : false
+            });    
+        });
+    };
+
     getMultipleTagList() {
         var tgOptionGroup = [];
 
@@ -138,7 +171,7 @@ class ListElementsProperties extends Component {
 
         this.state.allTagList.filter(function (e) {
             e.filter(function (ee) {
-                if (selectedOption.label == ee.tagKey) {
+                if (selectedOption.label.props.children[0].props.children == ee.tagKey) {
                     tgs.push(ee);
                 }
             });
@@ -247,6 +280,7 @@ class ListElementsProperties extends Component {
                                     message: data.message,
                                     stateToast: true
                                 });
+                                this.getMultipleTagList();
                             } else {
                                 this.toastRef.current.setToast({
                                     message: data.message,
@@ -254,7 +288,6 @@ class ListElementsProperties extends Component {
                                 });
                             }
 
-                            this.getMultipleTagList();
                         })
                         .catch(error => {
                             //console.error('Error:', error);
@@ -423,8 +456,22 @@ class ListElementsProperties extends Component {
                             <div className="col-md-10">
                                 <Select
                                     value={this.state.TagListSelectedGroup}
-                                    onChange={this.handleTagListChange}
-                                    options={this.state.TagListOptionGroup}
+                                    onChange={this.handleTagListChange}                                    options={this.state.TagListOptionGroup.map(option => ({
+                                        ...option,
+                                        label: (
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <span>{option.label}</span>
+                                                <FontAwesomeIcon
+                                                    icon="fa-times"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        this.handleRemoveOption(option.value);
+                                                    }}
+                                                    style={{ cursor: 'pointer' }}
+                                                />
+                                            </div>
+                                        )
+                                    }))}
                                     placeholder={this.props.t("Select")}
                                     classNamePrefix="select2-selection" />
                             </div>

@@ -2,6 +2,7 @@
 using Helios.Common.Model;
 using Helios.eCRF.Models;
 using Helios.eCRF.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Helios.eCRF.Controllers
@@ -158,6 +159,14 @@ namespace Helios.eCRF.Controllers
         public async Task<ApiResponse<dynamic>> DeleteElement(Int64 id, Int64 userId)
         {
             var result = await _moduleService.DeleteElement(id, userId);
+            return result;
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "TenantAdmin")]
+        public async Task<ApiResponse<dynamic>> RemoveMultipleTagList(Int64 id)
+        {
+            var result = await _moduleService.RemoveMultipleTagList(id);
             return result;
         }
 

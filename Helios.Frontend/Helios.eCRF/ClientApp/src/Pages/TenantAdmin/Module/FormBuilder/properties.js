@@ -189,7 +189,7 @@ class Properties extends React.Component {
         this.handleRelationInputChange = this.handleRelationInputChange.bind(this);
         this.isRelationVariableNameDuplicate = this.isRelationVariableNameDuplicate.bind(this);
         this.removeRelationRow = this.removeRelationRow.bind(this);
-
+        this.saveModule = this.saveModule.bind(this);
         this.changeUnit.bind(this);
         this.changeMask.bind(this);
         this.changeLowerLimit.bind(this);
@@ -432,7 +432,7 @@ class Properties extends React.Component {
                 });
 
                 this.state.dependentFieldOptionGroup = depFldOptionGroup;
-
+                
                 if (this.state.Id !== 0 && this.state.Id !== undefined) {
                     var t = this.state.DependentSourceFieldId;
 
@@ -810,9 +810,109 @@ class Properties extends React.Component {
         this.state.ValidationList = data.validationList;
     }
 
+    saveModule() {
+        var bdy = JSON.stringify({
+            Id: this.state.Id,
+            ModuleId: this.state.ModuleId,
+            TenantId: this.state.TenantId,
+            UserId: this.state.UserId,
+            ElementDetailId: this.state.ElementDetailId,
+            ParentId: this.state.ParentId,
+            ElementType: this.state.ElementType,
+            ElementName: this.state.ElementName,
+            Title: this.state.Title,
+            IsTitleHidden: this.state.IsTitleHidden,
+            Order: this.state.Order,
+            Description: this.state.Description,
+            Width: this.state.FieldWidths,
+            IsHidden: this.state.IsHidden,
+            IsRequired: this.state.IsRequired,
+            IsDependent: this.state.IsDependent,
+            IsRelated: this.state.IsRelation,
+            IsReadonly: this.state.IsReadonly,
+            CanMissing: this.state.CanMissing,
+
+            // Elements properties
+            DefaultValue: this.state.DefaultValue,
+            Unit: this.state.Unit,
+            Mask: this.state.Mask,
+            LowerLimit: this.state.LowerLimit,
+            UpperLimit: this.state.UpperLimit,
+            Layout: this.state.Layout,
+            StartDay: this.state.StartDay,
+            EndDay: this.state.EndDay,
+            StartMonth: this.state.StartMonth,
+            EndMonth: this.state.EndMonth,
+            StartYear: this.state.StartYear,
+            EndYear: this.state.EndYear,
+            AddTodayDate: this.state.AddTodayDate,
+            ElementOptions: this.state.SavedTagList != null && this.state.SavedTagList.length > 0 ? JSON.stringify(this.state.SavedTagList) : "",
+            LeftText: this.state.LeftText,
+            RightText: this.state.RightText,
+            CalculationSourceInputs: this.state.CalculationSourceInputs,
+            MainJs: this.state.MainJs,
+            RowCount: this.state.RowCount,
+            ColumnCount: this.state.ColumnCount,
+            DatagridAndTableProperties: this.state.DatagridAndTableProperties === null ? "" : this.state.DatagridAndTableProperties,
+            RowIndex: this.state.RowIndex,
+            ColumnIndex: this.state.ColumnIndex,
+            AdverseEventType: this.state.AdverseEventType,
+            TargetElementId: this.state.TargetElementId,
+            ButtonText: this.state.ButtonText,
+
+            // Dependency properties
+            DependentSourceFieldId: this.state.DependentSourceFieldId == null ? 0 : this.state.DependentSourceFieldId,
+            DependentTargetFieldId: this.state.DependentTargetFieldId == null ? 0 : this.state.DependentTargetFieldId,
+            DependentCondition: this.state.DependentCondition,
+            DependentAction: this.state.DependentAction,
+            DependentFieldValue: this.state.DependentFieldValue.length > 0 ? JSON.stringify(this.state.DependentFieldValue) : "",
+
+            RelationSourceInputs: this.state.RelationSourceInputs,
+            RelationMainJs: this.state.RelationMainJs,
+
+            ChildElements: [],
+            VariableName: "",
+
+            // Validation
+            HasValidation: this.state.ValidationList !== "[]" && this.state.ValidationList.length > 0 ? true : false,
+            ValidationList: this.state.ValidationList.length > 0 ? JSON.stringify(this.state.ValidationList) : "",
+        });
+
+        var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
+        this.state.dispatch(startloading());
+
+        fetch(url + '/SaveModuleContent', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            body: bdy
+        }).then(res => {
+            return res.json()
+        }).then(data => {
+            this.state.dispatch(startloading());
+            if (data.isSuccess) {
+                this.toastRef.current.setToast({
+                    message: data.message,
+                    stateToast: true
+                });
+                window.location.reload();
+            } else {
+                this.toastRef.current.setToast({
+                    message: data.message,
+                    stateToast: false
+                });
+            }
+            this.state.dispatch(endloading());
+        }).catch(error => {
+            console.log(error)
+        });
+    }
+
+
     handleSaveModuleContent(e) {
         var isValid = true;
-        debugger;
 
         if (this.state.ElementName === "") {
             this.setState({ ElementNameInputClass: "is-invalid form-control" });
@@ -845,125 +945,22 @@ class Properties extends React.Component {
         }
 
         if (isValid && this.state.IsFormValid) {
-            var bdy = JSON.stringify({
-                Id: this.state.Id,
-                ModuleId: this.state.ModuleId,
-                TenantId: this.state.TenantId,
-                UserId: this.state.UserId,
-                ElementDetailId: this.state.ElementDetailId,
-                ParentId: this.state.ParentId,
-                ElementType: this.state.ElementType,
-                ElementName: this.state.ElementName,
-                Title: this.state.Title,
-                IsTitleHidden: this.state.IsTitleHidden,
-                Order: this.state.Order,
-                Description: this.state.Description,
-                Width: this.state.FieldWidths,
-                IsHidden: this.state.IsHidden,
-                IsRequired: this.state.IsRequired,
-                IsDependent: this.state.IsDependent,
-                IsRelated: this.state.IsRelation,
-                IsReadonly: this.state.IsReadonly,
-                CanMissing: this.state.CanMissing,
-
-                // Elements properties
-                DefaultValue: this.state.DefaultValue,
-                Unit: this.state.Unit,
-                Mask: this.state.Mask,
-                LowerLimit: this.state.LowerLimit,
-                UpperLimit: this.state.UpperLimit,
-                Layout: this.state.Layout,
-                StartDay: this.state.StartDay,
-                EndDay: this.state.EndDay,
-                StartMonth: this.state.StartMonth,
-                EndMonth: this.state.EndMonth,
-                StartYear: this.state.StartYear,
-                EndYear: this.state.EndYear,
-                AddTodayDate: this.state.AddTodayDate,
-                ElementOptions: this.state.SavedTagList != null && this.state.SavedTagList.length > 0 ? JSON.stringify(this.state.SavedTagList) : "",
-                LeftText: this.state.LeftText,
-                RightText: this.state.RightText,
-                CalculationSourceInputs: this.state.CalculationSourceInputs,
-                MainJs: this.state.MainJs,
-                RowCount: this.state.RowCount,
-                ColumnCount: this.state.ColumnCount,
-                DatagridAndTableProperties: this.state.DatagridAndTableProperties == null ? "" : this.state.DatagridAndTableProperties,
-                RowIndex: this.state.RowIndex,
-                ColumnIndex: this.state.ColumnIndex,
-                AdverseEventType: this.state.AdverseEventType,
-                TargetElementId: this.state.TargetElementId,
-                ButtonText: this.state.ButtonText,
-
-                // Dependency properties
-                DependentSourceFieldId: this.state.DependentSourceFieldId == null ? 0 : this.state.DependentSourceFieldId,
-                DependentTargetFieldId: this.state.DependentTargetFieldId == null ? 0 : this.state.DependentTargetFieldId,
-                DependentCondition: this.state.DependentCondition,
-                DependentAction: this.state.DependentAction,
-                DependentFieldValue: this.state.DependentFieldValue.length > 0 ? JSON.stringify(this.state.DependentFieldValue) : "",
-
-                RelationSourceInputs: this.state.RelationSourceInputs,
-                RelationMainJs: this.state.RelationMainJs,
-
-                ChildElements: [],
-                VariableName: "",
-
-                // Validation
-                HasValidation: this.state.ValidationList !== "[]" && this.state.ValidationList.length > 0 ? true : false,
-                ValidationList: this.state.ValidationList.length > 0 ? JSON.stringify(this.state.ValidationList) : ""
-            });
-
-            debugger;
-            var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
-            this.state.dispatch(startloading());
-
-            fetch(url + '/SaveModuleContent', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json'
-                },
-                body: bdy
-            }).then(res => {
-                return res.json()
-            })
-                .then(data => {
-                    //if (data.isSuccess) {
-                    //    Swal.fire(data.message, '', 'success');
-                    //window.location.reload();
-                    //} else {
-                    //    Swal.fire(data.message, '', 'error');
-                    //    console.log(data.message);
-                    //};                  
-
-                    this.state.dispatch(startloading());
-
-                    if (data.isSuccess) {
-                        this.toastRef.current.setToast({
-                            message: data.message,
-                            stateToast: true
-                        });
-
-                        //if (this.state.ElementType === 1 || this.state.ElementType === 8 || this.state.ElementType === 15 || this.state.ElementType === 16)//label, radio button, table, datagrid need to reload page
-                            window.location.reload();
-                        //else
-                        //    this.props.SetPropModal(false);
-                    } else {
-                        this.toastRef.current.setToast({
-                            message: data.message,
-                            stateToast: false
-                        });
-                    }
-                    this.state.dispatch(endloading());
-
-                })
-                .catch(error => {
-                    //console.error('Error:', error);
-                    //alert(error);
-                    //this.toastRef.current.setToast({
-                    //    message: error,
-                    //    stateToast: false
-                    //});
+            if (this.state.DatagridAndTableProperties !== null && this.state.DatagridAndTableProperties !== "") {
+                const data = JSON.parse(this.state.DatagridAndTableProperties);
+                const newDatagridTable = data.map(item => {
+                    return {
+                        ...item,
+                        title: item.title.trim()
+                    };
                 });
+                this.setState({
+                    DatagridAndTableProperties: JSON.stringify(newDatagridTable)
+                }, () => {
+                    this.saveModule();
+                });
+            } else {
+                this.saveModule();
+            }
         }
         else {
             e.preventDefault();
@@ -1213,7 +1210,13 @@ class Properties extends React.Component {
                                                             classNamePrefix="select2-selection"
                                                             placeholder={this.props.t("Select")}
                                                             className={this.state.DepFldInputClass}
-                                                            isDisabled={this.state.dependentEnabled} />
+                                                            isDisabled={this.state.dependentEnabled}
+                                                            filterOption={(option, query) =>
+                                                                String(option.data.label)
+                                                                    .toLocaleLowerCase('tr')
+                                                                    .includes(query.toLocaleLowerCase('tr'))
+                                                            }
+                                                        />
                                                     </div>
                                                 </Col>
                                             </Row>
