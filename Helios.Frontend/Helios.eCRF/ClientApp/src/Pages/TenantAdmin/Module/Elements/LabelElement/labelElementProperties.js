@@ -96,7 +96,8 @@ class LabelElementProperties extends Component {
                         const contentState = data.getCurrentContent();
                         const contentStateRaw = convertToRaw(contentState);
                         const htmlContent = draftToHtml(contentStateRaw);
-                        const cntnt = contentState.hasText() ? htmlContent : null;
+                        const modifiedHtmlContent = htmlContent.replace(/<strong>(.*?)<\/strong>/g, '<strong style="font-weight: bold;">$1</strong>');
+                        const cntnt = contentState.hasText() ? modifiedHtmlContent : null;
                         this.handleTitleChange(cntnt);
                         //validationType.setFieldValue('editor', contentState.hasText() ? htmlContent : null);
                     }}

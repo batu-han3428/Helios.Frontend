@@ -151,6 +151,21 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
+        
+        public async Task<ApiResponse<dynamic>> RemoveMultipleTagList(Int64 id)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreModule/RemoveMultipleTagList", Method.Post);
+                AddApiHeaders(req);
+                req.AddJsonBody(new
+                {
+                    id = id
+                });
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
 
         public async Task<ApiResponse<dynamic>> DeleteElement(Int64 id, Int64 userId)
         {
