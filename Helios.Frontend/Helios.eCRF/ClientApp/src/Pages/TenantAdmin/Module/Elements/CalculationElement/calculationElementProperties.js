@@ -29,7 +29,7 @@ class CalculationElementProperties extends Component {
         super(props);
 
         var inps = props.CalculationSourceInputs !== "" ? JSON.parse(props.CalculationSourceInputs) : [];
-        var inpsCount = props.CalculationSourceInputs !== "" ? JSON.parse(props.CalculationSourceInputs).length : 0;
+        var inpsCount = props.CalculationSourceInputs !== "" ? JSON.parse(props.CalculationSourceInputs).length : 1;
 
         this.state = {
             Id: props.Id,

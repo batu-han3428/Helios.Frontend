@@ -128,7 +128,7 @@ import AddOrUpdateTenant from "../Pages/SystemAdmin/Tenants/AddOrUpdateTenant.js
 import ListTenantAndSystemAdmin from "../Pages/SystemAdmin/Users/ListTenantAndSystemAdmin";
 
 //Subject
-import PatientList from "../Pages/Subject/Patient/PatientList";
+import SubjectList from "../Pages/Subject/Subject/SubjectList";
 
 const userRoutes = [
 
@@ -239,11 +239,11 @@ const userRoutes = [
 
 
     //Subject
-    { path: "/patientlist", component: <PatientList />, menuType: "sso", roles: ['StudyUser'] },
+    { path: "/subjectlist", component: <SubjectList />, menuType: "sso", roles: ['StudyUser'] },
 
     // this route should be at the end of all other routes
     { path: "/", roles: ["TenantAdmin"], redirect: "/studylist", menuType: "admin" },
-    { path: "/", roles: ["StudyUser"], redirect: "/patientlist", menuType: "sso" },
+    { path: "/", roles: ["StudyUser"], redirect: "/subjectlist", menuType: "sso" },
     { path: "/", roles: ["SuperAdmin"], redirect: "/add-system-admin", menuType: "superadmin" },
     { path: "/", roles: ["SystemAdmin"], redirect: "/tenants", menuType: "systemadmin" },
 ];
