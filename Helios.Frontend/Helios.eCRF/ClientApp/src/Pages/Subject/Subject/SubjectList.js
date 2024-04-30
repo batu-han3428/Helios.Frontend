@@ -1,20 +1,33 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withTranslation } from "react-i18next";
 import { Table, Row, Col, Typography } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'reactstrap';
 import Swal from 'sweetalert2';
+import { useDispatch, useSelector } from "react-redux";
+import { startloading, endloading } from '../../../store/loader/actions';
+import { useAddSubjectMutation, useGetSubjectListQuery } from '../../../store/services/Subject';
 
 const SubjectList = props => {
+    const dispatch = useDispatch();
 
-    const subjectUpdate = (record) => {
+    //const subjectUpdate = (record) => {
 
-    };
+    //};
 
-    const subjectDelete = (id) => {
+    //const subjectDelete = (id) => {
 
-    };
+    //};
+
+    const [addingSubject] = useAddSubjectMutation();
+    const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(2);
+
+    useEffect(() => {
+        if (!error && !isLoading && subjectsData) {
+            console.log("sdfsdfs");
+        }
+    }, [subjectsData, error, isLoading]);
 
     const addSubject = (id) => {
         Swal.fire({
@@ -27,7 +40,25 @@ const SubjectList = props => {
             cancelButtonText: props.t("Cancel"),
         }).then(async (result) => {
             if (result.isConfirmed) {
-               
+                    dispatch(startloading());
+                const response = await addingSubject(2);
+                if (response.data.isSuccess) {
+                    dispatch(endloading());
+                    Swal.fire({
+                        title: "",
+                        text: props.t(response.data.message),
+                        icon: "success",
+                        confirmButtonText: props.t("Ok"),
+                    });
+                } else {
+                    dispatch(endloading());
+                    Swal.fire({
+                        title: "",
+                        text: response.data.message,
+                        icon: "error",
+                        confirmButtonText: props.t("Ok"),
+                    });
+                }
             } else {
                 return false;
             }
@@ -45,8 +76,8 @@ const SubjectList = props => {
             render: (text, record) => {
                 return (
                     <span>
-                        <Button onClick={() => subjectUpdate(record)}>Güncelle</Button>
-                        <Button onClick={() => subjectDelete(record.id)}>Sil</Button>
+                        {/*<Button onClick={() => subjectUpdate(record)}>Güncelle</Button>*/}
+                        {/*<Button onClick={() => subjectDelete(record.id)}>Sil</Button>*/}
                     </span>
                 );
             }
