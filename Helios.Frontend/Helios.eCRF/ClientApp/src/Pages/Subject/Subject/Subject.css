@@ -1,0 +1,10 @@
+﻿.subject-menu-header {
+    color: rgba(0, 0, 0, 0.88) !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ant-menu-item-disabled > span > svg {
+    color: rgba(0, 0, 0, 0.88) !important;
+}

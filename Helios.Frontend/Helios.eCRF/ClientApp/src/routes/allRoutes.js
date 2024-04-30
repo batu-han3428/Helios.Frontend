@@ -129,6 +129,7 @@ import ListTenantAndSystemAdmin from "../Pages/SystemAdmin/Users/ListTenantAndSy
 
 //Subject
 import SubjectList from "../Pages/Subject/Subject/SubjectList";
+import SubjectDetail from "../Pages/Subject/Subject/SubjectDetail";
 
 const userRoutes = [
 
@@ -240,6 +241,7 @@ const userRoutes = [
 
     //Subject
     { path: "/subjectlist", component: <SubjectList />, menuType: "sso", roles: ['StudyUser'] },
+    { path: "/subject-detail", component: <SubjectDetail />, menuType: "sso", roles: ['StudyUser'] },
 
     // this route should be at the end of all other routes
     { path: "/", roles: ["TenantAdmin"], redirect: "/studylist", menuType: "admin" },
