@@ -3,6 +3,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { setupListeners } from '@reduxjs/toolkit/query'
 import { LoginApi } from './services/Login'
 import { StudyApi } from './services/Study'
+import { SubjectApi } from './services/Subject'
 import { SiteLaboratoriesApi } from './services/SiteLaboratories'
 import { ContactUsApi } from './services/ContactUs'
 import { PermissionsApi } from './services/Permissions'
@@ -20,6 +21,7 @@ export const store = configureStore({
         rootReducer,
         [LoginApi.reducerPath]: LoginApi.reducer,
         [StudyApi.reducerPath]: StudyApi.reducer,
+        [SubjectApi.reducerPath]: SubjectApi.reducer,
         [SiteLaboratoriesApi.reducerPath]: SiteLaboratoriesApi.reducer,
         [ContactUsApi.reducerPath]: ContactUsApi.reducer,
         [PermissionsApi.reducerPath]: PermissionsApi.reducer,
@@ -36,6 +38,7 @@ export const store = configureStore({
         getDefaultMiddleware().concat(
             LoginApi.middleware,
             StudyApi.middleware,
+            SubjectApi.middleware,
             SiteLaboratoriesApi.middleware,
             ContactUsApi.middleware,
             PermissionsApi.middleware,

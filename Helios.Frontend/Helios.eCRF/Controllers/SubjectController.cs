@@ -6,7 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Helios.eCRF.Controllers
 {
-    public class SubjectController : ControllerBase
+    [ApiController]
+    [Route("[controller]/[action]")]
+    public class SubjectController : Controller
     {
         private ISubjectService _subjectService;
         public SubjectController(ISubjectService subjectService)
