@@ -10,6 +10,7 @@ import { useStudyListGetQuery, useStudyLockOrUnlockMutation } from '../../../sto
 import './study.css';
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
+import { Table } from 'antd';
 import { formatDate } from "../../../helpers/format_date";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Swal from 'sweetalert2';
@@ -141,7 +142,94 @@ const LockedList = props => {
         ],
         rows: tableData
     }
-
+    const columns = [
+        {
+            title: props.t('Study name'),
+            dataIndex: 'studyName',
+            sorter: (a, b) => a.studyName.localeCompare(b.studyName),
+            sortDirections: ['ascend', 'descend'],
+            render: (text, record) => {
+                let className = '';
+                if (record.status === 'Delete') {
+                    className = 'deleted-row';
+                }
+                return <span className={className}>{text}</span>;
+            }
+        },
+        {
+            title: props.t('Study link'),
+            dataIndex: 'studyLink',
+            sorter: (a, b) => a.studyLink.localeCompare(b.studyLink),
+            sortDirections: ['ascend', 'descend'],
+            render: (text, record) => {
+                let className = '';
+                if (record.status === 'Delete') {
+                    className = 'deleted-row';
+                }
+                return <span className={className}>{text}</span>;
+            }
+        },
+        {
+            title: props.t('Protocol code'),
+            dataIndex: 'protocolCode',
+            sorter: (a, b) => a.protocolCode.localeCompare(b.protocolCode),
+            sortDirections: ['ascend', 'descend'],
+            render: (text, record) => {
+                let className = '';
+                if (record.status === 'Delete') {
+                    className = 'deleted-row';
+                }
+                return <span className={className}>{text}</span>;
+            }
+        },
+        {
+            title: props.t('Ask subject Initial'),
+            dataIndex: 'askSubjectInitial',
+            sorter: (a, b) => a.askSubjectInitial != b.askSubjectInitial ? a.askSubjectInitial.localeCompare(b.askSubjectInitial) : null,
+            sortDirections: ['ascend', 'descend'],
+            render: (text, record) => {
+                let className = '';
+                if (record.status === 'Delete') {
+                    className = 'deleted-row';
+                }
+                return <span className={className}>{text}</span>;
+            }
+        },
+        {
+            title: props.t('Last updated on'),
+            dataIndex: 'updatedAt',
+            sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+            sortDirections: ['ascend', 'descend'],
+            render: (text, record) => {
+                let className = '';
+                if (record.status === 'Delete') {
+                    className = 'deleted-row';
+                }
+                return <span className={className}>{text}</span>;
+            }
+        },
+        {
+            title: props.t('Actions'),
+            dataIndex: 'actions',
+            render: (text, record) => {
+                let className = '';
+                if (record.status === 'Delete') {
+                    className = 'deleted-row';
+                }
+                return <span className={className}>{text}</span>;
+            }
+        },
+    ];
+    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+    const handleExpand = (expanded, record) => {
+        const currentRowKey = record.key;
+        if (expanded) {
+            setExpandedRowKeys(prevKeys => [...prevKeys, currentRowKey]);
+        } else {
+            const filteredKeys = expandedRowKeys.filter(key => key !== currentRowKey);
+            setExpandedRowKeys(filteredKeys);
+        }
+    };
     const { data: studyData, error, isLoading } = useStudyListGetQuery(true);
 
     useEffect(() => {
@@ -157,7 +245,7 @@ const LockedList = props => {
             setTableData(updatedStudyData);
 
             const timer = setTimeout(() => {
-                generateInfoLabel();
+                /*   generateInfoLabel();*/
             }, 10)
 
             dispatch(endloading());
@@ -233,16 +321,14 @@ const LockedList = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>
-                                    <MDBDataTable
-                                        paginationLabel={[props.t("Previous"), props.t("Next")]}
-                                        entriesLabel={props.t("Show entries")}
-                                        searchLabel={props.t("Search")}
-                                        noRecordsFoundLabel={props.t("No matching records found")}
-                                        hover
-                                        responsive
-                                        striped
-                                        bordered
-                                        data={data}
+                                    <Table
+
+                                        dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
+                                        columns={columns}
+                                        expandedRowKeys={expandedRowKeys}
+                                        onExpand={handleExpand}
+                                        pagination={true}
+                                        scroll={{ x: 'max-content' }}
                                     />
                                 </CardBody>
                             </Card>
