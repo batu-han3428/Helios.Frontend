@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { decodeToken } from "../../../helpers/Util/tokenUtil";
 import { getLocalStorage } from '../../../helpers/local-storage/localStorageProcess';
 import { withTranslation } from "react-i18next";
+import { Table, Input } from 'antd';
 import Swal from 'sweetalert2'
 
 function ModuleList(props) {
@@ -218,9 +219,37 @@ function ModuleList(props) {
         navigateToFormBuilder(rowId)
     };
 
+    const [searchText, setSearchText] = useState('');
+    const columns = [
+        {
+            title: props.t('Module Name'),
+            dataIndex: 'name',
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            sortDirections: ['ascend', 'descend'],
+            filteredValue: [searchText],
+            onFilter: (value, record) => { return String(record.name).toLowerCase().includes(value.toLowerCase()); },
+            render: (text, record) => {
+                let className = '';
+                if (record.status === 'Delete') {
+                    className = 'deleted-row';
+                }
+                return <span className={className}>{text}</span>;
+            }
+        },
+        {
+            title: props.t('Actions'),
+            dataIndex: 'actions',
+            render: (text, record) => {
+                let className = '';
+                if (record.status === 'Delete') {
+                    className = 'deleted-row';
+                }
+                return <span className={className}>{text}</span>;
+            }
+        },
+    ];
     const renderRows = () => {
         fetchData();
-        
         return data.rows.map((row) => (
             <tr key={row.id} onDoubleClick={() => handleRowDoubleClick(row.id)}>
                 <td>{row.name}</td>
@@ -228,13 +257,21 @@ function ModuleList(props) {
             </tr>
         ));
     };
-
-    //useEffect(() => {
-    //    dispatch(startloading());
-    //    fetchData();
-    //    dispatch(endloading());
-    //}, []);
-
+    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+    const handleExpand = (expanded, record) => {
+        const currentRowKey = record.key;      
+        if (expanded) {
+            setExpandedRowKeys(prevKeys => [...prevKeys, currentRowKey]); 
+        } else {
+            const filteredKeys = expandedRowKeys.filter(key => key !== currentRowKey);
+            setExpandedRowKeys(filteredKeys);
+        }
+    };
+    useEffect(() => {
+        dispatch(startloading());
+        fetchData();
+        dispatch(endloading());      
+    }, []);    
     return (
         <>
             <Col sm={6} md={4} xl={3}>
@@ -284,31 +321,25 @@ function ModuleList(props) {
                             </Row>
                         </div>
                         <Row>
-                            <Col className="col-12">
+                            <Col className="col-12">                               
                                 <Card>
                                     <CardBody>
-                                        <MDBDataTable
-                                            paginationLabel={[props.t("Previous"), props.t("Next")]}
-                                            entriesLabel={props.t("Show entries")}
-                                            searchLabel={props.t("Search")}
-                                            noRecordsFoundLabel={props.t("No matching records found")}
-                                            hover
-                                            responsive
-                                            striped
-                                            bordered
-                                            data={data}
-                                        >
-                                            <thead>
-                                                <tr>
-                                                    {data.columns.map((col) => (
-                                                        <th key={col.field}>{col.label}</th>
-                                                    ))}
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {renderRows()}
-                                            </tbody>
-                                        </MDBDataTable>
+                                        <Input.Search placeholder="input search text"  onChange={(e) => setSearchText(e.target.value)} style={{ width: 200, height: " 40px" }} />
+                                        <Table
+                                            dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
+                                            columns={columns}
+                                            expandedRowKeys={expandedRowKeys}
+                                            onExpand={handleExpand}
+                                            pagination={true}
+                                            scroll={{ x: 'max-content' }}
+                                            onRow={(record, rowIndex) => {
+                                                return {
+                                                    onDoubleClick: event => {
+                                                        handleRowDoubleClick(record.id, event);
+                                                    }
+                                                }
+                                            }}
+                                        />
                                     </CardBody>
                                 </Card>
                             </Col>
