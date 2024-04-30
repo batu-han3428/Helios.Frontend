@@ -22,6 +22,7 @@ namespace Helios.eCRF.Extension
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IStudyService, StudyService>();
+            services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<IModuleService, ModuleService>();
             services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<TimeZoneHelper>();
