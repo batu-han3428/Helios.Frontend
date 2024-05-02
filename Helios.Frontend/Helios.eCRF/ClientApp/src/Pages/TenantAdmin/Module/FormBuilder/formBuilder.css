@@ -11,7 +11,8 @@
 
 .actionBtn {
     border: solid 1px #dee2e6;
-    margin-right:2px;
+    margin-right:5px;
+    padding:0px;
 }
 
 .ml-0{
