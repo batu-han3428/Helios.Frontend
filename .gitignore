@@ -12,3 +12,6 @@
 /Helios.Frontend/.vs
 /Helios.Frontend/Helios.eCRF/ClientApp/node_modules/.bin
 /Helios.Frontend/Helios.eCRF/ClientApp/node_modules
+/Helios.Frontend/bin/Debug/Helios.eCRF.dll
+/Helios.Frontend/bin/Debug/Helios.eCRF.exe
+/Helios.Frontend/bin/Debug/Helios.eCRF.pdb
