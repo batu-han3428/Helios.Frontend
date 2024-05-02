@@ -71,7 +71,7 @@ const Study = props => {
             dataIndex: 'updatedon',
         }
     ];
-    
+
     const columns = defaultColumns.map((col) => {
         if (!col.editable) {
             return col;
@@ -107,6 +107,7 @@ const Study = props => {
 
     useEffect(() => {
         if (dataSource && dataSource.length > 0 && firstExpanded) {
+            handleDataChange();
             const allRowKeys = getAllRowKeys(dataSource);
             setExpandedRowKeys(allRowKeys);
             setFirstExpanded(false);
@@ -192,6 +193,50 @@ const Study = props => {
         setEditing(false);
     }, [studyId]);
 
+    const handleDataChange = () => {
+        const newData = dataSource.map(item => {
+            if (item.children) {
+                const updatedChildren = item.children.map(chld => {
+                    if (chld.children) {
+                        const updatedChildren2 = chld.children.map(chld2 => {
+                            if (chld2.updatedon === "0001-01-01T00:00:00+00:00") {
+                                return { ...chld2, updatedon: "-" };
+                            }
+                            return chld2;
+                        });
+                        if (chld.updatedon === "0001-01-01T00:00:00+00:00") {
+                            return { ...chld, children: updatedChildren2, updatedon: "-" };
+                        }
+                        else {
+                            return { ...chld, children: updatedChildren2 }
+                        }
+                    }
+                    else {
+                        if (chld.updatedon === "0001-01-01T00:00:00+00:00") {
+                            return { ...chld, updatedon: "-" };
+                        }
+                    }
+                    return chld;
+                });
+                if (item.updatedon === "0001-01-01T00:00:00+00:00") {
+                    return { ...item, children: updatedChildren, updatedon: "-" };
+                }
+                else {
+                    return { ...item, children: updatedChildren }
+                }
+
+            }
+            else {
+                if (item.updatedon === "0001-01-01T00:00:00+00:00") {
+                    return { ...item, updatedon: "-" };
+                }
+            }
+
+            return item;
+        });
+        setDataSource(newData);
+    };
+
     return (
         <React.Fragment>
             <div className="page-content">
@@ -205,7 +250,7 @@ const Study = props => {
                     </div>
                     <Row>
                         <Col className="col-12">
-                            <div style={{ display: "flex", justifyContent: "space-between", padding:"10px 0" }}>
+                            <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0" }}>
                                 <div>
                                     <Tooltip title={allRowsExpanded ? props.t("Collapse all") : props.t("Expand all")}>
                                         <Button onClick={handleToggleAllRows} icon={<FontAwesomeIcon icon="fa-solid fa-bars" style={{ color: "#3d3d3d", }} />} />
@@ -223,20 +268,20 @@ const Study = props => {
                                             <Space direction="vertical">
                                                 <Switch checked={ranking} checkedChildren={props.t("Ranking")} unCheckedChildren={props.t("Ranking")} onChange={(checked) => rankingHandle(checked)} />
                                             </Space>
-                                        {ranking && <FloatButton icon={<CheckOutlined />} type="primary" tooltip={<div>Save</div>} onClick={saveRanking} />}
+                                            {ranking && <FloatButton icon={<CheckOutlined />} type="primary" tooltip={<div>Save</div>} onClick={saveRanking} />}
                                         </>
                                     }
                                 </div>
-                                {studyInformation.isDemo && 
+                                {studyInformation.isDemo &&
                                     <Switch
                                         checkedChildren={<CheckOutlined />}
                                         unCheckedChildren={<CloseOutlined />}
                                         defaultChecked={editing}
                                         onChange={editingHandle}
                                         checked={editing}
-                                        />
+                                    />
                                 }
-                            </div>       
+                            </div>
                             <DndContext sensors={sensors} modifiers={[restrictToVerticalAxis]} onDragEnd={onDragEnd}>
                                 <SortableContext
                                     items={getAllKeys(dataSource)}
