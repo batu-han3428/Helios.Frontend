@@ -151,15 +151,16 @@ class DateElement extends Component {
                                 {this.state.IsRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
                                 {this.state.Title}
                             </label>
+                            {this.state.IsPreview && this.state.AddTodayDate &&
+
+                                <Button color="" style={{ border:'1px solid #bebebe',marginLeft:'8px',marginBottom:'10px' }}  onClick={this.handleTodayButton}>
+                                        {this.props.t("Today")}
+                                </Button>
+                               
+                            }
                         </div>
                     )}
-                    {this.state.IsPreview && this.state.AddTodayDate &&
-                        <div>
-                            <Button color="success" onClick={this.handleTodayButton}>
-                                {this.props.t("Today")}
-                            </Button>
-                        </div>
-                    }
+                   
                 </Row>
                 <Row>
                     <div className="col-md-3">
