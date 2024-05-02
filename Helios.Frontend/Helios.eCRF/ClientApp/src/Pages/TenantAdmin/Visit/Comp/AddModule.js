@@ -87,6 +87,17 @@ const AddModule = props => {
 
     const [trigger, { data: moduleData, error, isLoading }] = useLazyModuleListGetQuery();
 
+    const handleDataChange = () => {
+       
+        const newData = moduleData.map(item => {          
+            if (item.updatedAt === "0001-01-01T00:00:00+00:00") {
+                return { ...item, updatedAt: "-" };
+            }
+            return item;
+        });
+        setData(newData);
+    };
+
     useEffect(() => {
         if (props.record) {
             dispatch(startloading());
@@ -94,10 +105,11 @@ const AddModule = props => {
         }
     }, [props.record])
 
-    useEffect(() => {
+    useEffect(() => {      
         if (!isLoading && !error && moduleData) {
             setTotalHeight(moduleData.length * 50);
-            setData(moduleData);
+          /*  setData(moduleData);*/
+            handleDataChange();
             dispatch(endloading());
         } else if (!isLoading && error) {
             props.toast.current.setToast({
