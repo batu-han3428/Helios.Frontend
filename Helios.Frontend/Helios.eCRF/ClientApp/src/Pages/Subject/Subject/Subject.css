@@ -8,3 +8,25 @@
 .ant-menu-item-disabled > span > svg {
     color: rgba(0, 0, 0, 0.88) !important;
 }
+
+.menu-container {
+    height: calc(100vh - 70px);
+    overflow-y: auto;
+    border: 1px solid #ddd;
+}
+
+.subject-mobil-drawer .ant-drawer-body{
+    padding:0 !important;
+}
+
+.ant-drawer {
+    z-index: 1000000 !important;
+}
+
+.ant-dropdown {
+    z-index: 1000001 !important;
+}
+
+.ant-menu-submenu-title {
+    padding-right: 16.5px !important;
+}
