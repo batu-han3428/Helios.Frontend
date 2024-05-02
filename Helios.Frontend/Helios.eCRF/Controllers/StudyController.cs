@@ -1,8 +1,8 @@
 ﻿using Helios.Common.DTO;
 using Helios.Common.Enums;
 using Helios.Common.Model;
+using Helios.eCRF.Attributes;
 using Helios.eCRF.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Helios.eCRF.Controllers
@@ -26,7 +26,7 @@ namespace Helios.eCRF.Controllers
         /// </summary>
         /// <returns>çalışmalar</returns>
         [HttpGet("{isLock}")]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> GetStudyList(bool isLock)
         {
             var result = await _studyService.GetStudyList(isLock);
@@ -40,7 +40,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="studyId">çalışma id</param>
         /// <returns>çalışma bilgileri</returns>
         [HttpGet("{studyId}")]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> GetStudy(Int64 studyId)
         {
             var result = await _studyService.GetStudy(studyId);
@@ -54,7 +54,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="studyModel">çalışma bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> StudySave(StudyModel studyModel)
         {
             var result = await _studyService.StudySave(studyModel);
@@ -69,7 +69,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="studyLockDTO">çalışma bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> StudyLockOrUnlock(StudyLockDTO studyLockDTO)
         {
             var result = await _studyService.StudyLockOrUnlock(studyLockDTO);
@@ -87,7 +87,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="studyId">çalışma id</param>
         /// <returns>site listesi</returns>
         [HttpGet("{studyId}")]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> GetSiteList(Int64 studyId)
         {
             var result = await _studyService.GetSiteList(studyId);
@@ -101,7 +101,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="siteId">site id</param>
         /// <returns>site bilgisi</returns>
         [HttpGet("{siteId}")]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> GetSite(Int64 siteId)
         {
             var result = await _studyService.GetSite(siteId);
@@ -115,7 +115,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="siteModel">site bilgisi</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> SiteSaveOrUpdate(SiteModel siteModel)
         {
             var result = await _studyService.SiteSaveOrUpdate(siteModel);
@@ -130,7 +130,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="siteModel">site bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> SiteDelete(SiteModel siteModel)
         {
             var result = await _studyService.SiteDelete(siteModel);
@@ -147,7 +147,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="studyId">çalışma id</param>
         /// <returns>mail templateler</returns>
         [HttpGet("{studyId}")]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> GetEmailTemplateList(Int64 studyId)
         {
             var result = await _studyService.GetEmailTemplateList(studyId);
@@ -161,7 +161,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="emailTemplateDTO">template bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> DeleteEmailTemplate(BaseDTO emailTemplateDTO)
         {
             var result = await _studyService.DeleteEmailTemplate(emailTemplateDTO);
@@ -176,7 +176,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="templateId">template id</param>
         /// <returns>mail template</returns>
         [HttpGet("{templateId}")]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> GetEmailTemplate(Int64 templateId)
         {
             var result = await _studyService.GetEmailTemplate(templateId);
@@ -191,7 +191,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="templateType">template type</param>
         /// <returns>tag listesi</returns>
         [HttpGet("{tenantId}/{templateType}")]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> GetEmailTemplateTagList(Int64 tenantId, int templateType)
         {
             var result = await _studyService.GetEmailTemplateTagList(tenantId, templateType);
@@ -205,7 +205,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="emailTemplateTagDTO">tag bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> AddEmailTemplateTag(EmailTemplateTagDTO emailTemplateTagDTO)
         {
             var result = await _studyService.AddEmailTemplateTag(emailTemplateTagDTO);
@@ -220,7 +220,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="emailTemplateTagDTO">tag bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> DeleteEmailTemplateTag(EmailTemplateTagDTO emailTemplateTagDTO)
         {
             var result = await _studyService.DeleteEmailTemplateTag(emailTemplateTagDTO);
@@ -235,7 +235,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="emailTemplateDTO">email template bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> SetEmailTemplate(EmailTemplateDTO emailTemplateDTO)
         {
             var result = await _studyService.SetEmailTemplate(emailTemplateDTO);
@@ -265,7 +265,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="visitDTO">eklenecek yada güncellenecek veri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> SetVisits(VisitDTO visitDTO)
         {
             var result = await _studyService.SetVisits(visitDTO);
@@ -280,7 +280,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="visitDTO">silinecek veri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> DeleteVisits(VisitDTO visitDTO)
         {
             var result = await _studyService.DeleteVisits(visitDTO);
@@ -295,7 +295,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="visitDTO">page</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> SetVisitPageEPro(VisitDTO visitDTO)
         {
             var result = await _studyService.SetVisitPageEPro(visitDTO);
@@ -335,7 +335,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="id">visit veya page id</param>
         /// <returns>yetki listesi</returns>
         [HttpGet("{pageKey}/{studyId}/{id}")]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> GetVisitPagePermissionList(PermissionPage pageKey, Int64 studyId, Int64 id)
         {
             var result = await _studyService.GetVisitPagePermissionList(pageKey, studyId, id);
@@ -349,7 +349,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="dto">yetki bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> SetVisitPagePermission(VisitPagePermissionDTO dto)
         {
             var result = await _studyService.SetVisitPagePermission(dto);
@@ -364,7 +364,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="dto">modül/lerin ve sayfa bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> SetStudyModule(SetModuleDTO dto)
         {
             var result = await _studyService.SetStudyModule(dto);
@@ -379,7 +379,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="dto">visit bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> SetVisitRanking(List<VisitDTO> dto)
         {
             var result = await _studyService.SetVisitRanking(dto);
@@ -395,6 +395,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="activeStudyId">active çalışma id</param>
         /// <returns>visit listesi</returns>
         [HttpGet("{demoStudyId}/{activeStudyId}")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> GetTransferData(Int64 demoStudyId, Int64 activeStudyId)
         {
             var result = await _studyService.GetTransferData(demoStudyId, activeStudyId);
@@ -408,7 +409,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="dto">visit bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<IActionResult> SetTransferData(List<TransferDataDTO> dto)
         {
             var result = await _studyService.SetTransferData(dto);

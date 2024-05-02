@@ -1,7 +1,8 @@
 ﻿using Helios.Common.DTO;
+using Helios.Common.Enums;
 using Helios.Common.Model;
+using Helios.eCRF.Attributes;
 using Helios.eCRF.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Helios.eCRF.Controllers
@@ -36,6 +37,19 @@ namespace Helios.eCRF.Controllers
         {
             var result = new ApiResponse<dynamic>();
             return result;
+        }
+
+        /// <summary>
+        /// Hasta detay sayfasındaki sol menü verilerini listeler
+        /// </summary>
+        /// <param name="subjectId">hasta id</param>
+        /// <returns>menü listesi</returns>
+        [HttpGet("{subjectId}")]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> GetSubjectDetailMenu(Int64 subjectId)
+        {
+            var result = await _subjectService.GetSubjectDetailMenu(subjectId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
     }
 }

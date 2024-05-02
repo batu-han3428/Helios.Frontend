@@ -26,7 +26,3 @@
 .ant-dropdown {
     z-index: 1000001 !important;
 }
-
-.ant-menu-submenu-title {
-    padding-right: 16.5px !important;
-}

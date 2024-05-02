@@ -1,8 +1,8 @@
 ﻿import PropTypes from 'prop-types';
 import React from "react";
 import { withTranslation } from "react-i18next";
-import { Menu } from 'antd';
-import { AppstoreOutlined, UserOutlined, LockOutlined, BulbOutlined } from '@ant-design/icons';
+import { Menu, Tooltip } from 'antd';
+import { UserOutlined, LockOutlined, BulbOutlined, FolderOutlined, FileOutlined } from '@ant-design/icons';
 import { SubjectDetailEllipsis } from './SubjectDetailEllipsis';
 
 const SubjectDetailMenu = props => {
@@ -31,142 +31,58 @@ const SubjectDetailMenu = props => {
         );
     }
 
-    const CustomMenuItem = () => {      
+    const CustomMenuItem = ({item}) => {      
         return (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                Custom Menu Item
-                <SubjectDetailEllipsis items={[
-                    {
-                        key: '1',
-                        label: <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">Kilitle</a>,
-                        icon: <LockOutlined />
-                    },
-                    {
-                        key: '3',
-                        type: 'divider'
-                    },
-                    {
-                        key: '2',
-                        label: <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">Dondur</a>,
-                        icon: <BulbOutlined />
-                    },
-                ]} />
+                <Tooltip title={item.title}>
+                    <span style={{ width: '90%', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</span>
+                </Tooltip>
+                <div style={{ position: 'absolute', right: 15.5, overflow: 'hidden' }}>
+                    <SubjectDetailEllipsis items={[
+                        {
+                            key: '1',
+                            label: <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">Kilitle</a>,
+                            icon: <LockOutlined />
+                        },
+                        {
+                            key: '3',
+                            type: 'divider'
+                        },
+                        {
+                            key: '2',
+                            label: <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">Dondur</a>,
+                            icon: <BulbOutlined />
+                        },
+                    ]} />
+                    </div>
             </div>
         );
     };
 
-    const items = [
-        {
-            type: 'divider',
-        },
-        {
-            key: 'sub1',
-            label: <CustomMenuItem />,
-            icon: <AppstoreOutlined />,
-            children: [
-                {
-                    key: '1',
-                    label: 'Option 1',
-                },
-                {
-                    key: '2',
-                    label: 'Option 2',
-                },
-            ],
-        },
-        {
-            key: 'sub2',
-            label: <CustomMenuItem />,
-            icon: <AppstoreOutlined />,
-            children: [
-                {
-                    key: '3',
-                    label: 'Option 1',
-                },
-                {
-                    key: '4',
-                    label: 'Option 2',
-                },
-            ],
-        },
-        {
-            key: 'sub28',
-            label: <CustomMenuItem />,
-            icon: <AppstoreOutlined />,
-            children: [
-                {
-                    key: '38',
-                    label: 'Option 1',
-                },
-                {
-                    key: '48',
-                    label: 'Option 2',
-                },
-            ],
-        },
-        {
-            key: 'sub27',
-            label: <CustomMenuItem />,
-            icon: <AppstoreOutlined />,
-            children: [
-                {
-                    key: '37',
-                    label: 'Option 1',
-                },
-                {
-                    key: '47',
-                    label: 'Option 2',
-                },
-            ],
-        },
-        {
-            key: 'sub26',
-            label: <CustomMenuItem />,
-            icon: <AppstoreOutlined />,
-            children: [
-                {
-                    key: '36',
-                    label: 'Option 1',
-                },
-                {
-                    key: '46',
-                    label: 'Option 2',
-                },
-            ],
-        },
-        {
-            key: 'sub25',
-            label: <CustomMenuItem />,
-            icon: <AppstoreOutlined />,
-            children: [
-                {
-                    key: '35',
-                    label: 'Option 1',
-                },
-                {
-                    key: '45',
-                    label: 'Option 2',
-                },
-            ],
-        },
-        {
-            key: 'sub24',
-            label: <CustomMenuItem />,
-            icon: <AppstoreOutlined />,
-            children: [
-                {
-                    key: '34',
-                    label: 'Option 1',
-                },
-                {
-                    key: '44',
-                    label: 'Option 2',
-                },
-            ],
-        },
-    ];
+    const convertDataToItems = (data) => {
+        return data.map((item, index) => {
+            return {
+                key: `sub${index + 1}`,
+                label: <CustomMenuItem item={item} />,
+                icon: <FolderOutlined />,
+                children: item.children.map((child, childIndex) => {
+                    return {
+                        id: child.id,
+                        key: `${index + 1}-${childIndex + 1}`,
+                        label: <CustomMenuItem item={child} />,
+                        icon: <FileOutlined />,
+                    };
+                })
+            };
+        });
+    };
+
+    const items = convertDataToItems(props.data);
 
     if (!props.isMobil) {
+        items.unshift({
+            type: 'divider',
+        });
         items.unshift({
             key: 'header',
             label: <CustomMenuHeader />,
@@ -196,6 +112,9 @@ const SubjectDetailMenu = props => {
         if (parentKey) {
             const newOpenKeys = props.openKeys.includes(parentKey) ? [] : [parentKey];
             props.setOpenKeys(newOpenKeys);
+            const parentItem = items.find(item => item.key === parentKey);
+            const pageId = parentItem.children.find(child => child.key === e.key).id;
+            console.log("pageId: ", pageId);
         }
         props.setSelectedKeys(e.key);
     };

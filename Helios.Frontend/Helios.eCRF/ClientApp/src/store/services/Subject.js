@@ -34,6 +34,9 @@ export const SubjectApi = createApi({
             }),
             invalidatesTags: ['Subject'],
         }),
+        getSubjectDetailMenu: builder.query({
+            query: (subjectId) => `/Subject/GetSubjectDetailMenu/${subjectId}`
+        })
     }),
 });
 
@@ -43,3 +46,5 @@ export const { useGetSubjectListQuery } = SubjectApi;
 export const { useGoToSubjectQuery } = SubjectApi;
 
 export const { useAddSubjectMutation } = SubjectApi;
+
+export const { useLazyGetSubjectDetailMenuQuery } = SubjectApi;

@@ -1,8 +1,8 @@
 ﻿using Helios.Common.DTO;
+using Helios.Common.Enums;
 using Helios.Common.Model;
-using Helios.eCRF.Models;
+using Helios.eCRF.Attributes;
 using Helios.eCRF.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Helios.eCRF.Controllers
@@ -163,7 +163,7 @@ namespace Helios.eCRF.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "TenantAdmin")]
+        [RoleAttribute(Roles.TenantAdmin)]
         public async Task<ApiResponse<dynamic>> RemoveMultipleTagList(Int64 id)
         {
             var result = await _moduleService.RemoveMultipleTagList(id);
