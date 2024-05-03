@@ -9,5 +9,6 @@ namespace Helios.eCRF.Services.Interfaces
     {
         Task<RestResponse<List<SubjectDTO>>> GetSubjectList(Int64 studyId);
         Task<ApiResponse<dynamic>> AddSubject(Int64 studyId);
+        Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId);
     }
 }

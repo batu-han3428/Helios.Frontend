@@ -30,7 +30,9 @@ namespace Helios.eCRF.Services
         {
             var model = new SubjectDTO
             {
-                StudyId = studyId
+                StudyId = studyId,
+                SiteId = 3,
+                SubjectNumber = ""
             };
 
             using (var client = CoreServiceClient)
@@ -39,6 +41,18 @@ namespace Helios.eCRF.Services
                 req.AddJsonBody(model);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
+            }
+        }
+
+        public async Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/GetSubjectList", Method.Get);
+                req.AddParameter("subjectId", subjectId);
+                req.AddParameter("pageId", subjectVisitModulePageId);
+                var result = await client.ExecuteAsync<List<SubjectElementModel>>(req);
+                return result;
             }
         }
 

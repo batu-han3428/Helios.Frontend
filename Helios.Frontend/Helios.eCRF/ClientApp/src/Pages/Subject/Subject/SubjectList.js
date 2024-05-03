@@ -4,6 +4,7 @@ import { withTranslation } from "react-i18next";
 import { Table, Row, Col, Typography } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'reactstrap';
+import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
@@ -11,23 +12,36 @@ import { useAddSubjectMutation, useGetSubjectListQuery } from '../../../store/se
 
 const SubjectList = props => {
     const dispatch = useDispatch();
-
-    //const subjectUpdate = (record) => {
-
-    //};
-
-    //const subjectDelete = (id) => {
-
-    //};
+    const navigate = useNavigate();
 
     const [addingSubject] = useAddSubjectMutation();
-    const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(2);
+    const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
 
     useEffect(() => {
         if (!error && !isLoading && subjectsData) {
-            console.log("sdfsdfs");
+            const updatedSubjectsData = subjectsData.map(item => {
+                return {
+                    ...item,
+                    actions: getActions(item)
+                };
+            });
+            setData(updatedSubjectsData);
+
+            dispatch(endloading());
         }
     }, [subjectsData, error, isLoading]);
+
+    const goToSubjectDetail = (id) => {
+        navigate(`/SubjectDetail`, { state: { subjectId: id } });
+    };
+
+    const getActions = ({ id}) => {
+        const actions = (
+            <div className="icon-container">
+                <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(id) }}></div>
+            </div>);
+        return actions;
+    };
 
     const addSubject = (id) => {
         Swal.fire({
@@ -41,7 +55,7 @@ const SubjectList = props => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                     dispatch(startloading());
-                const response = await addingSubject(2);
+                const response = await addingSubject(8);
                 if (response.data.isSuccess) {
                     dispatch(endloading());
                     Swal.fire({
@@ -73,14 +87,6 @@ const SubjectList = props => {
         {
             title: props.t('Actions'),
             dataIndex: 'actions',
-            render: (text, record) => {
-                return (
-                    <span>
-                        {/*<Button onClick={() => subjectUpdate(record)}>Güncelle</Button>*/}
-                        {/*<Button onClick={() => subjectDelete(record.id)}>Sil</Button>*/}
-                    </span>
-                );
-            }
         },
     ];
 

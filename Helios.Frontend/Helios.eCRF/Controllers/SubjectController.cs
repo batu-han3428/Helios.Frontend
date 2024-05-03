@@ -17,7 +17,7 @@ namespace Helios.eCRF.Controllers
         }
 
         [HttpGet("{studyId}")]
-        //[Authorize(Roles = "TenantAdmin")]
+        //[Authorize(Roles = "StudyUser")]
         public async Task<IActionResult> GetSubjectList(Int64 studyId)
         {
             var result = await _subjectService.GetSubjectList(studyId);
@@ -29,6 +29,14 @@ namespace Helios.eCRF.Controllers
         {
             var result = await _subjectService.AddSubject(studyId);
             return result;
+        }
+
+        [HttpGet]
+        //[Authorize(Roles = "StudyUser")]
+        public async Task<IActionResult> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId)
+        {
+            var result = await _subjectService.GetSubjectElementList(subjectId,subjectVisitModulePageId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
         [HttpPost]
