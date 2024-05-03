@@ -6,7 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useAddSubjectMutation, useGetSubjectListQuery } from '../../../store/services/Subject';
 
@@ -32,7 +32,7 @@ const SubjectList = props => {
     }, [subjectsData, error, isLoading]);
 
     const goToSubjectDetail = (id) => {
-        navigate(`/SubjectDetail`, { state: { subjectId: id } });
+        navigate(`/subject-detail/${id}`);
     };
 
     const getActions = ({ id}) => {

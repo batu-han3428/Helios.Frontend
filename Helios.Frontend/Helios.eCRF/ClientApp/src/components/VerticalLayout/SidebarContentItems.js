@@ -16,12 +16,12 @@
             subMenu: [
                 {
                     label: "Active",
-                    to: "/studylist",
+                    to: "/studylist/false",
                     icon: "fa-solid fa-lock-open"
                 },
                 {
                     label: "Locked",
-                    to: "/lockedlist",
+                    to: "/studylist/true",
                     icon: "fa-solid fa-lock"
                 }
             ],

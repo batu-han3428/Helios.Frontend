@@ -6,7 +6,6 @@ import { Row, Col, Card, CardBody, FormGroup, CardSubtitle, Label, Input, Form, 
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import Select from "react-select";
-import './study.css';
 import { useStudySaveMutation } from '../../../store/services/Study';
 import { useSelector } from "react-redux";
 import { useStudyGetQuery } from '../../../store/services/Study';

@@ -53,7 +53,7 @@ export const StudyApi = createApi({
 });
 
 
-export const { useStudyListGetQuery } = StudyApi;
+export const { useLazyStudyListGetQuery } = StudyApi;
 
 export const { useStudyGetQuery, usePrefetch } = StudyApi;
 
