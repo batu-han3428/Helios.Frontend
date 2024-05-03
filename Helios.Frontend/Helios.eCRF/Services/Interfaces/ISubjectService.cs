@@ -1,5 +1,4 @@
-﻿using Helios.eCRF.Models;
-using Helios.Common.DTO;
+﻿using Helios.Common.DTO;
 using Helios.Common.Model;
 using RestSharp;
 
@@ -9,5 +8,6 @@ namespace Helios.eCRF.Services.Interfaces
     {
         Task<RestResponse<List<SubjectDTO>>> GetSubjectList(Int64 studyId);
         Task<ApiResponse<dynamic>> AddSubject(Int64 studyId);
+        Task<RestResponse<List<SubjectDetailMenuModel>>> GetSubjectDetailMenu(Int64 subjectId);
     }
 }

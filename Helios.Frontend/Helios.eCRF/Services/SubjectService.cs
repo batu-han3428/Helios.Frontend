@@ -1,11 +1,8 @@
 ﻿using Helios.Common.DTO;
 using Helios.Common.Model;
-using Helios.eCRF.Models;
 using Helios.eCRF.Services.Base;
 using Helios.eCRF.Services.Interfaces;
-using Newtonsoft.Json;
 using RestSharp;
-using System.Text.Json;
 
 namespace Helios.eCRF.Services
 {
@@ -42,5 +39,15 @@ namespace Helios.eCRF.Services
             }
         }
 
+        public async Task<RestResponse<List<SubjectDetailMenuModel>>> GetSubjectDetailMenu(Int64 subjectId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/GetSubjectDetailMenu", Method.Get);
+                req.AddParameter("subjectId", subjectId);
+                var result = await client.ExecuteAsync<List<SubjectDetailMenuModel>>(req);
+                return result;
+            }
+        }
     }
 }

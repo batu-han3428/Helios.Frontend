@@ -1,9 +1,9 @@
 ﻿using Helios.Common.DTO;
 using Helios.Common.Enums;
 using Helios.Common.Model;
+using Helios.eCRF.Attributes;
 using Helios.eCRF.Models;
 using Helios.eCRF.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
@@ -531,7 +531,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="userId">kullanıcı id</param>
         /// <returns>tenant ve study sayısı</returns>
         [HttpGet("{userId}")]
-        [Authorize(Roles = "StudyUser, TenantAdmin")]
+        [RoleAttribute(Roles.StudyUser, Roles.TenantAdmin)]
         public async Task<IActionResult> GetTenantOrStudy(Int64 userId)
         {
             var result = await _userService.GetTenantOrStudy(userId);
@@ -545,7 +545,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="role">kullanıcı seçtiği rol</param>
         /// <returns>tenant listesi</returns>
         [HttpGet("{userId}/{role}")]
-        [Authorize(Roles = "StudyUser, TenantAdmin")]
+        [RoleAttribute(Roles.StudyUser, Roles.TenantAdmin)]
         public async Task<List<SSOUserTenantModel>> GetUserTenantList(Int64 userId, Roles role)
         {
             return await _userService.GetUserTenantList(userId, role);
@@ -558,7 +558,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="userId">kullanıcı id</param>
         /// <returns>çalışma listesi</returns>
         [HttpGet("{tenantId}/{userId}")]
-        [Authorize(Roles = "StudyUser, TenantAdmin")]
+        [RoleAttribute(Roles.StudyUser, Roles.TenantAdmin)]
         public async Task<List<SSOUserStudyModel>> GetUserStudiesList(Int64 tenantId, Int64 userId)
         {
             return await _userService.GetUserStudiesList(tenantId, userId);
@@ -570,7 +570,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPost]
-        [Authorize(Roles = "StudyUser, TenantAdmin")]
+        [RoleAttribute(Roles.StudyUser, Roles.TenantAdmin)]
         public async Task<IActionResult> SSOLogin(SSOLoginDTO sSOLoginDTO)
         {
             var jwt = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
