@@ -1,5 +1,5 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLazyStudyListGetQuery, useStudyLockOrUnlockMutation } from '../../../store/services/Study';
@@ -7,11 +7,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { formatDate } from "../../../helpers/format_date";
 import { Table, Row, Col, Card, Dropdown, Button, Space } from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Swal from 'sweetalert2';
 import './study.css';
+import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 
 const StudyList = props => {
+
+    const toastRef = useRef();
 
     const userInformation = useSelector(state => state.rootReducer.Login);
 
@@ -158,6 +161,10 @@ const StudyList = props => {
             dispatch(endloading());
         } else if (!isLoading && error) {
             dispatch(endloading());
+            toastRef.current.setToast({
+                message: props.t("An unexpected error occurred."),
+                stateToast: false,
+            });
         }
     }, [studyData, error, isLoading, props.t]);
 
@@ -222,6 +229,7 @@ const StudyList = props => {
                     </Row>
                 </div>
             </div>
+            <ToastComp ref={toastRef} />
         </React.Fragment>
     );
 };

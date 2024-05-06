@@ -1,57 +1,35 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-    Row,
-    Col,
-    Card,
-    CardBody,
-    CardTitle,
-    Modal,
-    Container,
-    ModalBody,
-    ModalHeader,
-    ModalFooter,
-    Button,
-} from "reactstrap";
-
-import { MDBDataTable } from "mdbreact";
+import { Modal, ModalBody, ModalFooter } from "reactstrap";
 import './module.css';
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { formatDate } from "../../../helpers/format_date";
 import { useDispatch, useSelector } from "react-redux";
-import { decodeToken } from "../../../helpers/Util/tokenUtil";
 import { getLocalStorage } from '../../../helpers/local-storage/localStorageProcess';
 import { withTranslation } from "react-i18next";
-import { Table, Input } from 'antd';
+import { Table, Input, Row, Col, Card, Space, Button } from 'antd';
 import Swal from 'sweetalert2'
+import { API_BASE_URL } from '../../../constants/endpoints';
+import { SearchOutlined } from '@ant-design/icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 
 function ModuleList(props) {
-    let token = getLocalStorage("accessToken");
-    var auth = decodeToken(token);
+    const token = getLocalStorage("accessToken");
     const userInformation = useSelector(state => state.rootReducer.Login);
+    const toastRef = useRef();
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const baseUrl = "http://localhost:3300";
 
     const [Name, setName] = useState('');
     const [Id, setId] = useState(0);
     const [NameClass, setNameClass] = useState('form-control');
-    const [RequiredError] = useState('This value is required');
+    const [RequiredError] = useState(props.t('This field is required'));
     const [modal_large, setmodal_large] = useState(false);
     const [tableData, setTableData] = useState([]);
 
     const removeBodyCss = () => {
         document.body.classList.add("no_padding");
-    };
-
-    const getActions = (id) => {
-        const actions = (
-            <div className="icon-container">
-                <div className="icon icon-update" onClick={e => tog_large(e, id)}></div>
-                <div className="icon icon-delete" onClick={() => { deleteModule(id) }}></div>
-                <div className="icon icon-demo" onClick={() => { navigateToFormBuilder(id) }}></div>
-            </div>);
-        return actions;
     };
 
     const navigateToFormBuilder = (id) => {
@@ -65,17 +43,20 @@ function ModuleList(props) {
     const tog_large = (e, id) => {
         if (id !== "" && id !== undefined) {
             setId(id);
-            fetch(baseUrl + '/Module/GetModule?id=' + id, {
+            fetch(API_BASE_URL + 'Module/GetModule?id=' + id, {
                 method: 'GET',
             })
-                .then(response => response.json())
-                .then(data => {
-                    setName(data.name);
-                    setNameClass("form-control");
-                })
-                .catch(error => {
-                    //console.error('Error:', error);
+            .then(response => response.json())
+            .then(data => {
+                setName(data.name);
+                setNameClass("form-control");
+            })
+            .catch(error => {
+                toastRef.current.setToast({
+                    message: props.t("An unexpected error occurred."),
+                    stateToast: false,
                 });
+            });
         }
         else {
             setName('');
@@ -91,7 +72,8 @@ function ModuleList(props) {
             e.preventDefault();
         }
         else {
-            fetch(baseUrl + '/Module/SaveModule', {
+            dispatch(startloading());
+            fetch(API_BASE_URL + 'Module/SaveModule', {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json, text/plain, */*',
@@ -99,21 +81,37 @@ function ModuleList(props) {
                 },
                 body: JSON.stringify({
                     Id: Id,
-                    TenantId: auth.tenantId,
+                    TenantId: userInformation.tenantId,
                     Name: Name,
                     UserId: userInformation.userId
                 })
-
             })
-                .then(response => response.json())
-                .then(data => {
+            .then(response => response.json())
+            .then(data => {
+                if (data) {
                     tog_large();
-                    window.location.reload();
-                    // Handle response from the controller
-                })
-                .catch(error => {
-                    //console.error('Error:', error);
+                    fetchData();
+                    dispatch(endloading());
+                    toastRef.current.setToast({
+                        message: props.t("Successful"),
+                        stateToast: true,
+                    });
+                }
+                else {
+                    dispatch(endloading());
+                    toastRef.current.setToast({
+                        message: props.t("Unsuccessful"),
+                        stateToast: false,
+                    });
+                }
+            })
+            .catch(error => {
+                dispatch(endloading());
+                toastRef.current.setToast({
+                    message: props.t("An unexpected error occurred."),
+                    stateToast: false,
                 });
+            });
         }
     };
 
@@ -121,17 +119,16 @@ function ModuleList(props) {
         Swal.fire({
             title: props.t("You will not be able to recover this element"),
             text: props.t("Do you confirm"),
-            icon: props.t("Warning"),
+            icon: props.t("info"),
             showCancelButton: true,
             confirmButtonColor: "#3bbfad",
             confirmButtonText: props.t("Yes"),
-            cancelButtonText: props.t("Cancel"),
-            closeOnConfirm: false
+            cancelButtonText: props.t("Cancel")
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
                     dispatch(startloading());
-                    fetch(baseUrl + '/Module/DeleteModule', {
+                    fetch(API_BASE_URL + 'Module/DeleteModule', {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json, text/plain, */*',
@@ -139,30 +136,25 @@ function ModuleList(props) {
                         },
                         body: JSON.stringify({
                             Id: event,
-                            TenantId: auth.tenantId,
+                            TenantId: userInformation.tenantId,
                             Name: Name,
                             UserId: userInformation.userId
                         })
                     })
-                        .then(response => response.json())
-                        .then(data => {
-                            //if (data.isSuccess) {
-                            //    toastRef.current.setToast({
-                            //        message: data.message,
-                            //        stateToast: true
-                            //    });
-                            //} else {
-                            //    toastRef.current.setToast({
-                            //        message: data.message,
-                            //        stateToast: false
-                            //    });
-                            //}
-                            dispatch(endloading());
-                            window.location.reload();
-                        })
-                        .catch(error => {
-                            //console.error('Error:', error);
-                        });
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.isSuccess) {
+                            fetchData();
+                            Swal.fire(props.t(data.message), '', 'success');
+                        } else {
+                            Swal.fire(props.t(data.message), '', 'error');
+                        }
+                        dispatch(endloading());
+                    })
+                    .catch(error => {
+                        Swal.fire(props.t("An unexpected error occurred."), '', 'error');
+                        dispatch(endloading());
+                    });
                 } catch (error) {
                     dispatch(endloading());
                     Swal.fire('An error occurred', '', 'error');
@@ -171,48 +163,30 @@ function ModuleList(props) {
         })
     }
 
-    const data = {
-        columns: [
-            {
-                label: "Module Name",
-                field: "name",
-                sort: "asc",
-                width: 150
-            },
-            {
-                label: 'Actions',
-                field: 'actions',
-                sort: 'disabled',
-                width: 100,
-            }
-        ],
-        rows: tableData
-    }
-
     const fetchData = () => {
-        let token = getLocalStorage("accessToken");
-        fetch(baseUrl + '/Module/GetModuleList', {
+        fetch(API_BASE_URL + 'Module/GetModuleList', {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
             }
         })
-            .then(response => response.json())
-            .then(data => {
-                const updatedModuleData = data.map(item => {
-                    return {
-                        ...item,
-                        updatedAt: formatDate(item.updatedAt),
-                        actions: getActions(item.id)
-                    };
-                });
-
-                setTableData(updatedModuleData);
-            })
-            .catch(error => {
-                //console.error('Error:', error);
+        .then(response => response.json())
+        .then(data => {
+            const updatedModuleData = data.map(item => {
+                return {
+                    ...item,
+                    updatedAt: formatDate(item.updatedAt)
+                };
             });
+            setTableData(updatedModuleData); 
+        })
+        .catch(error => {
+            toastRef.current.setToast({
+                message: props.t("An unexpected error occurred."),
+                stateToast: false,
+            });
+        });
     }
 
     const handleRowDoubleClick = (rowId) => {
@@ -220,6 +194,7 @@ function ModuleList(props) {
     };
 
     const [searchText, setSearchText] = useState('');
+
     const columns = [
         {
             title: props.t('Module Name'),
@@ -227,66 +202,54 @@ function ModuleList(props) {
             sorter: (a, b) => a.name.localeCompare(b.name),
             sortDirections: ['ascend', 'descend'],
             filteredValue: [searchText],
-            onFilter: (value, record) => { return String(record.name).toLowerCase().includes(value.toLowerCase()); },
-            render: (text, record) => {
-                let className = '';
-                if (record.status === 'Delete') {
-                    className = 'deleted-row';
-                }
-                return <span className={className}>{text}</span>;
-            }
+            onFilter: (value, record) => String(record.name).toLowerCase().includes(value.toLowerCase()),
+            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                return (
+                    <div style={{ padding: 8 }}>
+                        <Input.Search
+                            placeholder="Search name"
+                            value={selectedKeys[0]}
+                            onChange={(e) => setSearchText(e.target.value)}
+                        />
+                    </div>
+                );
+            },
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
         {
             title: props.t('Actions'),
             dataIndex: 'actions',
+            width: "170px",
             render: (text, record) => {
-                let className = '';
-                if (record.status === 'Delete') {
-                    className = 'deleted-row';
-                }
-                return <span className={className}>{text}</span>;
+                return (
+                    <div className="icon-container">
+                        <div className="icon icon-update" onClick={e => tog_large(e, record.id)}></div>
+                        <div className="icon icon-delete" onClick={() => { deleteModule(record.id) }}></div>
+                        <div className="icon icon-demo" onClick={() => { navigateToFormBuilder(record.id) }}></div>
+                    </div>
+                );
             }
         },
     ];
-    const renderRows = () => {
-        fetchData();
-        return data.rows.map((row) => (
-            <tr key={row.id} onDoubleClick={() => handleRowDoubleClick(row.id)}>
-                <td>{row.name}</td>
-                <td>{row.actions}</td>
-            </tr>
-        ));
-    };
 
-   
-    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
-    const handleExpand = (expanded, record) => {
-        const currentRowKey = record.key;      
-        if (expanded) {
-            setExpandedRowKeys(prevKeys => [...prevKeys, currentRowKey]); 
-        } else {
-            const filteredKeys = expandedRowKeys.filter(key => key !== currentRowKey);
-            setExpandedRowKeys(filteredKeys);
-        }
-    };
     useEffect(() => {
         dispatch(startloading());
-        fetchData();
-        dispatch(endloading());      
+        fetchData();  
+        dispatch(endloading());   
     }, []);    
+
     return (
         <>
             <Col sm={6} md={4} xl={3}>
                 <Modal isOpen={modal_large} toggle={tog_large} size="lg">
                     <ModalBody>
-                        {/*<AddModule id={id}></AddModule>*/}
                         <div style={({ height: "100vh" }, { display: "flex" })}>
                             <div id="page-wrap" style={{ padding: "15px", width: '100%' }}>
-                                <div><h3>Add Module</h3></div>
+                                <div><h3>{props.t("Add module")}</h3></div>
                                 <hr />
                                 <div className='row'>
                                     <div className='form-group'>
-                                        <label> Name</label>
+                                        <label>{props.t("Name")}</label>
                                         <input className={NameClass} value={Name} onChange={handleNameChange} type='text' id='Name' />
                                         <div type="invalid" className="invalid-feedback">{RequiredError}</div>
                                     </div>
@@ -296,62 +259,57 @@ function ModuleList(props) {
                     </ModalBody>
                     <ModalFooter>
                         <Button color="secondary" onClick={tog_large}>
-                            Close
+                            {props.t("Close")}
                         </Button>{' '}
                         <Button color="primary" onClick={handleSubmit}>
-                            Save
+                            {props.t("Save")}
                         </Button>
                     </ModalFooter>
                 </Modal>
             </Col>
-            <React.Fragment>
-                <div className="page-content">
-                    <div className="container-fluid">
-                        <div className="page-title-box">
-                            <Row className="align-items-center">
-                                <Col md={8}>
-                                    <h6 className="page-title">Module list</h6>
-                                </Col>
-
-                                <Col md="4">
-                                    <div className="float-end d-none d-md-block">
-                                        <button className="btn btn-primary" onClick={e => tog_large(e, "")}>
-                                            <small>Add Module</small>
-                                        </button>
-                                    </div>
-                                </Col>
-                            </Row>
-                        </div>
-                        <Row>
-                            <Col className="col-12">                               
-                                <Card>
-                                    <CardBody>
-                                        <Input.Search placeholder="input search text"  onChange={(e) => setSearchText(e.target.value)} style={{ width: 200, height: " 40px" }} />
-                                        <Table
-                                            dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
-                                            columns={columns}
-                                            expandedRowKeys={expandedRowKeys}
-                                            onExpand={handleExpand}
-                                            pagination={true}
-                                            scroll={{ x: 'max-content' }}
-                                            onRow={(record, rowIndex) => {
-                                                return {
-                                                    onDoubleClick: event => {
-                                                        handleRowDoubleClick(record.id, event);
-                                                    }
-                                                }
-                                            }}
-                                        />
-                                    </CardBody>
-                                </Card>
+            <div className="page-content">
+                <div className="container-fluid">
+                    <div className="page-title-box">
+                        <Row className="align-items-center" justify="space-between" align="middle">
+                            <Col span={8}>
+                                <h6 className="page-title">{props.t("Module list")}</h6>
+                            </Col>
+                            <Col span={16}>
+                                <div className="float-end d-md-block" style={{ textAlign: 'right' }}>
+                                    <Button onClick={e => tog_large(e, "")}>
+                                        <Space>
+                                            {props.t("Add module")}
+                                            <FontAwesomeIcon icon="fa-solid fa-plus" />
+                                        </Space>
+                                    </Button>
+                                </div>
                             </Col>
                         </Row>
                     </div>
+                    <Row>
+                        <Col className="col-12">                               
+                            <Card className="modulelist-card-table">
+                                <Table
+                                    dataSource={tableData.map(item => ({ ...item, key: item.id }))}
+                                    columns={columns}
+                                    pagination={true}
+                                    scroll={{ x: 'max-content' }}
+                                    onRow={(record, rowIndex) => {
+                                        return {
+                                            onDoubleClick: event => {
+                                                handleRowDoubleClick(record.id, event);
+                                            }
+                                        }
+                                    }}
+                                />
+                            </Card>
+                        </Col>
+                    </Row>
                 </div>
-            </React.Fragment>
+            </div>
+            <ToastComp ref={toastRef} />
         </>
     );
 }
 
 export default withTranslation()(ModuleList);
-
