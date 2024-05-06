@@ -19,6 +19,8 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> CopyElement(Int64 id, Int64 userId);
         Task<ApiResponse<dynamic>> RemoveMultipleTagList(Int64 id);
         Task<ApiResponse<dynamic>> DeleteElement(Int64 id, Int64 userId);
+        Task<ApiResponse<dynamic>> DeleteTableRowElement(Int64 id, int rowIndex, Int64 userId);
+        Task<ApiResponse<dynamic>> CopyTableRowElement(Int64 id, int rowIndex, Int64 userId);
         Task<List<TagModel>> GetMultipleTagList(Int64 id);
         Task<ApiResponse<dynamic>> AddNewTag(List<TagModel> tags);
         Task<ApiResponse<dynamic>> AutoSaveElement(Int64 id, string value);

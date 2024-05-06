@@ -161,6 +161,19 @@ namespace Helios.eCRF.Controllers
             var result = await _moduleService.DeleteElement(id, userId);
             return result;
         }
+        [HttpPost]
+        public async Task<ApiResponse<dynamic>> CopyTableRowElement(Int64 id, int rowIndex, Int64 userId)
+        {
+            var result = await _moduleService.CopyTableRowElement(id,rowIndex, userId);
+            return result;
+        }
+
+        [HttpPost]
+        public async Task<ApiResponse<dynamic>> DeleteTableRowElement(Int64 id, int rowIndex, Int64 userId)
+        {
+            var result = await _moduleService.DeleteTableRowElement(id,rowIndex, userId);
+            return result;
+        }
 
         [HttpPost]
         [Authorize(Roles = "TenantAdmin")]
