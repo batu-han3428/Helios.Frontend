@@ -1,35 +1,28 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { withTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
-import { MDBDataTable } from "mdbreact";
-import {
-    Row, Col, Card, CardBody, Dropdown, DropdownToggle, DropdownItem, DropdownMenu
-} from "reactstrap";
-import { useStudyListGetQuery, useStudyLockOrUnlockMutation } from '../../../store/services/Study';
-import './study.css';
+import { useNavigate, useParams } from "react-router-dom";
+import { useLazyStudyListGetQuery, useStudyLockOrUnlockMutation } from '../../../store/services/Study';
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { formatDate } from "../../../helpers/format_date";
-import { Table } from 'antd';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { Table, Row, Col, Card, Dropdown, Button, Space } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Swal from 'sweetalert2';
-
+import './study.css';
+import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 
 const StudyList = props => {
 
+    const toastRef = useRef();
+
     const userInformation = useSelector(state => state.rootReducer.Login);
 
-    const [menu, setMenu] = useState(false);
     const [tableData, setTableData] = useState([]);
 
     const navigate = useNavigate();
 
     const dispatch = useDispatch();
-
-    const toggle = () => {
-        setMenu(!menu);
-    };
 
     const studyUpdate = (id) => {
         navigate(`/addstudy`, { state: { studyId: id } });
@@ -49,8 +42,7 @@ const StudyList = props => {
             showCancelButton: true,
             confirmButtonColor: "#3bbfad",
             confirmButtonText: props.t("Yes"),
-            cancelButtonText: props.t("Cancel"),
-            closeOnConfirm: false
+            cancelButtonText: props.t("Cancel")
         }).then(async (result) => {
             if (result.isConfirmed) {
                 try {
@@ -90,97 +82,24 @@ const StudyList = props => {
         });
     }
 
-    const getActions = ({ id, equivalentStudyId, isLock }) => {
-        const actions = (
-            <div className="icon-container">
-                <div title={props.t("Update")} className="icon icon-update" onClick={() => { studyUpdate(id) }}></div>
-                <div title={props.t("Go to demo study")} className="icon icon-demo" onClick={() => { goToStudy(equivalentStudyId, id) }}></div>
-                <div title={props.t("Lock")} className="icon icon-lock" onClick={() => { studyLock(id, isLock) }}></div>
-                <div title={props.t("Go to active study")} className="icon icon-live" onClick={() => { goToStudy(id, equivalentStudyId) }}></div>
-            </div>);
-        return actions;
-    };
-
-    const data = {
-        columns: [
-            {
-                label: props.t("Study name"),
-                field: "studyName",
-                sort: "asc",
-                width: 150
-            },
-            {
-                label: props.t("Study link"),
-                field: "studyLink",
-                sort: "asc",
-                width: 150
-            },
-            {
-                label: props.t("Protocol code"),
-                field: "protocolCode",
-                sort: "asc",
-                width: 150
-            },
-            {
-                label: props.t("Ask subject Initial"),
-                field: "askSubjectInitial",
-                sort: "asc",
-                width: 150
-            },
-            {
-                label: props.t("Last updated on"),
-                field: "updatedAt",
-                sort: "asc",
-                width: 150
-            },
-            {
-                label: props.t('Actions'),
-                field: 'actions',
-                sort: 'disabled',
-                width: 100,
-            }
-        ],
-        rows: tableData
-    };
     const columns = [
         {
             title: props.t('Study name'),
             dataIndex: 'studyName',
             sorter: (a, b) => a.studyName.localeCompare(b.studyName),
-            sortDirections: ['ascend', 'descend'],
-            render: (text, record) => {
-                let className = '';
-                if (record.status === 'Delete') {
-                    className = 'deleted-row';
-                }
-                return <span className={className}>{text}</span>;
-            }
+            sortDirections: ['ascend', 'descend']
         },
         {
             title: props.t('Study link'),
             dataIndex: 'studyLink',
             sorter: (a, b) => a.studyLink.localeCompare(b.studyLink),
-            sortDirections: ['ascend', 'descend'],
-            render: (text, record) => {
-                let className = '';
-                if (record.status === 'Delete') {
-                    className = 'deleted-row';
-                }
-                return <span className={className}>{text}</span>;
-            }
+            sortDirections: ['ascend', 'descend']
         },
         {
             title: props.t('Protocol code'),
             dataIndex: 'protocolCode',
             sorter: (a, b) => a.protocolCode.localeCompare(b.protocolCode),
-            sortDirections: ['ascend', 'descend'],
-            render: (text, record) => {
-                let className = '';
-                if (record.status === 'Delete') {
-                    className = 'deleted-row';
-                }
-                return <span className={className}>{text}</span>;
-            }
+            sortDirections: ['ascend', 'descend']
         },
         {
             title: props.t('Ask subject Initial'),
@@ -188,49 +107,46 @@ const StudyList = props => {
             sorter: (a, b) => a.askSubjectInitial != b.askSubjectInitial ? a.askSubjectInitial.localeCompare(b.askSubjectInitial) : null,
             sortDirections: ['ascend', 'descend'],
             render: (text, record) => {
-                let className = '';
-                if (record.status === 'Delete') {
-                    className = 'deleted-row';
+                if (text) {
+                    text = props.t("Yes");
+                } else {
+                    text = props.t("No");
                 }
-                return <span className={className}>{text}</span>;
+                return <span>{text}</span>;
             }
         },
         {
             title: props.t('Last updated on'),
             dataIndex: 'updatedAt',
             sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
-            sortDirections: ['ascend', 'descend'],
-            render: (text, record) => {
-                let className = '';
-                if (record.status === 'Delete') {
-                    className = 'deleted-row';
-                }
-                return <span className={className}>{text}</span>;
-            }
+            sortDirections: ['ascend', 'descend']
         },
         {
             title: props.t('Actions'),
             dataIndex: 'actions',
+            width:"150px",
             render: (text, record) => {
-                let className = '';
-                if (record.status === 'Delete') {
-                    className = 'deleted-row';
-                }
-                return <span className={className}>{text}</span>;
+                return (
+                    <div className="icon-container">
+                        <div title={props.t("Update")} className="icon icon-update" onClick={() => { studyUpdate(record.id) }}></div>
+                        <div title={props.t("Go to demo study")} className="icon icon-demo" onClick={() => { goToStudy(record.equivalentStudyId, record.id) }}></div>
+                        <div title={props.t(record.isLock ? "Unlock" : "Lock")} className={record.isLock ? "icon icon-unlock" :"icon icon-lock"} onClick={() => { studyLock(record.id, record.isLock) }}></div>
+                        <div title={props.t("Go to active study")} className="icon icon-live" onClick={() => { goToStudy(record.id, record.equivalentStudyId) }}></div>
+                    </div>
+                );
             }
         },
     ];
-    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
-    const handleExpand = (expanded, record) => {
-        const currentRowKey = record.key;
-        if (expanded) {
-            setExpandedRowKeys(prevKeys => [...prevKeys, currentRowKey]);
-        } else {
-            const filteredKeys = expandedRowKeys.filter(key => key !== currentRowKey);
-            setExpandedRowKeys(filteredKeys);
+
+    const [trigger, { data: studyData, error, isLoading }] = useLazyStudyListGetQuery();
+
+    const { isLocked } = useParams();
+
+    useEffect(() => {
+        if (isLocked) {
+            trigger(isLocked === 'true' ? true : false);
         }
-    };
-    const { data: studyData, error, isLoading } = useStudyListGetQuery(false);
+    }, [isLocked]);
 
     useEffect(() => {
         dispatch(startloading());
@@ -239,52 +155,40 @@ const StudyList = props => {
                 return {
                     ...item,
                     updatedAt: formatDate(item.updatedAt),
-                    actions: getActions(item)
                 };
             });
             setTableData(updatedStudyData);
-
-            const timer = setTimeout(() => {
-                /* generateInfoLabel();*/
-            }, 10)
-
             dispatch(endloading());
-
-            return () => clearTimeout(timer);
         } else if (!isLoading && error) {
             dispatch(endloading());
+            toastRef.current.setToast({
+                message: props.t("An unexpected error occurred."),
+                stateToast: false,
+            });
         }
     }, [studyData, error, isLoading, props.t]);
 
-    const navigatePage = (root) => {
-        navigate(root);
+    const handleMenuClick = (e) => {
+        if (e.key === 'newStudy') {
+            navigate("/addstudy");
+        }
     };
 
-    const generateInfoLabel = () => {
-        var infoDiv = document.querySelector('.dataTables_info');
-        var infoText = infoDiv.innerHTML;
-        let words = infoText.split(" ");
-        if (words[0] === "Showing") {
-            let from = words[1];
-            let to = words[3];
-            let total = words[5];
-            if (words[1] === "0") {
-                from = "0";
-                to = "0";
-                total = "0";
-            }
-            infoDiv.innerHTML = props.t("Showing entries").replace("{from}", from).replace("{to}", to).replace("{total}", total);
-        } else {
-            let from = words[2];
-            let to = words[4];
-            let total = words[0];
-            if (words[0] === "0") {
-                from = "0";
-                to = "0";
-                total = "0";
-            }
-            infoDiv.innerHTML = props.t("Showing entries").replace("{from}", from).replace("{to}", to).replace("{total}", total);
-        }
+    const items = [
+        {
+            label: props.t("Create a new study"),
+            key: 'newStudy',
+            icon: <FontAwesomeIcon style={{ marginRight: "10px" }} icon="fa-solid fa-plus" />
+        },
+        {
+            label: props.t("Add from an existing study"),
+            key: '2',
+        },
+    ];
+
+    const menuProps = {
+        items,
+        onClick: handleMenuClick,
     };
 
     document.title = "Studylist | Veltrix - React Admin & Dashboard Template";
@@ -293,25 +197,19 @@ const StudyList = props => {
             <div className="page-content">
                 <div className="container-fluid">
                     <div className="page-title-box">
-                        <Row className="align-items-center">
-                            <Col md={8}>
+                        <Row className="align-items-center" justify="space-between" align="middle">
+                            <Col span={8}>
                                 <h6 className="page-title">{props.t("Study list")}</h6>
                             </Col>
-
-                            <Col md="4">
-                                <div className="float-end d-none d-md-block">
-                                    <Dropdown isOpen={menu} toggle={toggle}>
-                                        <DropdownToggle color="primary" className="btn btn-primary dropdown-toggle waves-effect waves-light">
-                                            {props.t("Add a study")}&nbsp;<FontAwesomeIcon icon="fa-solid fa-caret-down" />
-                                        </DropdownToggle>
-                                        <DropdownMenu end>
-                                            <DropdownItem onClick={() => navigatePage("/addstudy")}>
-                                                <FontAwesomeIcon style={{ marginRight: "10px" }} icon="fa-solid fa-plus" />
-                                                <span>{props.t("Create a new study")}</span>
-                                            </DropdownItem>
-                                            <DropdownItem divider />
-                                            <DropdownItem>{props.t("Add from an existing study")}</DropdownItem>
-                                        </DropdownMenu>
+                            <Col span={16}>
+                                <div className="float-end d-md-block" style={{ textAlign: 'right' }}>
+                                    <Dropdown menu={menuProps}>
+                                        <Button>
+                                            <Space>
+                                                {props.t("Add a study")}
+                                                <FontAwesomeIcon icon="fa-solid fa-caret-down" />
+                                            </Space>
+                                        </Button>
                                     </Dropdown>
                                 </div>
                             </Col>
@@ -319,22 +217,19 @@ const StudyList = props => {
                     </div>
                     <Row>
                         <Col className="col-12">
-                            <Card>
-                                <CardBody>
-                                    <Table
-                                        dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
-                                        columns={columns}
-                                        expandedRowKeys={expandedRowKeys}
-                                        onExpand={handleExpand}
-                                        pagination={true}
-                                        scroll={{ x: 'max-content' }}
-                                    />
-                                </CardBody>
+                            <Card className="studylist-card-table">
+                                <Table
+                                    dataSource={tableData.map(item => ({ ...item, key: item.id }))}
+                                    columns={columns}
+                                    pagination={true}
+                                    scroll={{ x: 'max-content' }}
+                                />
                             </Card>
                         </Col>
                     </Row>
                 </div>
             </div>
+            <ToastComp ref={toastRef} />
         </React.Fragment>
     );
 };

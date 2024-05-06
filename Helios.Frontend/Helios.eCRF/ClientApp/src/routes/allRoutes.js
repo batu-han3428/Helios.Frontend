@@ -91,7 +91,6 @@ import AddOrUpdateModule from "../Pages/TenantAdmin/Module/addOrUpdateModule.js"
 
 //Study
 import StudyList from "../Pages/TenantAdmin/Study/StudyList";
-import LockedList from "../Pages/TenantAdmin/Study/LockedList";
 import AddOrUpdateStudy from "../Pages/TenantAdmin/Study/AddOrUpdateStudy";
 import Study from "../Pages/TenantAdmin/Visit/VisitList";
 import VisitFormBuilder from "../Pages/TenantAdmin/Visit/StudyModule/visitFormBuilder";
@@ -140,8 +139,7 @@ const userRoutes = [
     { path: "/preview/:moduleId", component: <Preview />, menuType: "admin", roles: ['TenantAdmin'] },
 
     //study
-    { path: "/studylist", component: <StudyList />, menuType: "admin", roles: ['TenantAdmin'] },
-    { path: "/lockedlist", component: <LockedList />, menuType: "admin", roles: ['TenantAdmin'] },
+    { path: "/studylist/:isLocked", component: <StudyList />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/addstudy", component: <AddOrUpdateStudy />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/visits/:studyId", component: <Study />, menuType: "study", roles: ['TenantAdmin'] },
     { path: "/visitFormBuilder/:studyVisitPageModuleId", component: <VisitFormBuilder />, menuType: "admin", roles: ['TenantAdmin'] },
@@ -244,7 +242,7 @@ const userRoutes = [
     { path: "/subject-detail/:subjectId", component: <SubjectDetail />, menuType: "sso", roles: ['StudyUser'] },
 
     // this route should be at the end of all other routes
-    { path: "/", roles: ["TenantAdmin"], redirect: "/studylist", menuType: "admin" },
+    { path: "/", roles: ["TenantAdmin"], redirect: "/studylist/false", menuType: "admin" },
     { path: "/", roles: ["StudyUser"], redirect: "/subjectlist", menuType: "sso" },
     { path: "/", roles: ["SuperAdmin"], redirect: "/add-system-admin", menuType: "superadmin" },
     { path: "/", roles: ["SystemAdmin"], redirect: "/tenants", menuType: "systemadmin" },
