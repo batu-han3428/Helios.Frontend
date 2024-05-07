@@ -401,5 +401,7 @@
   "If the field is": "Alan ise",
   "There is no element in the module you want to add. Please add element first.": "Eklemek istediğiniz modülde element yoktur. Lütfen önce element ekleyiniz.",
   "There is a list of tags registered with this name. Please try again with a different name.": "Bu isimde kayıtlı bir etiket listesi vardır. Lütfen başka bir isim ile tekrar deneyiniz.",
-  "Go to demo subject": "Hastaya git"
+  "Go to demo subject": "Hastaya git",
+  "Subject Number": "Hasta Numbersı",
+  "Subject List": "Hasta Listesi"
 }

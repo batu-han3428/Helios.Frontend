@@ -153,7 +153,6 @@ class TableElement extends Component {
                                 RowIndex={this.state.rowIndex}
                                 FormType={this.state.FormType}
                                 Dispatch={this.props.Dispatch}
-                                SetPropModal={this.props.SetPropModal}
                             >
                             </Properties>
                         </div>

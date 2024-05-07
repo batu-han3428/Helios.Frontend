@@ -21,12 +21,6 @@ export const SubjectApi = createApi({
             query: (studyId) => `/Subject/GetSubjectList/${studyId}`,
             providesTags: ['Subject'],
         }),
-        goToSubject: builder.query({
-            query: (subjectId) => `/Subject/GoToSubject/${subjectId}`,
-            async onQueryStarted(_, { dispatch, queryFulfilled }) {
-                await queryFulfilled;
-            },
-        }),
         addSubject: builder.mutation({
             query: (data) => ({
                 url: '/Subject/AddSubject?studyId=' + data,
@@ -36,6 +30,9 @@ export const SubjectApi = createApi({
         }),
         getSubjectDetailMenu: builder.query({
             query: (subjectId) => `/Subject/GetSubjectDetailMenu/${subjectId}`
+        }),
+        getSubjectElementList: builder.query({
+            query: (data) => '/Subject/GetSubjectElementList?subjectId=' + data.subjectId + '&subjectVisitModulePageId=' + data.pageId
         })
     }),
 });
@@ -43,8 +40,8 @@ export const SubjectApi = createApi({
 
 export const { useGetSubjectListQuery } = SubjectApi;
 
-export const { useGoToSubjectQuery } = SubjectApi;
-
 export const { useAddSubjectMutation } = SubjectApi;
 
 export const { useLazyGetSubjectDetailMenuQuery } = SubjectApi;
+
+export const { useGetSubjectElementListQuery } = SubjectApi;

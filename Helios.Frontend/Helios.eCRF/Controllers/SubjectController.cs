@@ -17,6 +17,11 @@ namespace Helios.eCRF.Controllers
             _subjectService = subjectService;
         }
 
+        /// <summary>
+        /// Hasta listesi verilerini listeler
+        /// </summary>
+        /// <param name="studyId">çalışma id</param>
+        /// <returns>hasta listesi</returns>
         [HttpGet("{studyId}")]
         //[Authorize(Roles = "StudyUser")]
         public async Task<IActionResult> GetSubjectList(Int64 studyId)
@@ -25,6 +30,11 @@ namespace Helios.eCRF.Controllers
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
+        /// <summary>
+        /// Hasta eklenir
+        /// </summary>
+        /// <param name="studyId">çalışma id</param>
+        /// <returns>başarılı başarısız</returns>
         [HttpPost]
         public async Task<ApiResponse<dynamic>> AddSubject(Int64 studyId)
         {
@@ -32,19 +42,18 @@ namespace Helios.eCRF.Controllers
             return result;
         }
 
+        /// <summary>
+        /// Hasta eklenir
+        /// </summary>
+        /// <param name="subjectId">hasta id</param>
+        /// <param name="subjectVisitModulePageId">hasta vizit modul sayfa id</param>
+        /// <returns>hasta element listesi</returns>
         [HttpGet]
         //[Authorize(Roles = "StudyUser")]
         public async Task<IActionResult> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId)
         {
             var result = await _subjectService.GetSubjectElementList(subjectId,subjectVisitModulePageId);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
-        }
-
-        [HttpPost]
-        public async Task<ApiResponse<dynamic>> AutoSaveSubjectData(ModuleModel model)
-        {
-            var result = new ApiResponse<dynamic>();
-            return result;
         }
 
         /// <summary>
@@ -58,6 +67,14 @@ namespace Helios.eCRF.Controllers
         {
             var result = await _subjectService.GetSubjectDetailMenu(subjectId);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
+
+        [HttpPost]
+        public async Task<ApiResponse<dynamic>> AutoSaveSubjectData(ModuleModel model)
+        {
+            var result = new ApiResponse<dynamic>();
+            return result;
         }
     }
 }
