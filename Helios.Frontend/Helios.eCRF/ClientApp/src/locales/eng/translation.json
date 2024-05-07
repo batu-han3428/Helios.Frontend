@@ -553,5 +553,7 @@
   "If the field is": "If the field is",
   "There is no element in the module you want to add. Please add element first.": "There is no element in the module you want to add. Please add element first.",
   "There is a list of tags registered with this name. Please try again with a different name.": "There is a list of tags registered with this name. Please try again with a different name.",
-  "Go to demo subject": "Go to demo subject"
+  "Go to demo subject": "Go to demo subject",
+  "Subject Number": "Subject Number",
+  "Subject List": "Subject List"
 }

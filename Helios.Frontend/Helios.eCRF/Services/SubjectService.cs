@@ -18,6 +18,7 @@ namespace Helios.eCRF.Services
             {
                 var req = new RestRequest("CoreSubject/GetSubjectList", Method.Get);
                 req.AddParameter("studyId", studyId);
+                req.AddParameter("userId", UserId);
                 var result = await client.ExecuteAsync<List<SubjectDTO>>(req);
                 return result;
             }
@@ -55,7 +56,7 @@ namespace Helios.eCRF.Services
         {
             using (var client = CoreServiceClient)
             {
-                var req = new RestRequest("CoreSubject/GetSubjectList", Method.Get);
+                var req = new RestRequest("CoreSubject/GetSubjectElementList", Method.Get);
                 req.AddParameter("subjectId", subjectId);
                 req.AddParameter("pageId", subjectVisitModulePageId);
                 var result = await client.ExecuteAsync<List<SubjectElementModel>>(req);

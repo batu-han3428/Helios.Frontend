@@ -9,6 +9,7 @@ import Swal from 'sweetalert2';
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useAddSubjectMutation, useGetSubjectListQuery } from '../../../store/services/Subject';
+import "./Subject.css";
 
 const SubjectList = props => {
     const dispatch = useDispatch();
@@ -31,14 +32,14 @@ const SubjectList = props => {
         }
     }, [subjectsData, error, isLoading]);
 
-    const goToSubjectDetail = (id) => {
-        navigate(`/SubjectDetail`, { state: { subjectId: id } });
+    const goToSubjectDetail = (id, pageId) => {
+        navigate(`/subject-detail/${id}/${pageId}`);
     };
 
-    const getActions = ({ id}) => {
+    const getActions = ({ id, firstPageId }) => {
         const actions = (
             <div className="icon-container">
-                <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(id) }}></div>
+                <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(id, firstPageId) }}></div>
             </div>);
         return actions;
     };
@@ -83,10 +84,18 @@ const SubjectList = props => {
         {
             title: props.t('subjectNumber'),
             dataIndex: 'subjectNumber',
+            key:'subjectNumber'
+        },
+        {
+            title: 'firstPageId',
+            dataIndex: 'firstPageId',
+            key: 'firstPageId',
+            className: 'hidden-column'
         },
         {
             title: props.t('Actions'),
             dataIndex: 'actions',
+            key:'actions'
         },
     ];
 

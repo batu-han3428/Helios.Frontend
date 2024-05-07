@@ -169,7 +169,6 @@ class DatagridElement extends Component {
                                 ColumnIndex={this.state.columnIndex}
                                 FormType={this.state.FormType}
                                 Dispatch={this.props.Dispatch}
-                                SetPropModal={this.props.SetPropModal}
                             >
                             </Properties>
                         </div>

@@ -26,3 +26,7 @@
 .ant-dropdown {
     z-index: 1000001 !important;
 }
+
+.hidden-column {
+    display: none;
+}

@@ -251,7 +251,6 @@ function ElementList(props) {
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
                     Dispatch={dispatch}
-                    SetPropModal={setpropModal}
                 />
             case 16:
                 return <DatagridElement
@@ -263,7 +262,6 @@ function ElementList(props) {
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
                     Dispatch={dispatch}
-                    SetPropModal={setpropModal}
                 />
             case 17:
                 return <AdverseEventElement
@@ -372,7 +370,6 @@ function ElementList(props) {
                             RowIndex={null}
                             FormType={formType}
                             Dispatch={dispatch}
-                            SetPropModal={setpropModal}
                         >
                         </Properties>
                     </ModalBody>

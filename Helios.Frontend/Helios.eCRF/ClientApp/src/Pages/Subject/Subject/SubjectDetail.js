@@ -7,14 +7,15 @@ import SubjectDetailMenu from './Comp/SubjectDetailMenu';
 import './Subject.css';
 import SubjectDetailDrawer from './Comp/SubjectDetailDrawer';
 import { useParams } from "react-router-dom";
-import { useLazyGetSubjectDetailMenuQuery } from '../../../store/services/Subject';
+import { useLazyGetSubjectDetailMenuQuery, useGetSubjectElementListQuery } from '../../../store/services/Subject';
 import { endloading, startloading } from '../../../store/loader/actions';
 import { useDispatch } from "react-redux";
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
+import SubjectDetailElementList from './SubjectDetailElementList.js';
 
 const SubjectDetail = props => {
 
-    const { subjectId } = useParams();
+    const { subjectId, pageId } = useParams();
 
     const dispatch = useDispatch();
 
@@ -25,8 +26,10 @@ const SubjectDetail = props => {
     const [openSubMenuKeys, setOpenSubMenuKeys] = useState(['sub1']);
     const [openMobileMenu, setOpenMobileMenu] = useState(false);
     const [leftMenuData, setLeftMenuData] = useState([]);
+    const [subjectElementList, setSubjectElementList] = useState([]);
 
     const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery();
+    const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: 4, pageId: 3 });
 
     useEffect(() => {
         if (subjectId) {
@@ -34,6 +37,13 @@ const SubjectDetail = props => {
             trigger(subjectId);
         }
     }, [subjectId]);
+
+    useEffect(() => {
+        if (!error1 && !isLoading1 && elementList) {
+            setSubjectElementList(elementList);
+            dispatch(endloading());
+        }
+    }, [elementList, error1, isLoading1]);
 
     useEffect(() => {
         if (menuData && !error && !isLoading) {
@@ -82,7 +92,12 @@ const SubjectDetail = props => {
                             <SubjectDetailDrawer onClose={onClose} openMobileMenu={openMobileMenu} content={<SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={true} />} />
                         </Col>
                         <Col xs={24} sm={24} md={18} lg={18} xl={19}>
-                            <div>elementler</div>
+                            <div>
+                                <SubjectDetailElementList
+                                    IsDisable={false}
+                                    ElementList={subjectElementList}
+                                />
+                            </div>
                         </Col>
                     </Row>
                 </div>
