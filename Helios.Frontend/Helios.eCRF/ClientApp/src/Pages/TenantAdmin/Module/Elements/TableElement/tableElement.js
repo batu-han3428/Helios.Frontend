@@ -17,7 +17,7 @@ import { GetElementNameByKey } from '../Common/utils.js';
 import Properties from '../../FormBuilder/properties.js';
 import ElementList from '../../FormBuilder/elementList.js';
 
-const baseUrl = "http://localhost:3300/Module";
+const baseUrl = "http://localhost:3300/";
 
 class TableElement extends Component {  
     constructor(props) {
@@ -97,7 +97,8 @@ class TableElement extends Component {
     };
     copyTableRowElement(e, id, rowindex) {
         this.props.dispatch(startloading());
-        fetch(baseUrl + '/CopyTableRowElement?id=' + id + '&rowIndex=' + rowindex + '&userId=' + this.state.userId, {
+        var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
+        fetch(url + '/CopyTableRowElement?id=' + id + '&rowIndex=' + rowindex + '&userId=' + this.state.userId, {
             method: 'POST',
         })
             .then(response => response.json())
@@ -115,7 +116,8 @@ class TableElement extends Component {
     }
     deleteTableRowElement(e, id, rowindex) {
         this.props.dispatch(startloading());
-        fetch(baseUrl + '/DeleteTableRowElement?id=' + id + '&rowIndex=' + rowindex + '&userId=' + this.state.userId, {
+        var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
+        fetch(url + '/DeleteTableRowElement?id=' + id + '&rowIndex=' + rowindex + '&userId=' + this.state.userId, {
             method: 'POST',
         })
             .then(response => response.json())

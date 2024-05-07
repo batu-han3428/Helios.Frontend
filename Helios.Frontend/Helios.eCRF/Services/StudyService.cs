@@ -404,7 +404,42 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
+        public async Task<ApiResponse<dynamic>> CopyTableRowElement(Int64 id, int rowIndex, Int64 userId)
+        {
+            var model = new ElementShortModel()
+            {
+                Id = id,
+                RowIndex = rowIndex,
+                UserId = userId,
+                Value = ""
+            };
 
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/CopyTableRowElement", Method.Post);
+                req.AddJsonBody(model);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+        public async Task<ApiResponse<dynamic>> DeleteTableRowElement(Int64 id, int rowIndex, Int64 userId)
+        {
+            var model = new ElementShortModel()
+            {
+                Id = id,
+                RowIndex = rowIndex,
+                UserId = userId,
+                Value = ""
+            };
+
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/DeleteTableRowElement", Method.Post);
+                req.AddJsonBody(model);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
         public async Task<List<ElementModel>> GetVisitPageModuleAllElements(Int64 id)
         {
             var elements = new List<ElementModel>();

@@ -1,6 +1,7 @@
 ﻿using Helios.Common.DTO;
 using Helios.Common.Enums;
 using Helios.Common.Model;
+using Helios.eCRF.Services;
 using Helios.eCRF.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -465,6 +466,20 @@ namespace Helios.eCRF.Controllers
             var result = await _studyService.DeleteElement(id, userId);
             return result;
         }
+        [HttpPost]
+        public async Task<ApiResponse<dynamic>> CopyTableRowElement(Int64 id, int rowIndex, Int64 userId)
+        {
+            var result = await _studyService.CopyTableRowElement(id, rowIndex, userId);
+            return result;
+        }
+
+        [HttpPost]
+        public async Task<ApiResponse<dynamic>> DeleteTableRowElement(Int64 id, int rowIndex, Int64 userId)
+        {
+            var result = await _studyService.DeleteTableRowElement(id, rowIndex, userId);
+            return result;
+        }
+
 
         [HttpGet]
         public async Task<List<ElementModel>> GetModuleAllElements(Int64 id)

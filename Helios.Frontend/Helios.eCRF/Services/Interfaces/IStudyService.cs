@@ -37,6 +37,8 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> SaveVisitPageModuleContent(ElementModel model);
         Task<ApiResponse<dynamic>> CopyElement(Int64 id, Int64 userId);
         Task<ApiResponse<dynamic>> DeleteElement(Int64 id, Int64 userId);
+        Task<ApiResponse<dynamic>> DeleteTableRowElement(Int64 id, int rowIndex, Int64 userId);
+        Task<ApiResponse<dynamic>> CopyTableRowElement(Int64 id, int rowIndex, Int64 userId);
         Task<List<ElementModel>> GetVisitPageModuleAllElements(Int64 id);
         Task<ElementModel> GetVisitPageModuleElementData(Int64 id);
         Task<ModuleModel> GetStudyPageModule(Int64 id);
