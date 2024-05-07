@@ -19,7 +19,7 @@ import ElementList from '../../FormBuilder/elementList.js';
 
 const baseUrl = "http://localhost:3300/";
 
-class TableElement extends Component {  
+class TableElement extends Component {
     constructor(props) {
         super(props);
 
@@ -42,12 +42,12 @@ class TableElement extends Component {
             elementType: 0,
             columnIndex: 0,
             rowIndex: 0,
-        }      
+        }
         this.toggleAddElementModal = this.toggleAddElementModal.bind(this);
         this.handleElementListChange = this.handleElementListChange.bind(this);
         this.getTdContent = this.getTdContent.bind(this);
     }
-   
+
     toggleAddElementModal = (columnIndex, rowIndex) => {
         this.setState(prevState => ({
             modalState: !prevState.modalState,
@@ -74,7 +74,6 @@ class TableElement extends Component {
     getTdContent(colIndex, rowIndex) {
         var result = false;
         var cld = [];
-
         this.state.childElementList.map(item => {
             if (item.columnIndex === colIndex + 1 && item.rowIndex === rowIndex + 1) {
                 result = true;
@@ -135,12 +134,12 @@ class TableElement extends Component {
             });
 
     }
-    getTableRowProp(id, rowindex) {     
-        return <div>< Button className="actionBtn" style={{ padding: '0px' }}><i className="far fa-copy" onClick={e => this.copyTableRowElement(e, id, rowindex)}></i></Button><br />
-            < Button className="actionBtn" style={{ padding: '0px' }}><i className="fas fa-trash-alt" onClick={e => this.deleteTableRowElement(e, id, rowindex)}></i></Button></div>;
-    }
-
-
+    getTableRowProp(id, rowindex) {
+        if (this.state.isDisable) {
+            return <div>< Button className="actionBtn" style={{ padding: '0px' }}><i className="far fa-copy" onClick={e => this.copyTableRowElement(e, id, rowindex)}></i></Button><br />
+                < Button className="actionBtn" style={{ padding: '0px' }}><i className="fas fa-trash-alt" onClick={e => this.deleteTableRowElement(e, id, rowindex)}></i></Button></div>;
+        }
+    }  
     render() {
         return (
             <div className="table-responsive mb-3">
@@ -153,11 +152,11 @@ class TableElement extends Component {
                             ))}
                         </tr>
                     </thead>
-                    <tbody>
-                        {[...Array(this.state.rowCount)].map((_, rowIndex) => (                       
+                    <tbody>                      
+                        {[...Array(this.state.rowCount === 0 ? 1 : this.state.rowCount)].map((_, rowIndex) => (
                             <tr key={rowIndex}>
                                 <td key='0'>
-                                    {this.getTableRowProp(this.state.id, rowIndex+1)}
+                                    {this.getTableRowProp(this.state.id, rowIndex + 1)}
                                 </td>
                                 {[...Array(this.state.columnCount)].map((_, columnIndex) => (
                                     <td key={columnIndex}>

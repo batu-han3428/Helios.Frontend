@@ -76,7 +76,7 @@ class TableElementProperties extends Component {
 
     handleRowCountChange(e) {
         this.props.changeRowCount(e.target.value);
-    };
+    };    
 
     render() {
         return (
@@ -100,7 +100,7 @@ class TableElementProperties extends Component {
                     <div className="table-responsive mb-3">
                         <Table className="table table-hover mb-0">
                             <thead>
-                                <tr>
+                                <tr>                                
                                     <th>{this.props.t("Title")}</th>
                                     <th>{this.props.t("Width")}</th>
                                     <th>{this.props.t("Action")}</th>
@@ -108,7 +108,7 @@ class TableElementProperties extends Component {
                             </thead>
                             <tbody>
                                 {this.state.elementRows.map((row, index) => (
-                                    <tr key={index}>
+                                    <tr key={index}>                                      
                                         <td>
                                             <input
                                                 value={row.title}
