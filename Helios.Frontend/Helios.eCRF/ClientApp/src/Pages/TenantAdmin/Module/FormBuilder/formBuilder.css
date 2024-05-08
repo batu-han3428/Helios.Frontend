@@ -13,7 +13,10 @@
     border: solid 1px #dee2e6;
     margin-right:2px;
 }
-
+.actionBtnDiv {  
+    margin-Top: 10px;
+    margin-Bottom: 3px;
+}
 .ml-0{
     margin-left:0px;
 }

@@ -279,19 +279,12 @@ function ElementList(props) {
 
     const content = Array.isArray(moduleElementList)
         ? moduleElementList.map((item) => {
-            var w = item.width === 0 ? 12 : item.width;      
-            const style = {
-                textAlign: item.elementType === 1 ? 'right' : '',
-                marginTop: '10px',
-                marginBottom: '3px',
-            };
-          
-            debugger;
+            var w = item.width === 0 ? 12 : item.width;                        
             var cls = "mb-6 col-md-" + w;
 
             return (
                 <Row className={cls} key={item.id}>
-                    <div style={ style }>
+                    <div className="actionBtnDiv" style={{ textAlign: item.elementType === 1 ? 'right' : '' }}>
                         <label style={{ marginRight: '5px' }}>
                             {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
                             {item.elementType !== 1 && item.title}
