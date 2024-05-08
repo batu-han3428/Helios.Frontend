@@ -556,5 +556,7 @@
   "There is a list of tags registered with this name. Please try again with a different name.": "There is a list of tags registered with this name. Please try again with a different name.",
   "Go to demo subject": "Go to demo subject",
   "Subject Number": "Subject Number",
-  "Subject List": "Subject List"
+  "Subject List": "Subject List",
+  "Created by": "Created by",
+  "Updated by": "Updated by"
 }
