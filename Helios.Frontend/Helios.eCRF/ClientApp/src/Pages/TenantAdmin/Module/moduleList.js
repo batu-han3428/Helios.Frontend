@@ -176,7 +176,8 @@ function ModuleList(props) {
             const updatedModuleData = data.map(item => {
                 return {
                     ...item,
-                    updatedAt: formatDate(item.updatedAt)
+                    updatedAt: formatDate(item.updatedAt),
+                    createdAt: formatDate(item.createdAt)
                 };
             });
             setTableData(updatedModuleData); 
@@ -214,6 +215,43 @@ function ModuleList(props) {
                     </div>
                 );
             },
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        },        
+        {
+            title: props.t('Created on'),
+            dataIndex: 'createdAt',
+            sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+            sortDirections: ['ascend', 'descend'],
+            filteredValue: [searchText],
+            onFilter: (value, record) => String(record.createdAt).toLowerCase().includes(value.toLowerCase()),         
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        },
+        {
+            title: props.t('Last updated on'),
+            dataIndex: 'updatedAt',
+            sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+            sortDirections: ['ascend', 'descend'],
+            filteredValue: [searchText],
+            onFilter: (value, record) => String(record.updatedAt).toLowerCase().includes(value.toLowerCase()),           
+
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        },
+        {
+            title: props.t('Created by'),
+            dataIndex: 'addedNameAndLastName',
+            sorter: (a, b) => a.addedNameAndLastName.localeCompare(b.addedNameAndLastName),
+            sortDirections: ['ascend', 'descend'],
+            filteredValue: [searchText],
+            onFilter: (value, record) => String(record.createdBy).toLowerCase().includes(value.toLowerCase()),          
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        },
+        {
+            title: props.t('Updated by'),
+            dataIndex: 'updatedNameAndLastName',
+            sorter: (a, b) => a.updatedNameAndLastName.localeCompare(b.updatedNameAndLastName),
+            sortDirections: ['ascend', 'descend'],
+            filteredValue: [searchText],
+            onFilter: (value, record) => String(record.updatedBy).toLowerCase().includes(value.toLowerCase()),          
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
         {

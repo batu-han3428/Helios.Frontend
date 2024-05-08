@@ -71,10 +71,54 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreModule/GetModuleList", Method.Get);
                 AddApiHeaders(req);
                 var result = await client.ExecuteAsync<List<ModuleModel>>(req);
+
+                var addedUserIds = result.Data.Select(x => x.AddedById);
+                var updatedUserIds = result.Data.Select(x => x.UpdatedById).ToList();
+                List<Int64?> ids = new List<Int64?>();
+                foreach (var id in addedUserIds)
+                {
+                    if (!ids.Any(x => x == id))
+                    {
+                        ids.Add(id);
+                    }
+                }
+                foreach (var id in updatedUserIds)
+                {
+                    if (!ids.Any(x => x == id))
+                    {
+                        ids.Add(id);
+                    }
+                }
+                var getUserList = GetUserList(ids);
+
+                foreach (var user in result.Data)
+                {
+                    var getaddeduser = getUserList.Result.Data.FirstOrDefault(x => x.Id == user.AddedById);
+                    if (getaddeduser != null)
+                    {
+                        user.AddedNameAndLastName = getaddeduser.Name + " " + getaddeduser.LastName;
+                    }
+                    var getupdateduser = getUserList.Result.Data.FirstOrDefault(x => x.Id == user.UpdatedById);
+                    if (getupdateduser != null)
+                    {
+                        user.UpdatedNameAndLastName = getupdateduser.Name + " " + getupdateduser.LastName;
+                    }
+                }
+
                 return result;
             }
         }
-
+        public async Task<RestResponse<List<AspNetUserDTO>>> GetUserList(List<Int64?> AuthUserIds)
+        {
+            using (var client = AuthServiceClient)
+            {
+                string authUserIdsString = string.Join(",", AuthUserIds);
+                var req = new RestRequest("AdminUser/GetUserList", Method.Get);
+                req.AddParameter("AuthUserIds", authUserIdsString);
+                var users = await client.ExecuteAsync<List<AspNetUserDTO>>(req);
+                return users;
+            }
+        }
         public async Task<List<ElementModel>> GetModuleAllElements(Int64 id)
         {
             var elements = new List<ElementModel>();
@@ -151,7 +195,7 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
-        
+
         public async Task<ApiResponse<dynamic>> RemoveMultipleTagList(Int64 id)
         {
             using (var client = CoreServiceClient)
