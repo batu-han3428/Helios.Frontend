@@ -46,17 +46,17 @@ function ModuleList(props) {
             fetch(API_BASE_URL + 'Module/GetModule?id=' + id, {
                 method: 'GET',
             })
-            .then(response => response.json())
-            .then(data => {
-                setName(data.name);
-                setNameClass("form-control");
-            })
-            .catch(error => {
-                toastRef.current.setToast({
-                    message: props.t("An unexpected error occurred."),
-                    stateToast: false,
+                .then(response => response.json())
+                .then(data => {
+                    setName(data.name);
+                    setNameClass("form-control");
+                })
+                .catch(error => {
+                    toastRef.current.setToast({
+                        message: props.t("An unexpected error occurred."),
+                        stateToast: false,
+                    });
                 });
-            });
         }
         else {
             setName('');
@@ -86,32 +86,32 @@ function ModuleList(props) {
                     UserId: userInformation.userId
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data) {
-                    tog_large();
-                    fetchData();
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        tog_large();
+                        fetchData();
+                        dispatch(endloading());
+                        toastRef.current.setToast({
+                            message: props.t("Successful"),
+                            stateToast: true,
+                        });
+                    }
+                    else {
+                        dispatch(endloading());
+                        toastRef.current.setToast({
+                            message: props.t("Unsuccessful"),
+                            stateToast: false,
+                        });
+                    }
+                })
+                .catch(error => {
                     dispatch(endloading());
                     toastRef.current.setToast({
-                        message: props.t("Successful"),
-                        stateToast: true,
-                    });
-                }
-                else {
-                    dispatch(endloading());
-                    toastRef.current.setToast({
-                        message: props.t("Unsuccessful"),
+                        message: props.t("An unexpected error occurred."),
                         stateToast: false,
                     });
-                }
-            })
-            .catch(error => {
-                dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t("An unexpected error occurred."),
-                    stateToast: false,
                 });
-            });
         }
     };
 
@@ -141,20 +141,20 @@ function ModuleList(props) {
                             UserId: userInformation.userId
                         })
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.isSuccess) {
-                            fetchData();
-                            Swal.fire(props.t(data.message), '', 'success');
-                        } else {
-                            Swal.fire(props.t(data.message), '', 'error');
-                        }
-                        dispatch(endloading());
-                    })
-                    .catch(error => {
-                        Swal.fire(props.t("An unexpected error occurred."), '', 'error');
-                        dispatch(endloading());
-                    });
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.isSuccess) {
+                                fetchData();
+                                Swal.fire(props.t(data.message), '', 'success');
+                            } else {
+                                Swal.fire(props.t(data.message), '', 'error');
+                            }
+                            dispatch(endloading());
+                        })
+                        .catch(error => {
+                            Swal.fire(props.t("An unexpected error occurred."), '', 'error');
+                            dispatch(endloading());
+                        });
                 } catch (error) {
                     dispatch(endloading());
                     Swal.fire('An error occurred', '', 'error');
@@ -171,23 +171,25 @@ function ModuleList(props) {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => response.json())
-        .then(data => {
-            const updatedModuleData = data.map(item => {
-                return {
-                    ...item,
-                    updatedAt: formatDate(item.updatedAt),
-                    createdAt: formatDate(item.createdAt)
-                };
+            .then(response => response.json())
+            .then(data => {
+                const updatedModuleData = data.map(item => {
+                    return {
+                        ...item,
+                        updatedAt: formatDate(item.updatedAt),
+                        createdAt: formatDate(item.createdAt),
+                        updatedNameAndLastName: item.updatedNameAndLastName != null ? item.updatedNameAndLastName : "-",
+                        addedNameAndLastName: item.addedNameAndLastName != null ? item.addedNameAndLastName : "-"
+                    };
+                });
+                setTableData(updatedModuleData);
+            })
+            .catch(error => {
+                toastRef.current.setToast({
+                    message: props.t("An unexpected error occurred."),
+                    stateToast: false,
+                });
             });
-            setTableData(updatedModuleData); 
-        })
-        .catch(error => {
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false,
-            });
-        });
     }
 
     const handleRowDoubleClick = (rowId) => {
@@ -216,14 +218,14 @@ function ModuleList(props) {
                 );
             },
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-        },        
+        },
         {
             title: props.t('Created on'),
             dataIndex: 'createdAt',
             sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
             sortDirections: ['ascend', 'descend'],
             filteredValue: [searchText],
-            onFilter: (value, record) => String(record.createdAt).toLowerCase().includes(value.toLowerCase()),         
+            onFilter: (value, record) => String(record.createdAt).toLowerCase().includes(value.toLowerCase()),
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
         {
@@ -232,7 +234,7 @@ function ModuleList(props) {
             sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
             sortDirections: ['ascend', 'descend'],
             filteredValue: [searchText],
-            onFilter: (value, record) => String(record.updatedAt).toLowerCase().includes(value.toLowerCase()),           
+            onFilter: (value, record) => String(record.updatedAt).toLowerCase().includes(value.toLowerCase()),
 
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
@@ -242,7 +244,7 @@ function ModuleList(props) {
             sorter: (a, b) => a.addedNameAndLastName.localeCompare(b.addedNameAndLastName),
             sortDirections: ['ascend', 'descend'],
             filteredValue: [searchText],
-            onFilter: (value, record) => String(record.createdBy).toLowerCase().includes(value.toLowerCase()),          
+            onFilter: (value, record) => String(record.createdBy).toLowerCase().includes(value.toLowerCase()),
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
         {
@@ -251,7 +253,7 @@ function ModuleList(props) {
             sorter: (a, b) => a.updatedNameAndLastName.localeCompare(b.updatedNameAndLastName),
             sortDirections: ['ascend', 'descend'],
             filteredValue: [searchText],
-            onFilter: (value, record) => String(record.updatedBy).toLowerCase().includes(value.toLowerCase()),          
+            onFilter: (value, record) => String(record.updatedBy).toLowerCase().includes(value.toLowerCase()),
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
         {
@@ -272,9 +274,9 @@ function ModuleList(props) {
 
     useEffect(() => {
         dispatch(startloading());
-        fetchData();  
-        dispatch(endloading());   
-    }, []);    
+        fetchData();
+        dispatch(endloading());
+    }, []);
 
     return (
         <>
@@ -325,7 +327,7 @@ function ModuleList(props) {
                         </Row>
                     </div>
                     <Row>
-                        <Col className="col-12">                               
+                        <Col className="col-12">
                             <Card className="modulelist-card-table">
                                 <Table
                                     dataSource={tableData.map(item => ({ ...item, key: item.id }))}
