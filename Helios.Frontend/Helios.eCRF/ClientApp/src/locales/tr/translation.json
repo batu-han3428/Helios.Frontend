@@ -403,5 +403,7 @@
   "There is a list of tags registered with this name. Please try again with a different name.": "Bu isimde kayıtlı bir etiket listesi vardır. Lütfen başka bir isim ile tekrar deneyiniz.",
   "Go to demo subject": "Hastaya git",
   "Subject Number": "Hasta Numbersı",
-  "Subject List": "Hasta Listesi"
+  "Subject List": "Hasta Listesi",
+  "Created by": "Ekleyen kişi",
+  "Updated by": "Güncelleyen kişi"
 }
