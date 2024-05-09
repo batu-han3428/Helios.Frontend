@@ -132,7 +132,7 @@ class Properties extends React.Component {
             LeftText: '',
             RightText: '',
             DatagridAndTableProperties: '',
-            RowCount: 0,
+            RowCount: 1,
             ColumnCount: 0,
             ColumnIndex: props.ColumnIndex == null ? 0 : props.ColumnIndex,
             RowIndex: props.RowIndex == null ? 0 : props.RowIndex,
@@ -159,13 +159,13 @@ class Properties extends React.Component {
         this.setShowToast.bind(this);
         this.fillDependentFieldList();
         this.getElementData();
-
+      
         this.toggleActiveTab = this.toggleActiveTab.bind(this);
         this.handleSaveModuleContent = this.handleSaveModuleContent.bind(this);
         this.getElementData = this.getElementData.bind(this);
         this.fillDependentFieldList = this.fillDependentFieldList.bind(this);
         this.fillElementProperties = this.fillElementProperties.bind(this);
-
+      
         this.handleIdChange = this.handleIdChange.bind(this);
         this.handleModuleIdChange = this.handleModuleIdChange.bind(this);
         this.handleElementDetailIdChange = this.handleElementDetailIdChange.bind(this);
@@ -218,8 +218,8 @@ class Properties extends React.Component {
 
         this.changeIsFormValid.bind(this);
 
-        this.changeValidationList.bind(this);
-    }
+        this.changeValidationList.bind(this);      
+    }  
 
     setShowToast() {
         this.setState({

@@ -22,7 +22,7 @@ const baseUrl = "http://localhost:3300/";
 class TableElement extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = {
             id: props.Id,
             moduleId: props.ModuleId,
