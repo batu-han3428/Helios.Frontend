@@ -7,13 +7,16 @@ class DropdownElement extends Component {
         super(props);
 
         this.state = {
+            id: props.Id,
             isDisable: props.IsDisable,
-            orgElementOptions: JSON.parse(props.ElementOptions),
+            orgElementOptions: props.ElementOptions !== null && props.ElementOptions !== undefined && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
             ElementOptions: [],
+            selectedOption: null
         }
 
         this.fillElementOptions = this.fillElementOptions.bind(this);
+        this.handleChange = this.handleChange.bind(this);
 
         this.fillElementOptions();
     }
@@ -27,7 +30,23 @@ class DropdownElement extends Component {
         });
 
         this.state.ElementOptions = optns;
+        var val = this.state.Value;
+
+        if (this.state.Value !== null) {
+            var selected = null;
+            optns.map(item => {
+                if (item.value === val)
+                    selected = item;
+            });
+
+            this.state.selectedOption = selected;
+        }
     }
+
+    handleChange = (selectedOption) => {
+        this.setState({ selectedOption: selectedOption });
+        this.props.HandleAutoSave(this.state.id, selectedOption.value);
+    };
 
     render() {
         return (
@@ -37,7 +56,9 @@ class DropdownElement extends Component {
                     options={this.state.ElementOptions}
                     isDisabled={this.state.isDisable}
                     placeholder={this.props.t("Select")}
-                />                                                                    
+                    value={this.state.selectedOption}
+                    onChange={this.handleChange}
+                />
 
             </div>
         )

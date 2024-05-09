@@ -5,12 +5,37 @@ class CheckElement extends Component {
         super(props);
 
         this.state = {
+            id: props.Id,
             isDisable: props.IsDisable,
             layout: props.Layout,
+            checkedOptions: [],
             ElementOptions: JSON.parse(props.ElementOptions),
             Value: props.Value
         }
+
+        this.handleChange = this.handleChange.bind(this);
     }
+
+    componentDidMount() {
+        this.setInitialCheckedOptions();
+    }
+
+    setInitialCheckedOptions = () => {
+        const { ElementOptions, Value } = this.state;
+        const checkedOptions = ElementOptions.filter(option => Value.includes(option.tagValue)).map(option => option.tagValue);
+        this.setState({ checkedOptions });
+    }
+
+    handleChange = (value) => {
+        this.setState({ selectedOption: value });
+
+        const checkedOptions = this.state.checkedOptions.includes(value)
+            ? this.state.checkedOptions.filter(option => option !== value)
+            : [...this.state.checkedOptions, value];
+
+        this.setState({ checkedOptions });
+        this.props.HandleAutoSave(this.state.id, JSON.stringify(checkedOptions));
+    };
 
     render() {
         return (
@@ -23,7 +48,11 @@ class CheckElement extends Component {
                                     <input
                                         type="checkbox"
                                         className="form-check-input"
-                                        disabled={this.state.isDisable} />
+                                        id={`checkbox-${index}`}
+                                        onChange={() => this.handleChange(item.tagValue)}
+                                        disabled={this.state.isDisable}
+                                        checked={this.state.checkedOptions.includes(item.tagValue)}
+                                    />
                                     <label className="form-check-label" htmlFor={`checkbox-${index}`}>
                                         {item.tagName}
                                     </label>
@@ -41,7 +70,10 @@ class CheckElement extends Component {
                                         type="checkbox"
                                         className="form-check-input"
                                         id={`checkbox-${index}`}
-                                        disabled={this.state.isDisable} />
+                                        onChange={() => this.handleChange(item.tagValue)}
+                                        disabled={this.state.isDisable}
+                                        checked={this.state.checkedOptions.includes(item.tagValue)}
+                                    />
                                     <label className="form-check-label" htmlFor={`checkbox-${index}`}>
                                         {item.tagName}
                                     </label>

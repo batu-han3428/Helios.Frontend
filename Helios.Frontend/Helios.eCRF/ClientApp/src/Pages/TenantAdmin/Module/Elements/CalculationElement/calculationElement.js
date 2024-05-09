@@ -6,6 +6,8 @@ class CalculationElement extends Component {
         super(props);
 
         this.state = {
+            id: props.Id,
+            Value: props.Value,
         }
     }
 
@@ -15,6 +17,7 @@ class CalculationElement extends Component {
                 <input
                     className="form-control"
                     type="text"
+                    value={this.state.Value}
                     disabled="disabled" />
                 {/*<label style={{ fontSize: "8pt", textDecoration: 'none' }}>*/}
                 {/*    {this.props.t("It will be calculated automatically")}*/}

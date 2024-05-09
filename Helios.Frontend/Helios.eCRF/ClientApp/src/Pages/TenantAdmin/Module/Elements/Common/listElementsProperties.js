@@ -29,8 +29,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getLocalStorage } from '../../../../../helpers/local-storage/localStorageProcess';
 import { API_BASE_URL } from '../../../../../constants/endpoints';
 
-const baseUrl = "http://localhost:3300";
-
 class ListElementsProperties extends Component {
     constructor(props) {
         super(props);
@@ -128,8 +126,8 @@ class ListElementsProperties extends Component {
     getMultipleTagList() {
         var tgOptionGroup = [];
 
-        if (this.state.Id == 0) {
-            fetch(baseUrl + '/Module/GetMultipleTagList?id=' + this.state.Id, {
+        if (this.state.Id === 0) {
+            fetch(API_BASE_URL + 'Module/GetMultipleTagList?id=' + this.state.Id, {
                 method: 'GET',
             })
                 .then(response => response.json())
@@ -229,14 +227,14 @@ class ListElementsProperties extends Component {
         var tagKey = this.state.tagKey;
         var isValid = true;
 
-        if (this.state.tagKey == '' && this.state.operationType == 1) {
+        if (this.state.tagKey === '' && this.state.operationType === 1) {
             isValid = false;
         }
 
-        this.state.tagKeyInpCls = this.state.tagKey == '' ? 'is-invalid form-control' : 'form-control';
+        this.state.tagKeyInpCls = this.state.tagKey === '' ? 'is-invalid form-control' : 'form-control';
 
         this.state.rows.filter(function (e) {
-            if (e.tagName == '' || e.tagValue == '')
+            if (e.tagName === '' || e.tagValue === '')
                 isValid = false;
 
             e.tagNameInpCls = e.tagName == '' ? 'is-invalid form-control' : 'form-control';
@@ -255,8 +253,8 @@ class ListElementsProperties extends Component {
 
         if (isValid) {
             if (!this.state.isEdit) {
-                if (this.state.operationType == 1) {//add new tag to db
-                    fetch(baseUrl + '/Module/AddNewTag', {
+                if (this.state.operationType === 1) {//add new tag to db
+                    fetch(API_BASE_URL + 'Module/AddNewTag', {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json, text/plain, */*',
@@ -456,7 +454,8 @@ class ListElementsProperties extends Component {
                             <div className="col-md-10">
                                 <Select
                                     value={this.state.TagListSelectedGroup}
-                                    onChange={this.handleTagListChange}                                    options={this.state.TagListOptionGroup.map(option => ({
+                                    onChange={this.handleTagListChange}
+                                    options={this.state.TagListOptionGroup.map(option => ({
                                         ...option,
                                         label: (
                                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>

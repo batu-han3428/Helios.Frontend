@@ -7,11 +7,12 @@ import {
 class RadioElement extends Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
+            id: props.Id,
             isDisable: props.IsDisable,
             layout: props.Layout,
-            ElementOptions:props.ElementOptions !== null && props.ElementOptions !== undefined && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
+            ElementOptions: props.ElementOptions !== null && props.ElementOptions !== undefined && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
             selectedOption: null,
         }
@@ -21,6 +22,7 @@ class RadioElement extends Component {
 
     handleRadioChange = (value) => {
         this.setState({ selectedOption: value });
+        this.props.HandleAutoSave(this.state.id, value);
     };
 
     render() {

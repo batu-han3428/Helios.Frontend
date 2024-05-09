@@ -21,8 +21,7 @@ import CodeMirror from "@uiw/react-codemirror";
 import { withTranslation } from "react-i18next";
 import { GetElementNameByKey } from '../Common/utils';
 import './calcStyle.css';
-
-const baseUrl = "http://localhost:3300/";
+import { API_BASE_URL } from '../../../../../constants/endpoints';
 
 class CalculationElementProperties extends Component {
     constructor(props) {
@@ -81,7 +80,7 @@ class CalculationElementProperties extends Component {
     };
 
     fillAllElementList() {
-        var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
+        var url = this.state.FormType === 1 ? API_BASE_URL + "Module" : API_BASE_URL + "Study";
         fetch(url + '/GetModuleAllElements?id=' + this.state.ModuleId, {
             method: 'GET',
         })

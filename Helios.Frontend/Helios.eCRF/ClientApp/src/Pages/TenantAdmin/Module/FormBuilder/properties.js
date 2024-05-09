@@ -43,8 +43,8 @@ import TableElementProperties from "../Elements/TableElement/tableElementPropert
 import AdverseEventElementProperties from "../Elements/AdverseEventElement/adverseEventElementProperties";
 import HiddenElementProperties from "../Elements/HiddenElement/hiddenElementProperties";
 import ConcomittantMedicationElementProperties from "../Elements/ConcomittantMedicationElement/concomittantMedicationElementProperties";
+import { API_BASE_URL } from '../../../../constants/endpoints';
 
-const baseUrl = "http://localhost:3300/";
 
 class Properties extends React.Component {
     constructor(props) {
@@ -344,9 +344,7 @@ class Properties extends React.Component {
                     changeAdverseEventType={this.changeAdverseEventType} AdverseEventType={this.state.AdverseEventType}
                 />;
             default:
-                this.state.showWhereElementPropeties = 0;
-                this.state.fieldWidthsW = "col-md-10";
-                return <TextElementProperties changeUnit={this.changeUnit} />;
+                return "";
         }
     }
 
@@ -415,7 +413,7 @@ class Properties extends React.Component {
     fillDependentFieldList() {
         var depFldOptionGroup = [];
         var relFldOptionGroup = [];
-        var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
+        var url = this.state.FormType === 1 ? API_BASE_URL + "Module" : API_BASE_URL + "Study";
 
         fetch(url + '/GetModuleAllElements?id=' + this.state.ModuleId, {
             method: 'GET',
@@ -719,7 +717,7 @@ class Properties extends React.Component {
 
     getElementData() {
         if (this.state.Id !== 0 && this.state.Id !== undefined) {
-            var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
+            var url = this.state.FormType === 1 ? API_BASE_URL + "Module" : API_BASE_URL + "Study";
 
             fetch(url + '/GetElementData?id=' + this.state.Id, {
                 method: 'GET',
@@ -893,7 +891,7 @@ class Properties extends React.Component {
             ValidationList: this.state.ValidationList.length > 0 ? JSON.stringify(this.state.ValidationList) : "",
         });
 
-        var url = this.state.FormType === 1 ? baseUrl + "Module" : baseUrl + "Study";
+        var url = this.state.FormType === 1 ? API_BASE_URL + "Module" : API_BASE_URL + "Study";
         this.state.dispatch(startloading());
 
         fetch(url + '/SaveModuleContent', {

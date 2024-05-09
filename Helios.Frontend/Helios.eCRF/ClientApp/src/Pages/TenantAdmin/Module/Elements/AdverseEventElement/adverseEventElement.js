@@ -5,11 +5,12 @@ import '../Common/common.css';
 class AdverseEventElement extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = {
             AdverseEventType: props.AdverseEventType,
             isDisable: props.IsDisable,
-            Value: props.Value === undefined ? "" : props.Value,
+            //Value: props.Value === undefined ? "" : props.Value,
+            Value: "",
         }
 
         this.handleValueChange = this.handleValueChange.bind(this);

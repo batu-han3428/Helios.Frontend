@@ -23,6 +23,7 @@ class DateElement extends Component {
         super(props);
 
         this.state = {
+            id: props.Id,
             Title: props.Title,
             IsRequired: props.IsRequired,
             isDisable: props.IsDisable,
@@ -48,6 +49,7 @@ class DateElement extends Component {
         this.handleDayChange = this.handleDayChange.bind(this);
         this.handleMonthChange = this.handleMonthChange.bind(this);
         this.handleYearChange = this.handleYearChange.bind(this);
+        this.handleSave = this.handleSave.bind(this);
         this.handleTodayButton = this.handleTodayButton.bind(this);
 
         this.fillElementDDs();
@@ -117,19 +119,23 @@ class DateElement extends Component {
     }
 
     handleDayChange = selectedOption => {
-        this.setState({ StartDay: selectedOption.value });
+        //this.setState({ StartDay: selectedOption.value });
         this.setState({ DaySelectedGroup: selectedOption });
     };
 
     handleMonthChange = selectedOption => {
-        this.setState({ StartMonth: selectedOption.value });
+        //this.setState({ StartMonth: selectedOption.value });
         this.setState({ MonthSelectedGroup: selectedOption });
     };
 
     handleYearChange = selectedOption => {
-        this.setState({ StartYear: selectedOption.value });
+        //this.setState({ StartYear: selectedOption.value });
         this.setState({ YearSelectedGroup: selectedOption });
     };
+
+    handleSave() {
+
+    }
 
     handleTodayButton = () => {
         const today = new Date();
