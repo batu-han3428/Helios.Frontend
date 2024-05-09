@@ -11,6 +11,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../../store/loader/actions.js';
 import { decodeToken } from "../../../../helpers/Util/tokenUtil";
 import { getLocalStorage, removeLocalStorage } from '../../../../helpers/local-storage/localStorageProcess.js';
+import { API_BASE_URL } from '../../../../constants/endpoints';
 
 const VisitFormBuilder = props => {
     let token = getLocalStorage("accessToken");
@@ -19,11 +20,10 @@ const VisitFormBuilder = props => {
     const { studyVisitPageModuleId } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
     const [studyPageModuleName, setStudyPageModuleName] = useState('');
-    const baseUrl = "http://localhost:3300";
     const dispatch = useDispatch();
 
     const fetchData = () => {
-        fetch(baseUrl + '/Study/GetStudyModuleElementsWithChildren?studyVisitPageModuleId=' + studyVisitPageModuleId, {
+        fetch(API_BASE_URL + 'Study/GetStudyModuleElementsWithChildren?studyVisitPageModuleId=' + studyVisitPageModuleId, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -34,7 +34,7 @@ const VisitFormBuilder = props => {
                 //console.error('Error:', error);
             });
         
-        fetch(baseUrl + '/Study/GetStudyPageModule?id=' + studyVisitPageModuleId, {
+        fetch(API_BASE_URL + 'Study/GetStudyPageModule?id=' + studyVisitPageModuleId, {
             method: 'GET',
         })
             .then(response => response.json())

@@ -29,7 +29,7 @@ const SubjectDetail = props => {
     const [subjectElementList, setSubjectElementList] = useState([]);
 
     const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery();
-    const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: 4, pageId: 3 });
+    const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId });
 
     useEffect(() => {
         if (subjectId) {

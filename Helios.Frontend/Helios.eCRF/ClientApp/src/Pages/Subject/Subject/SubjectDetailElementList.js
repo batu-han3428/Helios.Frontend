@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import {
     Row,
     Col,
@@ -36,26 +36,53 @@ import AdverseEventElement from '../../TenantAdmin/Module/Elements/AdverseEventE
 import HiddenElement from '../../TenantAdmin/Module/Elements/HiddenElement/hiddenElement.js';
 import ConcomittantMedicationElement from '../../TenantAdmin/Module/Elements/ConcomittantMedicationElement/concomittantMedicationElement.js';
 import { withTranslation } from "react-i18next";
-import { GetAllElementList } from '../../TenantAdmin/Module/FormBuilder/allElementList.js';
+import { API_BASE_URL } from '../../../constants/endpoints';
 
 function SubjectDetailElementList(props) {
-    debugger;
     const toastRef = useRef();
-    const baseUrl = "http://localhost:3300/Subject";
     const [tenantId] = useState(props.TenantId);
     const [moduleId] = useState(props.ModuleId);
     const [studyId] = useState(props.StudyId);
     const [isDisable] = useState(props.IsDisable);
-    const [elementId, setElementId] = useState(0);
     const [ElementList, setElementList] = useState([]);
-    const [elements] = useState(GetAllElementList());
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const userInformation = useSelector(state => state.rootReducer.Login);
 
     useEffect(() => {
         setElementList(props.ElementList);
     }, [props.ElementList]);
+
+    const AutoSave = (id, value) => {
+        debugger;
+        fetch(API_BASE_URL + 'Subject/AutoSaveSubjectData', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json, text/plain, */*',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                Id: id,
+                Value: value
+            })
+        }).then(res => {
+            return res.json()
+        }).then(data => {
+            this.state.dispatch(startloading());
+            if (data.isSuccess) {
+                this.toastRef.current.setToast({
+                    message: data.message,
+                    stateToast: true
+                });
+            } else {
+                this.toastRef.current.setToast({
+                    message: data.message,
+                    stateToast: false
+                });
+            }
+            this.state.dispatch(endloading());
+        }).catch(error => {
+            console.log(error)
+        });
+    }
 
     const renderElementsSwitch = (param) => {
         var dsbl = isDisable ? "disabled" : "";
@@ -64,25 +91,34 @@ function SubjectDetailElementList(props) {
                 return <LabelElement Title={param.title} />;
             case 2:
                 return <TextElement IsDisable={dsbl}
+                    Id={param.subjectVisitPageModuleElementId}
+                    Value={param.userValue === null ? "" : param.userValue}
+                    HandleAutoSave={AutoSave}
                 />;
             case 3:
                 return <HiddenElement />;
             case 4:
                 return <NumericElement
-                    Id={param.id}
+                    Id={param.subjectVisitPageModuleElementId}
+                    Value={param.userValue}
                     IsDisable={dsbl}
                     Unit={""}
                     Mask={""}
                     LowerLimit={0}
                     UpperLimit={0}
+                    HandleAutoSave={AutoSave}
                 />;
             case 5:
                 return <TextareaElement
+                    Id={param.subjectVisitPageModuleElementId}
+                    Value={param.userValue === null ? "" : param.userValue}
                     IsDisable={isDisable}
                     DefaultValue={param.defaultValue}
+                    HandleAutoSave={AutoSave}
                 />
             case 6:
                 return <DateElement
+                    Id={param.subjectVisitPageModuleElementId}
                     Title={param.title}
                     IsRequired={param.isRequired}
                     IsDisable={isDisable}
@@ -95,31 +131,46 @@ function SubjectDetailElementList(props) {
                     EndYear={param.endYear}
                     DefaultValue={param.defaultValue}
                     IsPreview={false}
+                    HandleAutoSave={AutoSave}
                 />
             case 7:
                 return <CalculationElement
+                    Id={param.subjectVisitPageModuleElementId}
+                    Value={param.userValue === null ? "" : param.userValue}
                 />
             case 8:
                 return <RadioElement
+                    Id={param.subjectVisitPageModuleElementId}
+                    Value={param.userValue === null ? "" : param.userValue}
                     IsDisable={dsbl}
                     Layout={param.layout}
                     ElementOptions={param.elementOptions}
+                    HandleAutoSave={AutoSave}
                 />
             case 9:
                 return <CheckElement
+                    Id={param.subjectVisitPageModuleElementId}
+                    Value={param.userValue === null ? [] : JSON.parse(param.userValue)}
                     IsDisable={dsbl}
                     Layout={param.layout}
                     ElementOptions={param.elementOptions}
+                    HandleAutoSave={AutoSave}
                 />
             case 10:
                 return <DropdownElement
+                    Id={param.subjectVisitPageModuleElementId}
+                    Value={param.userValue === null ? "" : param.userValue}
                     IsDisable={isDisable}
                     ElementOptions={param.elementOptions}
+                    HandleAutoSave={AutoSave}
                 />
             case 11:
                 return <DropdownCheckListElement
+                    Id={param.subjectVisitPageModuleElementId}
+                    Value={param.userValue === null ? [] : JSON.parse(param.userValue)}
                     IsDisable={isDisable}
                     ElementOptions={param.elementOptions}
+                    HandleAutoSave={AutoSave}
                 />
             case 12:
                 return <FileUploaderElement
@@ -168,9 +219,7 @@ function SubjectDetailElementList(props) {
                     IsDisable={isDisable}
                 />
             default:
-                return <TextElement
-                    IsDisable={dsbl}
-                />;
+                return "";
         }
     }
 
@@ -180,7 +229,7 @@ function SubjectDetailElementList(props) {
             var cls = "mb-6 col-md-" + w;
 
             return (
-                <Row className={cls} key={item.id}>
+                <Row className={cls} key={item.subjectVisitPageModuleElementId}>
                     <div style={{ marginBottom: '3px', marginTop: '10px' }}>
                         <label style={{ marginRight: '5px' }}>
                             {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
@@ -198,7 +247,7 @@ function SubjectDetailElementList(props) {
 
     return (
         <div>
-            <div>
+            <div className="row">
                 {content}
             </div>
             <ToastComp

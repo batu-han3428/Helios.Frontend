@@ -35,10 +35,10 @@ import TableElement from '../Elements/TableElement/tableElement.js';
 import CalculationElement from '../Elements/CalculationElement/calculationElement.js';
 import AdverseEventElement from '../Elements/AdverseEventElement/adverseEventElement.js';
 import { withTranslation } from "react-i18next";
+import { API_BASE_URL } from '../../../../constants/endpoints';
 
 function Preview() {
     const toastRef = useRef();
-    const baseUrl = "http://localhost:3300";
     const [tenantId, setTenantId] = useState(0);
     const { moduleId } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
@@ -53,7 +53,7 @@ function Preview() {
     });
 
     const fetchData = () => {
-        fetch(baseUrl + '/Module/GetModuleElementsWithChildren?id=' + moduleId, {
+        fetch(API_BASE_URL + 'Module/GetModuleElementsWithChildren?id=' + moduleId, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -66,7 +66,7 @@ function Preview() {
     }
 
     const AutoSaveElement = () => {
-        fetch(baseUrl + '/Module/AutoSaveElement?id=' + ElementId + '&value=' + ElementValue, {
+        fetch(API_BASE_URL + 'Module/AutoSaveElement?id=' + ElementId + '&value=' + ElementValue, {
             method: 'POST',
         }).then(res => res.json())
             .then(data => {
@@ -74,6 +74,10 @@ function Preview() {
             .catch(error => {
                 //console.error('Error:', error);
             });
+    }
+
+    const AutoSave = (value) => {
+        debugger;
     }
 
     const renderElementsSwitch = (param) => {
@@ -86,6 +90,7 @@ function Preview() {
                 return <TextElement
                     Id={param.id}
                     IsDisable={""}
+                    HandleAutoSave={AutoSave}
                 />;
             case 4:
                 return <NumericElement
@@ -137,6 +142,7 @@ function Preview() {
                     IsDisable={""}
                     Layout={param.layout}
                     ElementOptions={param.elementOptions}
+                    Value={[]}
                 />
             case 10:
                 return <DropdownElement

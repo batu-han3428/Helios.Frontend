@@ -39,10 +39,11 @@ import ConcomittantMedicationElement from '../Elements/ConcomittantMedicationEle
 import { withTranslation } from "react-i18next";
 import { GetElementNameByKey } from '../Elements/Common/utils.js';
 import { GetAllElementList } from './allElementList.js';
+import { API_BASE_URL } from '../../../../constants/endpoints';
 
 function ElementList(props) {
     const toastRef = useRef();
-    const baseUrl = props.FormType === 1 ? "http://localhost:3300/Module" : "http://localhost:3300/Study";
+    const baseUrl = props.FormType === 1 ? API_BASE_URL + "Module" : API_BASE_URL + "Study";
     const [tenantId] = useState(props.TenantId);
     const [moduleId] = useState(props.ModuleId);
     const [studyId] = useState(props.StudyId);
@@ -211,6 +212,7 @@ function ElementList(props) {
                     IsDisable={dsbl}
                     Layout={param.layout}
                     ElementOptions={param.elementOptions}
+                    Value={[]}
                 />
             case 10:
                 return <DropdownElement

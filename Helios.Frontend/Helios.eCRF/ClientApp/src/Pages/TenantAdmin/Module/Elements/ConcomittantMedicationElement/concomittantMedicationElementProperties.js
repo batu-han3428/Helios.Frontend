@@ -17,8 +17,8 @@ import {
 import Select from "react-select";
 import { GetElementNameByKey } from '../Common/utils.js'
 import { withTranslation } from "react-i18next";
+import { API_BASE_URL } from '../../../../../constants/endpoints';
 
-const baseUrl = "http://localhost:3300";
 class ConcomittantMedicationElementProperties extends Component {
     constructor(props) {
         super(props);
@@ -62,7 +62,7 @@ class ConcomittantMedicationElementProperties extends Component {
     getVisitList() {
         var vstOptionGroup = [];
 
-        fetch(baseUrl + `/Study/GetVisits/${this.state.StudyId}`, {
+        fetch(API_BASE_URL + `/Study/GetVisits/${this.state.StudyId}`, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -87,7 +87,7 @@ class ConcomittantMedicationElementProperties extends Component {
     }
 
     fillSelects() {
-        fetch(baseUrl + "/Study/GetVisitCollectionInfo?elementId=" + this.state.TargetElementId, {
+        fetch(API_BASE_URL + "/Study/GetVisitCollectionInfo?elementId=" + this.state.TargetElementId, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -178,8 +178,8 @@ class ConcomittantMedicationElementProperties extends Component {
         var elmOptionGroup = [];
         var tarId = this.state.TargetElementId;
         var selectedOption = [];
-        debugger;
-        fetch(baseUrl + '/Study/GetModuleAllElements?id=' + this.state.moduleSelectedGroup.value, {
+        
+        fetch(API_BASE_URL + '/Study/GetModuleAllElements?id=' + this.state.moduleSelectedGroup.value, {
             method: 'GET',
         })
             .then(response => response.json())

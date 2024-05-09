@@ -71,9 +71,9 @@ namespace Helios.eCRF.Controllers
 
 
         [HttpPost]
-        public async Task<ApiResponse<dynamic>> AutoSaveSubjectData(ModuleModel model)
+        public async Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model)
         {
-            var result = new ApiResponse<dynamic>();
+            var result = await _subjectService.AutoSaveSubjectData(model);
             return result;
         }
     }

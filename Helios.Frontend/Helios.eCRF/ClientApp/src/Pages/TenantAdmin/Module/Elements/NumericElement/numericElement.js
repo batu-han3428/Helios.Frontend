@@ -39,11 +39,7 @@ class NumericElement extends Component {
     };
 
     handleBlur = async (e) => {
-        //if (e.target.value !== "") {
-        //    await this.props.SetElementId(this.state.id);
-        //    await this.props.SetElementValue(e.target.value);
-        //    this.props.AutoSaveElement();
-        //}
+        this.props.HandleAutoSave(this.state.id, e.target.value);
     };
 
     render() {

@@ -52,6 +52,7 @@ namespace Helios.eCRF.Services
                 return result;
             }
         }
+
         public async Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId)
         {
             using (var client = CoreServiceClient)
@@ -61,6 +62,17 @@ namespace Helios.eCRF.Services
                 req.AddParameter("pageId", subjectVisitModulePageId);
                 var result = await client.ExecuteAsync<List<SubjectElementModel>>(req);
                 return result;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/AutoSaveSubjectData", Method.Post);
+                req.AddJsonBody(model);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
             }
         }
 

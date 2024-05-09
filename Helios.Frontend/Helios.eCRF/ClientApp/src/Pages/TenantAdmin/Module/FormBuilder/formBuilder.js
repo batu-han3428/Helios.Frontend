@@ -9,17 +9,17 @@ import ElementList from './elementList.js';
 import './formBuilder.css';
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../../store/loader/actions';
+import { API_BASE_URL } from '../../../../constants/endpoints';
 
 const FormBuilder = props => {
     const userInformation = useSelector(state => state.rootReducer.Login);
     const { moduleId } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
     const [moduleName, setModuleName] = useState('');
-    const baseUrl = "http://localhost:3300";
     const dispatch = useDispatch();
 
     const fetchData = () => {
-        fetch(baseUrl + '/Module/GetModuleElementsWithChildren?id=' + moduleId, {
+        fetch(API_BASE_URL + 'Module/GetModuleElementsWithChildren?id=' + moduleId, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -30,7 +30,7 @@ const FormBuilder = props => {
                 //console.error('Error:', error);
             });
 
-        fetch(baseUrl + '/Module/GetModule?id=' + moduleId, {
+        fetch(API_BASE_URL + 'Module/GetModule?id=' + moduleId, {
             method: 'GET',
         })
             .then(response => response.json())
