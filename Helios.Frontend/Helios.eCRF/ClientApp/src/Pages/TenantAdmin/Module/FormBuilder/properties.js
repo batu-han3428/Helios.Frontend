@@ -48,8 +48,7 @@ const baseUrl = "http://localhost:3300/";
 
 class Properties extends React.Component {
     constructor(props) {
-        super(props);
-
+        super(props);     
         this.state = {
             activeTab: props.ActiveTab,
             showWhereElementPropeties: 0,
@@ -128,7 +127,7 @@ class Properties extends React.Component {
             StartYear: 0,
             EndYear: 0,
             CalculationSourceInputs: '',
-            MainJs: '',
+            MainJs: '',         
             LeftText: '',
             RightText: '',
             DatagridAndTableProperties: '',
@@ -306,7 +305,7 @@ class Properties extends React.Component {
                 this.state.fieldWidthsW = "col-md-10";
                 return <FileUploaderElementProperties
                 />;
-            case 13:
+            case 13:               
                 this.state.showWhereElementPropeties = 3;
                 this.state.fieldWidthsW = "col-md-10";
                 return <RangeSliderElementProperties
@@ -538,7 +537,7 @@ class Properties extends React.Component {
         this.setState({ LowerLimit: newValue });
     };
 
-    changeUpperLimit = (newValue) => {
+    changeUpperLimit = (newValue) => {      
         this.setState({ UpperLimit: newValue });
     };
 
@@ -602,7 +601,7 @@ class Properties extends React.Component {
         this.setState({ LeftText: newValue });
     };
 
-    changeRightText = (newValue) => {
+    changeRightText = (newValue) => {      
         this.setState({ RightText: newValue });
     };
 
@@ -738,6 +737,7 @@ class Properties extends React.Component {
     }
 
     fillElementProperties(data) {
+        debugger
         this.setState({
             Title: data.title,
             ElementName: data.elementName,
@@ -748,6 +748,9 @@ class Properties extends React.Component {
             Mask: data.mask != null ? data.mask : "",
             LowerLimit: data.lowerLimit != null ? data.lowerLimit : "",
             UpperLimit: data.upperLimit != null ? data.upperLimit : "",
+            LeftText: data.leftText != null ? data.leftText:"",
+            RightText: data.rightText != null ? data.rightText : "",
+
             Layout: data.layout,
             DefaultValue: data.defaultValue,
             AddTodayDate: data.addTodayDate,

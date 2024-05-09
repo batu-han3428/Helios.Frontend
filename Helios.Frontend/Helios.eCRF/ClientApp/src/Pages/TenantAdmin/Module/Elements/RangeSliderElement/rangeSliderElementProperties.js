@@ -18,8 +18,7 @@ import { withTranslation } from "react-i18next";
 
 class RangeSliderElementProperties extends Component {
     constructor(props) {
-        super(props);
-
+        super(props);       
         this.handleDefaultValueChange = this.handleDefaultValueChange.bind(this);
         this.handleLowerLimitChange = this.handleLowerLimitChange.bind(this);
         this.handleUpperLimitChange = this.handleUpperLimitChange.bind(this);
