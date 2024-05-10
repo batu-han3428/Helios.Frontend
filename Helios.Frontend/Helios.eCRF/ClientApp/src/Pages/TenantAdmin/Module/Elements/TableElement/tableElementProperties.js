@@ -29,11 +29,10 @@ class TableElementProperties extends Component {
         }
 
         this.removeRow = this.removeRow.bind(this);
-        this.addRow = this.addRow.bind(this);
+        this.addRow = this.addRow.bind(this);      
         this.handleInputChange = this.handleInputChange.bind(this);
         this.handleRowCountChange = this.handleRowCountChange.bind(this);
-    }
-
+    }  
     removeRow = (index) => {
         this.state.columnCount = this.state.columnCount - 1;
 
@@ -45,8 +44,7 @@ class TableElementProperties extends Component {
             this.props.changeDatagridAndTableProperties(JSON.stringify(this.state.elementRows));
             this.props.changeColumnCount(this.state.columnCount);
         });
-    };
-
+    };   
     addRow = () => {
         this.state.columnCount = this.state.columnCount + 1;
 
@@ -77,7 +75,11 @@ class TableElementProperties extends Component {
     handleRowCountChange(e) {
         this.props.changeRowCount(e.target.value);
     };
-
+    componentDidMount() {       
+        if (this.props.DatagridAndTableProperties === "") {
+            this.addRow();
+        }
+    }
     render() {
         return (
             <>
@@ -107,8 +109,8 @@ class TableElementProperties extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {this.state.elementRows.map((row, index) => (
-                                    <tr key={index}>
+                                {this.state.elementRows.map((row, index) => (                                 
+                                    <tr key={index}>                                      
                                         <td>
                                             <input
                                                 value={row.title}
