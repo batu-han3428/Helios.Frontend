@@ -320,6 +320,7 @@ function ElementList(props) {
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
                     Dispatch={dispatch}
+                    IsFromDesign={true}
                 />
             case 16:
                 return <DatagridElement
@@ -331,6 +332,7 @@ function ElementList(props) {
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
                     Dispatch={dispatch}
+                    IsFromDesign={true}
                 />
             case 17:
                 return <AdverseEventElement

@@ -51,37 +51,38 @@ function SubjectDetailElementList(props) {
         setElementList(props.ElementList);
     }, [props.ElementList]);
 
-    const AutoSave = (id, value) => {
-        debugger;
-        fetch(API_BASE_URL + 'Subject/AutoSaveSubjectData', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                Id: id,
-                Value: value
-            })
-        }).then(res => {
-            return res.json()
-        }).then(data => {
-            this.state.dispatch(startloading());
-            if (data.isSuccess) {
-                this.toastRef.current.setToast({
-                    message: data.message,
-                    stateToast: true
-                });
-            } else {
-                this.toastRef.current.setToast({
-                    message: data.message,
-                    stateToast: false
-                });
-            }
-            this.state.dispatch(endloading());
-        }).catch(error => {
-            console.log(error)
-        });
+    const AutoSave = (id, value, type = 0) => {
+        if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) { /*when uncheck all options in dropdownCheck or check elements, value can be empty string*/
+            fetch(API_BASE_URL + 'Subject/AutoSaveSubjectData', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Id: id,
+                    Value: value
+                })
+            }).then(res => {
+                return res.json()
+            }).then(data => {
+                dispatch(startloading());
+                if (data.isSuccess) {
+                    toastRef.current.setToast({
+                        message: data.message,
+                        stateToast: true
+                    });
+                } else {
+                    toastRef.current.setToast({
+                        message: data.message,
+                        stateToast: false
+                    });
+                }
+                dispatch(endloading());
+            }).catch(error => {
+                console.log(error)
+            });
+        }
     }
 
     const renderElementsSwitch = (param) => {
@@ -168,7 +169,7 @@ function SubjectDetailElementList(props) {
             case 11:
                 return <DropdownCheckListElement
                     Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue === null ? [] : JSON.parse(param.userValue)}
+                    Value={param.userValue}
                     IsDisable={isDisable}
                     ElementOptions={param.elementOptions}
                     HandleAutoSave={AutoSave}
@@ -179,12 +180,15 @@ function SubjectDetailElementList(props) {
                 />
             case 13:
                 return <RangeSliderElement
+                    Id={param.subjectVisitPageModuleElementId}
+                    Value={param.userValue === null ? 0 : param.userValue}
                     IsDisable={isDisable}
                     LowerLimit={param.lowerLimit}
                     UpperLimit={param.upperLimit}
                     LeftText={param.leftText}
                     RightText={param.rightText}
-                    DefaultValue={param.defaultValue}
+                    DefaultValue={param.defaultValue === null ? 0 : param.userValue}
+                    HandleAutoSave={AutoSave}
                 />
             case 14:
                 return <ConcomittantMedicationElement
@@ -202,6 +206,7 @@ function SubjectDetailElementList(props) {
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
                     Dispatch={dispatch}
+                    IsFromDesign={false }
                 />
             case 16:
                 return <DatagridElement
@@ -213,6 +218,7 @@ function SubjectDetailElementList(props) {
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
                     Dispatch={dispatch}
+                    IsFromDesign={false }
                 />
             case 17:
                 return <AdverseEventElement

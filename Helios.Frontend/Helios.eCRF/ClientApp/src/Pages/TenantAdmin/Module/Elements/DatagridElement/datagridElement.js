@@ -15,6 +15,7 @@ import { GetElementNameByKey } from '../Common/utils.js';
 import Properties from '../../FormBuilder/properties.js';
 import ElementList from '../../FormBuilder/elementList.js';
 import Preview from '../../FormBuilder/preview.js';
+import SubjectDetailElementList from '../../../../Subject/Subject/SubjectDetailElementList.js';
 
 class DatagridElement extends Component {
     constructor(props) {
@@ -29,6 +30,7 @@ class DatagridElement extends Component {
             isDisable: props.IsDisable,
             columnCount: props.ColumnCount,
             FormType: props.FormType,
+            IsFromDesign: props.IsFromDesign,
             datagridAndTableProperties: props.DatagridAndTableProperties !== "" && props.DatagridAndTableProperties !== null ? JSON.parse(props.DatagridAndTableProperties) : [],
             childElementList: props.ChildElementList.length === 0 ? [] : props.ChildElementList,
             tableRows: [],
@@ -85,8 +87,12 @@ class DatagridElement extends Component {
                 return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleDgrdAddElementModal(index + 1)} />;
         }
         else {
-            if (result)
-                return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} FormType={this.state.FormType} />
+            if (result) {
+                if (this.state.IsFromDesign)
+                    return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} FormType={this.state.FormType} />
+                else
+                    return <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ElementList={cld} IsDisable={false} />
+            }
             else
                 return "";
 

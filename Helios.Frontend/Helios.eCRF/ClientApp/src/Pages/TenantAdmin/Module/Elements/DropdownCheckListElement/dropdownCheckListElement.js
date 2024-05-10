@@ -5,7 +5,7 @@ import { withTranslation } from "react-i18next";
 class DropdownCheckListElement extends Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
             id: props.Id,
             isDisable: props.IsDisable,
@@ -30,11 +30,32 @@ class DropdownCheckListElement extends Component {
         });
 
         this.state.ElementOptions = optns;
+        var spl = this.state.Value !== undefined && this.state.Value !== null && this.state.Value !== "" ? this.state.Value.split(',') : null;
+
+        if (spl != null) {
+            var finalVal = [];
+            this.state.ElementOptions.map(item => {
+                spl.map(sp => {
+                    if (item.value.toString() === sp)
+                        finalVal.push(item);
+                });
+            });
+
+            this.state.selectedOption = finalVal;
+        }
     }
 
     handleChange = (value) => {
         this.setState({ selectedOption: value });
-        this.props.HandleAutoSave(this.state.id, JSON.stringify(value));
+
+        var finalVal = [];
+        value.map(item => {
+            finalVal.push(item.value);
+        });
+
+        var val = JSON.stringify(finalVal).slice(1, JSON.stringify(finalVal).length - 1);
+
+        this.props.HandleAutoSave(this.state.id, val, 11);
     };
 
     render() {
