@@ -20,7 +20,7 @@ import {
     Table,
     TabPane,
     Label
-} from "reactstrap";    
+} from "reactstrap";
 import AccordionComp from '../../../../../components/Common/AccordionComp/AccordionComp';
 import Select from "react-select";
 import ToastComp from '../../../../../components/Common/ToastComp/ToastComp';
@@ -32,7 +32,7 @@ import { API_BASE_URL } from '../../../../../constants/endpoints';
 class ListElementsProperties extends Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
             Id: 0,
             Layout: props.Layout,
@@ -99,28 +99,28 @@ class ListElementsProperties extends Component {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Bearer ${getLocalStorage("accessToken")}` 
+                'Authorization': `Bearer ${getLocalStorage("accessToken")}`
             },
         })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            this.toastRef.current.setToast({
-                message: t(data.message),
-                stateToast: data.isSuccess? true:false
-            });               
-            this.getMultipleTagList();
-        })
-        .catch(error => {
-            this.toastRef.current.setToast({
-                message: t("An unexpected error occurred."),
-                stateToast: false
-            });    
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                this.toastRef.current.setToast({
+                    message: t(data.message),
+                    stateToast: data.isSuccess ? true : false
+                });
+                this.getMultipleTagList();
+            })
+            .catch(error => {
+                this.toastRef.current.setToast({
+                    message: t("An unexpected error occurred."),
+                    stateToast: false
+                });
+            });
     };
 
     getMultipleTagList() {
@@ -180,15 +180,15 @@ class ListElementsProperties extends Component {
 
     toggleNewTagModal = (e, isEdit) => {
         this.setState(prevState => ({
-            rows : [],
-            tagKey : '',
-            tagKeyInpCls : 'form-control',
+            rows: [],
+            tagKey: '',
+            tagKeyInpCls: 'form-control',
             operationType: e,
             modalState: !prevState.modalState,
-            tagAddDisableStatus : false,
-            tagAddDisplayStatus : "block",
-            tagKeyDisableStatus : e === 0 || isEdit,
-            isEdit : isEdit,
+            tagAddDisableStatus: false,
+            tagAddDisplayStatus: "block",
+            tagKeyDisableStatus: e === 0 || isEdit,
+            isEdit: isEdit,
         }));
     };
 
@@ -512,7 +512,12 @@ class ListElementsProperties extends Component {
                         </Row>
                         <Col sm={6} md={4} xl={3}>
                             <Modal isOpen={this.state.modalState} toggle={this.toggleNewTagModal} size="lg">
-                                <ModalHeader className="mt-0" toggle={this.toggleNewTagModal}>{this.props.t("Add new tag")}</ModalHeader>
+                                {this.state.isEdit === false &&
+                                    <ModalHeader className="mt-0" toggle={this.toggleNewTagModal}>{this.props.t("Add new tag")}</ModalHeader>
+                                }
+                                {this.state.isEdit === true &&
+                                    <ModalHeader className="mt-0" toggle={this.toggleNewTagModal}>{this.props.t("Edit tag")}</ModalHeader>
+                                }
                                 <ModalBody>
                                     <div>
                                         <Row className="mb-3">
@@ -541,7 +546,9 @@ class ListElementsProperties extends Component {
                                                         <tr>
                                                             <th>{this.props.t("Text to be shown to the user")}</th>
                                                             <th>{this.props.t("Data to be saved to database")}</th>
-                                                            <th>{this.props.t("Action")}</th>
+                                                            {this.state.isEdit === false &&
+                                                                <th>{this.props.t("Action")}</th>
+                                                            }
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -563,18 +570,22 @@ class ListElementsProperties extends Component {
                                                                         onChange={(e) => this.handleInputChange(index, 'tagValue', e.target.value)}
                                                                     />
                                                                 </td>
-                                                                <td>
-                                                                    <Button className="actionBtn" onClick={() => this.removeRow(index)}>
-                                                                        <i className="far fa-trash-alt"></i>
-                                                                    </Button>
-                                                                </td>
+                                                                {this.state.isEdit === false &&
+                                                                    <td>
+                                                                        <Button className="actionBtn" onClick={() => this.removeRow(index)}>
+                                                                            <i className="far fa-trash-alt"></i>
+                                                                        </Button>
+                                                                    </td>
+                                                                }
                                                             </tr>
                                                         ))}
                                                     </tbody>
                                                 </Table>
-                                                <Button color="success" onClick={this.addRow} className='mt-1' disabled={this.state.tagAddDisableStatus} style={{ display: this.state.tagAddDisplayStatus }}>
-                                                    {this.props.t("Add another")}
-                                                </Button>
+                                                {this.state.isEdit === false &&
+                                                    <Button color="success" onClick={this.addRow} className='mt-1' disabled={this.state.tagAddDisableStatus} style={{ display: this.state.tagAddDisplayStatus }}>
+                                                        {this.props.t("Add another")}
+                                                    </Button>
+                                                }
                                             </div>
                                         </Row>
                                     </div>
