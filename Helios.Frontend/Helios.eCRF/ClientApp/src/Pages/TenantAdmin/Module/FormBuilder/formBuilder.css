@@ -14,7 +14,10 @@
     margin-right:5px;
     padding:0px;
 }
-
+.actionBtnDiv {  
+    margin-Top: 10px;
+    margin-Bottom: 3px;
+}
 .ml-0{
     margin-left:0px;
 }
