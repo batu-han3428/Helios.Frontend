@@ -179,12 +179,14 @@ function SubjectDetailElementList(props) {
                 />
             case 13:
                 return <RangeSliderElement
+                    Id={param.subjectVisitPageModuleElementId}
+                    Value={param.userValue === null ? 0 : param.userValue}
                     IsDisable={isDisable}
                     LowerLimit={param.lowerLimit}
                     UpperLimit={param.upperLimit}
                     LeftText={param.leftText}
                     RightText={param.rightText}
-                    DefaultValue={param.defaultValue}
+                    DefaultValue={param.defaultValue === null ? 0 : param.userValue}
                 />
             case 14:
                 return <ConcomittantMedicationElement
@@ -202,6 +204,7 @@ function SubjectDetailElementList(props) {
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
                     Dispatch={dispatch}
+                    IsFromDesign={false }
                 />
             case 16:
                 return <DatagridElement
@@ -213,6 +216,7 @@ function SubjectDetailElementList(props) {
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
                     Dispatch={dispatch}
+                    IsFromDesign={false }
                 />
             case 17:
                 return <AdverseEventElement

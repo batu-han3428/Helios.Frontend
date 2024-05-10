@@ -178,6 +178,7 @@ function Preview() {
                     ColumnCount={param.columnCount} RowCount={param.rowCount}
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
+                    IsFromDesign={false }
                 />
             case 16:
                 return <DatagridElement
@@ -186,6 +187,7 @@ function Preview() {
                     ColumnCount={param.columnCount}
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
+                    IsFromDesign={false }
                 />
             case 17:
                 return <AdverseEventElement

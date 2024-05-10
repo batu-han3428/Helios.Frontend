@@ -14,6 +14,7 @@ import { GetAllElementListForSelect } from '../../FormBuilder/allElementList.js'
 import { GetElementNameByKey } from '../Common/utils.js';
 import Properties from '../../FormBuilder/properties.js';
 import ElementList from '../../FormBuilder/elementList.js';
+import SubjectDetailElementList from '../../../../Subject/Subject/SubjectDetailElementList.js';
 
 class TableElement extends Component {
     constructor(props) {
@@ -29,6 +30,7 @@ class TableElement extends Component {
             columnCount: props.ColumnCount,
             rowCount: props.RowCount,
             FormType: props.FormType,
+            IsFromDesign: props.IsFromDesign,
             datagridAndTableProperties: props.DatagridAndTableProperties !== "" && props.DatagridAndTableProperties !== null ? JSON.parse(props.DatagridAndTableProperties) : [],
             childElementList: props.ChildElementList.length === 0 ? [] : props.ChildElementList,
             modalState: false,
@@ -86,8 +88,12 @@ class TableElement extends Component {
                 return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleAddElementModal(colIndex + 1, rowIndex + 1)} />;
         }
         else {
-            if (result)
-                return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} FormType={this.state.FormType} />
+            if (result) {
+                if (this.state.IsFromDesign)
+                    return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} FormType={this.state.FormType} />
+                else
+                    return <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ElementList={cld} IsDisable={false} />
+            }
             else
                 return "";
         }
