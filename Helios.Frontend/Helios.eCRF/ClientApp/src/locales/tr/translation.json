@@ -405,5 +405,8 @@
   "Subject Number": "Hasta Numbersı",
   "Subject List": "Hasta Listesi",
   "Created by": "Ekleyen kişi",
-  "Updated by": "Güncelleyen kişi"
+  "Updated by": "Güncelleyen kişi",
+  "Check list": "Çoklu seçim butonu",
+  "Datagrid": "Çoklu veri tablosu",
+  "Table": "Tablo"
 }

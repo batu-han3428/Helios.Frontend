@@ -33,7 +33,7 @@ export function GetElementNameByKey(props, key) {
         case 16:
             return props.t("Datagrid");
         case 17:
-            return props.t("Adverse Event");
+            return props.t("Adverse event");
         default:
     }
 }
