@@ -1113,7 +1113,7 @@ class Properties extends React.Component {
                                                         )}
                                                         {this.state.showWhereElementPropeties === 0 && this.state.ElementType !== 7 && this.renderElementPropertiesSwitch(this.state.ElementType)}
                                                         <Row className="mb-3 ml-0">
-                                                            {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16 && this.state.ElementType !== 17 && this.state.ElementType !== 3 && this.state.ElementType !== 14) &&
+                                                            {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 16 && this.state.ElementType !== 17 && this.state.ElementType !== 3 && this.state.ElementType !== 14 && this.state.ElementType !== 15 && this.state.ElementType !== 1) &&
                                                                 <div className="form-check col-md-6">
                                                                     <input type="checkbox" className="form-check-input" checked={this.state.IsRequired} onChange={this.handleIsRequiredChange} id="isRequired" />
                                                                     <label className="form-check-label" htmlFor="isRequired">{this.props.t("Is required")}</label>
@@ -1126,7 +1126,7 @@ class Properties extends React.Component {
                                                                 </div>
                                                             }
                                                         </Row>
-                                                        {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 3 && this.state.ElementType !== 7) &&
+                                                        {(this.state.showWhereElementPropeties !== 2 && this.state.ElementType !== 3 && this.state.ElementType !== 7 && this.state.ElementType !== 12 && this.state.ElementType !== 15 && this.state.ElementType !== 16 && this.state.ElementType !== 17 && this.state.ElementType !== 1) &&
                                                             <Row className="mb-3 ml-0">
                                                                 <div className="form-check col-md-6">
                                                                     <input type="checkbox" className="form-check-input" checked={this.state.CanMissing} onChange={this.handleCanMissingChange} id="canMissing" />
