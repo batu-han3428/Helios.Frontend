@@ -99,42 +99,105 @@ class DateElement extends Component {
         }
 
         yOptionGroup.push(uitem);
-        this.state.YearOptionGroup = yOptionGroup;        
+        this.state.YearOptionGroup = yOptionGroup;
+
+        this.setDefaultValue();
     }
 
     setDefaultValue() {
-        debugger;
-        if (this.state.DefaultValue !== '') {
-            var spl = this.state.DefaultValue.split('.');
+        var spl = [];
+        
+        if (this.state.Value !== null && this.state.Value !== '' && this.state.Value !== undefined) {
+            spl = this.state.Value.split('.');
+        }
+        else if (this.state.DefaultValue !== null && this.state.DefaultValue !== '') {
+            spl = this.state.DefaultValue.split('.');
+        }
 
-            var dsel = [];
+        var dsel = [];
 
+        if (spl.length > 1) {
             this.state.DayOptionGroup.filter(item => {
-                if (item.value == spl[0])
-                    dsel = item;
+                if (spl[0].toString().toLowerCase() !== "unk") {
+                    if (item.label.toString().toLowerCase() === parseInt(spl[0]).toString().toLowerCase())
+                        dsel = item;
+                }
+                else {
+                    dsel = {
+                        label: "UNK",
+                        value: 100,
+                    }
+                }
             });
 
-            this.setState({ DaySelectedGroup: dsel });
+            this.state.DaySelectedGroup = dsel;
+            var msel = [];
+
+            this.state.MonthOptionGroup.filter(item => {
+                if (spl[1].toString().toLowerCase() !== "unk") {
+                    if (item.label.toString().toLowerCase() === parseInt(spl[1]).toString().toLowerCase())
+                        msel = item;
+                }
+                else {
+                    msel = {
+                        label: "UNK",
+                        value: 100,
+                    }
+                }
+            });
+
+            this.state.MonthSelectedGroup = msel;
+            var ysel = [];
+
+            this.state.YearOptionGroup.filter(item => {
+                if (spl[2].toString().toLowerCase() !== "unk") {
+                    if (item.label.toString().toLowerCase() === parseInt(spl[2]).toString().toLowerCase())
+                        ysel = item;
+                }
+                else {
+                    ysel = {
+                        label: "UNK",
+                        value: 100,
+                    }
+                }
+            });
+
+            this.state.YearSelectedGroup = ysel;
         }
     }
 
     handleDayChange = selectedOption => {
-        //this.setState({ StartDay: selectedOption.value });
-        this.setState({ DaySelectedGroup: selectedOption });
+        this.setState({
+            DaySelectedGroup: selectedOption
+        }, () => {
+            this.handleSave();
+        });
     };
 
     handleMonthChange = selectedOption => {
-        //this.setState({ StartMonth: selectedOption.value });
-        this.setState({ MonthSelectedGroup: selectedOption });
+        this.setState({
+            MonthSelectedGroup: selectedOption
+        }, () => {
+            this.handleSave();
+        });
     };
 
     handleYearChange = selectedOption => {
-        //this.setState({ StartYear: selectedOption.value });
-        this.setState({ YearSelectedGroup: selectedOption });
+        this.setState({
+            YearSelectedGroup: selectedOption
+        }, () => {
+            this.handleSave();
+        });
     };
 
     handleSave() {
+        if (this.state.DaySelectedGroup !== null && this.state.MonthSelectedGroup !== null && this.state.YearSelectedGroup !== null) {
+            var day = this.state.DaySelectedGroup.value < 10 && this.state.DaySelectedGroup.label.toString().toLowerCase() !== "unk" ? '0' + this.state.DaySelectedGroup.value : this.state.DaySelectedGroup.label;
+            var month = this.state.MonthSelectedGroup.value < 10 && this.state.MonthSelectedGroup.label.toString().toLowerCase() !== "unk" ? '0' + this.state.MonthSelectedGroup.value : this.state.MonthSelectedGroup.label;
 
+            var value = day + '.' + month + '.' + this.state.YearSelectedGroup.label;
+            this.props.HandleAutoSave(this.state.id, value);
+        }
     }
 
     handleTodayButton = () => {
@@ -159,14 +222,14 @@ class DateElement extends Component {
                             </label>
                             {this.state.IsPreview && this.state.AddTodayDate &&
 
-                                <Button color="" style={{ border:'1px solid #bebebe',marginLeft:'8px',marginBottom:'10px' }}  onClick={this.handleTodayButton}>
-                                        {this.props.t("Today")}
+                                <Button color="" style={{ border: '1px solid #bebebe', marginLeft: '8px', marginBottom: '10px' }} onClick={this.handleTodayButton}>
+                                    {this.props.t("Today")}
                                 </Button>
-                               
+
                             }
                         </div>
                     )}
-                   
+
                 </Row>
                 <Row>
                     <div className="col-md-3">
