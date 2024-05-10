@@ -66,19 +66,19 @@ function SubjectDetailElementList(props) {
         }).then(res => {
             return res.json()
         }).then(data => {
-            this.state.dispatch(startloading());
+            dispatch(startloading());
             if (data.isSuccess) {
-                this.toastRef.current.setToast({
+                toastRef.current.setToast({
                     message: data.message,
                     stateToast: true
                 });
             } else {
-                this.toastRef.current.setToast({
+                toastRef.current.setToast({
                     message: data.message,
                     stateToast: false
                 });
             }
-            this.state.dispatch(endloading());
+            dispatch(endloading());
         }).catch(error => {
             console.log(error)
         });
@@ -187,6 +187,7 @@ function SubjectDetailElementList(props) {
                     LeftText={param.leftText}
                     RightText={param.rightText}
                     DefaultValue={param.defaultValue === null ? 0 : param.userValue}
+                    HandleAutoSave={AutoSave}
                 />
             case 14:
                 return <ConcomittantMedicationElement
