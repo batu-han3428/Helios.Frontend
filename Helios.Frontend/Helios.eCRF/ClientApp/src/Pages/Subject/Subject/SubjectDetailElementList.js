@@ -51,37 +51,38 @@ function SubjectDetailElementList(props) {
         setElementList(props.ElementList);
     }, [props.ElementList]);
 
-    const AutoSave = (id, value) => {
-        debugger;
-        fetch(API_BASE_URL + 'Subject/AutoSaveSubjectData', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json, text/plain, */*',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                Id: id,
-                Value: value
-            })
-        }).then(res => {
-            return res.json()
-        }).then(data => {
-            dispatch(startloading());
-            if (data.isSuccess) {
-                toastRef.current.setToast({
-                    message: data.message,
-                    stateToast: true
-                });
-            } else {
-                toastRef.current.setToast({
-                    message: data.message,
-                    stateToast: false
-                });
-            }
-            dispatch(endloading());
-        }).catch(error => {
-            console.log(error)
-        });
+    const AutoSave = (id, value, type = 0) => {
+        if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) { /*when uncheck all options in dropdownCheck or check elements, value can be empty string*/
+            fetch(API_BASE_URL + 'Subject/AutoSaveSubjectData', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    Id: id,
+                    Value: value
+                })
+            }).then(res => {
+                return res.json()
+            }).then(data => {
+                dispatch(startloading());
+                if (data.isSuccess) {
+                    toastRef.current.setToast({
+                        message: data.message,
+                        stateToast: true
+                    });
+                } else {
+                    toastRef.current.setToast({
+                        message: data.message,
+                        stateToast: false
+                    });
+                }
+                dispatch(endloading());
+            }).catch(error => {
+                console.log(error)
+            });
+        }
     }
 
     const renderElementsSwitch = (param) => {
@@ -168,7 +169,7 @@ function SubjectDetailElementList(props) {
             case 11:
                 return <DropdownCheckListElement
                     Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue === null ? [] : JSON.parse(param.userValue)}
+                    Value={param.userValue}
                     IsDisable={isDisable}
                     ElementOptions={param.elementOptions}
                     HandleAutoSave={AutoSave}

@@ -34,7 +34,9 @@ class CheckElement extends Component {
             : [...this.state.checkedOptions, value];
 
         this.setState({ checkedOptions });
-        this.props.HandleAutoSave(this.state.id, JSON.stringify(checkedOptions));
+        var val = JSON.stringify(checkedOptions).slice(1, JSON.stringify(checkedOptions).length - 1);
+
+        this.props.HandleAutoSave(this.state.id, val, 9);
     };
 
     render() {
