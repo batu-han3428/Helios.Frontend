@@ -737,7 +737,6 @@ class Properties extends React.Component {
     }
 
     fillElementProperties(data) {
-        debugger
         this.setState({
             Title: data.title,
             ElementName: data.elementName,

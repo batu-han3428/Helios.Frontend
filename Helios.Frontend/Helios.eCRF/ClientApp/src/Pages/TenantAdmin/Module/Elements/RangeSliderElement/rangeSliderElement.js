@@ -17,6 +17,7 @@ class RangeSliderElement extends Component {
                 100: props.RightText
             }          
         }
+        
         this.myRef = React.createRef();
 
         this.handleChangeHorizontal = this.handleChangeHorizontal.bind(this);
@@ -32,12 +33,12 @@ class RangeSliderElement extends Component {
     render() {
         return (
             <div className='slider custom-labels'>
-                <p className='defaultvalue'>{parseInt(this.props.DefaultValue)}</p>
+                <p className='defaultvalue'>{this.state.horizontal !== "" ? parseInt(this.state.horizontal) : parseInt(this.props.LowerLimit)}</p>
                 <Slider
                     ref={this.myRef}
                     min={parseInt(this.props.LowerLimit)}
                     max={parseInt(this.props.UpperLimit)}
-                    value={parseInt(this.state.horizontal)}
+                    value={this.state.horizontal !== "" ? parseInt(this.state.horizontal) : parseInt(this.props.LowerLimit) }
                     labels={this.state.horizontalLabels}
                     onChange={this.handleChangeHorizontal}
                 />

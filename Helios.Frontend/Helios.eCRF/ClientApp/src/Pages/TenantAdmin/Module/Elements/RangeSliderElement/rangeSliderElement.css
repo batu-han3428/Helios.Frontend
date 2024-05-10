@@ -1,21 +1,27 @@
-﻿.rangeslider__label-item:first-child {
-   position:absolute;
-   left:102% !important;  
+﻿.rangeslider {
+    margin-left: 25px;
+    height: 9px;
+}
+.rangeslider__label-item:first-child {
+    position: absolute;
+    left: 102% !important;
     top: -18px;
 }
 .rangeslider__label-item:last-child {
     position: absolute;
-    left: -1.2% !important;
+    left: -2.2% !important;
     top: -18px;
+    max-width: 20px;
 }
 .LowerLimitString {
     width: 50%;
     display: flex;
     justify-content: start;
+    margin-left: 25px;
 }
 
 .UpperLimitString {
-    width: 50%;
+    width: 48%;
     display: flex;
     justify-content: end;
 }
