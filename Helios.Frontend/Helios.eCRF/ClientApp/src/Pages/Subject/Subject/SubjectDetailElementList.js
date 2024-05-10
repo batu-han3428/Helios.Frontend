@@ -119,6 +119,7 @@ function SubjectDetailElementList(props) {
             case 6:
                 return <DateElement
                     Id={param.subjectVisitPageModuleElementId}
+                    Value={param.userValue}
                     Title={param.title}
                     IsRequired={param.isRequired}
                     IsDisable={isDisable}
