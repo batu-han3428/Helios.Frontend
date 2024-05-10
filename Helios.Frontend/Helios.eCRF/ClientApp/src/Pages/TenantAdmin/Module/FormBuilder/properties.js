@@ -52,7 +52,7 @@ class Properties extends React.Component {
 
         this.state = {
             activeTab: props.ActiveTab,
-            showWhereElementPropeties: 0,
+            showWhereElementPropeties: props.ShowWhereElementPropeties,
             dispatch: props.Dispatch,
 
             // General properties
@@ -108,7 +108,7 @@ class Properties extends React.Component {
             inputCounter: 1,
             relationFieldOptionGroup: [],
             relationFieldsSelectedGroup: 0,
-            fieldWidthsW: "",
+            fieldWidthsW: props.FieldWidthsW,
             relationEnabled: true,
             RelFldVlInputClass: 'table-responsive mb-3',
 
@@ -238,23 +238,15 @@ class Properties extends React.Component {
     renderElementPropertiesSwitch(param) {
         switch (param) {
             case 1:
-                this.state.showWhereElementPropeties = 2;
-                this.state.fieldWidthsW = "col-md-6";
                 return <LabelElementProperties
                     changeLableTitle={this.changeLableTitle} Title={this.state.Title}
                 />;
             case 2:
-                this.state.showWhereElementPropeties = 0;
-                this.state.fieldWidthsW = "col-md-10";
                 return <TextElementProperties changeUnit={this.changeUnit} Unit={this.state.Unit} />;
             case 3:
-                this.state.showWhereElementPropeties = 3;
-                this.state.fieldWidthsW = "col-md-10";
                 return <HiddenElementProperties StudyId={this.state.StudyId}
                     TargetElementId={this.state.TargetElementId} changeTargetElementId={this.changeTargetElementId} />;
             case 4:
-                this.state.showWhereElementPropeties = 0;
-                this.state.fieldWidthsW = "col-md-10";
                 return <NumericElementProperties
                     changeUnit={this.changeUnit} Unit={this.state.Unit}
                     changeMask={this.changeMask} Mask={this.state.Mask}
@@ -262,14 +254,10 @@ class Properties extends React.Component {
                     changeUpperLimit={this.changeUpperLimit} UpperLimit={this.state.UpperLimit}
                 />;
             case 5:
-                this.state.showWhereElementPropeties = 0;
-                this.state.fieldWidthsW = "col-md-10";
                 return <TextareaElementProperties
                     changeDefaultValue={this.changeDefaultValue} DefaultValue={this.state.DefaultValue}
                 />;
             case 6:
-                this.state.showWhereElementPropeties = 3;
-                this.state.fieldWidthsW = "col-md-10";
                 return <DateElementProperties
                     changeDefaultValue={this.changeDefaultValue} DefaultValue={this.state.DefaultValue}
                     changeAddTodayDate={this.changeAddTodayDate} AddTodayDate={this.state.AddTodayDate}
@@ -281,8 +269,6 @@ class Properties extends React.Component {
                     changeEndYear={this.changeEndYear} EndYear={this.state.EndYear}
                 />;
             case 7:
-                this.state.showWhereElementPropeties = 3;
-                this.state.fieldWidthsW = "col-md-6";
                 return <CalculationElementProperties
                     Id={this.state.Id}
                     FormType={this.state.FormType}
@@ -295,20 +281,14 @@ class Properties extends React.Component {
             case 9:
             case 10:
             case 11:
-                this.state.showWhereElementPropeties = 1;
-                this.state.fieldWidthsW = "col-md-10";
                 return <ListElementsProperties
                     changeLayout={this.changeLayout} Layout={this.state.Layout} Type={this.state.ElementType}
                     changeSavedTagList={this.changeSavedTagList} SavedTagList={this.state.SavedTagList}
                 />;
             case 12:
-                this.state.showWhereElementPropeties = 1;
-                this.state.fieldWidthsW = "col-md-10";
                 return <FileUploaderElementProperties
                 />;
             case 13:
-                this.state.showWhereElementPropeties = 3;
-                this.state.fieldWidthsW = "col-md-10";
                 return <RangeSliderElementProperties
                     changeDefaultValue={this.changeDefaultValue} DefaultValue={this.state.DefaultValue}
                     changeLowerLimit={this.changeLowerLimit} LowerLimit={this.state.LowerLimit}
@@ -317,29 +297,21 @@ class Properties extends React.Component {
                     changeRightText={this.changeRightText} RightText={this.state.RightText}
                 />;
             case 14:
-                this.state.showWhereElementPropeties = 3;
-                this.state.fieldWidthsW = "col-md-10";
                 return <ConcomittantMedicationElementProperties StudyId={this.state.StudyId}
                     TargetElementId={this.state.TargetElementId} changeTargetElementId={this.changeTargetElementId}
                     ButtonText={this.state.ButtonText} changeButtonText={this.changeButtonText} />;
             case 15:
-                this.state.showWhereElementPropeties = 3;
-                this.state.fieldWidthsW = "col-md-10";
                 return <TableElementProperties
                     changeDatagridAndTableProperties={this.changeDatagridAndTableProperties} DatagridAndTableProperties={this.state.DatagridAndTableProperties}
                     changeColumnCount={this.changeColumnCount} ColumnCount={this.state.ColumnCount}
                     changeRowCount={this.changeRowCount} RowCount={this.state.RowCount}
                 />;
             case 16:
-                this.state.showWhereElementPropeties = 3;
-                this.state.fieldWidthsW = "col-md-10";
                 return <DatagridElementProperties
                     changeDatagridAndTableProperties={this.changeDatagridAndTableProperties} DatagridAndTableProperties={this.state.DatagridAndTableProperties}
                     changeColumnCount={this.changeColumnCount} ColumnCount={this.state.ColumnCount}
                 />;
             case 17:
-                this.state.showWhereElementPropeties = 3;
-                this.state.fieldWidthsW = "col-md-10";
                 return <AdverseEventElementProperties
                     changeAdverseEventType={this.changeAdverseEventType} AdverseEventType={this.state.AdverseEventType}
                 />;

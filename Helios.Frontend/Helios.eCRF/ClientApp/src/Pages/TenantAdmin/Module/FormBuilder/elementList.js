@@ -58,6 +58,8 @@ function ElementList(props) {
     const [activeTab, setActiveTab] = useState(false);
     const [elementName, setElementName] = useState('');
     const [isCalcBtn, setIsCalcBtn] = useState('');
+    const [showWhereElementPropeties, setShowWhereElementPropeties] = useState(0);
+    const [fieldWidthsW, setFieldWidthsW] = useState("");
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const userInformation = useSelector(state => state.rootReducer.Login);
@@ -90,6 +92,71 @@ function ElementList(props) {
         setActiveTab(tabid);
         setpropModal(!propModal);
         removeBodyCss();
+
+        switch (type) {
+            case 1:
+                setShowWhereElementPropeties(2);
+                setFieldWidthsW("col-md-6");
+                break;
+            case 2:
+                setShowWhereElementPropeties(0);
+                setFieldWidthsW("col-md-10");
+                break;
+            case 3:
+                setShowWhereElementPropeties(3);
+                setFieldWidthsW("col-md-10");
+                break;
+            case 4:
+                setShowWhereElementPropeties(0);
+                setFieldWidthsW("col-md-10");
+                break;
+            case 5:
+                setShowWhereElementPropeties(0);
+                setFieldWidthsW("col-md-10");
+                break;
+            case 6:
+                setShowWhereElementPropeties(3);
+                setFieldWidthsW("col-md-10");
+                break;
+            case 7:
+                setShowWhereElementPropeties(3);
+                setFieldWidthsW("col-md-6");
+                break;
+            case 8:
+            case 9:
+            case 10:
+            case 11:
+                setShowWhereElementPropeties(1);
+                setFieldWidthsW("col-md-10");
+                break;
+            case 12:
+                setShowWhereElementPropeties(1);
+                setFieldWidthsW("col-md-10");
+                break;
+            case 13:
+                setShowWhereElementPropeties(3);
+                setFieldWidthsW("col-md-10");
+                break;
+            case 14:
+                setShowWhereElementPropeties(3);
+                setFieldWidthsW("col-md-10");
+                break;
+            case 15:
+                setShowWhereElementPropeties(3);
+                setFieldWidthsW("col-md-10");
+                break;
+            case 16:
+                setShowWhereElementPropeties(3);
+                setFieldWidthsW("col-md-10");
+                break;
+            case 17:
+                setShowWhereElementPropeties(3);
+                setFieldWidthsW("col-md-10");
+                break;
+            default:
+                setShowWhereElementPropeties(0);
+                setFieldWidthsW("");
+        }
     };
 
     const copyElement = (e, id) => {
@@ -372,6 +439,8 @@ function ElementList(props) {
                             RowIndex={null}
                             FormType={formType}
                             Dispatch={dispatch}
+                            ShowWhereElementPropeties={showWhereElementPropeties}
+                            FieldWidthsW={fieldWidthsW}
                         >
                         </Properties>
                     </ModalBody>
