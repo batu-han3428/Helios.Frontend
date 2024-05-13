@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Select from "react-select";
 import { withTranslation } from "react-i18next";
+import './dropdownCheckListElementStyle.css';
 
 class DropdownCheckListElement extends Component {
     constructor(props) {
