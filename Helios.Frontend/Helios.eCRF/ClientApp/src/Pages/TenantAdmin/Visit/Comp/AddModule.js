@@ -3,13 +3,14 @@ import React, { useImperativeHandle, useState, useEffect } from "react";
 import { withTranslation } from "react-i18next";
 import { useDispatch } from 'react-redux';
 import { endloading, startloading } from '../../../../store/loader/actions';
-import { Table} from 'antd';
+import { Table, Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { useLazyModuleListGetQuery, useAddStudyModuleSetMutation } from "../../../../store/services/Visit";
 
 const AddModule = props => {
 
     const dispatch = useDispatch();
-
+    const [searchText, setSearchText] = useState('');
     const [addStudyModuleSet] = useAddStudyModuleSetMutation();
 
     const submitForm = async () => {
@@ -63,11 +64,25 @@ const AddModule = props => {
         submitForm: submitForm
     }), [submitForm, props]);
 
-    const columns = [
+    const columns = [      
         {
             title: props.t("Module name"),
             dataIndex: 'name',
             ellipsis: true,
+            filteredValue: [searchText],
+            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                return (
+                    <div style={{ padding: 8 }}>
+                        <Input.Search
+                            placeholder="Search name"
+                            value={selectedKeys[0]}
+                            onChange={(e) => setSearchText(e.target.value)}
+                        />
+                    </div>
+                );
+            },
+            onFilter: (value, record) => String(record.name).toLowerCase().includes(value.toLowerCase()),
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
         {
             title: props.t("Created on"),
@@ -87,8 +102,7 @@ const AddModule = props => {
 
     const [trigger, { data: moduleData, error, isLoading }] = useLazyModuleListGetQuery();
 
-    const handleDataChange = () => {
-       
+    const handleDataChange = () => {    
         const newData = moduleData.map(item => {          
             if (item.updatedAt === "0001-01-01T00:00:00+00:00") {
                 return { ...item, updatedAt: "-" };
@@ -140,7 +154,7 @@ const AddModule = props => {
             }}
             columns={columns}
             dataSource={data.map(item => ({ ...item, key: item.id }))}
-            pagination={false}
+            pagination={true}
             scroll={{ y: totalHeight > 350 ? 350 : undefined }}
         />
     )
