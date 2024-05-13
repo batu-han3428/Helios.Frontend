@@ -23,6 +23,7 @@ import { useFormik } from "formik";
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { exportToExcel } from '../../../helpers/ExcelDownload';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Table } from 'antd';
 
 
 const TenantUsers = props => {
@@ -83,7 +84,7 @@ const TenantUsers = props => {
         return actions;
     };
 
-    const liveData = {
+    const liveData = {      
         columns: [
             {
                 label: props.t("First name"),
@@ -231,13 +232,13 @@ const TenantUsers = props => {
 
             setExcelData(data);
 
-            const timer = setTimeout(() => {
-                generateInfoLabel();
-            }, 10)
+            //const timer = setTimeout(() => {
+            //    generateInfoLabel();
+            //}, 10)
 
             dispatch(endloading());
 
-            return () => clearTimeout(timer);
+           /* return () => clearTimeout(timer);*/
         } else if (!isLoading && error) {
             toastRef.current.setToast({
                 message: props.t("An unexpected error occurred."),
@@ -314,6 +315,65 @@ const TenantUsers = props => {
             validationType.resetForm();
         });
     };
+    const columns = [
+        {
+            title: props.t('First name'),
+            dataIndex: 'name',
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Last name'),
+            dataIndex: 'lastName',
+            sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Email'),
+            dataIndex: 'email',
+            sorter: (a, b) => a.email.localeCompare(b.email),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Study name'),
+            dataIndex: 'studyName',
+            sorter: (a, b) => a.studyName.localeCompare(b.studyName),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Created on'),
+            dataIndex: 'createdOn',
+            sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Last updated on'),
+            dataIndex: 'lastUpdatedOn',
+            sorter: (a, b) => a.lastUpdatedOn.localeCompare(b.lastUpdatedOn),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('State'),
+            dataIndex: 'isActive',
+            sorter: (a, b) => a.isActive.localeCompare(b.isActive),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Actions'),
+            dataIndex: 'actions',
+            width: "170px",
+        },
+    ];
+    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+    const handleExpand = (expanded, record) => {
+        const currentRowKey = record.key;
+        if (expanded) {
+            setExpandedRowKeys(prevKeys => [...prevKeys, currentRowKey]);
+        } else {
+            const filteredKeys = expandedRowKeys.filter(key => key !== currentRowKey);
+            setExpandedRowKeys(filteredKeys);
+        }
+    };
 
     return (
         <React.Fragment>
@@ -342,8 +402,8 @@ const TenantUsers = props => {
                                             ],
                                             rows: excelData
                                         },
-                                        props.t("User list"),
-                                        props.t("User list")
+                                            props.t("User list"),
+                                            props.t("User list")
                                         )}
                                     >
                                         <FontAwesomeIcon icon="fa-solid fa-download" /> {props.t("Excel Download")}
@@ -370,33 +430,18 @@ const TenantUsers = props => {
                                     </MDBTabs>
 
                                     <MDBTabsContent>
-                                        <MDBTabsPane show={basicActive === 'tab1'}>
-                                            <MDBDataTable
-                                                paginationLabel={[props.t("Previous"), props.t("Next")]}
-                                                entriesLabel={props.t("Show entries")}
-                                                searchLabel={props.t("Search")}
-                                                noRecordsFoundLabel={props.t("No matching records found")}
-                                                hover
-                                                responsive
-                                                striped
-                                                bordered
-                                                data={liveData}
-                                            />
-                                        </MDBTabsPane>
-                                        <MDBTabsPane show={basicActive === 'tab2'}>
-                                            <MDBDataTable
-                                                paginationLabel={[props.t("Previous"), props.t("Next")]}
-                                                entriesLabel={props.t("Show entries")}
-                                                searchLabel={props.t("Search")}
-                                                noRecordsFoundLabel={props.t("No matching records found")}
-                                                hover
-                                                responsive
-                                                striped
-                                                bordered
-                                                data={demoData}
-                                            />
-                                        </MDBTabsPane>
-                                        </MDBTabsContent>
+
+                                        <Table
+                                            dataSource={basicActive === 'tab1' ? liveData.rows.map(item => ({ ...item, key: item.studyUserId })) : demoData.rows.map(item => ({ ...item, key: item.studyUserId }))}
+                                            columns={columns}
+                                            expandedRowKeys={expandedRowKeys}
+                                            onExpand={handleExpand}
+                                            pagination={true}
+                                            scroll={{ x: 'max-content' }}
+                                        />
+
+
+                                    </MDBTabsContent>
                                 </CardBody>
                             </Card>
                         </Col>
@@ -408,72 +453,72 @@ const TenantUsers = props => {
                 title={props.t("Update user")}
                 body={
                     <>
-                    <Form
-                        onSubmit={(e) => {
-                            e.preventDefault();
-                            validationType.handleSubmit();
-                            return false;
-                        }}>
-                        <div className="row">
-                            <div className="mb-3 col-md-3">
-                                <Label className="form-label">{props.t("First name")}</Label>
-                                <Input
-                                    name="name"
-                                    placeholder={props.t("First name")}
-                                    type="text"
-                                    onChange={validationType.handleChange}
-                                    onBlur={(e) => {
-                                        validationType.handleBlur(e);
-                                    }}
-                                    value={validationType.values.name || ""}
-                                    invalid={
-                                        validationType.touched.name && validationType.errors.name ? true : false
-                                    }
-                                />
-                                {validationType.touched.name && validationType.errors.name ? (
-                                    <FormFeedback type="invalid">{validationType.errors.name}</FormFeedback>
-                                ) : null}
-                            </div>
-                            <div className="mb-3 col-md-3">
-                                <Label className="form-label">{props.t("Last name")}</Label>
-                                <Input
-                                    name="lastname"
-                                    placeholder={props.t("Last name")}
-                                    type="text"
-                                    onChange={validationType.handleChange}
-                                    onBlur={(e) => {
-                                        validationType.handleBlur(e);
-                                    }}
-                                    value={validationType.values.lastname || ""}
-                                    invalid={
-                                        validationType.touched.lastname && validationType.errors.lastname ? true : false
-                                    }
+                        <Form
+                            onSubmit={(e) => {
+                                e.preventDefault();
+                                validationType.handleSubmit();
+                                return false;
+                            }}>
+                            <div className="row">
+                                <div className="mb-3 col-md-3">
+                                    <Label className="form-label">{props.t("First name")}</Label>
+                                    <Input
+                                        name="name"
+                                        placeholder={props.t("First name")}
+                                        type="text"
+                                        onChange={validationType.handleChange}
+                                        onBlur={(e) => {
+                                            validationType.handleBlur(e);
+                                        }}
+                                        value={validationType.values.name || ""}
+                                        invalid={
+                                            validationType.touched.name && validationType.errors.name ? true : false
+                                        }
+                                    />
+                                    {validationType.touched.name && validationType.errors.name ? (
+                                        <FormFeedback type="invalid">{validationType.errors.name}</FormFeedback>
+                                    ) : null}
+                                </div>
+                                <div className="mb-3 col-md-3">
+                                    <Label className="form-label">{props.t("Last name")}</Label>
+                                    <Input
+                                        name="lastname"
+                                        placeholder={props.t("Last name")}
+                                        type="text"
+                                        onChange={validationType.handleChange}
+                                        onBlur={(e) => {
+                                            validationType.handleBlur(e);
+                                        }}
+                                        value={validationType.values.lastname || ""}
+                                        invalid={
+                                            validationType.touched.lastname && validationType.errors.lastname ? true : false
+                                        }
                                     />
                                     {validationType.touched.lastname && validationType.errors.lastname ? (
                                         <FormFeedback type="invalid">{validationType.errors.lastname}</FormFeedback>
                                     ) : null}
-                            </div>
-                            <div className="mb-3 col-md-6">
-                                <Label className="form-label">{props.t("e-Mail")}</Label>
-                                <Input
-                                    name="email"
-                                    placeholder="abc@hotmail.com"
-                                    type="text"
-                                    onChange={validationType.handleChange}
-                                    onBlur={(e) => {
-                                        validationType.handleBlur(e);
-                                    }}
-                                    value={validationType.values.email || ""}
-                                    invalid={
-                                        validationType.touched.email && validationType.errors.email ? true : false
-                                    }
-                                />
-                                {validationType.touched.email && validationType.errors.email ? (
+                                </div>
+                                <div className="mb-3 col-md-6">
+                                    <Label className="form-label">{props.t("e-Mail")}</Label>
+                                    <Input
+                                        name="email"
+                                        placeholder="abc@hotmail.com"
+                                        type="text"
+                                        onChange={validationType.handleChange}
+                                        onBlur={(e) => {
+                                            validationType.handleBlur(e);
+                                        }}
+                                        value={validationType.values.email || ""}
+                                        invalid={
+                                            validationType.touched.email && validationType.errors.email ? true : false
+                                        }
+                                    />
+                                    {validationType.touched.email && validationType.errors.email ? (
                                         <FormFeedback type="invalid">{validationType.errors.email}</FormFeedback>
-                                ) : null}
+                                    ) : null}
+                                </div>
                             </div>
-                        </div>
-                    </Form>
+                        </Form>
                     </>
                 }
                 resetValue={resetValue}
