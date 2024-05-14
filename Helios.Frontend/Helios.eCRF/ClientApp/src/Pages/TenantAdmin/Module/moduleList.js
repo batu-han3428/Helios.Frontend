@@ -115,7 +115,7 @@ function ModuleList(props) {
         }
     };
 
-    const deleteModule = (event) => {
+    const deleteModule = (event) => {      
         Swal.fire({
             title: props.t("You will not be able to recover this element"),
             text: props.t("Do you confirm"),
@@ -137,8 +137,10 @@ function ModuleList(props) {
                         body: JSON.stringify({
                             Id: event,
                             TenantId: userInformation.tenantId,
-                            Name: Name,
-                            UserId: userInformation.userId
+                            Name: Name,                         
+                            UserId: userInformation.userId,
+                            UpdatedNameAndLastName: "",
+                            AddedNameAndLastName:"",
                         })
                     })
                         .then(response => response.json())
@@ -260,7 +262,7 @@ function ModuleList(props) {
             title: props.t('Actions'),
             dataIndex: 'actions',
             width: "170px",
-            render: (text, record) => {
+            render: (text, record) => {             
                 return (
                     <div className="icon-container">
                         <div className="icon icon-update" onClick={e => tog_large(e, record.id)}></div>
