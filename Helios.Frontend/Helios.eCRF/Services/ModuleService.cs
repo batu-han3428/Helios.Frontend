@@ -308,5 +308,27 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
+
+        public async Task<RestResponse<List<ElementRankingModel>>> GetElementRankingList(Int64 moduleId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreModule/GetElementRankingList", Method.Get);
+                req.AddParameter("moduleId", moduleId);
+                var result = await client.ExecuteAsync<List<ElementRankingModel>>(req);
+                return result;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> SetElementRankingList(List<ElementRankingModel> elements, Int64 moduleId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest($"CoreModule/SetElementRankingList?moduleId={moduleId}", Method.Post);
+                req.AddJsonBody(elements);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
     }
 }

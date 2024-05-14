@@ -15,6 +15,7 @@ import { SystemAdminApi } from './services/SystemAdmin/SystemAdmin'
 import { TenantsApi } from './services/Tenants'
 import { SystemUsersApi } from './services/SystemAdmin/Users/SystemUsers'
 import { VisitApi } from './services/Visit'
+import { ModuleApi } from "./services/Module"
 
 export const store = configureStore({
     reducer: {
@@ -33,6 +34,7 @@ export const store = configureStore({
         [TenantsApi.reducerPath]: TenantsApi.reducer,
         [SystemUsersApi.reducerPath]: SystemUsersApi.reducer,
         [VisitApi.reducerPath]: VisitApi.reducer,
+        [ModuleApi.reducerPath]: ModuleApi.reducer,
     },
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware().concat(
@@ -49,7 +51,8 @@ export const store = configureStore({
             SystemAdminApi.middleware,
             TenantsApi.middleware,
             SystemUsersApi.middleware,
-            VisitApi.middleware
+            VisitApi.middleware,
+            ModuleApi.middleware
         )
 })
 

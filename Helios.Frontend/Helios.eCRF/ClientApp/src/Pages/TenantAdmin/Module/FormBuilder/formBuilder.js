@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import {
-    Row,
-    Col,
-} from "reactstrap";
-import { useNavigate, useLocation, useParams } from "react-router-dom";
+import React, { useState, useEffect, useRef } from 'react';
+import { Row, Col, Button } from "reactstrap";
+import { useNavigate, useParams } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import ElementList from './elementList.js';
 import './formBuilder.css';
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../../store/loader/actions';
 import { API_BASE_URL } from '../../../../constants/endpoints';
+import ModalComp from '../../../../components/Common/ModalComp/ModalComp.js';
+import RankingList from './RankingList.js';
 
 const FormBuilder = props => {
     const userInformation = useSelector(state => state.rootReducer.Login);
@@ -17,6 +16,7 @@ const FormBuilder = props => {
     const [moduleElementList, setModuleElementList] = useState([]);
     const [moduleName, setModuleName] = useState('');
     const dispatch = useDispatch();
+    const modalRef = useRef();
 
     const fetchData = () => {
         fetch(API_BASE_URL + 'Module/GetModuleElementsWithChildren?id=' + moduleId, {
@@ -47,25 +47,67 @@ const FormBuilder = props => {
         dispatch(startloading());
         fetchData();
         dispatch(endloading());
-    },[]);
+    }, []);
+
+    const navigate = useNavigate();
+
+    const navigateToPreview = (id) => {
+        navigate(`/preview/${id}`);
+    };
+
+    const [modalTitle, setModalTitle] = useState("");
+    const [modalButtonText, setModalButtonText] = useState("");
+    const [modalContent, setModalContent] = useState(null);
+
+    const openModal = (data) => {
+        setModalTitle(data.title);
+        setModalButtonText(data.buttonText);
+        setModalContent(data.content);
+        toggleModal();
+    }
+
+    const toggleModal = () => {
+        modalRef.current.tog_backdrop();
+    }
 
     return (
-        <div style={({ height: "100vh" }, { display: "flex" })} >
-            <div className="page-content" style={{ width:"100%"} }>
-                <div className="container-fluid">
-                    <div className="page-title-box">
-                        <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
-                            <Col md={12}>
-                                <h6 className="page-title">{moduleName}</h6>
-                            </Col>
-                        </Row>
-                    </div>
-                    <div>
-                        <ElementList TenantId={userInformation.TenantId} StudyId={0} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={1} />
+        <>
+            <div style={({ height: "100vh" }, { display: "flex" })} >
+                <div className="page-content" style={{ width: "100%" }}>
+                    <div className="container-fluid">
+                        <div className="page-title-box">
+                            <Row className="align-items-center" style={{ borderBottom: "1px solid black", paddingBottom: '10px' }}>
+                                <Col md={12} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                    <h6 className="page-title">{moduleName}</h6>
+                                    <div>
+                                        <Button color="success" onClick={() => {
+                                            openModal({
+                                                title: props.t("Ranking"), buttonText: props.t("Save"), content: <RankingList toggleModal={toggleModal} moduleId={moduleId} refs={modalRef} />
+                                            });
+                                        }} style={{ marginRight: '8px' }}>
+                                            {props.t("Ranking")}
+                                        </Button>
+                                        <Button color="success" onClick={() => { navigateToPreview(moduleId); }}>
+                                            {props.t("Preview")}
+                                        </Button>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </div>
+                        <div>
+                            <ElementList TenantId={userInformation.TenantId} StudyId={0} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={1} />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+            <ModalComp
+                refs={modalRef}
+                title={modalTitle}
+                body={modalContent}
+                buttonText={modalButtonText}
+                isButton={true}          
+            />
+        </>
     );
 }
 
