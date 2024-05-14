@@ -97,7 +97,7 @@ function SubjectDetailElementList(props) {
                     HandleAutoSave={AutoSave}
                 />;
             case 3:
-                return <HiddenElement />;
+                return "";
             case 4:
                 return <NumericElement
                     Id={param.subjectVisitPageModuleElementId}
