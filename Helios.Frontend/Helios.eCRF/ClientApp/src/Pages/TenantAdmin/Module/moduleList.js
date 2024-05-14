@@ -83,7 +83,9 @@ function ModuleList(props) {
                     Id: Id,
                     TenantId: userInformation.tenantId,
                     Name: Name,
-                    UserId: userInformation.userId
+                    UserId: userInformation.userId,
+                    AddedNameAndLastName: "",
+                    UpdatedNameAndLastName:"",
                 })
             })
                 .then(response => response.json())
