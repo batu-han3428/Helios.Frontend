@@ -13,7 +13,7 @@ import './study.css';
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 
 const StudyList = props => {
-
+    
     const toastRef = useRef();
 
     const userInformation = useSelector(state => state.rootReducer.Login);
@@ -82,7 +82,7 @@ const StudyList = props => {
         });
     }
 
-    const columns = [
+    const columns = [       
         {
             title: props.t('Study name'),
             dataIndex: 'studyName',
@@ -114,6 +114,12 @@ const StudyList = props => {
                 }
                 return <span>{text}</span>;
             }
+        },
+        {
+            title: props.t('Created on'),
+            dataIndex: 'createdAt',
+            sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+            sortDirections: ['ascend', 'descend'],          
         },
         {
             title: props.t('Last updated on'),
@@ -151,10 +157,11 @@ const StudyList = props => {
     useEffect(() => {
         dispatch(startloading());
         if (!isLoading && !error && studyData) {
-            const updatedStudyData = studyData.map(item => {
+            const updatedStudyData = studyData.map(item => {               
                 return {
                     ...item,
                     updatedAt: formatDate(item.updatedAt),
+                    createdAt: formatDate(item.createdAt)
                 };
             });
             setTableData(updatedStudyData);
