@@ -134,7 +134,7 @@ const StudyList = props => {
         {
             title: props.t('Ask subject Initial'),
             dataIndex: 'askSubjectInitial',
-            sorter: (a, b) => a.askSubjectInitial != b.askSubjectInitial ? a.askSubjectInitial.localeCompare(b.askSubjectInitial) : null,
+            sorter: (a, b) => a.askSubjectInitial !== b.askSubjectInitial ? a.askSubjectInitial.localeCompare(b.askSubjectInitial) : null,
             sortDirections: ['ascend', 'descend'],
             render: (text, record) => {
                 if (text) {
@@ -220,6 +220,12 @@ const StudyList = props => {
         items,
         onClick: handleMenuClick,
     };
+    const handleRowDoubleClick = (rowId) => {
+        navigateToFormBuilder(rowId)
+    };
+    const navigateToFormBuilder = (id) => {
+        navigate(`/visits/${id}`);
+    };
 
     document.title = "Studylist | Veltrix - React Admin & Dashboard Template";
     return (
@@ -253,6 +259,13 @@ const StudyList = props => {
                                     columns={columns}
                                     pagination={true}
                                     scroll={{ x: 'max-content' }}
+                                    onRow={(record, rowIndex) => {
+                                        return {
+                                            onDoubleClick: event => {
+                                                handleRowDoubleClick(record.equivalentStudyId, event);
+                                            }
+                                        }
+                                    }}
                                 />
                             </Card>
                         </Col>

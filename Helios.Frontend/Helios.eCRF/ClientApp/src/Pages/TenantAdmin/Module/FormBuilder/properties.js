@@ -1130,7 +1130,7 @@ class Properties extends React.Component {
                                                             <Row className="mb-3 ml-0">
                                                                 <div className="form-check col-md-6">
                                                                     <input type="checkbox" className="form-check-input" checked={this.state.CanMissing} onChange={this.handleCanMissingChange} id="canMissing" />
-                                                                    <label className="form-check-label" htmlFor="canMissing">{this.props.t("Can be missing")}</label>
+                                                                    <label className="form-check-label" htmlFor="canMissing">{this.props.t("Missing data")}</label>
                                                                 </div>
                                                             </Row>
                                                         }
