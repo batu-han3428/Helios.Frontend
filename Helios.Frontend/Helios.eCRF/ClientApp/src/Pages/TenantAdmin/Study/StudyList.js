@@ -6,7 +6,8 @@ import { useLazyStudyListGetQuery, useStudyLockOrUnlockMutation } from '../../..
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { formatDate } from "../../../helpers/format_date";
-import { Table, Row, Col, Card, Dropdown, Button, Space } from 'antd';
+import { Table, Row, Col, Card, Dropdown, Button, Space, Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Swal from 'sweetalert2';
 import './study.css';
@@ -81,13 +82,28 @@ const StudyList = props => {
             }
         });
     }
-
+    const [searchTextstudyName, setSearchTextstudyName] = useState('');
+    const [searchTextprotocolCode, setSearchTextprotocolCode] = useState('');
     const columns = [
         {
             title: props.t('Study name'),
             dataIndex: 'studyName',
             sorter: (a, b) => a.studyName.localeCompare(b.studyName),
-            sortDirections: ['ascend', 'descend']
+            sortDirections: ['ascend', 'descend'],
+            filteredValue: [searchTextstudyName],
+            onFilter: (value, record) => String(record.studyName).toLowerCase().includes(value.toLowerCase()),
+            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                return (
+                    <div style={{ padding: 8 }}>
+                        <Input.Search
+                            placeholder="Search name"
+                            value={selectedKeys[0]}
+                            onChange={(e) => setSearchTextstudyName(e.target.value)}
+                        />
+                    </div>
+                );
+            },
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
         {
             title: props.t('Study link'),
@@ -99,7 +115,21 @@ const StudyList = props => {
             title: props.t('Protocol code'),
             dataIndex: 'protocolCode',
             sorter: (a, b) => a.protocolCode.localeCompare(b.protocolCode),
-            sortDirections: ['ascend', 'descend']
+            sortDirections: ['ascend', 'descend'],
+            filteredValue: [searchTextprotocolCode],
+            onFilter: (value, record) => String(record.protocolCode).toLowerCase().includes(value.toLowerCase()),
+            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                return (
+                    <div style={{ padding: 8 }}>
+                        <Input.Search
+                            placeholder="Search name"
+                            value={selectedKeys[0]}
+                            onChange={(e) => setSearchTextprotocolCode(e.target.value)}
+                        />
+                    </div>
+                );
+            },
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
         {
             title: props.t('Ask subject Initial'),
