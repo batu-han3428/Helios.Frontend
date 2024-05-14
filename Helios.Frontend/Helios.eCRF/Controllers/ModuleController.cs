@@ -204,6 +204,26 @@ namespace Helios.eCRF.Controllers
             return result;
         }
 
+        /// <summary>
+        /// Sıralama işlemi için seçili modülün elementlerini listeler
+        /// </summary>
+        /// <param name="moduleId">Modül Id</param>
+        /// <returns>Element listesi</returns>
+        [HttpGet("{moduleId}")]
+        [RoleAttribute(Roles.TenantAdmin)]
+        public async Task<IActionResult> GetElementRankingList(Int64 moduleId)
+        {
+            var result = await _moduleService.GetElementRankingList(moduleId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
 
+
+        [HttpPost]
+        [RoleAttribute(Roles.TenantAdmin)]
+        public async Task<IActionResult> SetElementRankingList(List<ElementRankingModel> elements, Int64 moduleId)
+        {
+            var result = await _moduleService.SetElementRankingList(elements, moduleId);
+            return Ok(null);
+        }
     }
 }

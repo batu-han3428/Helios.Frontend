@@ -24,5 +24,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<List<TagModel>> GetMultipleTagList(Int64 id);
         Task<ApiResponse<dynamic>> AddNewTag(List<TagModel> tags);
         Task<ApiResponse<dynamic>> AutoSaveElement(Int64 id, string value);
+        Task<RestResponse<List<ElementRankingModel>>> GetElementRankingList(Int64 moduleId);
+        Task<ApiResponse<dynamic>> SetElementRankingList(List<ElementRankingModel> elements, Int64 moduleId);
     }
 }

@@ -1,18 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-    Row,
-    Col,
-    Card,
-    CardBody,
-    CardTitle,
-    Modal,
-    Container,
-    ModalBody,
-    ModalHeader,
-    ModalFooter,
-    Button,
-} from "reactstrap";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { Row, Col, Modal, ModalBody, ModalHeader, Button } from "reactstrap";
 import Properties from './properties.js';
 import './formBuilder.css';
 import { useDispatch, useSelector } from "react-redux";
@@ -61,16 +48,11 @@ function ElementList(props) {
     const [showWhereElementPropeties, setShowWhereElementPropeties] = useState(0);
     const [fieldWidthsW, setFieldWidthsW] = useState("");
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const userInformation = useSelector(state => state.rootReducer.Login);
 
     useEffect(() => {
         setModuleElementList(props.ModuleElementList);
     }, [props.ModuleElementList]);
-
-    const navigateToPreview = (id) => {
-        navigate(`/preview/${id}`);
-    };
 
     const removeBodyCss = () => {
         document.body.classList.add("no_padding");
@@ -401,22 +383,22 @@ function ElementList(props) {
     return (
         <div>
             {showElementList && (
-                <>
-                    <div style={{ float: 'right' }}>
-                        <Button color="success" onClick={() => { navigateToPreview(moduleId); }} className='mt-1'>
-                            {props.t("Preview")}
-                        </Button>
-                    </div>
-                    <br />
-                    <div style={{ width: "200px", float: 'left', position: 'fixed' }}>
-                        <div>
-                            {elementItems}
-                        </div>
-                    </div>
-                    <div style={{ margin: '10px 20px 10px 215px' }} className="row">
-                        {content}
-                    </div>
-                </>
+                <Col md={12}>
+                    <Row>
+                        <Col xs={5} sm={4} md={3} lg={3}>
+                            <div style={{ maxWidth: '300px', position: 'sticky', top: '70px' }}>
+                                {elementItems}
+                            </div>
+                        </Col>
+                        <Col xs={7} sm={8} md={9} lg={9}>
+                            <Row>
+                                <Col md={12}>                               
+                                        {content}
+                                </Col>
+                            </Row>
+                        </Col>
+                   </Row>
+                </Col>
             )}
             {!showElementList && (
                 <div>
