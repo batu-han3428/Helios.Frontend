@@ -35,7 +35,7 @@ const AddOrUpdateStudy = props => {
     const location = useLocation();
 
     const backPage = () => {
-        navigate('/studylist');
+        navigate('/studylist/false');
     };
 
     const optionGroup = [
