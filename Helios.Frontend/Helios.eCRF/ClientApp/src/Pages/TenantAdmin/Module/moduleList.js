@@ -289,7 +289,7 @@ function ModuleList(props) {
                     <ModalBody>
                         <div style={({ height: "100vh" }, { display: "flex" })}>
                             <div id="page-wrap" style={{ padding: "15px", width: '100%' }}>
-                                <div><h3>{props.t("Add module")}</h3></div>
+                                <div><h3>{ Name === "" ? props.t("Add module") : props.t("Rename module")}</h3></div>
                                 <hr />
                                 <div className='row'>
                                     <div className='form-group'>

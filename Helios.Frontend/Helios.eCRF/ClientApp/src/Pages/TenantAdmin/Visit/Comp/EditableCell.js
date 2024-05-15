@@ -4,7 +4,11 @@ import visitType from '../VisitTypeItems';
 import EditableContext from './EditableContext';
 import { useApiHelper, handleSettings, handleAddModule } from '../VisitHelper/Helper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
+library.add( fas);
+
 
 const EditableCell = ({
     title,
@@ -150,8 +154,8 @@ const EditableCell = ({
                     label: (
                         <a onClick={() => navigate(`/visitFormBuilder/${record.id}`)}>{t("Go to module")}</a>
                     ),
-                    icon: <FontAwesomeIcon icon="fa-solid fa-gears" style={{ color: "#e48181", }} />,
-                    style: { color: "#e48181" },
+                    icon: <FontAwesomeIcon icon="fa-solid fa-arrow-right" style={{ color: "#3498db", }} />,
+                    style: { color: "#3498db" },
                 });
             }
             if (record.type === 'page' && record.key !== dataSource[dataSource.length - 1].key) {
@@ -160,8 +164,8 @@ const EditableCell = ({
                     label: (
                         <a onClick={() => handleAddModule(openModal, record, modalRef, toastRef, toggleModal)}>{t("Add module")}</a>
                     ),
-                    icon: <FontAwesomeIcon icon="fa-solid fa-gears" style={{ color: "#e5f37c", }} />,
-                    style: { color: "#e5f37c" },
+                    icon: <FontAwesomeIcon icon="fa-solid fa-plus" style={{ color: "#3498db", }} />,
+                    style: { color: "#3498db" },
                 });
             }
             if (dataSource.length > 1 && (record.key !== dataSource[dataSource.length - 1].key)) {
@@ -172,8 +176,8 @@ const EditableCell = ({
                             <a>{t("Delete")}</a>
                         </Popconfirm>
                     ),
-                    icon: <FontAwesomeIcon icon="fa-regular fa-trash-can" style={{ color: "#e48181", }} />,
-                    style: { color: "#e48181" },
+                    icon: <FontAwesomeIcon icon="fa-regular fa-trash-can" style={{ color: "#e74c3c", }} />,
+                    style: { color: "#e74c3c" },
                 });
             }
             if (record.type !== 'module' && record.key !== dataSource[dataSource.length - 1].key) {
@@ -182,8 +186,8 @@ const EditableCell = ({
                     label: (
                         <a onClick={() => handleSettings(openModal, record, modalRef, toastRef)}>{t("Settings")}</a>
                     ),
-                    icon: <FontAwesomeIcon icon="fa-solid fa-gears" style={{ color: "#e5f37c", }} />,
-                    style: { color: "#e5f37c" },
+                    icon: <FontAwesomeIcon icon="fa-solid fa-gears" style={{ color: "#f1c40f", }} />,
+                    style: { color: "#f1c40f" },
                 });
             }
          
