@@ -85,3 +85,9 @@
             flex-grow: 1;
             padding: 0;
         }
+.vertical-menu {
+    background-color: #f8f9fa;
+}
+.page-content{
+    background-color:white;
+}

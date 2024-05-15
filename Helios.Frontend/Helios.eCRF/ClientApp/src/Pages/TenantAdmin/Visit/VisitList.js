@@ -269,7 +269,7 @@ const Study = props => {
                                                     </Space>
                                                 </Button>
                                             </Dropdown>
-                                            <Space direction="vertical">
+                                            <Space direction="vertical" title={props.t("Edit visits ")}>
                                                 <Switch checked={ranking} checkedChildren={props.t("Ranking")} unCheckedChildren={props.t("Ranking")} onChange={(checked) => rankingHandle(checked)} />
                                             </Space>
                                             {ranking && <FloatButton icon={<CheckOutlined />} type="primary" tooltip={<div>Save</div>} onClick={saveRanking} />}
@@ -278,8 +278,8 @@ const Study = props => {
                                 </div>
                                 {studyInformation.isDemo &&
                                     <Switch
-                                        checkedChildren={<CheckOutlined />}
-                                        unCheckedChildren={<CloseOutlined />}
+                                        checkedChildren={props.t("Edit visits")}
+                                        unCheckedChildren={props.t("Edit visits")}
                                         defaultChecked={editing}
                                         onChange={editingHandle}
                                         checked={editing}
