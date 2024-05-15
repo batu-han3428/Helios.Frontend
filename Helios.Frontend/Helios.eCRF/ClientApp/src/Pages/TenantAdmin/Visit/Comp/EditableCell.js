@@ -4,7 +4,11 @@ import visitType from '../VisitTypeItems';
 import EditableContext from './EditableContext';
 import { useApiHelper, handleSettings, handleAddModule } from '../VisitHelper/Helper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
+library.add( fas);
+
 
 const EditableCell = ({
     title,
@@ -150,8 +154,8 @@ const EditableCell = ({
                     label: (
                         <a onClick={() => navigate(`/visitFormBuilder/${record.id}`)}>{t("Go to module")}</a>
                     ),
-                    icon: <FontAwesomeIcon icon="fa-solid fa-gears" style={{ color: "#e48181", }} />,
-                    style: { color: "#e48181" },
+                    icon: <FontAwesomeIcon icon="fa-solid fa-arrow-right" style={{ color: "#3498db", }} />,
+                    style: { color: "#3498db" },
                 });
             }
             if (record.type === 'page' && record.key !== dataSource[dataSource.length - 1].key) {
@@ -160,7 +164,7 @@ const EditableCell = ({
                     label: (
                         <a onClick={() => handleAddModule(openModal, record, modalRef, toastRef, toggleModal)}>{t("Add module")}</a>
                     ),
-                    icon: <FontAwesomeIcon icon="fa-solid fa-gears" style={{ color: "#3498db", }} />,
+                    icon: <FontAwesomeIcon icon="fa-solid fa-plus" style={{ color: "#3498db", }} />,
                     style: { color: "#3498db" },
                 });
             }
