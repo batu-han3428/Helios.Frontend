@@ -17,6 +17,7 @@ import { GetElementNameByKey } from '../Common/utils.js';
 import Properties from '../../FormBuilder/properties.js';
 import ElementList from '../../FormBuilder/elementList.js';
 import SubjectDetailElementList from '../../../../Subject/Subject/SubjectDetailElementList.js';
+import AccordionComp from '../../../../../../src/components/Common/AccordionComp/AccordionComp';
 
 const baseUrl = "http://localhost:3300/";
 
@@ -148,6 +149,8 @@ class TableElement extends Component {
     }  
     render() {
         return (
+            <AccordionComp title="" isOpened="true" body={
+                 <>
             <div className="table-responsive mb-3">
                 <Table className="table table-hover table-bordered mb-0">
                     <thead>
@@ -215,7 +218,9 @@ class TableElement extends Component {
                         </div>
                     </ModalBody>
                 </Modal>
-            </div>
+                    </div>
+                </>
+            } />
         )
     }
 };
