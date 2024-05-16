@@ -63,7 +63,6 @@ class CalculationElementProperties extends Component {
     };
 
     addRow = () => {
-        debugger
         this.state.inputCounter = this.state.elementRows.length !==0 ? this.state.inputCounter + 1 : this.state.inputCounter;
 
         this.setState((prevState) => ({
