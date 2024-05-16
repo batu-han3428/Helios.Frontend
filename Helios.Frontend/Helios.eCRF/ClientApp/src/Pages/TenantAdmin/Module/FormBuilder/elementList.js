@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, Col, Modal, ModalBody, ModalHeader, Button } from "reactstrap";
 import Properties from './properties.js';
 import './formBuilder.css';
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../../store/loader/actions';
 import Swal from 'sweetalert2'
-import ToastComp from '../../../../components/Common/ToastComp/ToastComp';
 import TextElement from '../Elements/TextElement/textElement.js';
 import NumericElement from '../Elements/NumericElement/numericElement.js';
 import RadioElement from '../Elements/RadioElement/radioElement.js';
@@ -29,7 +28,6 @@ import { GetAllElementList } from './allElementList.js';
 import { API_BASE_URL } from '../../../../constants/endpoints';
 
 function ElementList(props) {
-    const toastRef = useRef();
     const baseUrl = props.FormType === 1 ? API_BASE_URL + "Module" : API_BASE_URL + "Study";
     const [tenantId] = useState(props.TenantId);
     const [moduleId] = useState(props.ModuleId);
@@ -148,14 +146,14 @@ function ElementList(props) {
             .then(response => response.json())
             .then(data => {
                 if (data.isSuccess) {
-                    toastRef.current.setToast({
+                    props.toast.current.setToast({
                         message: data.message,
                         stateToast: true
                     });
                     dispatch(endloading());
                     window.location.reload();
                 } else {
-                    toastRef.current.setToast({
+                    props.toast.current.setToast({
                         message: data.message,
                         stateToast: false
                     });
@@ -430,9 +428,6 @@ function ElementList(props) {
                     </ModalBody>
                 </Modal>
             </Col>
-            <ToastComp
-                ref={toastRef}
-            />
         </div>
 
     );

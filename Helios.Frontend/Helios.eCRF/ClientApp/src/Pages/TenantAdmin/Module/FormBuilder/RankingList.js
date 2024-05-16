@@ -1,5 +1,5 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { withTranslation } from "react-i18next";
 import { Tree } from 'antd';
 import { DndProvider } from 'react-dnd';
@@ -340,31 +340,44 @@ const RankingList = props => {
 
     const [elementRankingListSet] = useElementRankingListSetMutation();
 
-    const save = async () => {
+    const save = useCallback(async () => {
         try {
             dispatch(startloading());
             const hasChanges = isItemsEqual();
             if (!hasChanges) {
-                alert(props.t("No changes were made. Please make changes to save."))
-                dispatch(endloading());       
+                props.toast.current.setToast({
+                    message: props.t("No changes were made. Please make changes to save."),
+                    stateToast: false,
+                    autoHide: false
+                });
+                dispatch(endloading());
                 return;
             }
             const response = await elementRankingListSet({ elements: items, moduleId: parseInt(props.moduleId) });
             if (response.data.isSuccess) {
                 props.fetchData();
-                alert(props.t(response.data.message));
+                props.toast.current.setToast({
+                    message: props.t(response.data.message),
+                    stateToast: true
+                });
                 props.toggleModal();
                 dispatch(endloading());
             } else {
-                alert(props.t(response.data.message))
+                props.toast.current.setToast({
+                    message: props.t(response.data.message),
+                    stateToast: false
+                });
                 dispatch(endloading());
             }
         } catch (error) {
-            console.log(error)
-            alert(props.t("An unexpected error occurred."))
+            props.toast.current.setToast({
+                message: props.t("An unexpected error occurred."),
+                stateToast: false,
+                autoHide: false
+            });
             dispatch(endloading());
         }
-    }
+    }, [items, props]);
 
     useEffect(() => {
         if (props.refs.current) {
