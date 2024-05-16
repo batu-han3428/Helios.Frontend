@@ -8,7 +8,6 @@ namespace Helios.eCRF.Extension
 {
     public static class StartupServiceExtension
     {
-        private static IConfiguration Configuration;
         public static IServiceCollection DefaultConfigurationService(this IServiceCollection services, IConfiguration Configuration)
         {
             services.AddHttpContextAccessor();

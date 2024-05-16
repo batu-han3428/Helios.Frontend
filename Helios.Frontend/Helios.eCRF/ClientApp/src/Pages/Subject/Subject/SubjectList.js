@@ -14,7 +14,8 @@ import "./Subject.css";
 const SubjectList = props => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
+    
+    const [studyId, setStudyId] = useState(8);
     const [addingSubject] = useAddSubjectMutation();
     const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
 
@@ -32,14 +33,14 @@ const SubjectList = props => {
         }
     }, [subjectsData, error, isLoading]);
 
-    const goToSubjectDetail = (id, pageId) => {
-        navigate(`/subject-detail/${id}/${pageId}`);
+    const goToSubjectDetail = (studyId, id, pageId) => {
+        navigate(`/subject-detail/${studyId}/${id}/${pageId}`);
     };
 
     const getActions = ({ id, firstPageId }) => {
         const actions = (
             <div className="icon-container">
-                <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(id, firstPageId) }}></div>
+                <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(studyId, id, firstPageId) }}></div>
             </div>);
         return actions;
     };

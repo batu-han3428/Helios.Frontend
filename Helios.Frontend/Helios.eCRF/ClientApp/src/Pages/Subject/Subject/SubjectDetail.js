@@ -14,11 +14,10 @@ import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import SubjectDetailElementList from './SubjectDetailElementList.js';
 
 const SubjectDetail = props => {
-
-    const { subjectId, pageId } = useParams();
+    
+    const { studyId, subjectId, pageId } = useParams();
 
     const dispatch = useDispatch();
-
     const toastRef = useRef();
 
     const [selectedKeys, setSelectedKeys] = useState(['1-1']);
@@ -28,15 +27,15 @@ const SubjectDetail = props => {
     const [leftMenuData, setLeftMenuData] = useState([]);
     const [subjectElementList, setSubjectElementList] = useState([]);
 
-    const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery();
+    const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery({ studyId });
     const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId });
 
     useEffect(() => {
-        if (subjectId) {
+        if (studyId) {
             dispatch(startloading());
-            trigger(subjectId);
+            trigger(studyId);
         }
-    }, [subjectId]);
+    }, [studyId]);
 
     useEffect(() => {
         if (!error1 && !isLoading1 && elementList) {
