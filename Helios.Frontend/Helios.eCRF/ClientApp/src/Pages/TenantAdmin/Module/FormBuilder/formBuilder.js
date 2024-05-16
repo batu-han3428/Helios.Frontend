@@ -82,7 +82,7 @@ const FormBuilder = props => {
                                     <div>
                                         <Button color="success" onClick={() => {
                                             openModal({
-                                                title: props.t("Ranking"), buttonText: props.t("Save"), content: <RankingList toggleModal={toggleModal} moduleId={moduleId} refs={modalRef} />
+                                                title: props.t("Ranking"), buttonText: props.t("Save"), content: <RankingList fetchData={fetchData} toggleModal={toggleModal} moduleId={moduleId} refs={modalRef} />
                                             });
                                         }} style={{ marginRight: '8px' }}>
                                             {props.t("Ranking")}

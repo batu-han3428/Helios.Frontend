@@ -351,7 +351,8 @@ const RankingList = props => {
             }
             const response = await elementRankingListSet({ elements: items, moduleId: parseInt(props.moduleId) });
             if (response.data.isSuccess) {
-                alert(props.t(response.data.message))
+                props.fetchData();
+                alert(props.t(response.data.message));
                 props.toggleModal();
                 dispatch(endloading());
             } else {
