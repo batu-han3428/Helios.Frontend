@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withTranslation } from "react-i18next";
 import { Row, Col, Button, Card, CardBody } from "reactstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { MDBDataTable } from "mdbreact";
+//import { MDBDataTable } from "mdbreact";
 import ModalComp from "../../../components/Common/ModalComp/ModalComp";
 import AddOrUpdateSystemAdmin from "./AddOrUpdateSystemAdmin";
 import ToastComp from "../../../components/Common/ToastComp/ToastComp";
@@ -307,17 +307,17 @@ const ListSystemAdmin = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>
-                                    <MDBDataTable
-                                        paginationLabel={[props.t("Previous"), props.t("Next")]}
-                                        entriesLabel={props.t("Show entries")}
-                                        searchLabel={props.t("Search")}
-                                        noRecordsFoundLabel={props.t("No matching records found")}
-                                        hover
-                                        responsive
-                                        striped
-                                        bordered
-                                        data={data}
-                                    />
+                                    {/*<MDBDataTable*/}
+                                    {/*    paginationLabel={[props.t("Previous"), props.t("Next")]}*/}
+                                    {/*    entriesLabel={props.t("Show entries")}*/}
+                                    {/*    searchLabel={props.t("Search")}*/}
+                                    {/*    noRecordsFoundLabel={props.t("No matching records found")}*/}
+                                    {/*    hover*/}
+                                    {/*    responsive*/}
+                                    {/*    striped*/}
+                                    {/*    bordered*/}
+                                    {/*    data={data}*/}
+                                    {/*/>*/}
                                 </CardBody>
                             </Card>
                         </Col>

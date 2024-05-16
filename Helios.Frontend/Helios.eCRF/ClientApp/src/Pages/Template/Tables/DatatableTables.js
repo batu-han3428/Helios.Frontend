@@ -1,5 +1,5 @@
 import React from "react";
-import { MDBDataTable } from "mdbreact";
+//import { MDBDataTable } from "mdbreact";
 import { Row, Col, Card, CardBody, CardTitle, CardSubtitle } from "reactstrap";
 
 //Import Breadcrumb
@@ -524,7 +524,7 @@ const DatatableTables = () => {
                     <code>&lt;MDBDataTable /&gt;</code>.
                   </p>
 
-                  <MDBDataTable responsive bordered data={data} />
+                 {/* <MDBDataTable responsive bordered data={data} />*/}
                 </CardBody>
               </Card>
             </Col>
@@ -542,7 +542,7 @@ const DatatableTables = () => {
                     <code>&lt;MDBDataTable striped /&gt;</code>.
                   </p>
 
-                  <MDBDataTable responsive striped bordered data={data} />
+                 {/* <MDBDataTable responsive striped bordered data={data} />*/}
                 </CardBody>
               </Card>
             </Col>

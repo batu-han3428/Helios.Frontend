@@ -1,7 +1,7 @@
 ﻿import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef } from "react";
 import { withTranslation } from "react-i18next";
-import { MDBDataTable } from "mdbreact";
+//import { MDBDataTable } from "mdbreact";
 import {
     Row, Col, Card, CardBody, Button, Label, Input, Form, FormFeedback, Alert
 } from "reactstrap";
@@ -309,12 +309,12 @@ const Sites = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>
-                                    <MDBDataTable
-                                        paginationLabel={[props.t("Previous"), props.t("Next")]}
-                                        entriesLabel={props.t("Show entries")}
-                                        searchLabel={props.t("Search")}
-                                        noRecordsFoundLabel={props.t("No matching records found")}
-                                        hover responsive striped bordered data={data} />
+                                    {/*<MDBDataTable*/}
+                                    {/*    paginationLabel={[props.t("Previous"), props.t("Next")]}*/}
+                                    {/*    entriesLabel={props.t("Show entries")}*/}
+                                    {/*    searchLabel={props.t("Search")}*/}
+                                    {/*    noRecordsFoundLabel={props.t("No matching records found")}*/}
+                                    {/*    hover responsive striped bordered data={data} />*/}
                                 </CardBody>
                             </Card>
                         </Col>

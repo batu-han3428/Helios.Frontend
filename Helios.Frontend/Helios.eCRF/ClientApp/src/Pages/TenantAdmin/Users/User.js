@@ -14,7 +14,7 @@ import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2'
 import { formatDate } from "../../../helpers/format_date";
-import { MDBDataTable } from "mdbreact";
+//import { MDBDataTable } from "mdbreact";
 import Select from "react-select";
 import { useLazyRoleListGetQuery } from '../../../store/services/Permissions';
 import { useLazySiteListGetQuery } from '../../../store/services/SiteLaboratories';
@@ -727,6 +727,7 @@ const User = props => {
 
     return (
         <React.Fragment>
+        
             <ModalComp
                 refs={modalRef}
                 title={studyUserId === 0 ? props.t("Add a user") : props.t("Update user")}
@@ -945,6 +946,7 @@ const User = props => {
                     <div className="page-title-box">
                         <Row className="align-items-center" style={{ borderBottom: "1px solid black", paddingBottom: "5px" }}>
                             <Col md={8}>
+                            <div>dsadasdasdasda</div>
                                 <h6 className="page-title">{props.t("User list")}</h6>
                             </Col>
                             <Col md="4">
@@ -998,17 +1000,17 @@ const User = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>
-                                    <MDBDataTable
-                                        paginationLabel={[props.t("Previous"), props.t("Next")]}
-                                        entriesLabel={props.t("Show entries")}
-                                        searchLabel={props.t("Search")}
-                                        noRecordsFoundLabel={props.t("No matching records found")}
-                                        hover
-                                        responsive
-                                        striped
-                                        bordered
-                                        data={data}
-                                    />
+                                    {/*<MDBDataTable*/}
+                                    {/*    paginationLabel={[props.t("Previous"), props.t("Next")]}*/}
+                                    {/*    entriesLabel={props.t("Show entries")}*/}
+                                    {/*    searchLabel={props.t("Search")}*/}
+                                    {/*    noRecordsFoundLabel={props.t("No matching records found")}*/}
+                                    {/*    hover*/}
+                                    {/*    responsive*/}
+                                    {/*    striped*/}
+                                    {/*    bordered*/}
+                                    {/*    data={data}*/}
+                                    {/*/>*/}
                                 </CardBody>
                             </Card>
                         </Col>
