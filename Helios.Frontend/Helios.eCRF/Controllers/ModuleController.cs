@@ -223,7 +223,7 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> SetElementRankingList(List<ElementRankingModel> elements, Int64 moduleId)
         {
             var result = await _moduleService.SetElementRankingList(elements, moduleId);
-            return Ok(null);
+            return Ok(result);
         }
     }
 }
