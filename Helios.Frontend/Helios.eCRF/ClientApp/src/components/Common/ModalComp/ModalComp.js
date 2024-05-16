@@ -17,7 +17,7 @@ const ModalComp = ({ title, body, resetValue = null, handle, buttonText, t, refs
                 if (modalElement) {
                     const firstParentDiv = modalElement.parentNode;
                     const secondParentDiv = firstParentDiv.parentNode;
-                    secondParentDiv.style.zIndex = '999998';
+                    secondParentDiv.style.zIndex = '9998';
                     observer.disconnect();
                 }
             });

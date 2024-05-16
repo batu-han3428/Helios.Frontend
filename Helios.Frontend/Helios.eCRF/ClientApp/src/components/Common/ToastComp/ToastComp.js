@@ -27,7 +27,7 @@ const ToastComp = forwardRef((props, ref) => {
     }), [setToast]);
 
     return (
-        <ToastContainer zIndex={999999} />
+        <ToastContainer zIndex={9999} />
     );
 });
 
