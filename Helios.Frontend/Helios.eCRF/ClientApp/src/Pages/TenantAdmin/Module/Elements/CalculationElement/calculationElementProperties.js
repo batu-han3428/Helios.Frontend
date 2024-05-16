@@ -29,7 +29,7 @@ class CalculationElementProperties extends Component {
 
         var inps = props.CalculationSourceInputs !== "" ? JSON.parse(props.CalculationSourceInputs) : [];
         var inpsCount = props.CalculationSourceInputs !== "" ? JSON.parse(props.CalculationSourceInputs).length : 1;
-
+      
         this.state = {
             Id: props.Id,
             FormType: props.FormType,
@@ -63,7 +63,8 @@ class CalculationElementProperties extends Component {
     };
 
     addRow = () => {
-        this.state.inputCounter = this.state.inputCounter + 1;
+        debugger
+        this.state.inputCounter = this.state.elementRows.length !==0 ? this.state.inputCounter + 1 : this.state.inputCounter;
 
         this.setState((prevState) => ({
             elementRows: [
