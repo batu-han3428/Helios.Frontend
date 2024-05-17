@@ -10,6 +10,7 @@ import { API_BASE_URL } from '../../../../constants/endpoints';
 import ModalComp from '../../../../components/Common/ModalComp/ModalComp.js';
 import RankingList from './RankingList.js';
 import ToastComp from '../../../../components/Common/ToastComp/ToastComp.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const FormBuilder = props => {
     const userInformation = useSelector(state => state.rootReducer.Login);
@@ -70,6 +71,9 @@ const FormBuilder = props => {
     const toggleModal = () => {
         modalRef.current.tog_backdrop();
     }
+    const backPage = () => {
+        navigate('/moduleList');
+    };
 
     return (
         <>
@@ -79,7 +83,13 @@ const FormBuilder = props => {
                         <div className="page-title-box">
                             <Row className="align-items-center" style={{ borderBottom: "1px solid black", paddingBottom: '10px' }}>
                                 <Col md={12} style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                    <h6 className="page-title">{moduleName}</h6>
+                                    <div className="page-title-box">
+                                        <Row className="align-items-center" >
+                                            <Col>
+                                                <h6 className="page-title"><FontAwesomeIcon style={{ marginRight: "10px", cursor: "pointer", position: "relative", top: "0.5px" }} onClick={backPage} icon="fa-solid fa-left-long" />{moduleName}</h6>
+                                            </Col>
+                                        </Row>
+                                    </div>
                                     <div>
                                         <Button color="success" onClick={() => {
                                             openModal({
@@ -106,7 +116,7 @@ const FormBuilder = props => {
                 title={modalTitle}
                 body={modalContent}
                 buttonText={modalButtonText}
-                isButton={true}          
+                isButton={true}
             />
             <ToastComp ref={toastRef} />
         </>
