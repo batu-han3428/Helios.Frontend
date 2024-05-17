@@ -332,7 +332,7 @@ function ElementList(props) {
             var cls = "mb-6 col-md-" + w;
 
             return (
-                <Row className={cls} key={item.id}>
+                <Col className={cls} key={item.id}>
                     <div className="actionBtnDiv" style={{ textAlign: item.elementType === 1 ? 'right' : '' }}>
                         <label style={{ marginRight: '5px' }}>
                             {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
@@ -361,7 +361,7 @@ function ElementList(props) {
                     <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
                         {item.description}
                     </label>
-                </Row>
+                </Col>
             );
         })
         : null;
@@ -389,10 +389,8 @@ function ElementList(props) {
                             </div>
                         </Col>
                         <Col xs={7} sm={8} md={9} lg={9}>
-                            <Row>
-                                <Col md={12}>                               
-                                        {content}
-                                </Col>
+                            <Row>                                                       
+                                {content}                          
                             </Row>
                         </Col>
                    </Row>
