@@ -12,7 +12,7 @@ import {
     ModalFooter,
     Button,
 } from "reactstrap";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Properties from './properties.js';
 import './formBuilder.css';
 import { useDispatch, useSelector } from "react-redux";
@@ -36,6 +36,7 @@ import CalculationElement from '../Elements/CalculationElement/calculationElemen
 import AdverseEventElement from '../Elements/AdverseEventElement/adverseEventElement.js';
 import { withTranslation } from "react-i18next";
 import { API_BASE_URL } from '../../../../constants/endpoints';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function Preview() {
     const toastRef = useRef();
@@ -227,9 +228,20 @@ function Preview() {
         })
         : null;
 
+    const navigate = useNavigate();
+    const backPage = () => {
+        navigate('/formBuilder/' + moduleId);
+    };
     return (
-        <div>
+        <div>           
             <div style={{ margin: '80px 20px' }} className="row">
+                <div className="page-title-box">
+                    <Row className="align-items-center" >
+                        <Col>
+                            <h6 className="page-title"><FontAwesomeIcon style={{ marginRight: "10px", cursor: "pointer", position: "relative", top: "0.5px" }} onClick={backPage} icon="fa-solid fa-left-long" /></h6>
+                        </Col>
+                    </Row>
+                </div>
                 {content}
             </div>
             <ToastComp
