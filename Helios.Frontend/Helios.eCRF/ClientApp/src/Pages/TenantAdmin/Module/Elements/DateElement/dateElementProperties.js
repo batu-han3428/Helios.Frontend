@@ -38,8 +38,9 @@ class DateElementProperties extends Component {
         this.props.changeDefaultValue(e.target.value);
     };
 
-    handleAddTodayDateChange(e) {
-        var val = e.target.value === "on" ? true : false;
+    handleAddTodayDateChange(e) {      
+       /* var val = e.target.value === "on" ? true : false;*/
+        var val = !this.state.AddTodayDate;
         this.props.changeAddTodayDate(val);
         this.state.AddTodayDate = val;
     };
