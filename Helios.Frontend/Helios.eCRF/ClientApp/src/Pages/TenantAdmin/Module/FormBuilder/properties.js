@@ -614,12 +614,12 @@ class Properties extends React.Component {
         this.setState({ DependentFieldValue: newTags });
     }
 
-    dependentFieldValueInputKeyDown = (e) => {
+    dependentFieldValueInputKeyDown = (e) => {    
         const val = e.target.value;
         this.setState({ wth: this.state.wth + 10 });
 
         if (e.key === 'Enter' && val) {
-            if (this.state.DependentFieldValue.find(tag => tag.toLowerCase() === val.toLowerCase())) {
+            if (this.state.DependentFieldValue.find(tag => tag=== val)) {
                 return;
             }
 
