@@ -43,6 +43,7 @@ function Preview() {
     const [tenantId, setTenantId] = useState(0);
     const { moduleId } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
+    const [moduleName, setModuleName] = useState([]);
     const [ElementId, setElementId] = useState(0);
     const [ElementValue, setElementValue] = useState("");
     const dispatch = useDispatch();
@@ -50,6 +51,7 @@ function Preview() {
     useEffect(() => {
         dispatch(startloading());
         fetchData();
+        getModule();
         dispatch(endloading());
     });
 
@@ -58,7 +60,7 @@ function Preview() {
             method: 'GET',
         })
             .then(response => response.json())
-            .then(data => {
+            .then(data => {                
                 setModuleElementList(data);
             })
             .catch(error => {
@@ -66,6 +68,18 @@ function Preview() {
             });
     }
 
+    const getModule = () => {
+        fetch(API_BASE_URL + 'Module/GetModule?id=' + moduleId, {
+            method: 'GET',
+        })
+            .then(response => response.json())
+            .then(data => {
+                setModuleName(data.name);
+            })
+            .catch(error => {
+                //console.error('Error:', error);
+            });
+    }
     const AutoSaveElement = () => {
         fetch(API_BASE_URL + 'Module/AutoSaveElement?id=' + ElementId + '&value=' + ElementValue, {
             method: 'POST',
@@ -207,8 +221,7 @@ function Preview() {
     const content = Array.isArray(moduleElementList)
         ? moduleElementList.map((item) => {
             var w = item.width === 0 ? 12 : item.width;
-            var cls = "mb-6 col-md-" + w;
-
+            var cls = "mb-6 col-md-" + w;           
             return (
                 <Row className={cls} key={item.id}>
                     <div style={{ marginBottom: '3px', marginTop: '10px' }}>
@@ -235,13 +248,17 @@ function Preview() {
     return (
         <div>           
             <div style={{ margin: '80px 20px' }} className="row">
+                <Row className="align-items-center" style={{ borderBottom: "1px solid black", paddingBottom: '10px' }}>
+                    <Col md={12} style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <div className="page-title-box">
                     <Row className="align-items-center" >
                         <Col>
-                            <h6 className="page-title"><FontAwesomeIcon style={{ marginRight: "10px", cursor: "pointer", position: "relative", top: "0.5px" }} onClick={backPage} icon="fa-solid fa-left-long" /></h6>
+                            <h6 className="page-title"><FontAwesomeIcon style={{ marginRight: "10px", cursor: "pointer", position: "relative", top: "0.5px" }} onClick={backPage} icon="fa-solid fa-left-long" />{moduleName}</h6>
                         </Col>
                     </Row>
-                </div>
+                        </div>
+                    </Col>
+                </Row>
                 {content}
             </div>
             <ToastComp
