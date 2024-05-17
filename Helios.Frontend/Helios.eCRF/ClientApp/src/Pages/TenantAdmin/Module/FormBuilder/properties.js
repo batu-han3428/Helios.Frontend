@@ -48,8 +48,7 @@ import { API_BASE_URL } from '../../../../constants/endpoints';
 
 class Properties extends React.Component {
     constructor(props) {
-        super(props);
-
+        super(props);     
         this.state = {
             activeTab: props.ActiveTab,
             showWhereElementPropeties: props.ShowWhereElementPropeties,
@@ -128,7 +127,7 @@ class Properties extends React.Component {
             StartYear: 0,
             EndYear: 0,
             CalculationSourceInputs: '',
-            MainJs: '',
+            MainJs: '',         
             LeftText: '',
             RightText: '',
             DatagridAndTableProperties: '',
@@ -288,7 +287,7 @@ class Properties extends React.Component {
             case 12:
                 return <FileUploaderElementProperties
                 />;
-            case 13:
+            case 13:               
                 return <RangeSliderElementProperties
                     changeDefaultValue={this.changeDefaultValue} DefaultValue={this.state.DefaultValue}
                     changeLowerLimit={this.changeLowerLimit} LowerLimit={this.state.LowerLimit}
@@ -508,7 +507,7 @@ class Properties extends React.Component {
         this.setState({ LowerLimit: newValue });
     };
 
-    changeUpperLimit = (newValue) => {
+    changeUpperLimit = (newValue) => {      
         this.setState({ UpperLimit: newValue });
     };
 
@@ -572,7 +571,7 @@ class Properties extends React.Component {
         this.setState({ LeftText: newValue });
     };
 
-    changeRightText = (newValue) => {
+    changeRightText = (newValue) => {      
         this.setState({ RightText: newValue });
     };
 
@@ -718,6 +717,9 @@ class Properties extends React.Component {
             Mask: data.mask != null ? data.mask : "",
             LowerLimit: data.lowerLimit != null ? data.lowerLimit : "",
             UpperLimit: data.upperLimit != null ? data.upperLimit : "",
+            LeftText: data.leftText != null ? data.leftText:"",
+            RightText: data.rightText != null ? data.rightText : "",
+
             Layout: data.layout,
             DefaultValue: data.defaultValue,
             AddTodayDate: data.addTodayDate,

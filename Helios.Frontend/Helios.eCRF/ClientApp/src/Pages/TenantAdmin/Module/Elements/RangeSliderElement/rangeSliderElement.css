@@ -1,0 +1,129 @@
+﻿.rangeslider {
+    margin-left: 25px;
+    height: 9px;
+}
+.rangeslider__label-item:first-child {
+    position: absolute;
+    left: 102% !important;
+    top: -18px;
+}
+.rangeslider__label-item:last-child {
+    position: absolute;
+    left: -2.2% !important;
+    top: -18px;
+    max-width: 20px;
+}
+.LowerLimitString {
+    width: 50%;
+    display: flex;
+    justify-content: start;
+    margin-left: 10px;
+    margin-top: -14px;
+}
+
+.UpperLimitString {
+    width: 49%;
+    display: flex;
+    justify-content: end;
+    margin-top: -15px;
+}
+.LeftText {
+    width: 50%;
+    display: flex;
+    justify-content: start;
+    margin-left: 28px;
+    margin-top: -14px;
+}
+
+.RightText {
+    width: 46%;
+    display: flex;
+    justify-content: end;
+    margin-top: -15px;
+}
+.defaultvalue {
+    display: flex; 
+    justify-content:center;
+}
+
+:root {
+    --main-color: rgb(104, 117, 217);
+    --main-color-hover: rgb(104, 117, 217, 0.2);
+    --track-color: #ddd;
+}
+
+.customSlider {
+    /* max width of your slider */
+    max-width: 95%;
+    /* Optional: Only If you want to center your slider in the page */
+    margin: auto;
+    top:-13px;
+}
+
+.customSlider-track {
+    /* Top value to align your track to the center of your thumb */
+    top: 8px;
+    /* thickness of the track */
+    height: 4px;
+    /* default color of your track */
+    background: var(--track-color);
+}
+
+    .customSlider-track.customSlider-track-0 {
+        /* color of the track before the thumb */
+        background: var(--main-color);
+    }
+.customSlider-thumb {
+    cursor: pointer;
+    /*color for the thumb */
+    background: var(--main-color);
+    /* shape of the thumb: circle */
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    /* remove default outline when selected */
+    outline: none;
+}
+
+    .customSlider-thumb:hover {
+        box-shadow: 0 0 0 8px var(--main-color-hover);
+    }
+
+@media screen and (max-width: 1500px) {
+    .customSlider {
+        /* max width of your slider */
+        max-width: 89%;
+        /* Optional: Only If you want to center your slider in the page */
+        margin: auto;
+        top: -13px;
+    }
+    .LowerLimitString {
+        width: 50%;
+        display: flex;
+        justify-content: start;
+        margin-left: 10px;
+        margin-top: -14px;
+    }
+
+    .UpperLimitString {
+        width: 47%;
+        display: flex;
+        justify-content: end;
+        margin-top: -15px;
+    }
+
+    .LeftText {
+        width: 50%;
+        display: flex;
+        justify-content: start;
+        margin-left: 28px;
+        margin-top: -14px;
+    }
+
+    .RightText {
+        width: 42%;
+        display: flex;
+        justify-content: end;
+        margin-top: -15px;
+    }
+}
