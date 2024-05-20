@@ -334,8 +334,8 @@ function ElementList(props) {
             var cls = "mb-6 col-md-" + w;
 
             return (
-                <Row className={cls} key={item.id}>
-                    <div className="actionBtnDiv" style={{ textAlign: (item.elementType === 1) ? 'right' : '', marginLeft: (item.elementType===15) ? "20px":" " }}>
+                <Col className={cls} key={item.id}>
+                    <div className="actionBtnDiv" style={{ textAlign: (item.elementType === 1) ? 'right' : '', marginLeft: (item.elementType === 15) ? "20px" : " ", marginBottom: (item.elementType === 15) ? "-35px" : " " }}>
                         <label style={{ marginRight: '5px' }}>
                             {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
                             {item.elementType !== 1 && item.title}
@@ -363,7 +363,7 @@ function ElementList(props) {
                     <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
                         {item.description}
                     </label>
-                </Row>
+                </Col>
             );
         })
         : null;
