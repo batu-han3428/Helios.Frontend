@@ -8,10 +8,11 @@ const sliderRef = '0px';
 class RangeSliderElement extends Component {
     constructor(props) {
         super(props);
+        debugger
         this.state = {
             id: props.Id,
             isDisable: props.IsDisable,
-            horizontal: props.Value === null ? parseInt(props.DefaultValue) : parseInt(props.Value),
+            horizontal: (props.Value === null || props.Value === undefined) ? parseInt(props.DefaultValue) : parseInt(props.Value),
             horizontalLabels: {
                 0: props.LeftText,
                 100: props.RightText
@@ -47,7 +48,6 @@ class RangeSliderElement extends Component {
                     getAriaValueText={this.state.horizontalLabels}                  
                     onChange={this.handleChangeHorizontal}                   
                     onChangeComplete={this.handleComplete}
-                />
                     disabled={this.state.isDisable}
                     className="customSlider"
                     trackClassName="customSlider-track"
