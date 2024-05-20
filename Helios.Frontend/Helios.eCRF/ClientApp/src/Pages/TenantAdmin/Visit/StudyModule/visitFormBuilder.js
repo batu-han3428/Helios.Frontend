@@ -12,6 +12,7 @@ import { startloading, endloading } from '../../../../store/loader/actions.js';
 import { decodeToken } from "../../../../helpers/Util/tokenUtil";
 import { getLocalStorage, removeLocalStorage } from '../../../../helpers/local-storage/localStorageProcess.js';
 import { API_BASE_URL } from '../../../../constants/endpoints';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const VisitFormBuilder = props => {
     let token = getLocalStorage("accessToken");
@@ -50,7 +51,12 @@ const VisitFormBuilder = props => {
         dispatch(startloading());
         fetchData();
         dispatch(endloading());
-    },[]);
+    }, []);
+
+    const navigate = useNavigate();
+    const backPage = () => {
+        navigate('/visits/' + auth.studyId);
+    };
 
     return (
         <div style={({ height: "100vh" }, { display: "flex" })} >
@@ -59,7 +65,7 @@ const VisitFormBuilder = props => {
                     <div className="page-title-box">
                         <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
                             <Col md={8}>
-                                <h6 className="page-title">{studyPageModuleName}</h6>
+                                <h6 className="page-title"><FontAwesomeIcon style={{ marginRight: "10px", cursor: "pointer", position: "relative", top: "0.5px" }} onClick={backPage} icon="fa-solid fa-left-long" />{studyPageModuleName}</h6>
                             </Col>
                         </Row>
                     </div>
