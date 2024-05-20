@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Row, Col, Button } from "reactstrap";
 import { useNavigate, useParams } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 import ElementList from './elementList.js';
 import './formBuilder.css';
 import { useDispatch, useSelector } from "react-redux";
-import { startloading, endloading } from '../../../../store/loader/actions';
-import { API_BASE_URL } from '../../../../constants/endpoints';
+import { startloading, endloading } from '../../../../store/loader/actions.js';
+import { API_BASE_URL } from '../../../../constants/endpoints.js';
 import ModalComp from '../../../../components/Common/ModalComp/ModalComp.js';
 import RankingList from './RankingList.js';
 import ToastComp from '../../../../components/Common/ToastComp/ToastComp.js';
@@ -14,42 +14,60 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const FormBuilder = props => {
     const userInformation = useSelector(state => state.rootReducer.Login);
-    const { moduleId } = useParams();
+    const { moduleId, isStudy } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
     const [moduleName, setModuleName] = useState('');
     const dispatch = useDispatch();
     const modalRef = useRef();
     const toastRef = useRef();
+    const [path, setPath] = useState([]);
+    const [formType, setFormType] = useState(0);
+
     const fetchData = () => {
-        fetch(API_BASE_URL + 'Module/GetModuleElementsWithChildren?id=' + moduleId, {
+        fetch(API_BASE_URL + path[0] + moduleId, {
             method: 'GET',
         })
-            .then(response => response.json())
-            .then(data => {
-                setModuleElementList(data);
-            })
-            .catch(error => {
-                //console.error('Error:', error);
-            });
+        .then(response => response.json())
+        .then(data => {
+            setModuleElementList(data);
+        })
+        .catch(error => {
+            //console.error('Error:', error);
+        });
 
-        fetch(API_BASE_URL + 'Module/GetModule?id=' + moduleId, {
+        fetch(API_BASE_URL + path[1] + moduleId, {
             method: 'GET',
         })
-            .then(response => response.json())
-            .then(data => {
-                setModuleName(data.name);
-            })
-            .catch(error => {
-                //console.error('Error:', error);
-            });
-    }
+        .then(response => response.json())
+        .then(data => {
+            setModuleName(data.name);
+        })
+        .catch(error => {
+            //console.error('Error:', error);
+        });
+    };
 
-    
     useEffect(() => {
         dispatch(startloading());
-        fetchData();
+        if (moduleId && isStudy !== undefined) {
+            if (isStudy === 'true') {
+                setPath(["Study/GetStudyModuleElementsWithChildren?studyVisitPageModuleId=", "Study/GetStudyPageModule?id="]);
+                setFormType(2);
+            } else {
+                setPath(["Module/GetModuleElementsWithChildren?id=", "Module/GetModule?id="]);
+                setFormType(1);
+            }
+        } else {
+            dispatch(endloading());
+        }
+    }, [moduleId, isStudy]);
+
+    useEffect(() => {
+        if (path.length > 0) {
+            fetchData();
+        }
         dispatch(endloading());
-    }, []);
+    }, [path]);
 
     const navigate = useNavigate();
 
@@ -72,7 +90,7 @@ const FormBuilder = props => {
         modalRef.current.tog_backdrop();
     }
     const backPage = () => {
-        navigate('/moduleList');
+        navigate(-1);
     };
 
     return (
@@ -93,7 +111,7 @@ const FormBuilder = props => {
                                     <div>
                                         <Button color="success" onClick={() => {
                                             openModal({
-                                                title: props.t("Ranking"), buttonText: props.t("Save"), content: <RankingList toast={toastRef} fetchData={fetchData} toggleModal={toggleModal} moduleId={moduleId} refs={modalRef} />
+                                                title: props.t("Ranking"), buttonText: props.t("Save"), content: <RankingList toast={toastRef} fetchData={fetchData} toggleModal={toggleModal} moduleId={moduleId} refs={modalRef} isStudy={isStudy} />
                                             });
                                         }} style={{ marginRight: '8px' }}>
                                             {props.t("Ranking")}
@@ -106,7 +124,7 @@ const FormBuilder = props => {
                             </Row>
                         </div>
                         <div>
-                            <ElementList toast={toastRef} TenantId={userInformation.TenantId} StudyId={0} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={1} />
+                            <ElementList toast={toastRef} TenantId={userInformation.TenantId} StudyId={0} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={formType} />
                         </div>
                     </div>
                 </div>
@@ -124,4 +142,3 @@ const FormBuilder = props => {
 }
 
 export default withTranslation()(FormBuilder);
-

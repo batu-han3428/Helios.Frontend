@@ -152,7 +152,7 @@ const EditableCell = ({
                 items.push({
                     key: '4',
                     label: (
-                        <a onClick={() => navigate(`/visitFormBuilder/${record.id}`)}>{t("Go to module")}</a>
+                        <a onClick={() => navigate(`/formBuilder/${record.id}/true`)}>{t("Go to module")}</a>
                     ),
                     icon: <FontAwesomeIcon icon="fa-solid fa-arrow-right" style={{ color: "#3498db", }} />,
                     style: { color: "#3498db" },

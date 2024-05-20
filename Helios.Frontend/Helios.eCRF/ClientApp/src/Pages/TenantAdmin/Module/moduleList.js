@@ -33,7 +33,7 @@ function ModuleList(props) {
     };
 
     const navigateToFormBuilder = (id) => {
-        navigate(`/formBuilder/${id}`);
+        navigate(`/formBuilder/${id}/false`);
     };
 
     const handleNameChange = (e) => {

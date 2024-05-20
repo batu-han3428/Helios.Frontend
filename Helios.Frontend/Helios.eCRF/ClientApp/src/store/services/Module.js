@@ -17,14 +17,14 @@ export const ModuleApi = createApi({
     }),
     endpoints: (builder) => ({
         elementRankingListGet: builder.query({
-            query: (moduleId) => `/Module/GetElementRankingList/${moduleId}`,
+            query: (data) => `/Module/GetElementRankingList/${data.moduleId}/${data.isStudy}`,
             refetchOnMountOrArgChange: true,
             keepUnusedDataFor: 0,
         }),
         elementRankingListSet: builder.mutation({
-            query: ({ elements, moduleId }) => {
+            query: ({ elements, moduleId, isStudy }) => {
                 return {
-                    url: `/Module/SetElementRankingList?moduleId=${moduleId}`,
+                    url: `/Module/SetElementRankingList?moduleId=${moduleId}&isStudy=${isStudy}`,
                     method: 'POST',
                     body:elements
                 }

@@ -208,21 +208,28 @@ namespace Helios.eCRF.Controllers
         /// Sıralama işlemi için seçili modülün elementlerini listeler
         /// </summary>
         /// <param name="moduleId">Modül Id</param>
+        /// <param name="isStudy">çalışma modülü mü</param>
         /// <returns>Element listesi</returns>
-        [HttpGet("{moduleId}")]
+        [HttpGet("{moduleId}/{isStudy}")]
         [RoleAttribute(Roles.TenantAdmin)]
-        public async Task<IActionResult> GetElementRankingList(Int64 moduleId)
+        public async Task<IActionResult> GetElementRankingList(Int64 moduleId, bool isStudy)
         {
-            var result = await _moduleService.GetElementRankingList(moduleId);
+            var result = await _moduleService.GetElementRankingList(moduleId, isStudy);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
-
+        /// <summary>
+        /// Modülün elementlerinin sıralama işlemini gerçekleştirir
+        /// </summary>
+        /// <param name="elements">modüldeki elementler</param>
+        /// <param name="moduleId">modül id</param>
+        /// <param name="isStudy">çalışma modülü mü</param>
+        /// <returns>başarılı başarısız</returns>
         [HttpPost]
         [RoleAttribute(Roles.TenantAdmin)]
-        public async Task<IActionResult> SetElementRankingList(List<ElementRankingModel> elements, Int64 moduleId)
+        public async Task<IActionResult> SetElementRankingList(List<ElementRankingModel> elements, Int64 moduleId, bool isStudy)
         {
-            var result = await _moduleService.SetElementRankingList(elements, moduleId);
+            var result = await _moduleService.SetElementRankingList(elements, moduleId, isStudy);
             return Ok(result);
         }
     }
