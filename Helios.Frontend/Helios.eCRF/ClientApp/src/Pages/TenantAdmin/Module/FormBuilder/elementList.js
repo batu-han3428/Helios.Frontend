@@ -335,7 +335,7 @@ function ElementList(props) {
 
             return (
                 <Row className={cls} key={item.id}>
-                    <div className="actionBtnDiv" style={{ textAlign: (item.elementType === 1 || item.elementType === 15) ? 'right' : '' }}>
+                    <div className="actionBtnDiv" style={{ textAlign: (item.elementType === 1) ? 'right' : '', marginLeft: (item.elementType===15) ? "20px":" " }}>
                         <label style={{ marginRight: '5px' }}>
                             {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
                             {item.elementType !== 1 && item.title}

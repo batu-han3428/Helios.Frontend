@@ -3,11 +3,10 @@ import {
     Collapse, Label
 } from "reactstrap";
 import { withTranslation } from "react-i18next";
-import PropTypes from 'prop-types';
+import PropTypes, { element } from 'prop-types';
 
 
-const AccordionComp = ({ title, body, t, isOpened }) => {
-    
+const AccordionComp = ({ title, body, t, isOpened, elementType }) => {
     const [isOpen, setIsOpen] = useState(isOpened);
 
     const toggleAccordion = () => {
@@ -20,7 +19,7 @@ const AccordionComp = ({ title, body, t, isOpened }) => {
 
     return (
         <>
-            <i onClick={toggleAccordion} className={isOpen ? "mdi mdi-chevron-up" : "mdi mdi-chevron-down"} style={{ fontSize: title === "" ? "20px":"12px", marginRight: "5px", cursor: "pointer" }}></i><Label style={{ borderBottom: title === "" ? "" : "1px solid black" }} className="form-label">{t(title)}</Label>
+            <i onClick={toggleAccordion} className={isOpen ? "mdi mdi-chevron-up" : "mdi mdi-chevron-down"} style={{ fontSize: title === "" ? "20px" : "12px", marginRight: "5px", cursor: "pointer", marginTop: elementType===15 ? "-38px":"" }}></i><Label style={{ borderBottom: title === "" ? "" : "1px solid black" }} className="form-label">{t(title)}</Label>
             <Collapse isOpen={isOpen}>
                 <div style={{ padding: "5px 0" }}>
                     {body}

@@ -149,7 +149,7 @@ class TableElement extends Component {
     }  
     render() {
         return (
-            <AccordionComp title="" isOpened={true} body={
+            <AccordionComp title="" isOpened={true} elementType={15} body={
                  <>
             <div className="table-responsive mb-3">
                 <Table className="table table-hover table-bordered mb-0">
