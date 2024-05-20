@@ -333,7 +333,7 @@ function ElementList(props) {
 
             return (
                 <Col className={cls} key={item.id}>
-                    <div className="actionBtnDiv" style={{ textAlign: item.elementType === 1 ? 'right' : '' }}>
+                    <div className="actionBtnDiv" style={{ textAlign: (item.elementType === 1) ? 'right' : '', marginLeft: (item.elementType === 15) ? "20px" : " ", marginBottom: (item.elementType === 15) ? "-35px" : " " }}>
                         <label style={{ marginRight: '5px' }}>
                             {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
                             {item.elementType !== 1 && item.title}
