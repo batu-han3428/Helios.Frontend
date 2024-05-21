@@ -5,7 +5,7 @@ import { withTranslation } from "react-i18next";
 import { formatDate } from "../../../helpers/format_date";
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../../store/loader/actions';
-import { MDBDataTable } from "mdbreact";
+//import { MDBDataTable } from "mdbreact";
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate, useLocation } from "react-router-dom";
@@ -236,17 +236,17 @@ const EmailTemplateList = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>
-                                    <MDBDataTable
-                                        paginationLabel={[props.t("Previous"), props.t("Next")]}
-                                        entriesLabel={props.t("Show entries")}
-                                        searchLabel={props.t("Search")}
-                                        noRecordsFoundLabel={props.t("No matching records found")}
-                                        hover
-                                        responsive
-                                        striped
-                                        bordered
-                                        data={data}
-                                    />
+                                    {/*<MDBDataTable*/}
+                                    {/*    paginationLabel={[props.t("Previous"), props.t("Next")]}*/}
+                                    {/*    entriesLabel={props.t("Show entries")}*/}
+                                    {/*    searchLabel={props.t("Search")}*/}
+                                    {/*    noRecordsFoundLabel={props.t("No matching records found")}*/}
+                                    {/*    hover*/}
+                                    {/*    responsive*/}
+                                    {/*    striped*/}
+                                    {/*    bordered*/}
+                                    {/*    data={data}*/}
+                                    {/*/>*/}
                                 </CardBody>
                             </Card>
                         </Col>

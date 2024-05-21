@@ -14,7 +14,7 @@ import Breadcrumbs from "../../../components/Common/Breadcrumb";
 
 // Form Mask
 import InputMask from "react-input-mask";
-import MaterialInput from "@material-ui/core/Input";
+//import MaterialInput from "@material-ui/core/Input";
 
 const FormMask = () => {
 
@@ -25,9 +25,9 @@ const FormMask = () => {
       className="form-control input-color"
       onChange={props.onChange}
     >
-      {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
-      )}
+      {/*{inputProps => (*/}
+      {/*  <MaterialInput {...inputProps} type="tel" disableUnderline />*/}
+      {/*)}*/}
     </InputMask>
   );
 
@@ -38,9 +38,9 @@ const FormMask = () => {
       className="form-control input-color"
       onChange={props.onChange}
     >
-      {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
-      )}
+      {/*{inputProps => (*/}
+      {/*  <MaterialInput {...inputProps} type="tel" disableUnderline />*/}
+      {/*)}*/}
     </InputMask>
   );
 
@@ -51,7 +51,7 @@ const FormMask = () => {
       className="form-control input-color"
       onChange={props.onChange}
     >
-      {inputProps => <MaterialInput {...inputProps} disableUnderline />}
+      {/*{inputProps => <MaterialInput {...inputProps} disableUnderline />}*/}
     </InputMask>
   );
 
@@ -62,9 +62,9 @@ const FormMask = () => {
       className="form-control input-color"
       onChange={props.onChange}
     >
-      {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
-      )}
+      {/*{inputProps => (*/}
+      {/*  <MaterialInput {...inputProps} type="tel" disableUnderline />*/}
+      {/*)}*/}
     </InputMask>
   );
 
@@ -75,9 +75,9 @@ const FormMask = () => {
       className="form-control input-color"
       onChange={props.onChange}
     >
-      {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
-      )}
+      {/*{inputProps => (*/}
+      {/*  <MaterialInput {...inputProps} type="tel" disableUnderline />*/}
+      {/*)}*/}
     </InputMask>
   );
 
@@ -88,9 +88,9 @@ const FormMask = () => {
       className="form-control input-color"
       onChange={props.onChange}
     >
-      {inputProps => (
-        <MaterialInput {...inputProps} prefix="$" type="tel" disableUnderline />
-      )}
+      {/*{inputProps => (*/}
+      {/*  <MaterialInput {...inputProps} prefix="$" type="tel" disableUnderline />*/}
+      {/*)}*/}
     </InputMask>
   );
 
@@ -101,9 +101,9 @@ const FormMask = () => {
       className="form-control input-color"
       onChange={props.onChange}
     >
-      {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
-      )}
+      {/*{inputProps => (*/}
+      {/*  <MaterialInput {...inputProps} type="tel" disableUnderline />*/}
+      {/*)}*/}
     </InputMask>
   );
 
@@ -114,9 +114,9 @@ const FormMask = () => {
       className="form-control input-color"
       onChange={props.onChange}
     >
-      {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
-      )}
+      {/*{inputProps => (*/}
+      {/*  <MaterialInput {...inputProps} type="tel" disableUnderline />*/}
+      {/*)}*/}
     </InputMask>
   );
 

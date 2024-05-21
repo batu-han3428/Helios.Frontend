@@ -4,7 +4,7 @@ import { withTranslation } from "react-i18next";
 import { useLazyRoleUsersListGetQuery } from '../../../store/services/Permissions';
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useDispatch } from 'react-redux';
-import { MDBDataTable } from "mdbreact";
+//import { MDBDataTable } from "mdbreact";
 
 
 const PermissionShowUsersRole = props => {
@@ -83,17 +83,18 @@ const PermissionShowUsersRole = props => {
     }, [resultData, isError, isLoading, props.t]);
 
     return (
-        <MDBDataTable
-            paginationLabel={[props.t("Previous"), props.t("Next")]}
-            entriesLabel={props.t("Show entries")}
-            searchLabel={props.t("Search")}
-            noRecordsFoundLabel={props.t("No matching records found")}
-            hover
-            responsive
-            striped
-            bordered
-            data={data}
-        />
+        //<MDBDataTable
+        //    paginationLabel={[props.t("Previous"), props.t("Next")]}
+        //    entriesLabel={props.t("Show entries")}
+        //    searchLabel={props.t("Search")}
+        //    noRecordsFoundLabel={props.t("No matching records found")}
+        //    hover
+        //    responsive
+        //    striped
+        //    bordered
+        //    data={data}
+        ///>
+        <></>
     )
 }
 

@@ -8,15 +8,14 @@ import {
     MDBTabs,
     MDBTabsItem,
     MDBTabsLink,
-    MDBTabsContent,
-    MDBTabsPane
+    MDBTabsContent
 } from 'mdb-react-ui-kit';
 import "./tenantusers.css";
 import { useLazyTenantUserListGetQuery, useTenantUserSetMutation } from '../../../store/services/TenantUsers';
 import { formatDate } from "../../../helpers/format_date";
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../../store/loader/actions';
-import { MDBDataTable } from "mdbreact";
+//import { MDBDataTable } from "mdbreact";
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import * as Yup from "yup";
 import { useFormik } from "formik";

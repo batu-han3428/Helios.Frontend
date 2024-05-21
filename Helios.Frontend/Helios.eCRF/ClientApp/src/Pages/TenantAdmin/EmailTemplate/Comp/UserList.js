@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader, CardTitle} from "reactstrap";
 import { withTranslation } from "react-i18next";
-import { MDBDataTable } from "mdbreact";
+//import { MDBDataTable } from "mdbreact";
 import { useLazyStudyRoleUsersListGetQuery } from '../../../../store/services/Permissions';
 import { startloading, endloading } from '../../../../store/loader/actions';
 import { useDispatch } from 'react-redux';
@@ -56,17 +56,17 @@ const UserList = props => {
                 <CardTitle>{props.t("List of users to view the email")}</CardTitle>
             </CardHeader>
             <CardBody>
-                <MDBDataTable
-                    paginationLabel={[props.t("Previous"), props.t("Next")]}
-                    entriesLabel={props.t("Show entries")}
-                    searchLabel={props.t("Search")}
-                    noRecordsFoundLabel={props.t("No matching records found")}
-                    hover
-                    responsive
-                    striped
-                    bordered
-                    data={data}
-                />
+                {/*<MDBDataTable*/}
+                {/*    paginationLabel={[props.t("Previous"), props.t("Next")]}*/}
+                {/*    entriesLabel={props.t("Show entries")}*/}
+                {/*    searchLabel={props.t("Search")}*/}
+                {/*    noRecordsFoundLabel={props.t("No matching records found")}*/}
+                {/*    hover*/}
+                {/*    responsive*/}
+                {/*    striped*/}
+                {/*    bordered*/}
+                {/*    data={data}*/}
+                {/*/>*/}
             </CardBody>
         </Card>
     );
