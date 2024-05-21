@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Slider from 'react-slider';
-import 'react-rangeslider/lib/index.css';
 import './rangeSliderElement.css';
 
 
