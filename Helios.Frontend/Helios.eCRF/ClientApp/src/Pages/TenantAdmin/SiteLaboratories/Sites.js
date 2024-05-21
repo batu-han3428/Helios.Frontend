@@ -16,9 +16,11 @@ import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { formatDate } from "../../../helpers/format_date";
 import Swal from 'sweetalert2'
 import { exportToExcel } from '../../../helpers/ExcelDownload';
+import { Table } from 'antd';
+import './Sites.css';
 
 const Sites = props => {
-
+    
     const toastRef = useRef();
 
     const modalRef = useRef();
@@ -167,6 +169,49 @@ const Sites = props => {
         ],
         rows: tableData
     }
+    const columns = [
+        {
+            title: props.t('Site Name'),
+            dataIndex: 'siteFullName',
+            sorter: (a, b) => a.siteFullName.localeCompare(b.siteFullName),
+            sortDirections: ['ascend', 'descend'],         
+        },
+        {
+            title: props.t('Site no'),
+            dataIndex: 'code',
+            sorter: (a, b) => a.code.localeCompare(b.code),
+            sortDirections: ['ascend', 'descend'],          
+        },
+        {
+            title: props.t('Country code'),
+            dataIndex: 'countryCode',
+            sorter: (a, b) => a.countryCode.localeCompare(b.countryCode),
+            sortDirections: ['ascend', 'descend'],           
+        },
+        {
+            title: props.t('Country'),
+            dataIndex: 'countryName',
+            sorter: (a, b) => a.countryName.localeCompare(b.countryName),
+            sortDirections: ['ascend', 'descend'],           
+        },
+        {
+            title: props.t('Number of subjects that can be added to the center'),
+            dataIndex: 'maxEnrolmentCount',
+            sorter: (a, b) => a.maxEnrolmentCount.localeCompare(b.maxEnrolmentCount),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Last updated on"'),
+            dataIndex: 'updatedAt',
+            sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+            sortDirections: ['ascend', 'descend'],
+        },     
+        {
+            title: props.t('Actions'),
+            dataIndex: 'actions',
+            width: "170px",           
+        },
+    ];
 
     const [triggerSites, resultSites] = useLazySiteListGetQuery();
     const { data: siteData, error, isLoading } = resultSites;
@@ -315,6 +360,12 @@ const Sites = props => {
                                     {/*    searchLabel={props.t("Search")}*/}
                                     {/*    noRecordsFoundLabel={props.t("No matching records found")}*/}
                                     {/*    hover responsive striped bordered data={data} />*/}
+                                    <Table
+                                        dataSource={tableData.map(item => ({ ...item, key: item.id }))}
+                                        columns={columns}
+                                        pagination={true}
+                                        scroll={{ x: 'max-content' }}                                       
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>
