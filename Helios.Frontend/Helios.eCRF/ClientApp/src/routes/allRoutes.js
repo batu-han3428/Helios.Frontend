@@ -84,7 +84,7 @@ import UiOffcanvas from "../Pages/Template/Ui/UiOffcanvas";
 
 
 //Module
-import FormBuilder from "../Pages/TenantAdmin/Module/FormBuilder/formBuilder.js";
+import FormBuilder from "../Pages/TenantAdmin/Module/FormBuilder/FormBuilder.js";
 import Preview from "../Pages/TenantAdmin/Module/FormBuilder/preview.js";
 import Module from "../Pages/TenantAdmin/Module/moduleList.js";
 import AddOrUpdateModule from "../Pages/TenantAdmin/Module/addOrUpdateModule.js";
@@ -93,7 +93,6 @@ import AddOrUpdateModule from "../Pages/TenantAdmin/Module/addOrUpdateModule.js"
 import StudyList from "../Pages/TenantAdmin/Study/StudyList";
 import AddOrUpdateStudy from "../Pages/TenantAdmin/Study/AddOrUpdateStudy";
 import Study from "../Pages/TenantAdmin/Visit/VisitList";
-import VisitFormBuilder from "../Pages/TenantAdmin/Visit/StudyModule/visitFormBuilder";
 
 //Site & Laboratories
 import Sites from "../Pages/TenantAdmin/SiteLaboratories/Sites";
@@ -135,14 +134,13 @@ const userRoutes = [
     //Module
     { path: "/moduleList", component: <Module />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/addModule", component: <AddOrUpdateModule />, menuType: "admin", roles: ['TenantAdmin'] },
-    { path: "/formBuilder/:moduleId", component: <FormBuilder />, menuType: "admin", roles: ['TenantAdmin'] },
+    { path: "/formBuilder/:moduleId/:isStudy", component: <FormBuilder />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/preview/:moduleId", component: <Preview />, menuType: "admin", roles: ['TenantAdmin'] },
 
     //study
     { path: "/studylist/:isLocked", component: <StudyList />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/addstudy", component: <AddOrUpdateStudy />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/visits/:studyId", component: <Study />, menuType: "study", roles: ['TenantAdmin'] },
-    { path: "/visitFormBuilder/:studyVisitPageModuleId", component: <VisitFormBuilder />, menuType: "admin", roles: ['TenantAdmin'] },
 
     //sites
     { path: "/sites/:studyId", component: <Sites />, menuType: "study", roles: ['TenantAdmin'] },

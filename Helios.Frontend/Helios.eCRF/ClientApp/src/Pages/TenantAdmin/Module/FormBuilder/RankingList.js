@@ -17,11 +17,11 @@ const RankingList = props => {
     const [trigger, { data: rankingData, error, isLoading }] = useLazyElementRankingListGetQuery();
 
     useEffect(() => {
-        if (props.moduleId) {
+        if (props.moduleId && props.isStudy !== undefined) {
             dispatch(startloading());
-            trigger(props.moduleId);
+            trigger({ moduleId: props.moduleId, isStudy: props.isStudy === 'true' ? true : false });
         }
-    }, [props.moduleId]);
+    }, [props.moduleId, props.isStudy]);
 
     useEffect(() => {
         if (!isLoading && !error && rankingData) {
@@ -51,7 +51,7 @@ const RankingList = props => {
         updateOrderValues(filteredItems);
     }
 
-    const moveItem = (dragKey, hoverKey, isDragChild, isNodeChild, isNodeDragOver, dropPosition, isNodeParent, dragParentIndex, nodeDragParentIndex, nodeDragOverGapTop) => {
+    const moveItem = (dragKey, hoverKey, isDragChild, isNodeChild, isNodeDragOver, dropPosition, isNodeParent, dragParentIndex, nodeDragParentIndex, nodeDragOverGapTop, dragOverGapBottom) => {
         const findItem = (arr, key) => {
             for (let i = 0; i < arr.length; i++) {
                 const item = arr[i];
@@ -71,7 +71,8 @@ const RankingList = props => {
         const { item: dragItem, index: dragIndex, array: dragArray } = findItem(items, dragKey);
         const { item: hoverItem, index: hoverIndex, array: hoverArray } = findItem(items, hoverKey);
 
-        if (!dragItem || !hoverItem || dragItem.key === hoverKey || ((isNodeChild && dragItem.children) || (dragItem.children && hoverItem.children))) {
+        if (!dragItem || !hoverItem || dragItem.key === hoverKey || ((isNodeChild && dragItem.children) || (dragItem.children && hoverItem.children && !dragOverGapBottom))) {
+            console.log('return')
             return;
         }
 
@@ -291,8 +292,9 @@ const RankingList = props => {
         const dragParentIndex = getParentIndex(info.dragNode.pos);
         const nodeDragParentIndex = getParentIndex(info.node.pos);
         const nodeDragOverGapTop = info.node.dragOverGapTop;
+        const dragOverGapBottom = info.node.dragOverGapBottom;
 
-        moveItem(dragKey, hoverKey, isDragChild, isNodeChild, isNodeDragOver, dropPosition, isNodeParent, dragParentIndex, nodeDragParentIndex, nodeDragOverGapTop);
+        moveItem(dragKey, hoverKey, isDragChild, isNodeChild, isNodeDragOver, dropPosition, isNodeParent, dragParentIndex, nodeDragParentIndex, nodeDragOverGapTop, dragOverGapBottom);
     };
 
     const generateTreeNodes = (data) =>
@@ -353,7 +355,7 @@ const RankingList = props => {
                 dispatch(endloading());
                 return;
             }
-            const response = await elementRankingListSet({ elements: items, moduleId: parseInt(props.moduleId) });
+            const response = await elementRankingListSet({ elements: items, moduleId: parseInt(props.moduleId), isStudy: props.isStudy === 'true' ? true : false });
             if (response.data.isSuccess) {
                 props.fetchData();
                 props.toast.current.setToast({

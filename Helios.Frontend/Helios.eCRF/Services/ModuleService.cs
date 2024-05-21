@@ -1,11 +1,9 @@
 ﻿using Helios.Common.DTO;
 using Helios.Common.Model;
-using Helios.eCRF.Models;
 using Helios.eCRF.Services.Base;
 using Helios.eCRF.Services.Interfaces;
 using Newtonsoft.Json;
 using RestSharp;
-using System.Text.Json;
 
 namespace Helios.eCRF.Services
 {
@@ -309,22 +307,23 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<RestResponse<List<ElementRankingModel>>> GetElementRankingList(Int64 moduleId)
+        public async Task<RestResponse<List<ElementRankingModel>>> GetElementRankingList(Int64 moduleId, bool isStudy)
         {
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreModule/GetElementRankingList", Method.Get);
                 req.AddParameter("moduleId", moduleId);
+                req.AddParameter("isStudy", isStudy);
                 var result = await client.ExecuteAsync<List<ElementRankingModel>>(req);
                 return result;
             }
         }
 
-        public async Task<ApiResponse<dynamic>> SetElementRankingList(List<ElementRankingModel> elements, Int64 moduleId)
+        public async Task<ApiResponse<dynamic>> SetElementRankingList(List<ElementRankingModel> elements, Int64 moduleId, bool isStudy)
         {
             using (var client = CoreServiceClient)
             {
-                var req = new RestRequest($"CoreModule/SetElementRankingList?moduleId={moduleId}", Method.Post);
+                var req = new RestRequest($"CoreModule/SetElementRankingList?moduleId={moduleId}&isStudy={isStudy}", Method.Post);
                 req.AddJsonBody(elements);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
