@@ -14,8 +14,7 @@ import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import SubjectDetailElementList from './SubjectDetailElementList.js';
 
 const SubjectDetail = props => {
-    
-    const { studyId, subjectId, pageId } = useParams();
+    const { studyId, pageId, subjectId } = useParams();
 
     const dispatch = useDispatch();
     const toastRef = useRef();

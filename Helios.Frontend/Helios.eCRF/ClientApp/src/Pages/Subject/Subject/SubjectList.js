@@ -33,14 +33,14 @@ const SubjectList = props => {
         }
     }, [subjectsData, error, isLoading]);
 
-    const goToSubjectDetail = (studyId, id, pageId) => {
-        navigate(`/subject-detail/${studyId}/${id}/${pageId}`);
+    const goToSubjectDetail = (studyId, pageId, subjectId) => {
+        navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}`);
     };
 
     const getActions = ({ id, firstPageId }) => {
         const actions = (
             <div className="icon-container">
-                <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(studyId, id, firstPageId) }}></div>
+                <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(studyId, firstPageId, id) }}></div>
             </div>);
         return actions;
     };

@@ -12,11 +12,9 @@ namespace Helios.eCRF.Controllers
     public class SubjectController : Controller
     {
         private ISubjectService _subjectService;
-        ICacheService _cacheService;
-        public SubjectController(ISubjectService subjectService, ICacheService cacheService)
+        public SubjectController(ISubjectService subjectService)
         {
             _subjectService = subjectService;
-            _cacheService = cacheService;
         }
 
         /// <summary>
@@ -67,8 +65,8 @@ namespace Helios.eCRF.Controllers
         [RoleAttribute(Roles.StudyUser)]
         public async Task<IActionResult> GetSubjectDetailMenu(Int64 studyId)
         {
-            var result = await _cacheService.GetSubjectDetailMenu(studyId);
-            return new ObjectResult(result);
+            var result = await _subjectService.GetSubjectDetailMenu(studyId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
 

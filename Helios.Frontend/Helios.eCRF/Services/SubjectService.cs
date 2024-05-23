@@ -44,9 +44,9 @@ namespace Helios.eCRF.Services
 
         public async Task<RestResponse<List<SubjectDetailMenuModel>>> GetSubjectDetailMenu(Int64 studyId)
         {
-            using (var client = CoreServiceClient)
+            using (var client = SharedServiceClient)
             {
-                var req = new RestRequest("CoreSubject/GetSubjectDetailMenu", Method.Get);
+                var req = new RestRequest("Cache/GetSubjectDetailMenu", Method.Get);
                 req.AddParameter("studyId", studyId);
                 var result = await client.ExecuteAsync<List<SubjectDetailMenuModel>>(req);
                 return result;

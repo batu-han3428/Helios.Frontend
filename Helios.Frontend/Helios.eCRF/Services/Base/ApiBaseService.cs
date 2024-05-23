@@ -29,6 +29,10 @@ namespace Helios.eCRF.Services.Base
             get { return new RestClient(new Uri("http://core:8080")); }
         }
 
+        protected RestClient SharedServiceClient {
+            get { return new RestClient(new Uri("http://shared:8080")); }
+        }
+
         public void OnServiceInstanceCreated()
         {
             var httpContext = _httpContextAccessor.HttpContext;

@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class NumericElement extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = {
             id: props.Id,
             isDisable: props.IsDisable,
@@ -11,7 +11,7 @@ class NumericElement extends Component {
             Mask: props.Mask,
             LowerLimit: props.LowerLimit,
             UpperLimit: props.UpperLimit,
-            Value: props.ElementValue
+            Value: props.Value
         }
 
         this.handleChange = this.handleChange.bind(this);

@@ -12,12 +12,10 @@ namespace Helios.eCRF.Controllers
     public class StudyController : Controller
     {
         private IStudyService _studyService;
-        private ICacheService _cacheService;
 
-        public StudyController(IStudyService studyService, ICacheService cacheService)
+        public StudyController(IStudyService studyService)
         {
             _studyService = studyService;
-            _cacheService = cacheService;
         }
 
         #region Study
@@ -272,11 +270,6 @@ namespace Helios.eCRF.Controllers
         {
             var result = await _studyService.SetVisits(visitDTO);
 
-            if (result.IsSuccess)
-            {
-                _cacheService.SetSubjectDetailMenu(visitDTO.StudyId);
-            }
-
             return Ok(result);
         }
 
@@ -291,11 +284,6 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> DeleteVisits(VisitDTO visitDTO)
         {
             var result = await _studyService.DeleteVisits(visitDTO);
-
-            if (result.IsSuccess)
-            {
-                _cacheService.SetSubjectDetailMenu(visitDTO.StudyId);
-            }
 
             return Ok(result);
         }

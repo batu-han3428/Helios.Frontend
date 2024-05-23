@@ -239,7 +239,7 @@ const userRoutes = [
 
     //Subject
     { path: "/subjectlist", component: <SubjectList />, menuType: "sso", roles: ['StudyUser'] },
-    { path: "/subject-detail/:studyId/:subjectId/:pageId", component: <SubjectDetail />, menuType: "sso", roles: ['StudyUser'] },
+    { path: "/subject-detail/:studyId/:pageId/:subjectId", component: <SubjectDetail />, menuType: "sso", roles: ['StudyUser'] },
 
     // this route should be at the end of all other routes
     { path: "/", roles: ["TenantAdmin"], redirect: "/studylist/false", menuType: "admin" },
