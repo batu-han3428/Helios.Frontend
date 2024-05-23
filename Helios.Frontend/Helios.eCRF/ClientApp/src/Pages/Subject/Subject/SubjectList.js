@@ -1,24 +1,40 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { Table, Row, Col, Typography } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button } from 'reactstrap';
+import { Button, Form } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
-import { useDispatch } from "react-redux";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useDispatch, useSelector } from "react-redux";
+import Select from "react-select";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useAddSubjectMutation, useGetSubjectListQuery } from '../../../store/services/Subject';
+import ModalComp from '../../../components/Common/ModalComp/ModalComp';
+import { API_BASE_URL } from '../../../constants/endpoints';
 import "./Subject.css";
 
 const SubjectList = props => {
+    const modalRef = useRef();
+    const toastRef = useRef();
+    const [modalTitle, setModalTitle] = useState("");
+    const [modalButtonText, setModalButtonText] = useState("");
+    const [modalContent, setModalContent] = useState(null);
+    const [selectedSite, setselectedSite] = useState(null);
+    const [selectSites, setselectSites] = useState([]);
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [addingSubject] = useAddSubjectMutation();
     const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
 
+    const userInformation = useSelector(state => state.rootReducer.Login);
+
     useEffect(() => {
+        optionGroup(8);
         if (!error && !isLoading && subjectsData) {
             const updatedSubjectsData = subjectsData.map(item => {
                 return {
@@ -27,7 +43,6 @@ const SubjectList = props => {
                 };
             });
             setData(updatedSubjectsData);
-
             dispatch(endloading());
         }
     }, [subjectsData, error, isLoading]);
@@ -44,6 +59,119 @@ const SubjectList = props => {
         return actions;
     };
 
+    const validationType = useFormik({
+        enableReinitialize: true,
+        initialValues: {
+            studyId: "8",
+            site: userInformation.site,
+            initialName: userInformation.ini,
+        },
+        validationSchema: Yup.object().shape({
+            site: Yup.string().required(
+                props.t("This field is required")
+            ),
+            initialName: Yup.string().required(
+                props.t("This field is required")
+            ),
+
+        }),
+        onSubmit: async (values) => {
+            debugger
+            try {
+                dispatch(startloading());
+                const response = await addingSubject(values);
+                if (response.data.isSuccess) {
+                    toastRef.current.setToast({
+                        message: props.t(response.data.message),
+                        stateToast: true
+                    });
+                    modalRef.current.tog_backdrop();
+                    dispatch(endloading());
+                } else {
+                    toastRef.current.setToast({
+                        message: props.t(response.data.message),
+                        stateToast: false
+                    });
+                    dispatch(endloading());
+                }
+            } catch (e) {
+                dispatch(endloading());
+            }
+        }
+    });
+
+    const modalContent2 = () => {
+        const content = (
+            <>
+                <Form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        validationType.handleSubmit();
+                        return false;
+                    }}>
+                    <div className='row'>
+                        <div className='form-group'>
+                            {selectSites.length > 1 &&
+                                <div className="mb-12" style={{ marginBottom: "15px" }}>
+                                    <label className="form-label"> {props.t('Site')}</label>
+                                    <Select
+                                        name='site'
+                                        value={validationType.values.site || ""}
+                                        onChange={validationType.handleChange}
+                                        onBlur={(e) => {
+                                            validationType.handleBlur(e);
+                                        }}
+                                        options={selectSites}
+                                        getOptionLabel={(option) => option.name}
+                                        getOptionValue={(option) => option.id}
+                                        placeholder={props.t("Select")}
+                                        classNamePrefix="select2-selection" />
+                                </div>
+                            }
+                            <div className="mb-12" >
+                                <label className="control-label">
+                                    {props.t('Subject initial')}
+                                </label>
+                                <input className='form-control' type='text' name='initialName' onChange={validationType.handleChange}
+                                    onBlur={(e) => {
+                                        validationType.handleBlur(e);
+                                    }} />
+                            </div>
+                        </div>
+                    </div>
+                </Form>
+            </>
+        );
+        return content;
+    };
+    const openModal = () => {
+        setModalTitle(props.t('Add new subject'));
+        setModalButtonText(props.t('Save'));
+        setModalContent(modalContent2());
+        toggleModal();
+    }
+    const resetValue = () => {
+        validationType.validateForm().then(errors => {
+            validationType.setErrors({});
+            validationType.resetForm();
+        });
+    };
+    const toggleModal = () => {
+        modalRef.current.tog_backdrop();
+    }
+
+    const optionGroup = (id) => {
+        fetch(API_BASE_URL + 'Subject/GetSites?studyId=' + id, {
+            method: 'GET',
+        })
+            .then(response => response.json())
+            .then(data => {
+                setselectSites(data);
+            })
+            .catch(error => {
+
+            });
+    };
     const addSubject = (id) => {
         Swal.fire({
             title: props.t("You have unsaved changes"),
@@ -55,7 +183,7 @@ const SubjectList = props => {
             cancelButtonText: props.t("Cancel"),
         }).then(async (result) => {
             if (result.isConfirmed) {
-                    dispatch(startloading());
+                dispatch(startloading());
                 const response = await addingSubject(8);
                 if (response.data.isSuccess) {
                     dispatch(endloading());
@@ -79,12 +207,12 @@ const SubjectList = props => {
             }
         });
     };
-    
+
     const columns = [
         {
             title: props.t('subjectNumber'),
             dataIndex: 'subjectNumber',
-            key:'subjectNumber'
+            key: 'subjectNumber'
         },
         {
             title: 'firstPageId',
@@ -95,7 +223,7 @@ const SubjectList = props => {
         {
             title: props.t('Actions'),
             dataIndex: 'actions',
-            key:'actions'
+            key: 'actions'
         },
     ];
 
@@ -114,8 +242,8 @@ const SubjectList = props => {
                     </div>
                     <Row>
                         <Col className="col-12">
-                            <div style={{ display: 'inline-block', float: 'right' }} onClick={addSubject}>
-                                <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>Yeni hasta ekle</Typography.Text>
+                            <div style={{ display: 'inline-block', float: 'right' }} onClick={openModal}>
+                                <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>{props.t('Add new subject')}</Typography.Text>
                                 <Button color="success" className="rounded-circle">
                                     <FontAwesomeIcon icon="fa-plus" />
                                 </Button>
@@ -132,6 +260,16 @@ const SubjectList = props => {
                     </Row>
                 </div>
             </div>
+            <ModalComp
+                refs={modalRef}
+                title={modalTitle}
+                body={modalContent}
+                resetValue={resetValue}
+                handle={() => validationType.handleSubmit()}
+                buttonText={modalButtonText}
+                isButton={true}
+                size="lg"
+            />
         </React.Fragment>
     )
 }

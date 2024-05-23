@@ -411,5 +411,8 @@
   "Updated by": "Güncelleyen kişi",
   "Check list": "Çoklu seçim butonu",
   "Datagrid": "Çoklu veri tablosu",
-  "Table": "Tablo"
+  "Table": "Tablo",
+  "Add new subject": "Yeni hasta ekle",
+  "Subject initial": "Hastanın baş harfleri",
+  "Site": "Merkez"
 }

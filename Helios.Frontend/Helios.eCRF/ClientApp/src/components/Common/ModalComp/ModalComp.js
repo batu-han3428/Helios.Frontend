@@ -11,7 +11,7 @@ const ModalComp = ({ title, body, resetValue = null, handle, buttonText, t, refs
         if (!modal_backdrop) {
             if (resetValue !== null) resetValue();
         }
-        else{
+        else {
             const observer = new MutationObserver(() => {
                 const modalElement = document.querySelector('.modal');
                 if (modalElement) {
@@ -19,6 +19,7 @@ const ModalComp = ({ title, body, resetValue = null, handle, buttonText, t, refs
                     const secondParentDiv = firstParentDiv.parentNode;
                     secondParentDiv.style.zIndex = '9998';
                     observer.disconnect();
+                    if (resetValue !== null) resetValue();
                 }
             });
 

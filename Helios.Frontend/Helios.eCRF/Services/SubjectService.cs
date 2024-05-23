@@ -24,7 +24,17 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<ApiResponse<dynamic>> AddSubject(Int64 studyId)
+        public async Task<ApiResponse<dynamic>> AddSubject(SubjectDTO SubjectDTO)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/AddSubject", Method.Post);
+                req.AddJsonBody(SubjectDTO);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+        public async Task<RestResponse<List<SiteModel>>> GetSites(Int64 studyId)
         {
             var model = new SubjectDTO
             {
@@ -35,13 +45,12 @@ namespace Helios.eCRF.Services
 
             using (var client = CoreServiceClient)
             {
-                var req = new RestRequest("CoreSubject/AddSubject", Method.Post);
+                var req = new RestRequest("CoreSubject/GetSites", Method.Post);
                 req.AddJsonBody(model);
-                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
-                return result.Data;
+                var result = await client.ExecuteAsync<List<SiteModel>>(req);
+                return result;
             }
         }
-
         public async Task<RestResponse<List<SubjectDetailMenuModel>>> GetSubjectDetailMenu(Int64 subjectId)
         {
             using (var client = CoreServiceClient)
