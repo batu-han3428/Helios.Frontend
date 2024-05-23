@@ -22,10 +22,10 @@ export const SubjectApi = createApi({
             providesTags: ['Subject'],
         }),
         addSubject: builder.mutation({
-            query: (data,values) => ({
+            query: (values) => ({
                 url: '/Subject/AddSubject',
-                method: 'POST',
-                body: values
+                method: 'POST',              
+                body:values               
             }),
             invalidatesTags: ['Subject'],
         }),

@@ -31,7 +31,7 @@ const ModalComp = ({ title, body, resetValue = null, handle, buttonText, t, refs
         document.body.classList.add('no_padding');
     };
 
-    const tog_backdrop = () => {
+    const tog_backdrop = () => {       
         setmodal_backdrop(!modal_backdrop);
         removeBodyCss();
     };

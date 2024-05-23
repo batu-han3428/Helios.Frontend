@@ -2,6 +2,7 @@
 using Helios.Common.Enums;
 using Helios.Common.Model;
 using Helios.eCRF.Attributes;
+using Helios.eCRF.Services;
 using Helios.eCRF.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -84,6 +85,13 @@ namespace Helios.eCRF.Controllers
         public async Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model)
         {
             var result = await _subjectService.AutoSaveSubjectData(model);
+            return result;
+        }
+
+        [HttpGet]     
+        public async Task<bool> GetStudyAskSubjectInitial(Int64 studyId)
+        {
+            var result = await _subjectService.GetStudyAskSubjectInitial(studyId);
             return result;
         }
     }

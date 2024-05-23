@@ -40,7 +40,8 @@ namespace Helios.eCRF.Services
             {
                 StudyId = studyId,
                 SiteId = 3,
-                SubjectNumber = ""
+                SubjectNumber = "",
+                InitialName=""
             };
 
             using (var client = CoreServiceClient)
@@ -81,6 +82,17 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreSubject/AutoSaveSubjectData", Method.Post);
                 req.AddJsonBody(model);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
+        public async Task<bool> GetStudyAskSubjectInitial(Int64 studyId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/GetStudyAskSubjectInitial", Method.Get);
+                req.AddParameter("studyId", studyId);
+                var result = await client.ExecuteAsync<bool>(req);
                 return result.Data;
             }
         }
