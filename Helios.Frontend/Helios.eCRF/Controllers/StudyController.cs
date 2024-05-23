@@ -2,7 +2,6 @@
 using Helios.Common.Enums;
 using Helios.Common.Model;
 using Helios.eCRF.Attributes;
-using Helios.eCRF.Services;
 using Helios.eCRF.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -417,6 +416,32 @@ namespace Helios.eCRF.Controllers
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// visit relation sayfasındaki verileri listeler
+        /// </summary>
+        /// <returns>relation ve sayfa listesi</returns>
+        [HttpGet]
+        [RoleAttribute(Roles.TenantAdmin)]
+        public async Task<IActionResult> GetVisitRelation()
+        {
+            var result = await _studyService.GetVisitRelation();
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
+        /// <summary>
+        /// visit relation verilerini kaydeder
+        /// </summary>
+        /// <param name="dto">relation verileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [RoleAttribute(Roles.TenantAdmin)]
+        public async Task<IActionResult> SetVisitRelation(List<StudyVisitRelationDTO> dto)
+        {
+            var result = await _studyService.SetVisitRelation(dto);
+            return Ok(result);
+        }
+
         #endregion
 
         #region Module

@@ -1,7 +1,6 @@
 ﻿using Helios.Common.DTO;
 using Helios.Common.Enums;
 using Helios.Common.Model;
-using Helios.eCRF.Models;
 using RestSharp;
 
 namespace Helios.eCRF.Services.Interfaces
@@ -43,5 +42,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ElementModel> GetVisitPageModuleElementData(Int64 id);
         Task<ModuleModel> GetStudyPageModule(Int64 id);
         Task<VisitCollectionModel> GetVisitCollectionInfo(Int64 elementId);
+        Task<RestResponse<StudyVisitRelationModel>> GetVisitRelation();
+        Task<ApiResponse<dynamic>> SetVisitRelation(List<StudyVisitRelationDTO> dto);
     }
 }

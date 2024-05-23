@@ -317,7 +317,7 @@ const Study = props => {
                 body={modalContent}
                 buttonText={modalButtonText}
                 isButton={true}
-                size="lg"
+                size="xl"
             />
         </React.Fragment>
     );
