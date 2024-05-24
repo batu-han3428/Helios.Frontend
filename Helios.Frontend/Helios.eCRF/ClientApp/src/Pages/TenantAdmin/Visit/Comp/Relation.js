@@ -151,7 +151,7 @@ const Relation = props => {
                 />
             ) : (
                 <Tag style={tagPlusStyle} icon={<PlusOutlined />} onClick={() => showInput(record)}>
-                    New Tag
+                    {props.t("New tag")}
                 </Tag>
             )}
         </div>
@@ -242,7 +242,7 @@ const Relation = props => {
                 onChange={(value) => handleSelectChange(record.key, value, fieldName)}
                 onSelect={(selectedValue, option) => handleSelect(record, selectedValue, fieldName, option)}
                 onDeselect={(deselectedValue, option) => handleDeselect(record, deselectedValue, fieldName, option)}
-                placeholder='Select Item...'
+                placeholder={props.t("Select")}
                 maxTagCount='responsive'
             >
                 {fieldName === 'sourcePageId' &&
@@ -269,21 +269,19 @@ const Relation = props => {
                         <Option key={option.value} value={option.value}>{option.label}</Option>
                     ))}
                 {fieldName === 'targetPage' && (
-                    <>
-                        {sourcePageOptions.map(visit => (
-                           <>
-                                <Option key={visit.key} value={visit.id} label="visit" style={{ fontWeight: 'bold', color:'red' }}>
-                                    {visit.label }
-                                </Option>
-                                {visit.options.map(page => (
-                                    <Option  key={page.id} value={page.id}>{page.label}</Option>
-                                ))}
-                            </>
-                        ))}
-                    </>
+                    sourcePageOptions.map(visit => (
+                        <React.Fragment key={visit.label}>
+                            <Option key={visit.key} value={visit.id} label="visit" style={{ fontWeight: 'bold', color:'red' }}>
+                                {visit.label }
+                            </Option>
+                            {visit.options.map(page => (
+                                <Option  key={page.id} value={page.id}>{page.label}</Option>
+                            ))}
+                        </React.Fragment>
+                    ))
                 )}
                 {fieldName === 'actionType' &&
-                    <Option key={2} value={2}>Hide</Option>
+                    <Option key={2} value={2}>{props.t('Hide')}</Option>
                 }
             </Select>
         )
@@ -299,43 +297,43 @@ const Relation = props => {
 
     const columns = [
         {
-            title: 'Source Page',
+            title: props.t('Source page'),
             dataIndex: 'sourcePageId',
             key: 'sourcePageId',
             render: (text, record) => renderSelect('sourcePageId', text, record),
         },
         {
-            title: 'Source Input',
+            title: props.t('Source input'),
             dataIndex: 'elementId',
             key: 'elementId',
             render: (text, record) => renderSelect('elementId', text, record),
         },
         {
-            title: 'Field Operation',
+            title: props.t('Field operation'),
             dataIndex: 'actionCondition',
             key: 'actionCondition',
             render: (text, record) => renderSelect('actionCondition', text, record),
         },
         {
-            title: 'Tags',
+            title: props.t('Input value'),
             dataIndex: 'actionValue',
             key: 'actionValue',
             render: renderTags,
         },
         {
-            title: 'Target Page',
+            title: props.t('Target page'),
             dataIndex: 'targetPage',
             key: 'targetPage',   
             render: (text, record) => renderSelect('targetPage', text, record),
         },
         {
-            title: 'Action Type',
+            title: props.t('Hide'),
             dataIndex: 'actionType',
             key: 'actionType',
             render: (text, record) => renderSelect('actionType', text, record),
         },
         {
-            title: 'Delete',
+            title: props.t('Delete'),
             dataIndex: 'delete',
             key: 'delete',
             render: (text, record) => renderDelete(record.key),

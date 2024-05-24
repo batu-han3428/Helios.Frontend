@@ -601,7 +601,7 @@ const handleTransferData = (openModal, studyId, activeStudyId, ref, toastRef, mo
 
 const handleRelation = (openModal, studyId, activeStudyId, ref, toastRef, modalRef) => {
     const content = <Relation studyId={studyId} activeStudyId={activeStudyId} toast={toastRef} refs={modalRef} />;
-    openModal({ title: "Relation", buttonText: "Save", content: content });
+    openModal({ title: i18n.t("Relation"), buttonText: i18n.t("Save"), content: content });
 };
 
 export function visitSettingsItems(openModal, studyId, activeStudyId, ref, toastRef, modalRef) {
