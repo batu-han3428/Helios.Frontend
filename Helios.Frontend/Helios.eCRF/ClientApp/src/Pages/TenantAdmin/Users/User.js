@@ -14,7 +14,7 @@ import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2'
 import { formatDate } from "../../../helpers/format_date";
-import { MDBDataTable } from "mdbreact";
+import { Table } from 'antd';
 import Select from "react-select";
 import { useLazyRoleListGetQuery } from '../../../store/services/Permissions';
 import { useLazySiteListGetQuery } from '../../../store/services/SiteLaboratories';
@@ -93,63 +93,62 @@ const User = props => {
     const data = {
         columns: [
             {
-                label: props.t("First name"),
-                field: "name",
-                sort: "asc",
-                width: 150
+                title: props.t('First name'),
+                dataIndex: 'name',
+                sorter: (a, b) => a.name.localeCompare(b.name),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Last name"),
-                field: "lastName",
-                sort: "asc",
-                width: 150
+                title: props.t('Last name'),
+                dataIndex: 'lastName',
+                sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("e-Mail"),
-                field: "email",
-                sort: "asc",
-                width: 150
+                title: props.t('e-Mail'),
+                dataIndex: 'email',
+                sorter: (a, b) => a.email.localeCompare(b.email),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Study role name"),
-                field: "roleName",
-                sort: "asc",
-                width: 150
+                title: props.t('Study role name'),
+                dataIndex: 'roleName',
+                sorter: (a, b) => a.roleName.localeCompare(b.roleName),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Site name"),
-                field: "siteName",
-                sort: "asc",
-                width: 150
+                title: props.t('Site name'),
+                dataIndex: 'siteName',
+                sorter: (a, b) => a.siteName.localeCompare(b.siteName),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Created on"),
-                field: "createdOn",
-                sort: "asc",
-                width: 150
+                title: props.t('Created on'),
+                dataIndex: 'createdOn',
+                sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Last updated on"),
-                field: "lastUpdatedOn",
-                sort: "asc",
-                width: 150
+                title: props.t('Last updated on'),
+                dataIndex: 'lastUpdatedOn',
+                sorter: (a, b) => a.lastUpdatedOn.localeCompare(b.lastUpdatedOn),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("State"),
-                field: "isActive",
-                sort: "asc",
-                width: 150
+                title: props.t('State'),
+                dataIndex: 'isActive',
+                sorter: (a, b) => a.isActive.localeCompare(b.isActive),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t('Actions'),
-                field: 'actions',
-                sort: 'disabled',
-                width: 100,
-            }
+                title: props.t('Actions'),
+                dataIndex: 'actions',
+                width: "170px",
+            },
         ],
         rows: tableData
     }
-
+  
     const getActions = (item) => {
         const actions = (
             <div className="icon-container">
@@ -998,16 +997,11 @@ const User = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>
-                                    <MDBDataTable
-                                        paginationLabel={[props.t("Previous"), props.t("Next")]}
-                                        entriesLabel={props.t("Show entries")}
-                                        searchLabel={props.t("Search")}
-                                        noRecordsFoundLabel={props.t("No matching records found")}
-                                        hover
-                                        responsive
-                                        striped
-                                        bordered
-                                        data={data}
+                                    <Table
+                                        dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
+                                        columns={data.columns}
+                                        pagination={true}
+                                        scroll={{ x: 'max-content' }}
                                     />
                                 </CardBody>
                             </Card>

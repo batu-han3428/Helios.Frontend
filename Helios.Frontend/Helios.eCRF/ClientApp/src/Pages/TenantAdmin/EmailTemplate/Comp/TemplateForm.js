@@ -19,7 +19,6 @@ import { useFormik } from "formik";
 import { useLazyRoleListGetQuery } from '../../../../store/services/Permissions';
 import { arraysHaveSameItems } from '../../../../helpers/General/index';
 import { useEmailTemplateSetMutation, useLazyEmailTemplateGetQuery } from '../../../../store/services/EmailTemplate';
-import 'draft-js-image-plugin/lib/plugin.css';
 import htmlToDraft from 'html-to-draftjs';
 import templateTypeItems from '../TemplateTypeItems';
 

@@ -16,7 +16,6 @@ import { useLazyTenantUserListGetQuery, useTenantUserSetMutation } from '../../.
 import { formatDate } from "../../../helpers/format_date";
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../../store/loader/actions';
-import { MDBDataTable } from "mdbreact";
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import * as Yup from "yup";
 import { useFormik } from "formik";
@@ -87,53 +86,52 @@ const TenantUsers = props => {
     const liveData = {      
         columns: [
             {
-                label: props.t("First name"),
-                field: "name",
-                sort: "asc",
-                width: 150
+                title: props.t('First name'),
+                dataIndex: 'name',
+                sorter: (a, b) => a.name.localeCompare(b.name),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Last name"),
-                field: "lastName",
-                sort: "asc",
-                width: 150
+                title: props.t('Last name'),
+                dataIndex: 'lastName',
+                sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: "Email",
-                field: "email",
-                sort: "asc",
-                width: 150
+                title: props.t('Email'),
+                dataIndex: 'email',
+                sorter: (a, b) => a.email.localeCompare(b.email),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Study name"),
-                field: "studyName",
-                sort: "asc",
-                width: 150
+                title: props.t('Study name'),
+                dataIndex: 'studyName',
+                sorter: (a, b) => a.studyName.localeCompare(b.studyName),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Created on"),
-                field: "createdOn",
-                sort: "asc",
-                width: 150
+                title: props.t('Created on'),
+                dataIndex: 'createdOn',
+                sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Last updated on"),
-                field: "lastUpdatedOn",
-                sort: "asc",
-                width: 150
+                title: props.t('Last updated on'),
+                dataIndex: 'lastUpdatedOn',
+                sorter: (a, b) => a.lastUpdatedOn.localeCompare(b.lastUpdatedOn),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("State"),
-                field: "isActive",
-                sort: "asc",
-                width: 150
+                title: props.t('State'),
+                dataIndex: 'isActive',
+                sorter: (a, b) => a.isActive.localeCompare(b.isActive),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t('Actions'),
-                field: 'actions',
-                sort: 'disabled',
-                width: 100,
-            }
+                title: props.t('Actions'),
+                dataIndex: 'actions',
+                width: "170px",
+            },
         ],
         rows: liveTableData
     }
@@ -141,53 +139,52 @@ const TenantUsers = props => {
     const demoData = {
         columns: [
             {
-                label: props.t("First name"),
-                field: "name",
-                sort: "asc",
-                width: 150
+                title: props.t('First name'),
+                dataIndex: 'name',
+                sorter: (a, b) => a.name.localeCompare(b.name),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Last name"),
-                field: "lastName",
-                sort: "asc",
-                width: 150
+                title: props.t('Last name'),
+                dataIndex: 'lastName',
+                sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: "Email",
-                field: "email",
-                sort: "asc",
-                width: 150
+                title: props.t('Email'),
+                dataIndex: 'email',
+                sorter: (a, b) => a.email.localeCompare(b.email),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Study name"),
-                field: "studyName",
-                sort: "asc",
-                width: 150
+                title: props.t('Study name'),
+                dataIndex: 'studyName',
+                sorter: (a, b) => a.studyName.localeCompare(b.studyName),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Created on"),
-                field: "createdOn",
-                sort: "asc",
-                width: 150
+                title: props.t('Created on'),
+                dataIndex: 'createdOn',
+                sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Last updated on"),
-                field: "lastUpdatedOn",
-                sort: "asc",
-                width: 150
+                title: props.t('Last updated on'),
+                dataIndex: 'lastUpdatedOn',
+                sorter: (a, b) => a.lastUpdatedOn.localeCompare(b.lastUpdatedOn),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("State"),
-                field: "isActive",
-                sort: "asc",
-                width: 150
+                title: props.t('State'),
+                dataIndex: 'isActive',
+                sorter: (a, b) => a.isActive.localeCompare(b.isActive),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t('Actions'),
-                field: 'actions',
-                sort: 'disabled',
-                width: 100,
-            }
+                title: props.t('Actions'),
+                dataIndex: 'actions',
+                width: "170px",
+            },
         ],
         rows: demoTableData
     }
@@ -314,56 +311,7 @@ const TenantUsers = props => {
             validationType.setErrors({});
             validationType.resetForm();
         });
-    };
-    const columns = [
-        {
-            title: props.t('First name'),
-            dataIndex: 'name',
-            sorter: (a, b) => a.name.localeCompare(b.name),
-            sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('Last name'),
-            dataIndex: 'lastName',
-            sorter: (a, b) => a.lastName.localeCompare(b.lastName),
-            sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('Email'),
-            dataIndex: 'email',
-            sorter: (a, b) => a.email.localeCompare(b.email),
-            sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('Study name'),
-            dataIndex: 'studyName',
-            sorter: (a, b) => a.studyName.localeCompare(b.studyName),
-            sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('Created on'),
-            dataIndex: 'createdOn',
-            sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
-            sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('Last updated on'),
-            dataIndex: 'lastUpdatedOn',
-            sorter: (a, b) => a.lastUpdatedOn.localeCompare(b.lastUpdatedOn),
-            sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('State'),
-            dataIndex: 'isActive',
-            sorter: (a, b) => a.isActive.localeCompare(b.isActive),
-            sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('Actions'),
-            dataIndex: 'actions',
-            width: "170px",
-        },
-    ];
+    };  
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     const handleExpand = (expanded, record) => {
         const currentRowKey = record.key;
@@ -433,7 +381,7 @@ const TenantUsers = props => {
 
                                         <Table
                                             dataSource={basicActive === 'tab1' ? liveData.rows.map(item => ({ ...item, key: item.studyUserId })) : demoData.rows.map(item => ({ ...item, key: item.studyUserId }))}
-                                            columns={columns}
+                                            columns={basicActive === 'tab1' ? liveData.columns : demoData.columns}
                                             expandedRowKeys={expandedRowKeys}
                                             onExpand={handleExpand}
                                             pagination={true}

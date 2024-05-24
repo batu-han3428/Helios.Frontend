@@ -14,7 +14,7 @@ import Breadcrumbs from "../../../components/Common/Breadcrumb";
 
 // Form Mask
 import InputMask from "react-input-mask";
-import MaterialInput from "@material-ui/core/Input";
+import { Input } from 'antd';
 
 const FormMask = () => {
 
@@ -26,7 +26,7 @@ const FormMask = () => {
       onChange={props.onChange}
     >
       {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
+        <Input {...inputProps} type="tel" disableUnderline />
       )}
     </InputMask>
   );
@@ -39,7 +39,7 @@ const FormMask = () => {
       onChange={props.onChange}
     >
       {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
+        <Input {...inputProps} type="tel" disableUnderline />
       )}
     </InputMask>
   );
@@ -51,7 +51,7 @@ const FormMask = () => {
       className="form-control input-color"
       onChange={props.onChange}
     >
-      {inputProps => <MaterialInput {...inputProps} disableUnderline />}
+      {inputProps => <Input {...inputProps} disableUnderline />}
     </InputMask>
   );
 
@@ -63,7 +63,7 @@ const FormMask = () => {
       onChange={props.onChange}
     >
       {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
+        <Input {...inputProps} type="tel" disableUnderline />
       )}
     </InputMask>
   );
@@ -76,7 +76,7 @@ const FormMask = () => {
       onChange={props.onChange}
     >
       {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
+        <Input {...inputProps} type="tel" disableUnderline />
       )}
     </InputMask>
   );
@@ -89,7 +89,7 @@ const FormMask = () => {
       onChange={props.onChange}
     >
       {inputProps => (
-        <MaterialInput {...inputProps} prefix="$" type="tel" disableUnderline />
+        <Input {...inputProps} prefix="$" type="tel" disableUnderline />
       )}
     </InputMask>
   );
@@ -102,7 +102,7 @@ const FormMask = () => {
       onChange={props.onChange}
     >
       {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
+        <Input {...inputProps} type="tel" disableUnderline />
       )}
     </InputMask>
   );
@@ -115,7 +115,7 @@ const FormMask = () => {
       onChange={props.onChange}
     >
       {inputProps => (
-        <MaterialInput {...inputProps} type="tel" disableUnderline />
+        <Input {...inputProps} type="tel" disableUnderline />
       )}
     </InputMask>
   );

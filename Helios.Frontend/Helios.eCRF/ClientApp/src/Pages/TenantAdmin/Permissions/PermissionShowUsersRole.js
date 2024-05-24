@@ -4,7 +4,7 @@ import { withTranslation } from "react-i18next";
 import { useLazyRoleUsersListGetQuery } from '../../../store/services/Permissions';
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useDispatch } from 'react-redux';
-import { MDBDataTable } from "mdbreact";
+import { Table } from 'antd';
 
 
 const PermissionShowUsersRole = props => {
@@ -16,21 +16,21 @@ const PermissionShowUsersRole = props => {
     const data = {
         columns: [
             {
-                label: props.t("Name"),
-                field: "name",
-                sort: "asc",
-                width: 150
+                title: props.t('Name'),
+                dataIndex: 'name',
+                sorter: (a, b) => a.name.localeCompare(b.name),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Role"),
-                field: "role",
-                sort: "asc",
-                width: 150
-            }
+                title: props.t('Role'),
+                dataIndex: 'role',
+                sorter: (a, b) => a.role.localeCompare(b.role),
+                sortDirections: ['ascend', 'descend'],
+            },
         ],
         rows: tableData
     }
-
+  
     const generateInfoLabel = () => {
         var infoDiv = document.querySelector('.dataTables_info');
         var infoText = infoDiv.innerHTML;
@@ -83,16 +83,11 @@ const PermissionShowUsersRole = props => {
     }, [resultData, isError, isLoading, props.t]);
 
     return (
-        <MDBDataTable
-            paginationLabel={[props.t("Previous"), props.t("Next")]}
-            entriesLabel={props.t("Show entries")}
-            searchLabel={props.t("Search")}
-            noRecordsFoundLabel={props.t("No matching records found")}
-            hover
-            responsive
-            striped
-            bordered
-            data={data}
+        <Table
+            dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
+            columns={data.columns}
+            pagination={true}
+            scroll={{ x: 'max-content' }}
         />
     )
 }
