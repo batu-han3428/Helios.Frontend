@@ -193,7 +193,7 @@ const Study = props => {
         connection.on("LiveData", (response) => {
             setData(response.data.data)
             toastRef.current.setToast({
-                message: props.t(response.message),
+                message: props.t("Has updated the table").replace("{user}", response.message),
                 stateToast: true,
                 autoHide: false
             });

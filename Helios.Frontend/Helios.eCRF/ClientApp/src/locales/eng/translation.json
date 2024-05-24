@@ -564,5 +564,6 @@
   "Updated by": "Updated by",
   "Check list": "Check list",
   "Datagrid": "Datagrid",
-  "Table": "Table"
+  "Table": "Table",
+  "Has updated the table": "User {user} has updated the table."
 }
