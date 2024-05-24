@@ -84,7 +84,7 @@ import UiOffcanvas from "../Pages/Template/Ui/UiOffcanvas";
 
 
 //Module
-import FormBuilder from "../Pages/TenantAdmin/Module/FormBuilder/FormBuilder.js";
+import FormBuilder from "../Pages/TenantAdmin/Module/FormBuilder/formBuilder.js";
 import Preview from "../Pages/TenantAdmin/Module/FormBuilder/preview.js";
 import Module from "../Pages/TenantAdmin/Module/moduleList.js";
 import AddOrUpdateModule from "../Pages/TenantAdmin/Module/addOrUpdateModule.js";
