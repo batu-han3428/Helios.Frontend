@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useDispatch } from 'react-redux';
 import { endloading, startloading } from '../../../../store/loader/actions';
 import { useLazyVisitRelationGetQuery, useVisitRelationSetMutation } from '../../../../store/services/Visit';
+import isEqual from 'lodash/isEqual';
 
 const { Option, OptGroup } = Select;
 const tagInputStyle = {
@@ -36,19 +37,20 @@ const Relation = props => {
     }, []);
 
     const [dataSource, setDataSource] = useState([]);
-    //{ key: '1', id: 1, sourcepage: 342, elementId: 9589, actionCondition: 1, actionValue: ['nice', 'developer'], targetPage: ['target Page 1'], actionType: 1 },
-    //{ key: '2', id: 2, sourcepage: null, elementId: null, actionCondition: null, actionValue: ['cool'], targetPage: [], actionType: 1 },
+
+    const [originalDataSource, setOriginalDataSource] = useState([]);
+
     useEffect(() => {
         if (!isLoading && !error && relationData) {
-            console.log(relationData)
             let sourcePage = relationData.studyVisitRelationSourcePageModels;
             let fieldOperation = relationData.fieldOperationData;
             let visitRelation = relationData.visitRelationModels;
-            setSourcePageOptions(sourcePage.map(visit => ({
+            let sourcePageOption = sourcePage.map(visit => ({
                 id: visit.id,
                 label: visit.label,
                 options: visit.options.map(page => ({ id: page.id, label: page.label }))
-            })));
+            }));
+            setSourcePageOptions(sourcePageOption);
             setSourceInputOptions(sourcePage.flatMap(visit => visit.options).map(page => ({
                 [page.id]: page.options.map(elm => ({
                     id: elm.id,
@@ -56,37 +58,25 @@ const Relation = props => {
                 }))
             })));
             setFieldOperationOptions(fieldOperation);
-            setDataSource(visitRelation);
+            const updatedVisitRelation = visitRelation.map(item => {
+                const currentTargetPage = item.targetPage || [];
+                const newTargetPage = [...currentTargetPage];
+                sourcePageOption.forEach(visit => {
+                    const allOptionsInTarget = visit.options.every(page => newTargetPage.includes(page.id));
+                    if (allOptionsInTarget) {
+                        newTargetPage.push(visit.id);
+                    }
+                });
+                return { ...item, targetPage: newTargetPage };
+            });
+            setDataSource(JSON.parse(JSON.stringify(updatedVisitRelation)));
+            setOriginalDataSource(JSON.parse(JSON.stringify(updatedVisitRelation)));
             dispatch(endloading());
         } else if (!isLoading && error) {
            
             dispatch(endloading());
         }
     }, [relationData, error, isLoading]);
-
-    //const [dataSource, setDataSource] = useState([
-    //    { key: '1', sourcepage: 342, sourceinput: null, fieldoperation: 'Operation 2', tags: ['nice', 'developer'], targetpage: ['target Page 1'], role: 'Developer' },
-    //    { key: '2', sourcepage: null, sourceinput: null, fieldoperation: '', tags: ['cool'], targetpage: [], role: 'Designer' },
-    //]);
-
-   /* const fieldOperationOptions = ['Operation 1', 'Operation 2', 'Operation 3'];*/
-
-    //const sourcePageOptions = [
-    //    { label: 'Group 1', options: ['Page 1', 'Page 2'] },
-    //    { label: 'Group 2', options: ['Page 3', 'Page 4'] },
-    //];
-
-    //const sourceInputOptions = {
-    //    342: ['Input 1', 'Input 2', 'Input 3'],
-    //    'Page 2': ['Input 4', 'Input 5', 'Input 6'],
-    //    'Page 3': ['Input 7', 'Input 8', 'Input 9'],
-    //    'Page 4': ['Input 10', 'Input 11', 'Input 12'],
-    //};
-
-    //const targetPageOptions = [
-    //    { label: 'Group 1', options: ['target Page 1', 'target Page 2'] },
-    //    { label: 'Group 2', options: ['target Page 3', 'target Page 4'] },
-    //];
 
     const handleTagChange = (key, newTags) => {
         const newDataSource = dataSource.map(item => {
@@ -111,21 +101,17 @@ const Relation = props => {
 
     const { token } = theme.useToken();
 
-
     const tagPlusStyle = {
         height: 22,
         background: token.colorBgContainer,
         borderStyle: 'dashed',
     };
 
-
     const [inputVisibleMap, setInputVisibleMap] = useState({});
-
 
     const showInput = (record) => {
         const updatedInputVisibleMap = { ...inputVisibleMap, [record.key]: true };
         setInputVisibleMap(updatedInputVisibleMap);
-
     };
 
     const handleInputConfirm = (record, inputValue) => {
@@ -140,7 +126,6 @@ const Relation = props => {
     const isInputVisible = (record) => {
         return inputVisibleMap[record.key];
     };
-
 
     const renderTags = (tags, record) => (
         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
@@ -172,51 +157,73 @@ const Relation = props => {
         </div>
     );
 
-    const [lastSelectedItem, setLastSelectedItem] = useState('');
-
     const handleSelect = (record, selectedValue, fieldName, option) => {
-        if (selectedValue === 'visit' && fieldName === 'targetPage') {
-            console.log(record);
-            console.log(sourcePageOptions)
-            console.log(selectedValue)
-            console.log(option)
-            const visit = sourcePageOptions.find(x => x.id === parseInt(option.key));
-            console.log(visit)
+        if (option.label === 'visit' && fieldName === 'targetPage') {
+            const visit = sourcePageOptions.find(x => x.id === parseInt(selectedValue));
             if (!visit) return;
-            if (record.targetPage.length === visit.options.length) {
-                console.log('hepsini kaldır')
-            }
-            else {
-                console.log('hepsini seç')
-                const newTargetPage = [];
-                newTargetPage.push(...visit.options.map(opt => opt.id));
-                record.targetPage = newTargetPage;
+            const newDataSource = dataSource.map(item => {
+                if (item.key === record.key) {
+                    const existingItems = item[fieldName].filter(existingItem => !visit.options.some(opt => opt.id === existingItem));
+                    const updatedField = [...existingItems, ...visit.options.map(opt => opt.id)];
+
+                    return { ...item, [fieldName]: [selectedValue, ...updatedField] };
+                }
+                return item;
+            });
+            setDataSource(newDataSource);
+        }
+        else if (option.label !== 'visit' && fieldName === 'targetPage') {
+            const visit = sourcePageOptions.find(x => x.options.find(a => a.id === selectedValue));
+            const otherOptions = visit.options.filter(option => option.id !== selectedValue);
+            const filteredTargetPage = record.targetPage.filter(targetId => {
+                return visit.options.some(option => option.id === targetId);
+            });
+            const isMatching = filteredTargetPage.every(id => otherOptions.some(option => option.id === id)) &&
+                otherOptions.every(option => filteredTargetPage.some(id => option.id === id));
+            if (otherOptions.length < 1 || isMatching) {
+                const newDataSource = dataSource.map(item => {
+                    if (item.key === record.key) {
+                        return { ...item, [fieldName]: [selectedValue, visit.id, ...item[fieldName]] };
+                    }
+                    return item;
+                });
+                setDataSource(newDataSource);
             }
         }
     };
 
-    const handleDeselect = (key, deselectedValue, fieldName) => {
-        setLastSelectedItem(deselectedValue);
-        console.log(`Deselected: ${deselectedValue} in field: ${fieldName}`);
+    const handleDeselect = (record, deselectedValue, fieldName, option) => {
+        if (option.label === 'visit' && fieldName === 'targetPage') {
+            const visit = sourcePageOptions.find(x => x.id === parseInt(deselectedValue));
+            if (!visit) return;
+            const newDataSource = dataSource.map(item => {
+                if (item.key === record.key) {
+                    const updatedField = item[fieldName].filter(existingItem => !visit.options.some(opt => opt.id === existingItem) && existingItem !== deselectedValue);
+
+                    return { ...item, [fieldName]: updatedField };
+                }
+                return item;
+            });
+            setDataSource(newDataSource);
+        }
+        else if (option.label !== 'visit' && fieldName === 'targetPage') {
+            const visit = sourcePageOptions.find(x => x.options.find(a => a.id === deselectedValue));       
+            const filteredTargetPage = record.targetPage.filter(targetId => targetId !== deselectedValue);
+            const allOptionsInTargetPage = filteredTargetPage.some(targetPageId => visit.options.some(option => option.id === targetPageId));
+            if (allOptionsInTargetPage || visit.options.length < 2) {
+                const newDataSource = dataSource.map(item => {
+                    if (item.key === record.key) {
+                        const updatedField = item[fieldName].filter(id => id !== visit.id && id !== deselectedValue);
+                        return { ...item, [fieldName]: updatedField };
+                    }
+                    return item;
+                });
+                setDataSource(newDataSource);
+            } 
+        }
     };
 
     const handleSelectChange = (key, value, fieldName) => {
-
-        //if (fieldName === 'targetpage') {
-        //    console.log(lastSelectedItem)
-        //    const totalOptions = targetPageOptions.reduce((acc, group) => acc + group.options.length, 0);
-        //    console.log(totalOptions)
-        //    const clickedItem = value[value.length - 1];
-        //    console.log(clickedItem)
-        //    if (value.length === totalOptions) {
-        //        value = [];
-        //        console.log(value)
-        //    } else if (value.indexOf('all') !== -1) {
-        //        value = targetPageOptions.flatMap(group => group.options).concat('all');
-
-        //        console.log(value)
-        //    }
-        //}
         const newDataSource = dataSource.map(item => {
             if (item.key === key) {
                 return { ...item, [fieldName]: value };
@@ -234,7 +241,7 @@ const Relation = props => {
                 value={value}
                 onChange={(value) => handleSelectChange(record.key, value, fieldName)}
                 onSelect={(selectedValue, option) => handleSelect(record, selectedValue, fieldName, option)}
-                onDeselect={(deselectedValue) => handleDeselect(record.key, deselectedValue, fieldName)}
+                onDeselect={(deselectedValue, option) => handleDeselect(record, deselectedValue, fieldName, option)}
                 placeholder='Select Item...'
                 maxTagCount='responsive'
             >
@@ -264,14 +271,14 @@ const Relation = props => {
                 {fieldName === 'targetPage' && (
                     <>
                         {sourcePageOptions.map(visit => (
-                            <OptGroup key={visit.label} label={visit.label}>
-                                <Option key={visit.id} value="visit">
-                                    Viziti seç
+                           <>
+                                <Option key={visit.key} value={visit.id} label="visit" style={{ fontWeight: 'bold', color:'red' }}>
+                                    {visit.label }
                                 </Option>
                                 {visit.options.map(page => (
-                                    <Option key={page.id} value={page.id}>{page.label}</Option>
+                                    <Option  key={page.id} value={page.id}>{page.label}</Option>
                                 ))}
-                            </OptGroup>
+                            </>
                         ))}
                     </>
                 )}
@@ -318,7 +325,7 @@ const Relation = props => {
         {
             title: 'Target Page',
             dataIndex: 'targetPage',
-            key: 'targetPage',
+            key: 'targetPage',   
             render: (text, record) => renderSelect('targetPage', text, record),
         },
         {
@@ -355,31 +362,80 @@ const Relation = props => {
         setDataSource(updatedDataSource);
     };
 
+    const hasChanges = (originalDataSource, dataSource) => {
+        if (originalDataSource.length !== dataSource.length) {
+            return true;
+        }
+        for (let i = 0; i < originalDataSource.length; i++) {
+            if (!isEqual(originalDataSource[i], dataSource[i])) {
+                return true;
+            }
+        }
+        return false;
+    };
+
+    const isEmpty = (dataSource) => {
+        const emptyFields = [];
+        for (let item of dataSource) {
+            const keys = Object.keys(item);          
+            for (let key of keys) {
+                if (!item[key] || (Array.isArray(item[key]) && item[key].length === 0)) {
+                    emptyFields.push(columns.find(x => x.key === key).title);
+                }
+            }
+        }
+        return emptyFields;
+    };
+
     const save = useCallback(async () => {
         try {
             dispatch(startloading());
-            //const hasChanges = isItemsEqual();
-            //if (!hasChanges) {
-            //    props.toast.current.setToast({
-            //        message: props.t("No changes were made. Please make changes to save."),
-            //        stateToast: false,
-            //        autoHide: false
-            //    });
-            //    dispatch(endloading());
-            //    return;
-            //}
-            console.log(dataSource)
-            const response = await visitRelationSet(dataSource.map(item => ({
-                ...item,
-                actionValue: JSON.stringify(item.actionValue),
-                targetPage: JSON.stringify(item.targetPage)
-            })));
+            const empty = isEmpty(dataSource);
+            if (empty.length > 0) {
+                props.toast.current.setToast({
+                    message:<div>
+                        <h5>{props.t("This field is required")}</h5>
+                        <ul>
+                            {
+                                empty.map((msg, index) => (
+                                    <li key={index}>{msg}</li>
+                                ))
+                            }
+                        </ul>
+                    </div>,
+                    stateToast: false,
+                    autoHide: false
+                });
+                dispatch(endloading());
+                return;
+            }
+            const changesExist = hasChanges(originalDataSource, dataSource);
+            if (!changesExist) {
+                props.toast.current.setToast({
+                    message: props.t("No changes were made. Please make changes to save."),
+                    stateToast: false,
+                    autoHide: false
+                });
+                dispatch(endloading());
+                return;
+            }
+            const updatedDataSource = dataSource.map(item => {
+                const newTargetPage = [...item.targetPage];
+                    sourcePageOptions.forEach(visit => {
+                     
+                        if (newTargetPage.includes(visit.id)) {
+                            const index = newTargetPage.indexOf(visit.id);
+                            newTargetPage.splice(index, 1);
+                        }
+                    });
+                return { ...item, actionValue: JSON.stringify(item.actionValue), targetPage: JSON.stringify(newTargetPage) };
+            });
+            const response = await visitRelationSet(updatedDataSource);
             if (response.data.isSuccess) {
                 props.toast.current.setToast({
                     message: props.t(response.data.message),
                     stateToast: true
                 });
-                props.toggleModal();
                 dispatch(endloading());
             } else {
                 props.toast.current.setToast({
