@@ -26,6 +26,7 @@ import LanguageDropdown from '../../components/CommonForBoth/TopbarDropdown/Lang
 import { withTranslation } from "react-i18next";
 import logoheliossmImg from "../../assets/images/helios-sm-logo.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import "./Login.css";
 
 
 const Login = props => {
@@ -70,43 +71,51 @@ const Login = props => {
     const [loginPost, { isLoading }] = useLoginPostMutation();
     const [formData, setFormData] = useState({ Email: '', Password: '', Language: props.i18n.language });
 
+    const [errors, setErrors] = useState({});
+
     const handleSubmit = async (e) => {
         try {
-            dispatch(startloading());
-
-            const response = await loginPost(formData);
-
-            if (response.data.isSuccess) {               
-                setLocalStorage("accessToken", response.data.values.accessToken);
-                let result = onLogin();
-
-                dispatch(endloading()) 
-                if (result === false) {
-                    toastRef.current.setToast({
-                        message: props.t("An unexpected error occurred."),
-                        stateToast: false
-                    });
-                } else {
-                    dispatch(loginuser(result));
-                    navigate("/");
-                }
+            let formErrors = {};
+            if (!formData.Password) {
+                formErrors.password = 'Password is required';
+                setErrors(formErrors);
             } else {
-                dispatch(endloading());
-                if (response.data.values !== null) {
-                    if (response.data.values.hasOwnProperty("redirect")) {
-                        navigate(response.data.values.redirect);
+                dispatch(startloading());
+                const response = await loginPost(formData);
+
+                if (response.data.isSuccess) {
+                    setLocalStorage("accessToken", response.data.values.accessToken);
+                    let result = onLogin();
+
+                    dispatch(endloading())
+                    if (result === false) {
+                        toastRef.current.setToast({
+                            message: props.t("An unexpected error occurred."),
+                            stateToast: false
+                        });
+                    } else {
+                        dispatch(loginuser(result));
+                        navigate("/");
                     }
-                    toastRef.current.setToast({
-                        message: response.data.values.hasOwnProperty("change") ? props.t(response.data.message).replace(/@Change/g, response.data.values.change) : props.t(response.data.message),
-                        stateToast: false
-                    });
                 } else {
-                    toastRef.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: false
-                    });
+                    dispatch(endloading());
+                    if (response.data.values !== null) {
+                        if (response.data.values.hasOwnProperty("redirect")) {
+                            navigate(response.data.values.redirect);
+                        }
+                        toastRef.current.setToast({
+                            message: response.data.values.hasOwnProperty("change") ? props.t(response.data.message).replace(/@Change/g, response.data.values.change) : props.t(response.data.message),
+                            stateToast: false
+                        });
+                    } else {
+                        toastRef.current.setToast({
+                            message: props.t(response.data.message),
+                            stateToast: false
+                        });
+                    }
                 }
             }
+           
         } catch (error) {
             dispatch(endloading());
         }
@@ -123,6 +132,10 @@ const Login = props => {
             stateToast: state
         });
     }
+    const handleFocus = (field) => {
+        setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
+    };
+
 
     document.title = "Login | Veltrix - React Admin & Dashboard Template";
     return (
@@ -183,10 +196,12 @@ const Login = props => {
                                                 <Input
                                                     name="password"
                                                     type="password"
-                                                    className="form-control"
+                                                    className={errors.password ? 'form-control error-border' : 'form-control'}
+                                                    onFocus={() => handleFocus('password')}
                                                     placeholder=""
                                                     onChange={(e) => setFormData({ ...formData, Password: e.target.value })}
                                                 />
+                                                {errors.password && <span className="error-message">{props.t("This field is required")}</span>}
                                             </div>
 
                                             <div className="mb-3 row">
