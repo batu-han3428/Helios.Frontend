@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withTranslation } from "react-i18next";
 import { Row, Col, Button, Card, CardBody } from "reactstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//import { MDBDataTable } from "mdbreact";
+import { Table } from 'antd';
 import { useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useTenantListGetQuery } from '../../../store/services/Tenants';
@@ -30,39 +30,38 @@ const TenantsList = props => {
     const data = {
         columns: [
             {
-                label: props.t("Tenant name"),
-                field: "name",
-                sort: "asc",
-                width: 150
+                title: props.t('Tenant name'),
+                dataIndex: 'name',
+                sorter: (a, b) => a.name.localeCompare(b.name),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Active studies"),
-                field: "activeStudies",
-                sort: "asc",
-                width: 150
+                title: props.t('Active studies'),
+                dataIndex: 'activeStudies',
+                sorter: (a, b) => a.activeStudies.localeCompare(b.activeStudies),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Created on"),
-                field: "createdAt",
-                sort: "asc",
-                width: 150
+                title: props.t('Created on'),
+                dataIndex: 'createdAt',
+                sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Updated on"),
-                field: "updatedAt",
-                sort: "asc",
-                width: 150
+                title: props.t('Updated on'),
+                dataIndex: 'updatedAt',
+                sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t('Actions'),
-                field: 'actions',
-                sort: 'disabled',
-                width: 100,
-            }
+                title: props.t('Actions'),
+                dataIndex: 'actions',
+                width: "170px",
+            },
         ],
         rows: table
     }
-
+   
     const { data: tenantsData, error, isLoading } = useTenantListGetQuery();
 
     useEffect(() => {
@@ -118,18 +117,13 @@ const TenantsList = props => {
                     <Row>
                         <Col className="col-12">
                             <Card>
-                                <CardBody>
-                                    {/*<MDBDataTable*/}
-                                    {/*    paginationLabel={[props.t("Previous"), props.t("Next")]}*/}
-                                    {/*    entriesLabel={props.t("Show entries")}*/}
-                                    {/*    searchLabel={props.t("Search")}*/}
-                                    {/*    noRecordsFoundLabel={props.t("No matching records found")}*/}
-                                    {/*    hover*/}
-                                    {/*    responsive*/}
-                                    {/*    striped*/}
-                                    {/*    bordered*/}
-                                    {/*    data={data}*/}
-                                    {/*/>*/}
+                                <CardBody>                                  
+                                    <Table
+                                        dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
+                                        columns={data.columns}
+                                        pagination={true}
+                                        scroll={{ x: 'max-content' }}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>

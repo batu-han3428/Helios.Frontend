@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withTranslation } from "react-i18next";
 import { Row, Col, Button, Card, CardBody } from "reactstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-//import { MDBDataTable } from "mdbreact";
+import { Table } from 'antd';
 import ModalComp from "../../../components/Common/ModalComp/ModalComp";
 import AddOrUpdateSystemAdmin from "./AddOrUpdateSystemAdmin";
 import ToastComp from "../../../components/Common/ToastComp/ToastComp";
@@ -73,44 +73,43 @@ const ListSystemAdmin = props => {
     const data = {
         columns: [
             {
-                label: props.t("Name"),
-                field: "name",
-                sort: "asc",
-                width: 150
+                title: props.t('Name'),
+                dataIndex: 'name',
+                sorter: (a, b) => a.name.localeCompare(b.name),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Last Name"),
-                field: "lastName",
-                sort: "asc",
-                width: 150
+                title: props.t('Last Name'),
+                dataIndex: 'lastName',
+                sorter: (a, b) => a.lastName.localeCompare(b.lastName),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("e-Mail"),
-                field: "email",
-                sort: "asc",
-                width: 150
+                title: props.t('e-Mail'),
+                dataIndex: 'email',
+                sorter: (a, b) => a.email.localeCompare(b.email),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("State"),
-                field: "isActive",
-                sort: "asc",
-                width: 150
+                title: props.t('State'),
+                dataIndex: 'isActive',
+                sorter: (a, b) => a.isActive.localeCompare(b.isActive),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Phone number"),
-                field: "phoneNumber",
-                sort: "asc",
-                width: 150
+                title: props.t('Phone number'),
+                dataIndex: 'phoneNumber',
+                sorter: (a, b) => a.phoneNumber.localeCompare(b.phoneNumber),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t('Actions'),
-                field: 'actions',
-                sort: 'disabled',
-                width: 100,
-            }
+                title: props.t('Actions'),
+                dataIndex: 'actions',
+                width: "170px",
+            },
         ],
         rows: table
-    }
+    }  
 
     const { data: usersData, error, isLoading } = useSystemAdminListGetQuery();
 
@@ -306,18 +305,13 @@ const ListSystemAdmin = props => {
                     <Row>
                         <Col className="col-12">
                             <Card>
-                                <CardBody>
-                                    {/*<MDBDataTable*/}
-                                    {/*    paginationLabel={[props.t("Previous"), props.t("Next")]}*/}
-                                    {/*    entriesLabel={props.t("Show entries")}*/}
-                                    {/*    searchLabel={props.t("Search")}*/}
-                                    {/*    noRecordsFoundLabel={props.t("No matching records found")}*/}
-                                    {/*    hover*/}
-                                    {/*    responsive*/}
-                                    {/*    striped*/}
-                                    {/*    bordered*/}
-                                    {/*    data={data}*/}
-                                    {/*/>*/}
+                                <CardBody>                                   
+                                    <Table
+                                        dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
+                                        columns={data.columns}
+                                        pagination={true}
+                                        scroll={{ x: 'max-content' }}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>

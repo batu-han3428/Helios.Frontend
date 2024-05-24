@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardBody, CardHeader, CardTitle} from "reactstrap";
 import { withTranslation } from "react-i18next";
-//import { MDBDataTable } from "mdbreact";
+import { Table } from 'antd';
 import { useLazyStudyRoleUsersListGetQuery } from '../../../../store/services/Permissions';
 import { startloading, endloading } from '../../../../store/loader/actions';
 import { useDispatch } from 'react-redux';
@@ -35,38 +35,33 @@ const UserList = props => {
     const data = {
         columns: [
             {
-                label: props.t("Name / Surname"),
-                field: "name",
-                sort: "asc",
-                width: 100
+                title: props.t('Name / Surname'),
+                dataIndex: 'name',
+                sorter: (a, b) => a.name.localeCompare(b.name),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Role"),
-                field: "role",
-                sort: "asc",
-                width: 100
-            }
+                title: props.t('Role'),
+                dataIndex: 'role',
+                sorter: (a, b) => a.role.localeCompare(b.role),
+                sortDirections: ['ascend', 'descend'],
+            },      
         ],
         rows: table
-    }
-
+    }  
     return (
         <Card className="mb-3">
             <CardHeader style={{ display: "flex", justifyContent: "center", alignItems: "center", background: "white", borderBottom: "1px solid #e9ecef" }}>
                 <CardTitle>{props.t("List of users to view the email")}</CardTitle>
             </CardHeader>
             <CardBody>
-                {/*<MDBDataTable*/}
-                {/*    paginationLabel={[props.t("Previous"), props.t("Next")]}*/}
-                {/*    entriesLabel={props.t("Show entries")}*/}
-                {/*    searchLabel={props.t("Search")}*/}
-                {/*    noRecordsFoundLabel={props.t("No matching records found")}*/}
-                {/*    hover*/}
-                {/*    responsive*/}
-                {/*    striped*/}
-                {/*    bordered*/}
-                {/*    data={data}*/}
-                {/*/>*/}
+              
+                <Table
+                    dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
+                    columns={data.columns}
+                    pagination={true}
+                    scroll={{ x: 'max-content' }}
+                />
             </CardBody>
         </Card>
     );

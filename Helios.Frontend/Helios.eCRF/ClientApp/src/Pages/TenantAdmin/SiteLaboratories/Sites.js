@@ -1,7 +1,7 @@
 ﻿import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef } from "react";
 import { withTranslation } from "react-i18next";
-//import { MDBDataTable } from "mdbreact";
+import { Table } from 'antd';
 import {
     Row, Col, Card, CardBody, Button, Label, Input, Form, FormFeedback, Alert
 } from "reactstrap";
@@ -125,94 +125,50 @@ const Sites = props => {
     const data = {
         columns: [
             {
-                label: props.t("Site Name"),
-                field: "siteFullName",
-                sort: "asc",
-                width: 150
+                title: props.t('Site Name'),
+                dataIndex: 'siteFullName',
+                sorter: (a, b) => a.siteFullName.localeCompare(b.siteFullName),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Site no"),
-                field: "code",
-                sort: "asc",
-                width: 150
+                title: props.t('Site no'),
+                dataIndex: 'code',
+                sorter: (a, b) => a.code.localeCompare(b.code),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Country code"),
-                field: "countryCode",
-                sort: "asc",
-                width: 150
+                title: props.t('Country code'),
+                dataIndex: 'countryCode',
+                sorter: (a, b) => a.countryCode.localeCompare(b.countryCode),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Country"),
-                field: "countryName",
-                sort: "asc",
-                width: 150
+                title: props.t('Country'),
+                dataIndex: 'countryName',
+                sorter: (a, b) => a.countryName.localeCompare(b.countryName),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Number of subjects that can be added to the center"),
-                field: "maxEnrolmentCount",
-                sort: "asc",
-                width: 150
+                title: props.t('Number of subjects that can be added to the center'),
+                dataIndex: 'maxEnrolmentCount',
+                sorter: (a, b) => a.maxEnrolmentCount.localeCompare(b.maxEnrolmentCount),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t("Last updated on"),
-                field: "updatedAt",
-                sort: "asc",
-                width: 150
+                title: props.t('Last updated on"'),
+                dataIndex: 'updatedAt',
+                sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+                sortDirections: ['ascend', 'descend'],
             },
             {
-                label: props.t('Actions'),
-                field: 'actions',
-                sort: 'disabled',
-                width: 100,
-            }
+                title: props.t('Actions'),
+                dataIndex: 'actions',
+                width: "170px",
+            },
         ],
         rows: tableData
-    }
-    const columns = [
-        {
-            title: props.t('Site Name'),
-            dataIndex: 'siteFullName',
-            sorter: (a, b) => a.siteFullName.localeCompare(b.siteFullName),
-            sortDirections: ['ascend', 'descend'],         
-        },
-        {
-            title: props.t('Site no'),
-            dataIndex: 'code',
-            sorter: (a, b) => a.code.localeCompare(b.code),
-            sortDirections: ['ascend', 'descend'],          
-        },
-        {
-            title: props.t('Country code'),
-            dataIndex: 'countryCode',
-            sorter: (a, b) => a.countryCode.localeCompare(b.countryCode),
-            sortDirections: ['ascend', 'descend'],           
-        },
-        {
-            title: props.t('Country'),
-            dataIndex: 'countryName',
-            sorter: (a, b) => a.countryName.localeCompare(b.countryName),
-            sortDirections: ['ascend', 'descend'],           
-        },
-        {
-            title: props.t('Number of subjects that can be added to the center'),
-            dataIndex: 'maxEnrolmentCount',
-            sorter: (a, b) => a.maxEnrolmentCount.localeCompare(b.maxEnrolmentCount),
-            sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('Last updated on"'),
-            dataIndex: 'updatedAt',
-            sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
-            sortDirections: ['ascend', 'descend'],
-        },     
-        {
-            title: props.t('Actions'),
-            dataIndex: 'actions',
-            width: "170px",           
-        },
-    ];
-
+    }   
+    
     const [triggerSites, resultSites] = useLazySiteListGetQuery();
     const { data: siteData, error, isLoading } = resultSites;
 
@@ -353,18 +309,14 @@ const Sites = props => {
                     <Row>
                         <Col className="col-12">
                             <Card>
-                                <CardBody>
-                                    {/*<MDBDataTable*/}
-                                    {/*    paginationLabel={[props.t("Previous"), props.t("Next")]}*/}
-                                    {/*    entriesLabel={props.t("Show entries")}*/}
-                                    {/*    searchLabel={props.t("Search")}*/}
-                                    {/*    noRecordsFoundLabel={props.t("No matching records found")}*/}
-                                    {/*    hover responsive striped bordered data={data} />*/}
+                                <CardBody>                                  
+                               
+                                   
                                     <Table
-                                        dataSource={tableData.map(item => ({ ...item, key: item.id }))}
-                                        columns={columns}
+                                        dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
+                                        columns={data.columns}
                                         pagination={true}
-                                        scroll={{ x: 'max-content' }}                                       
+                                        scroll={{ x: 'max-content' }}
                                     />
                                 </CardBody>
                             </Card>
