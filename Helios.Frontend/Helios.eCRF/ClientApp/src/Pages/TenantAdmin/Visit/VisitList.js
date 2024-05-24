@@ -39,6 +39,10 @@ const Study = props => {
     const [modalButtonText, setModalButtonText] = useState("");
     const [modalContent, setModalContent] = useState(null);
 
+    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
+    const [allRowsExpanded, setAllRowsExpanded] = useState(true);
+    const [firstExpanded, setFirstExpanded] = useState(true);
+
     const openModal = (data) => {
         setModalTitle(data.title);
         setModalButtonText(data.buttonText);
@@ -50,12 +54,43 @@ const Study = props => {
         modalRef.current.tog_backdrop();
     }
 
+    const handleToggleAllRows = () => {
+        if (allRowsExpanded) {
+            setExpandedRowKeys([]);
+        } else {
+            const closeAllChildren = (data) => {
+                return data.reduce((keys, record) => {
+                    keys.push(record.key);
+                    if (record.children) {
+                        const childKeys = closeAllChildren(record.children);
+                        keys.push(...childKeys);
+                    }
+                    return keys;
+                }, []);
+            };
+
+            const allChildKeys = closeAllChildren(dataSource);
+            setExpandedRowKeys(allChildKeys);
+        }
+        setAllRowsExpanded(!allRowsExpanded);
+    };
+
     const defaultColumns = [
         {
-            title: props.t('Visit name'),
+            title: (
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Tooltip title={allRowsExpanded ? props.t("Collapse all") : props.t("Expand all")} >
+                        <Button onClick={handleToggleAllRows} icon={<FontAwesomeIcon icon="fa-solid fa-bars" style={{ color: "#3d3d3d",  }} />} />
+                    </Tooltip>
+                    <label style={{ marginBottom: "0px", display: 'flex', alignItems: 'center', marginLeft: "5px" }}> {props.t('Visit name')}</label>
+                     
+                </div>
+                 
+            ),
             dataIndex: 'name',
             width: '30%',
             editable: true,
+
         },
         {
             title: props.t('Visit type'),
@@ -105,9 +140,7 @@ const Study = props => {
         }
     }, [studyInformation.studyId])
 
-    const [expandedRowKeys, setExpandedRowKeys] = useState([]);
-    const [allRowsExpanded, setAllRowsExpanded] = useState(true);
-    const [firstExpanded, setFirstExpanded] = useState(true);
+
 
     useEffect(() => {
         if (dataSource && dataSource.length > 0 && firstExpanded) {
@@ -139,26 +172,6 @@ const Study = props => {
         }
     };
 
-    const handleToggleAllRows = () => {
-        if (allRowsExpanded) {
-            setExpandedRowKeys([]);
-        } else {
-            const closeAllChildren = (data) => {
-                return data.reduce((keys, record) => {
-                    keys.push(record.key);
-                    if (record.children) {
-                        const childKeys = closeAllChildren(record.children);
-                        keys.push(...childKeys);
-                    }
-                    return keys;
-                }, []);
-            };
-
-            const allChildKeys = closeAllChildren(dataSource);
-            setExpandedRowKeys(allChildKeys);
-        }
-        setAllRowsExpanded(!allRowsExpanded);
-    };
 
     useEffect(() => {
         const connection = new signalR.HubConnectionBuilder()
@@ -256,9 +269,6 @@ const Study = props => {
                         <Col className="col-12">
                             <div style={{ display: "flex", justifyContent: "space-between", padding: "10px 0" }}>
                                 <div>
-                                    <Tooltip title={allRowsExpanded ? props.t("Collapse all") : props.t("Expand all")}>
-                                        <Button onClick={handleToggleAllRows} icon={<FontAwesomeIcon icon="fa-solid fa-bars" style={{ color: "#3d3d3d", }} />} />
-                                    </Tooltip>
                                     {editing && studyInformation.isDemo &&
                                         <>
                                             <Dropdown menu={visitSettingsItems(openModal, studyInformation.studyId, studyInformation.equivalentStudyId, modalContentRef, toastRef, modalRef)} trigger={['click']} placement="bottomLeft">
