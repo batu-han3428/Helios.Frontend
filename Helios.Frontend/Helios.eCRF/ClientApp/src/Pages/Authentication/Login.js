@@ -70,6 +70,16 @@ const Login = props => {
     const [loginPost, { isLoading }] = useLoginPostMutation();
     const [formData, setFormData] = useState({ Email: '', Password: '', Language: props.i18n.language });
 
+<<<<<<< Updated upstream
+=======
+    const [errors, setErrors] = useState({});
+    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+
+    const togglePasswordVisibility = () => {
+        setIsPasswordVisible(!isPasswordVisible);
+    };
+
+>>>>>>> Stashed changes
     const handleSubmit = async (e) => {
         try {
             dispatch(startloading());
@@ -182,11 +192,26 @@ const Login = props => {
                                                 <Label className="form-label" htmlFor="userpassword">{props.t("Password")}</Label>
                                                 <Input
                                                     name="password"
+<<<<<<< Updated upstream
                                                     type="password"
                                                     className="form-control"
                                                     placeholder=""
                                                     onChange={(e) => setFormData({ ...formData, Password: e.target.value })}
                                                 />
+=======
+                                                    type={isPasswordVisible ? 'text' : 'password'}
+                                                    className={errors.password ? 'form-control  error-border' : 'form-control'}
+                                                    onFocus={() => handleFocus('password')}
+                                                    placeholder=""
+                                                    onChange={(e) => setFormData({ ...formData, Password: e.target.value })}
+                                                /> <span
+                                                    className="toggle-visibility"
+                                                    onClick={togglePasswordVisibility}
+                                                >
+                                                    {isPasswordVisible ? <FontAwesomeIcon icon="fa-solid fa-eye-slash" /> : <FontAwesomeIcon icon="fa-solid fa-eye" />}
+                                                </span>
+                                                {errors.password && <span className="error-message">{props.t("This field is required")}</span>}
+>>>>>>> Stashed changes
                                             </div>
 
                                             <div className="mb-3 row">
