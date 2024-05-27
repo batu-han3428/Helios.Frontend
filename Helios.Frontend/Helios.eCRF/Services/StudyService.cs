@@ -234,7 +234,7 @@ namespace Helios.eCRF.Services
                 if (result.Data.IsSuccess)
                 {
                     var data = await GetVisits(StudyId);
-                    await _liveDataHub.Clients.Group("Visit").SendAsync("LiveData", new Dictionary<string, object> { { "data", data }, { "message", Name + " tabloyu güncellendi." } });
+                    await _liveDataHub.Clients.Group("Visit").SendAsync("LiveData", new Dictionary<string, object> { { "data", data }, { "message", Name} });
                 }
                 return result.Data;
             }
@@ -250,7 +250,7 @@ namespace Helios.eCRF.Services
                 if (result.Data.IsSuccess)
                 {
                     var data = await GetVisits(StudyId);
-                    await _liveDataHub.Clients.Group("Visit").SendAsync("LiveData", new Dictionary<string, object> { { "data", data }, { "message", Name + " tabloyu güncellendi." } });
+                    await _liveDataHub.Clients.Group("Visit").SendAsync("LiveData", new Dictionary<string, object> { { "data", data }, { "message", Name } });
                 }
                 return result.Data;
             }
@@ -521,7 +521,7 @@ namespace Helios.eCRF.Services
                 if (result.Data.IsSuccess)
                 {
                     var data = await GetVisits(StudyId);
-                    await _liveDataHub.Clients.Group("Visit").SendAsync("LiveData", new Dictionary<string, object> { { "data", data }, { "message", Name + " tabloyu güncellendi." } });
+                    await _liveDataHub.Clients.Group("Visit").SendAsync("LiveData", new Dictionary<string, object> { { "data", data }, { "message", Name } });
                 }
                 return result.Data;
             }
