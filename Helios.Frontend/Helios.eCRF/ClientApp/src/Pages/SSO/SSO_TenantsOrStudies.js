@@ -8,10 +8,17 @@ import { useLazyTenantOrStudytGetQuery } from '../../store/services/SSO/SSO_Api'
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../store/loader/actions';
 import { useNavigate, Link } from "react-router-dom";
+import { Button, ConfigProvider } from 'antd';
+import { TinyColor } from '@ctrl/tinycolor';
 
 
 const SSO_TenantsOrStudies = props => {
 
+    const colors1 = ['#6253E1', '#04BEFE'];
+    const getHoverColors = (colors: string[]) =>
+        colors.map((color) => new TinyColor(color).lighten(5).toString());
+    const getActiveColors = (colors: string[]) =>
+        colors.map((color) => new TinyColor(color).darken(5).toString());
     const userInformation = useSelector(state => state.rootReducer.Login);
 
     const dispatch = useDispatch();
@@ -68,16 +75,29 @@ const SSO_TenantsOrStudies = props => {
                                     ) : (                                         
                                             <>
                                                 {((tsCount.tenantCount && tsCount.tenantCount > 1) || (tsCount.studyCount && tsCount.studyCount > 0 && tsCount.tenantCount && tsCount.tenantCount > 0)) ? (
-                                                    <div className="col-lg-2" style={{ border: "1px solid rgb(231, 234, 236)", margin: "10px", padding: "0px" }}>
-                                                        <div className="ibox float-e-margins" style={{ marginBottom: "0" }}>
-                                                            <div className="ibox-content" style={{ padding: "0" }}>
+                                                    <div className="col-lg-2">
+                                                        <div className=" float-e-margins" style={{ marginBottom: "0", marginTop:"25px" }}>
+                                                            <div className="" style={{ padding: "0" }}>
                                                                 <div>
                                                                     <div style={{ width: "90%" }}>
-                                                                        Admin
-                                                                    </div>
-                                                                    <div style={{ width: "10%" }}>
-                                                                        <FontAwesomeIcon onClick={() => goToTenants(3)} style={{ cursor: "pointer", color: "#868686" }} icon="fa-solid fa-caret-right" />
-                                                                    </div>
+                                                                        <ConfigProvider
+                                                                            theme={{
+                                                                                components: {
+                                                                                    Button: {
+                                                                                        colorPrimary: `linear-gradient(135deg, ${colors1.join(', ')})`,
+                                                                                        colorPrimaryHover: `linear-gradient(135deg, ${getHoverColors(colors1).join(', ')})`,
+                                                                                        colorPrimaryActive: `linear-gradient(135deg, ${getActiveColors(colors1).join(', ')})`,
+                                                                                        lineWidth: 0,
+                                                                                    },
+                                                                                },
+                                                                            }}
+                                                                        >
+                                                                            <Button type="primary" size="large" onClick={() => goToTenants(3)} style={{ width: "100%" }}>
+                                                                                Admin
+                                                                            </Button>
+                                                                        </ConfigProvider>
+                                                                       
+                                                                    </div>                                                                  
                                                                 </div>
                                                             </div>
                                                         </div>

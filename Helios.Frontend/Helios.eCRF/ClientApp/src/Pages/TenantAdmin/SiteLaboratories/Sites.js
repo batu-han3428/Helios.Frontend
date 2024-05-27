@@ -16,7 +16,6 @@ import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { formatDate } from "../../../helpers/format_date";
 import Swal from 'sweetalert2'
 import { exportToExcel } from '../../../helpers/ExcelDownload';
-import { Table } from 'antd';
 import './Sites.css';
 
 const Sites = props => {
@@ -155,7 +154,7 @@ const Sites = props => {
                 sortDirections: ['ascend', 'descend'],
             },
             {
-                title: props.t('Last updated on"'),
+                title: props.t('Last updated on'),
                 dataIndex: 'updatedAt',
                 sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
                 sortDirections: ['ascend', 'descend'],

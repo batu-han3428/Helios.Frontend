@@ -12,9 +12,17 @@ import { setLocalStorage } from '../../helpers/local-storage/localStorageProcess
 import { onLogin } from '../../helpers/Auth/useAuth';
 import { loginuser } from '../../store/actions';
 import ToastComp from '../../components/Common/ToastComp/ToastComp';
+import { Button, ConfigProvider } from 'antd';
+import { TinyColor } from '@ctrl/tinycolor';
 
 
 const SSO_Tenants = props => {
+
+    const colors1 = ['#6253E1', '#04BEFE'];
+    const getHoverColors = (colors: string[]) =>
+        colors.map((color) => new TinyColor(color).lighten(5).toString());
+    const getActiveColors = (colors: string[]) =>
+        colors.map((color) => new TinyColor(color).darken(5).toString());
 
     const userInformation = useSelector(state => state.rootReducer.Login);
 
@@ -133,16 +141,26 @@ const SSO_Tenants = props => {
                                         </Alert>
                                     ) : (
                                     filteredData.map((item, index) => (
-                                        <div key={index} className="col-lg-2" style={{ border: "1px solid rgb(231, 234, 236)", margin: "10px", padding: "0px" }} >
-                                            <div className="ibox float-e-margins" style={{ marginBottom: "0" }}>
-                                                <div className="ibox-content" style={{ padding: "0" }} >
+                                        <div key={index} className="col-lg-2" style={{  margin: "10px", padding: "0px" }} >
+                                            <div className="float-e-margins" style={{ marginBottom: "0", marginTop:"25px" }}>
+                                                <div className="" style={{ padding: "0" }} >
                                                     <div>
-                                                        <div style={{ width: "90%" }} >
-                                                            {item.tenantName}
-                                                        </div>
-                                                        <div style={{ width: "10%" }} >
-                                                            <FontAwesomeIcon onClick={() => goToStudies(item.id) } style={{ cursor: "pointer", color: "#868686" }} icon="fa-solid fa-caret-right" />
-                                                        </div>
+                                                        <ConfigProvider
+                                                            theme={{
+                                                                components: {
+                                                                    Button: {
+                                                                        colorPrimary: `linear-gradient(135deg, ${colors1.join(', ')})`,
+                                                                        colorPrimaryHover: `linear-gradient(135deg, ${getHoverColors(colors1).join(', ')})`,
+                                                                        colorPrimaryActive: `linear-gradient(135deg, ${getActiveColors(colors1).join(', ')})`,
+                                                                        lineWidth: 0,
+                                                                    },
+                                                                },
+                                                            }}
+                                                        >
+                                                            <Button type="primary" size="large" onClick={() => goToStudies(item.id)} style={{ width: "100%" }}>
+                                                                {item.tenantName}
+                                                            </Button>
+                                                        </ConfigProvider>                                                       
                                                     </div>
                                                 </div>
                                             </div>
