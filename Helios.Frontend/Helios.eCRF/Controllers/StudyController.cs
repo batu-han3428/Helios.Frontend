@@ -269,7 +269,7 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> SetVisits(VisitDTO visitDTO)
         {
             var result = await _studyService.SetVisits(visitDTO);
-            
+
             return Ok(result);
         }
 

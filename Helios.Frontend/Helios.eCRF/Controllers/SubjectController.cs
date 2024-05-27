@@ -49,7 +49,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="subjectVisitModulePageId">hasta vizit modul sayfa id</param>
         /// <returns>hasta element listesi</returns>
         [HttpGet]
-        //[Authorize(Roles = "StudyUser")]
+        [RoleAttribute(Roles.StudyUser)]
         public async Task<IActionResult> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId)
         {
             var result = await _subjectService.GetSubjectElementList(subjectId,subjectVisitModulePageId);
@@ -61,11 +61,11 @@ namespace Helios.eCRF.Controllers
         /// </summary>
         /// <param name="subjectId">hasta id</param>
         /// <returns>menü listesi</returns>
-        [HttpGet("{subjectId}")]
+        [HttpGet("{studyId}")]
         [RoleAttribute(Roles.StudyUser)]
-        public async Task<IActionResult> GetSubjectDetailMenu(Int64 subjectId)
+        public async Task<IActionResult> GetSubjectDetailMenu(Int64 studyId)
         {
-            var result = await _subjectService.GetSubjectDetailMenu(subjectId);
+            var result = await _subjectService.GetSubjectDetailMenu(studyId);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 

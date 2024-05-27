@@ -42,14 +42,14 @@ services:
       - v3network
 
 
-  redis_image:
-    image: redis
-    container_name: redis.cache
-    command: redis-server --requirepass heliosredis
-    ports:
-      - 6380:6380
-    networks:
-      - v3network
+  # redis_image:
+  #   image: redis
+  #   container_name: redis.cache
+  #   command: redis-server --requirepass heliosredis
+  #   ports:
+  #     - 6380:6380
+  #   networks:
+  #     - v3network
 
   # rabbitmq:
   #   image: rabbitmq:3-management-alpine

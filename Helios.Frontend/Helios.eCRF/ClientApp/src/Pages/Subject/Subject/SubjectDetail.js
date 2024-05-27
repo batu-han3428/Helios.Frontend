@@ -14,11 +14,9 @@ import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import SubjectDetailElementList from './SubjectDetailElementList.js';
 
 const SubjectDetail = props => {
-
-    const { subjectId, pageId } = useParams();
+    const { studyId, pageId, subjectId } = useParams();
 
     const dispatch = useDispatch();
-
     const toastRef = useRef();
 
     const [selectedKeys, setSelectedKeys] = useState(['1-1']);
@@ -28,15 +26,15 @@ const SubjectDetail = props => {
     const [leftMenuData, setLeftMenuData] = useState([]);
     const [subjectElementList, setSubjectElementList] = useState([]);
 
-    const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery();
+    const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery({ studyId });
     const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId });
 
     useEffect(() => {
-        if (subjectId) {
+        if (studyId) {
             dispatch(startloading());
-            trigger(subjectId);
+            trigger(studyId);
         }
-    }, [subjectId]);
+    }, [studyId]);
 
     useEffect(() => {
         if (!error1 && !isLoading1 && elementList) {
@@ -85,11 +83,11 @@ const SubjectDetail = props => {
                 <div className="container-fluid" style={{ paddingLeft: 0 }}>
                     <Row gutter={16}>
                         <Col xs={0} sm={0} md={6} lg={6} xl={5}>
-                            <SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} />
+                            <SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} />
                         </Col>
                         <Col xs={1} sm={1} md={0} lg={0} xl={0}>
                             <Button style={{ position: "fixed", top: "80px", left: "10px", zIndex: "1000" }} onClick={showDrawer} shape="circle" icon={<MenuOutlined />} />
-                            <SubjectDetailDrawer onClose={onClose} openMobileMenu={openMobileMenu} content={<SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={true} />} />
+                            <SubjectDetailDrawer onClose={onClose} openMobileMenu={openMobileMenu} content={<SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={true} studyId={studyId} subjectId={subjectId} />} />
                         </Col>
                         <Col xs={24} sm={24} md={18} lg={18} xl={19}>
                             <div>

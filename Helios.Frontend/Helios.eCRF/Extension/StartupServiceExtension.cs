@@ -8,7 +8,6 @@ namespace Helios.eCRF.Extension
 {
     public static class StartupServiceExtension
     {
-        private static IConfiguration Configuration;
         public static IServiceCollection DefaultConfigurationService(this IServiceCollection services, IConfiguration Configuration)
         {
             services.AddHttpContextAccessor();
@@ -24,7 +23,6 @@ namespace Helios.eCRF.Extension
             services.AddScoped<IStudyService, StudyService>();
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<IModuleService, ModuleService>();
-            services.AddScoped<ICacheService, CacheService>();
             services.AddScoped<ISubjectService, SubjectService>();
             services.AddScoped<TimeZoneHelper>();
             services.AddSignalR();
