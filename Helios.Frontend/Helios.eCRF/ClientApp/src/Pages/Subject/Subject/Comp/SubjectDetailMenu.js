@@ -4,8 +4,10 @@ import { withTranslation } from "react-i18next";
 import { Menu, Tooltip } from 'antd';
 import { UserOutlined, LockOutlined, BulbOutlined, FolderOutlined, FileOutlined } from '@ant-design/icons';
 import { SubjectDetailEllipsis } from './SubjectDetailEllipsis';
+import { useNavigate } from "react-router-dom";
 
 const SubjectDetailMenu = props => {
+    const navigate = useNavigate();
 
     const CustomMenuHeader = () => {
         return (
@@ -31,7 +33,7 @@ const SubjectDetailMenu = props => {
         );
     }
 
-    const CustomMenuItem = ({item}) => {      
+    const CustomMenuItem = ({ item }) => {
         return (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Tooltip title={item.title}>
@@ -54,7 +56,7 @@ const SubjectDetailMenu = props => {
                             icon: <BulbOutlined />
                         },
                     ]} />
-                    </div>
+                </div>
             </div>
         );
     };
@@ -114,7 +116,7 @@ const SubjectDetailMenu = props => {
             props.setOpenKeys(newOpenKeys);
             const parentItem = items.find(item => item.key === parentKey);
             const pageId = parentItem.children.find(child => child.key === e.key).id;
-            console.log("pageId: ", pageId);
+            navigate(`/subject-detail/${props.studyId}/${pageId}/${props.subjectId}`);
         }
         props.setSelectedKeys(e.key);
     };
