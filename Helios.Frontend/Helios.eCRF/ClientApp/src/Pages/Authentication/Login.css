@@ -7,12 +7,11 @@
     font-size: 12px;
 }
 
-
 .toggle-visibility {
     position: absolute;
     right: 50px;
     cursor: pointer;
     margin-top: -27px;
     color: #535eb4;
-    user-select: none; 
+    user-select: none;
 }

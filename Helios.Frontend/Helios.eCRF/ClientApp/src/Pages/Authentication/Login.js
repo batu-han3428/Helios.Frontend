@@ -26,6 +26,7 @@ import LanguageDropdown from '../../components/CommonForBoth/TopbarDropdown/Lang
 import { withTranslation } from "react-i18next";
 import logoheliossmImg from "../../assets/images/helios-sm-logo.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import "./Login.css";
 
 
 const Login = props => {
@@ -70,53 +71,58 @@ const Login = props => {
     const [loginPost, { isLoading }] = useLoginPostMutation();
     const [formData, setFormData] = useState({ Email: '', Password: '', Language: props.i18n.language });
 
-<<<<<<< Updated upstream
-=======
+  
+
+  
     const [errors, setErrors] = useState({});
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
     const togglePasswordVisibility = () => {
         setIsPasswordVisible(!isPasswordVisible);
     };
-
->>>>>>> Stashed changes
     const handleSubmit = async (e) => {
         try {
-            dispatch(startloading());
-
-            const response = await loginPost(formData);
-
-            if (response.data.isSuccess) {               
-                setLocalStorage("accessToken", response.data.values.accessToken);
-                let result = onLogin();
-
-                dispatch(endloading()) 
-                if (result === false) {
-                    toastRef.current.setToast({
-                        message: props.t("An unexpected error occurred."),
-                        stateToast: false
-                    });
-                } else {
-                    dispatch(loginuser(result));
-                    navigate("/");
-                }
+            let formErrors = {};
+            if (!formData.Password) {
+                formErrors.password = 'Password is required';
+                setErrors(formErrors);
             } else {
-                dispatch(endloading());
-                if (response.data.values !== null) {
-                    if (response.data.values.hasOwnProperty("redirect")) {
-                        navigate(response.data.values.redirect);
+                dispatch(startloading());
+                const response = await loginPost(formData);
+
+                if (response.data.isSuccess) {
+                    setLocalStorage("accessToken", response.data.values.accessToken);
+                    let result = onLogin();
+
+                    dispatch(endloading())
+                    if (result === false) {
+                        toastRef.current.setToast({
+                            message: props.t("An unexpected error occurred."),
+                            stateToast: false
+                        });
+                    } else {
+                        dispatch(loginuser(result));
+                        navigate("/");
                     }
-                    toastRef.current.setToast({
-                        message: response.data.values.hasOwnProperty("change") ? props.t(response.data.message).replace(/@Change/g, response.data.values.change) : props.t(response.data.message),
-                        stateToast: false
-                    });
                 } else {
-                    toastRef.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: false
-                    });
+                    dispatch(endloading());
+                    if (response.data.values !== null) {
+                        if (response.data.values.hasOwnProperty("redirect")) {
+                            navigate(response.data.values.redirect);
+                        }
+                        toastRef.current.setToast({
+                            message: response.data.values.hasOwnProperty("change") ? props.t(response.data.message).replace(/@Change/g, response.data.values.change) : props.t(response.data.message),
+                            stateToast: false
+                        });
+                    } else {
+                        toastRef.current.setToast({
+                            message: props.t(response.data.message),
+                            stateToast: false
+                        });
+                    }
                 }
             }
+           
         } catch (error) {
             dispatch(endloading());
         }
@@ -133,6 +139,10 @@ const Login = props => {
             stateToast: state
         });
     }
+    const handleFocus = (field) => {
+        setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
+    };
+
 
     document.title = "Login | Veltrix - React Admin & Dashboard Template";
     return (
@@ -192,26 +202,18 @@ const Login = props => {
                                                 <Label className="form-label" htmlFor="userpassword">{props.t("Password")}</Label>
                                                 <Input
                                                     name="password"
-<<<<<<< Updated upstream
-                                                    type="password"
-                                                    className="form-control"
-                                                    placeholder=""
-                                                    onChange={(e) => setFormData({ ...formData, Password: e.target.value })}
-                                                />
-=======
+                                                  
                                                     type={isPasswordVisible ? 'text' : 'password'}
-                                                    className={errors.password ? 'form-control  error-border' : 'form-control'}
+                                                    className={errors.password ? 'form-control error-border' : 'form-control'}
                                                     onFocus={() => handleFocus('password')}
                                                     placeholder=""
                                                     onChange={(e) => setFormData({ ...formData, Password: e.target.value })}
-                                                /> <span
-                                                    className="toggle-visibility"
-                                                    onClick={togglePasswordVisibility}
-                                                >
+                                                />
+                                               
+                                                <span className="toggle-visibility" onClick={togglePasswordVisibility}>
                                                     {isPasswordVisible ? <FontAwesomeIcon icon="fa-solid fa-eye-slash" /> : <FontAwesomeIcon icon="fa-solid fa-eye" />}
                                                 </span>
                                                 {errors.password && <span className="error-message">{props.t("This field is required")}</span>}
->>>>>>> Stashed changes
                                             </div>
 
                                             <div className="mb-3 row">
