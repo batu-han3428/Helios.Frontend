@@ -25,11 +25,11 @@ namespace Helios.eCRF.Controllers
         /// çalışma listesini döner
         /// </summary>
         /// <returns>çalışmalar</returns>
-        [HttpGet("{isLock}")]
+        [HttpGet("{isLock}/{tenantId}")]
         [RoleAttribute(Roles.TenantAdmin)]
-        public async Task<IActionResult> GetStudyList(bool isLock)
+        public async Task<IActionResult> GetStudyList(bool isLock,Int64 tenantId)
         {
-            var result = await _studyService.GetStudyList(isLock);
+            var result = await _studyService.GetStudyList(isLock,tenantId);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 

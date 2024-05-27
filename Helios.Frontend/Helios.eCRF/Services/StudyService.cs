@@ -19,12 +19,13 @@ namespace Helios.eCRF.Services
         }
 
         #region Study
-        public async Task<RestResponse<List<StudyDTO>>> GetStudyList(bool isLock)
+        public async Task<RestResponse<List<StudyDTO>>> GetStudyList(bool isLock,Int64 tenantId)
         {
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreStudy/GetStudyList", Method.Get);
                 req.AddParameter("isLock", isLock);
+                req.AddParameter("tenantId", tenantId);
                 var result = await client.ExecuteAsync<List<StudyDTO>>(req);
                 return result;
             }

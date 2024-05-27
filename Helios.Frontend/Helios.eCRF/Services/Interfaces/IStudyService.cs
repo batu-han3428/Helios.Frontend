@@ -7,7 +7,7 @@ namespace Helios.eCRF.Services.Interfaces
 {
     public interface IStudyService
     {
-        Task<RestResponse<List<StudyDTO>>> GetStudyList(bool isLock);
+        Task<RestResponse<List<StudyDTO>>> GetStudyList(bool isLock, Int64 tenantId);
         Task<RestResponse<List<SiteDTO>>> GetSiteList(Int64 studyId);
         Task<ApiResponse<dynamic>> SiteSaveOrUpdate(SiteModel siteModel);
         Task<ApiResponse<dynamic>> SiteDelete(SiteModel siteModel);
