@@ -10,6 +10,7 @@ import { PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import Swal from 'sweetalert2';
 import { arrayMove } from '@dnd-kit/sortable';
 import TransferData from '../Comp/TransferData';
+import Relation from '../Comp/Relation';
 
 export const findItemRecursive = (items, key) => {
     for (const item of items) {
@@ -598,6 +599,11 @@ const handleTransferData = (openModal, studyId, activeStudyId, ref, toastRef, mo
     openModal({ title: "Data Transfer", buttonText: "Save Transfer", content: content });
 };
 
+const handleRelation = (openModal, studyId, activeStudyId, ref, toastRef, modalRef) => {
+    const content = <Relation studyId={studyId} activeStudyId={activeStudyId} toast={toastRef} refs={modalRef} />;
+    openModal({ title: i18n.t("Relation"), buttonText: i18n.t("Save"), content: content });
+};
+
 export function visitSettingsItems(openModal, studyId, activeStudyId, ref, toastRef, modalRef) {
     let items = [];
     items.push({
@@ -612,6 +618,7 @@ export function visitSettingsItems(openModal, studyId, activeStudyId, ref, toast
         key: '2',
         icon: <FontAwesomeIcon icon="fa-solid fa-diagram-project" style={{ color: "#f6f797", }} />,
         style: { color: "#f6f797" },
+        onClick: () => handleRelation(openModal, studyId, activeStudyId, ref, toastRef, modalRef)
     });
     items.push({
         label: i18n.t('Annotated CRF PDF'),

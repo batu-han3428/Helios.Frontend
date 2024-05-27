@@ -7,7 +7,6 @@ using Helios.eCRF.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
 using RestSharp;
-using System.Text.Json;
 
 namespace Helios.eCRF.Services
 {
@@ -338,6 +337,29 @@ namespace Helios.eCRF.Services
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreStudy/SetTransferData", Method.Post);
+                AddApiHeaders(req);
+                req.AddJsonBody(dto);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
+        public async Task<RestResponse<StudyVisitRelationModel>> GetVisitRelation()
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetVisitRelation", Method.Get);
+                AddApiHeaders(req);
+                var result = await client.ExecuteAsync<StudyVisitRelationModel>(req);
+                return result;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> SetVisitRelation(List<StudyVisitRelationDTO> dto)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/SetVisitRelation", Method.Post);
                 AddApiHeaders(req);
                 req.AddJsonBody(dto);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);

@@ -87,6 +87,17 @@ export const VisitApi = createApi({
                 body: data,
             }),
         }),
+        visitRelationGet: builder.query({
+            query: () => `/Study/GetVisitRelation`,
+            keepUnusedDataFor: 0,
+        }),
+        visitRelationSet: builder.mutation({
+            query: (data) => ({
+                url: '/Study/SetVisitRelation',
+                method: 'POST',
+                body: data,
+            }),
+        }),
     }),
 });
 
@@ -114,3 +125,7 @@ export const { useVisitRankingSetMutation } = VisitApi;
 export const { useLazyTransferDataGetQuery } = VisitApi;
 
 export const { useTransferDataSetMutation } = VisitApi;
+
+export const { useLazyVisitRelationGetQuery } = VisitApi;
+
+export const { useVisitRelationSetMutation } = VisitApi;

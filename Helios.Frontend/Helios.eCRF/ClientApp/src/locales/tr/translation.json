@@ -411,5 +411,12 @@
   "Updated by": "Güncelleyen kişi",
   "Check list": "Çoklu seçim butonu",
   "Datagrid": "Çoklu veri tablosu",
-  "Table": "Tablo"
+  "Table": "Tablo",
+  "Source page": "Kaynak sayfa",
+  "Source input": "Kaynak girdi",
+  "Field operation": "Alan işlemi",
+  "Input value": "Girdi değeri",
+  "Target page": "Hedef sayfa",
+  "Hide": "Gizle",
+  "New tag": "Yeni etiket"
 }
