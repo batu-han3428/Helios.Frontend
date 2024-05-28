@@ -7,7 +7,6 @@ const sliderRef = '0px';
 class RangeSliderElement extends Component {
     constructor(props) {
         super(props);
-        debugger
         this.state = {
             id: props.Id,
             isDisable: props.IsDisable,
