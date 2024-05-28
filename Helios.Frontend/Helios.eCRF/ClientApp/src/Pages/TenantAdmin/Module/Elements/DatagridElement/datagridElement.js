@@ -20,7 +20,7 @@ import SubjectDetailElementList from '../../../../Subject/Subject/SubjectDetailE
 class DatagridElement extends Component {
     constructor(props) {
         super(props);
-       
+
         this.state = {
             id: props.Id,
             moduleId: props.ModuleId,

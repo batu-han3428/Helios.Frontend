@@ -24,7 +24,7 @@ const baseUrl = "http://localhost:3300/";
 class TableElement extends Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
             id: props.Id,
             moduleId: props.ModuleId,
@@ -83,7 +83,7 @@ class TableElement extends Component {
                 cld.push(item);
             }
         })
-
+        
         if (this.state.isDisable) {
             if (result)
                 return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />
@@ -146,78 +146,78 @@ class TableElement extends Component {
             return <div>< Button className="actionBtn" style={{ padding: '0px' }}><i className="far fa-copy" onClick={e => this.copyTableRowElement(e, id, rowindex)}></i></Button><br />
                 < Button className="actionBtn" style={{ padding: '0px' }}><i className="fas fa-trash-alt" onClick={e => this.deleteTableRowElement(e, id, rowindex)}></i></Button></div>;
         }
-    }  
+    }
     render() {
         return (
-            <AccordionComp title="" isOpened={true}  body={
-                 <>
-            <div className="table-responsive mb-3">
-                <Table className="table table-hover table-bordered mb-0">
-                    <thead>
-                        <tr>
-                            <th key='0' style={{ width: '', backgroundColor: "#6D6E70", color: "#FFF" }}>#</th>
-                            {this.state.datagridAndTableProperties.map((col, index) => (
-                                <th key={index} style={{ width: col.width, backgroundColor: "#6D6E70", color: "#FFF" }}>{col.title}</th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>                      
-                        {[...Array(this.state.rowCount === 0 ? 1 : this.state.rowCount)].map((_, rowIndex) => (
-                            <tr key={rowIndex}>
-                                <td key='0'>
-                                    {this.getTableRowProp(this.state.id, rowIndex + 1)}
-                                </td>
-                                {[...Array(this.state.columnCount)].map((_, columnIndex) => (
-                                    <td key={columnIndex}>
-                                        {this.getTdContent(columnIndex, rowIndex)}
-                                    </td>
+            <AccordionComp title="" isOpened={true} body={
+                <>
+                    <div className="table-responsive mb-3">
+                        <Table className="table table-hover table-bordered mb-0">
+                            <thead>
+                                <tr>
+                                    <th key='0' style={{ width: '', backgroundColor: "#6D6E70", color: "#FFF" }}>#</th>
+                                    {this.state.datagridAndTableProperties.map((col, index) => (
+                                        <th key={index} style={{ width: col.width, backgroundColor: "#6D6E70", color: "#FFF" }}>{col.title}</th>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {[...Array(this.state.rowCount === 0 ? 1 : this.state.rowCount)].map((_, rowIndex) => (
+                                    <tr key={rowIndex}>
+                                        <td key='0'>
+                                            {this.getTableRowProp(this.state.id, rowIndex + 1)}
+                                        </td>
+                                        {[...Array(this.state.columnCount)].map((_, columnIndex) => (
+                                            <td key={columnIndex}>
+                                                {this.getTdContent(columnIndex, rowIndex)}
+                                            </td>
+                                        ))}
+                                    </tr>
                                 ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                </Table>
+                            </tbody>
+                        </Table>
 
-                <Modal isOpen={this.state.modalState} toggle={this.toggleAddElementModal} size="md">
-                    <ModalHeader className="mt-0" toggle={this.toggleAddElementModal}>{this.props.t("Add a child input")}</ModalHeader>
-                    <ModalBody>
-                        <div>
-                            <Row className="mb-3">
-                                <div className="col-md-12">
-                                    <Select
-                                        value={this.state.elementListSelectedGroup}
-                                        onChange={this.handleElementListChange}
-                                        options={this.state.elementListOptionGroup}
-                                        placeholder={this.props.t("Select")}
-                                        classNamePrefix="select2-selection" />
+                        <Modal isOpen={this.state.modalState} toggle={this.toggleAddElementModal} size="md">
+                            <ModalHeader className="mt-0" toggle={this.toggleAddElementModal}>{this.props.t("Add a child input")}</ModalHeader>
+                            <ModalBody>
+                                <div>
+                                    <Row className="mb-3">
+                                        <div className="col-md-12">
+                                            <Select
+                                                value={this.state.elementListSelectedGroup}
+                                                onChange={this.handleElementListChange}
+                                                options={this.state.elementListOptionGroup}
+                                                placeholder={this.props.t("Select")}
+                                                classNamePrefix="select2-selection" />
+                                        </div>
+                                    </Row>
                                 </div>
-                            </Row>
-                        </div>
-                    </ModalBody>
-                </Modal>
+                            </ModalBody>
+                        </Modal>
 
-                <Modal isOpen={this.state.propertiesModalState} toggle={this.togglePropertiesModal} size="lg">
-                    <ModalHeader className="mt-0" toggle={this.togglePropertiesModal}>{this.state.elementName}</ModalHeader>
-                    <ModalBody>
-                        <div>
-                            <Properties
-                                ModuleId={this.state.moduleId}
-                                Type={this.state.elementType}
-                                Id={0}
-                                TenantId={this.state.tenantId}
-                                StudyId={this.state.studyId}
-                                UserId={this.state.userId}
-                                ParentId={this.state.id}
-                                ActiveTab={"1"}
-                                isCalcBtn={false}
-                                ColumnIndex={this.state.columnIndex}
-                                RowIndex={this.state.rowIndex}
-                                FormType={this.state.FormType}
-                                Dispatch={this.props.Dispatch}
-                            >
-                            </Properties>
-                        </div>
-                    </ModalBody>
-                </Modal>
+                        <Modal isOpen={this.state.propertiesModalState} toggle={this.togglePropertiesModal} size="lg">
+                            <ModalHeader className="mt-0" toggle={this.togglePropertiesModal}>{this.state.elementName}</ModalHeader>
+                            <ModalBody>
+                                <div>
+                                    <Properties
+                                        ModuleId={this.state.moduleId}
+                                        Type={this.state.elementType}
+                                        Id={0}
+                                        TenantId={this.state.tenantId}
+                                        StudyId={this.state.studyId}
+                                        UserId={this.state.userId}
+                                        ParentId={this.state.id}
+                                        ActiveTab={"1"}
+                                        isCalcBtn={false}
+                                        ColumnIndex={this.state.columnIndex}
+                                        RowIndex={this.state.rowIndex}
+                                        FormType={this.state.FormType}
+                                        Dispatch={this.props.Dispatch}
+                                    >
+                                    </Properties>
+                                </div>
+                            </ModalBody>
+                        </Modal>
                     </div>
                 </>
             } />
