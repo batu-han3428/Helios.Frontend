@@ -301,14 +301,14 @@ const RankingList = props => {
         data.map(item => {
             if (item.children) {
                 return {
-                    title: item.title,
+                    title: item.title+"-"+item.elementType,
                     key: item.key,
                     children: generateTreeNodes(item.children),
                     order: item.order
                 };
             }
             return {
-                title: item.title,
+                title: item.title + "-" + item.elementType,
                 key: item.key,
                 order: item.order
             };
