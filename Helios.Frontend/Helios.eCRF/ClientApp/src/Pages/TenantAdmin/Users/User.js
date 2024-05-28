@@ -945,7 +945,6 @@ const User = props => {
                     <div className="page-title-box">
                         <Row className="align-items-center" style={{ borderBottom: "1px solid black", paddingBottom: "5px" }}>
                             <Col md={8}>
-                            <div>dsadasdasdasda</div>
                                 <h6 className="page-title">{props.t("User list")}</h6>
                             </Col>
                             <Col md="4">
