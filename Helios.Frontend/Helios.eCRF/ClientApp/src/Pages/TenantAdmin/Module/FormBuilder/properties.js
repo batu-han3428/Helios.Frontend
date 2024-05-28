@@ -44,14 +44,14 @@ import AdverseEventElementProperties from "../Elements/AdverseEventElement/adver
 import HiddenElementProperties from "../Elements/HiddenElement/hiddenElementProperties";
 import ConcomittantMedicationElementProperties from "../Elements/ConcomittantMedicationElement/concomittantMedicationElementProperties";
 import { API_BASE_URL } from '../../../../constants/endpoints';
-
+import { GetElementPropertiesPlace, GetElementPropertiesWidth } from '../Elements/Common/ElementPropertiesPlace'
 
 class Properties extends React.Component {
     constructor(props) {
-        super(props);     
+        super(props);
         this.state = {
             activeTab: props.ActiveTab,
-            showWhereElementPropeties: props.ShowWhereElementPropeties,
+            showWhereElementPropeties: GetElementPropertiesPlace(props.Type),
             dispatch: props.Dispatch,
 
             // General properties
@@ -107,7 +107,7 @@ class Properties extends React.Component {
             inputCounter: 1,
             relationFieldOptionGroup: [],
             relationFieldsSelectedGroup: 0,
-            fieldWidthsW: props.FieldWidthsW,
+            fieldWidthsW: GetElementPropertiesWidth(props.Type),
             relationEnabled: true,
             RelFldVlInputClass: 'table-responsive mb-3',
 
@@ -127,7 +127,7 @@ class Properties extends React.Component {
             StartYear: 0,
             EndYear: 0,
             CalculationSourceInputs: '',
-            MainJs: '',         
+            MainJs: '',
             LeftText: '',
             RightText: '',
             DatagridAndTableProperties: '',
@@ -158,13 +158,13 @@ class Properties extends React.Component {
         this.setShowToast.bind(this);
         this.fillDependentFieldList();
         this.getElementData();
-      
+
         this.toggleActiveTab = this.toggleActiveTab.bind(this);
         this.handleSaveModuleContent = this.handleSaveModuleContent.bind(this);
         this.getElementData = this.getElementData.bind(this);
         this.fillDependentFieldList = this.fillDependentFieldList.bind(this);
         this.fillElementProperties = this.fillElementProperties.bind(this);
-      
+
         this.handleIdChange = this.handleIdChange.bind(this);
         this.handleModuleIdChange = this.handleModuleIdChange.bind(this);
         this.handleElementDetailIdChange = this.handleElementDetailIdChange.bind(this);
@@ -217,8 +217,8 @@ class Properties extends React.Component {
 
         this.changeIsFormValid.bind(this);
 
-        this.changeValidationList.bind(this);      
-    }  
+        this.changeValidationList.bind(this);
+    }
 
     setShowToast() {
         this.setState({
@@ -287,7 +287,7 @@ class Properties extends React.Component {
             case 12:
                 return <FileUploaderElementProperties
                 />;
-            case 13:               
+            case 13:
                 return <RangeSliderElementProperties
                     changeDefaultValue={this.changeDefaultValue} DefaultValue={this.state.DefaultValue}
                     changeLowerLimit={this.changeLowerLimit} LowerLimit={this.state.LowerLimit}
@@ -404,7 +404,7 @@ class Properties extends React.Component {
                 this.setState({
                     dependentFieldOptionGroup: depFldOptionGroup,
                 });
-                
+
                 if (this.state.Id !== 0 && this.state.Id !== undefined) {
                     var t = this.state.DependentSourceFieldId;
 
@@ -507,7 +507,7 @@ class Properties extends React.Component {
         this.setState({ LowerLimit: newValue });
     };
 
-    changeUpperLimit = (newValue) => {      
+    changeUpperLimit = (newValue) => {
         this.setState({ UpperLimit: newValue });
     };
 
@@ -571,7 +571,7 @@ class Properties extends React.Component {
         this.setState({ LeftText: newValue });
     };
 
-    changeRightText = (newValue) => {      
+    changeRightText = (newValue) => {
         this.setState({ RightText: newValue });
     };
 
@@ -613,12 +613,12 @@ class Properties extends React.Component {
         this.setState({ DependentFieldValue: newTags });
     }
 
-    dependentFieldValueInputKeyDown = (e) => {    
+    dependentFieldValueInputKeyDown = (e) => {
         const val = e.target.value;
         this.setState({ wth: this.state.wth + 10 });
 
         if (e.key === 'Enter' && val) {
-            if (this.state.DependentFieldValue.find(tag => tag=== val)) {
+            if (this.state.DependentFieldValue.find(tag => tag === val)) {
                 return;
             }
 
@@ -717,7 +717,7 @@ class Properties extends React.Component {
             Mask: data.mask != null ? data.mask : "",
             LowerLimit: data.lowerLimit != null ? data.lowerLimit : "",
             UpperLimit: data.upperLimit != null ? data.upperLimit : "",
-            LeftText: data.leftText != null ? data.leftText:"",
+            LeftText: data.leftText != null ? data.leftText : "",
             RightText: data.rightText != null ? data.rightText : "",
 
             Layout: data.layout,
@@ -884,7 +884,7 @@ class Properties extends React.Component {
                     message: data.message,
                     stateToast: true
                 });
-                        window.location.reload();
+                window.location.reload();
             } else {
                 this.toastRef.current.setToast({
                     message: data.message,
