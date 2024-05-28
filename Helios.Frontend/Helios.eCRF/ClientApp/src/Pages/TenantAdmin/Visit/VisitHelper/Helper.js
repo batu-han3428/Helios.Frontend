@@ -194,8 +194,10 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
                     createdat: "",
                     updatedon: "",
                 };
-
-                pageRows.push(emptyPage);
+                if (studyInformation.isDemo) {
+                    pageRows.push(emptyPage);
+                }
+             
             }
 
             return {
@@ -220,7 +222,9 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
             createdat: "",
             updatedon: "",
         };
-        formattedData.push(emptyVisit);
+        if (studyInformation.isDemo) {
+            formattedData.push(emptyVisit);
+        }
         syncRankingData(formattedData);
         setDataSource(formattedData);
     };
@@ -535,7 +539,7 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
         const changedItems = findChangedItems();
         if (changedItems.length > 0) {
             try {
-                dispatch(startloading());       
+                dispatch(startloading());
                 const response = await visitRankingSet(changedItems);
                 if (response.data.isSuccess) {
                     //setChangedDataSource(JSON.parse(JSON.stringify(dataSource)));
@@ -703,7 +707,7 @@ export function findIndexWithChildren(data, key) {
     }
 
     return -1;
-}; 
+};
 
 export const flattenChildren = (data) => {
     const flattenArray = [];
