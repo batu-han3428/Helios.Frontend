@@ -572,5 +572,6 @@
   "Target page": "Target page",
   "Hide": "Hide",
   "New tag": "New tag",
-  "Has updated the table": "User {user} has updated the table."
+  "Has updated the table": "User {user} has updated the table.",
+  "Your account has been deactivated, please contact the system administrator.": "Your account has been deactivated, please contact the system administrator."
 }
