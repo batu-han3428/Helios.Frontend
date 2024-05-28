@@ -56,17 +56,13 @@ function ElementList(props) {
 
     const togglePropModal = (e, type, id, tabid, isCalc = false) => {
         setIsCalcBtn(isCalc);
-
         setElementName(GetElementNameByKey(props, type) + " " + props.t("Properties"));
 
         if (id !== 0) {
             setElementId(id);
-            setElementType(0);
-        }
-        else {
-            setElementType(type);
         }
 
+        setElementType(type);
         setActiveTab(tabid);
         setpropModal(!propModal);
         removeBodyCss();
