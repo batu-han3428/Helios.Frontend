@@ -298,19 +298,22 @@ const RankingList = props => {
     };
 
     const generateTreeNodes = (data) =>
-        data.map(item => {
+        data.map((item, index) => {
+            debugger
             if (item.children) {
                 return {
-                    title: item.title+"-"+item.elementType,
+                    title: item.title + "-" + item.elementType,
                     key: item.key,
                     children: generateTreeNodes(item.children),
-                    order: item.order
+                    order: item.order,
+                    index: index+1
                 };
             }
             return {
                 title: item.title + "-" + item.elementType,
                 key: item.key,
-                order: item.order
+                order: item.order,
+                index: index+1
             };
         });
 
@@ -404,7 +407,7 @@ const RankingList = props => {
         };
         return (
             <div style={titleStyle}>
-                {nodeData.order && <span style={orderStyle}>{`${nodeData.order} -`}</span>}
+                {nodeData.order && <span style={orderStyle}>{`${nodeData.index} -`}</span>}
                 <span>{nodeData.title}</span>
             </div>
         );
