@@ -253,7 +253,7 @@ const TransferData = props => {
                 }
                 clearVisitType(element);
             });
-            setData(newData);
+            handleDataChange(newData);
             const allRowKeys = getAllRowKeys(newData);
             setExpandedRowKeys(allRowKeys);
             dispatch(endloading());
@@ -265,6 +265,50 @@ const TransferData = props => {
             dispatch(endloading());
         }
     }, [visitData, error, isLoading]);
+
+    const handleDataChange = (data) => {
+        const newData = data.map(item => {
+            if (item.children) {
+                const updatedChildren = item.children.map(chld => {
+                    if (chld.children) {
+                        const updatedChildren2 = chld.children.map(chld2 => {
+                            if (chld2.updatedAt === "0001-01-01T00:00:00+00:00") {
+                                return { ...chld2, updatedAt: "-" };
+                            }
+                            return chld2;
+                        });
+                        if (chld.updatedAt === "0001-01-01T00:00:00+00:00") {
+                            return { ...chld, children: updatedChildren2, updatedAt: "-" };
+                        }
+                        else {
+                            return { ...chld, children: updatedChildren2 }
+                        }
+                    }
+                    else {
+                        if (chld.updatedAt === "0001-01-01T00:00:00+00:00") {
+                            return { ...chld, updatedAt: "-" };
+                        }
+                    }
+                    return chld;
+                });
+                if (item.updatedAt === "0001-01-01T00:00:00+00:00") {
+                    return { ...item, children: updatedChildren, updatedAt: "-" };
+                }
+                else {
+                    return { ...item, children: updatedChildren }
+                }
+
+            }
+            else {
+                if (item.updatedAt === "0001-01-01T00:00:00+00:00") {
+                    return { ...item, updatedAt: "-" };
+                }
+            }
+
+            return item;
+        });
+        setData(newData);
+    };
 
     const getAllRowKeys = (data) => {
         return data.reduce((keys, record) => {
