@@ -191,7 +191,7 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
                 visittype: data.visitType,
                 order: data.order,
                 createdat: data.createdAt,
-                updatedon: data.updatedAt,
+                updatedon: data.updatedAt === "0001-01-01T00:00:00+00:00" ? "-" : data.updatedAt,
             };
 
             const pageRows = data.children ? [...data.children].sort((a, b) => a.order - b.order).map((page, i) => {
@@ -204,7 +204,7 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
                     order: page.order,
                     epro: page.ePro,
                     createdat: page.createdAt,
-                    updatedon: page.updatedAt,
+                    updatedon: page.updatedAt === "0001-01-01T00:00:00+00:00" ? "-" : page.updatedAt,
                     ...(page.children && page.children.length > 0 && {
                         children: [...page.children].sort((a, b) => a.order - b.order).map((module, j) => ({
                             key: `${data.id}_${page.id}_${j}`,
@@ -214,7 +214,7 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
                             name: module.name,
                             order: module.order,
                             createdat: module.createdAt,
-                            updatedon: module.updatedAt,
+                            updatedon: module.updatedAt === "0001-01-01T00:00:00+00:00" ? "-" : module.updatedAt,
                         })),
                     }),
                 };
