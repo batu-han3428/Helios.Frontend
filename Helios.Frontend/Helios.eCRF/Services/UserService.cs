@@ -798,6 +798,7 @@ namespace Helios.eCRF.Services
                                                                 LastName = aspNetUser.LastName,
                                                                 IsActive = tenantUser.IsActive,
                                                                 Email = aspNetUser.Email,
+                                                                UserRoleName=tenantUser.UserRoleName,
                                                                 StudyName = tenantUser.StudyName,
                                                                 StudyDemoLive = tenantUser.StudyDemoLive,
                                                                 CreatedOn = tenantUser.CreatedOn,

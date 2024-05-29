@@ -85,6 +85,12 @@ const TenantUsers = props => {
     const liveData = {      
         columns: [
             {
+                title: props.t('Study name'),
+                dataIndex: 'studyName',
+                sorter: (a, b) => a.studyName.localeCompare(b.studyName),
+                sortDirections: ['ascend', 'descend'],
+            },
+            {
                 title: props.t('First name'),
                 dataIndex: 'name',
                 sorter: (a, b) => a.name.localeCompare(b.name),
@@ -101,13 +107,13 @@ const TenantUsers = props => {
                 dataIndex: 'email',
                 sorter: (a, b) => a.email.localeCompare(b.email),
                 sortDirections: ['ascend', 'descend'],
-            },
+            },     
             {
-                title: props.t('Study name'),
-                dataIndex: 'studyName',
-                sorter: (a, b) => a.studyName.localeCompare(b.studyName),
+                title: props.t('Study role name'),
+                dataIndex: 'userRoleName',
+                sorter: (a, b) => a.userRoleName.localeCompare(b.userRoleName),
                 sortDirections: ['ascend', 'descend'],
-            },
+            },     
             {
                 title: props.t('Created on'),
                 dataIndex: 'createdOn',
@@ -138,6 +144,12 @@ const TenantUsers = props => {
     const demoData = {
         columns: [
             {
+                title: props.t('Study name'),
+                dataIndex: 'studyName',
+                sorter: (a, b) => a.studyName.localeCompare(b.studyName),
+                sortDirections: ['ascend', 'descend'],
+            },
+            {
                 title: props.t('First name'),
                 dataIndex: 'name',
                 sorter: (a, b) => a.name.localeCompare(b.name),
@@ -156,11 +168,11 @@ const TenantUsers = props => {
                 sortDirections: ['ascend', 'descend'],
             },
             {
-                title: props.t('Study name'),
-                dataIndex: 'studyName',
-                sorter: (a, b) => a.studyName.localeCompare(b.studyName),
+                title: props.t('Study role name'),
+                dataIndex: 'userRoleName',
+                sorter: (a, b) => a.userRoleName.localeCompare(b.userRoleName),
                 sortDirections: ['ascend', 'descend'],
-            },
+            },                
             {
                 title: props.t('Created on'),
                 dataIndex: 'createdOn',
