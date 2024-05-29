@@ -267,7 +267,6 @@ const TransferData = props => {
     }, [visitData, error, isLoading]);
 
     const handleDataChange = (data) => {
-        debugger
         const newData = data.map(item => {
             if (item.children) {
                 const updatedChildren = item.children.map(chld => {
