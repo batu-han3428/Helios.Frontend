@@ -135,8 +135,51 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
 
     const handleList = () => {
         dispatch(startloading());
-        trigger(studyInformation.studyId);
+        trigger(studyInformation.studyId);       
     }
+    const handleDataChange = () => {
+        const newData = visitsData.map(item => {
+            if (item.children) {
+                const updatedChildren = item.children.map(chld => {
+                    if (chld.children) {
+                        const updatedChildren2 = chld.children.map(chld2 => {
+                            if (chld2.updatedAt === "0001-01-01T00:00:00+00:00") {
+                                return { ...chld2, updatedAt: "-" };
+                            }
+                            return chld2;
+                        });
+                        if (chld.updatedAt === "0001-01-01T00:00:00+00:00") {
+                            return { ...chld, children: updatedChildren2, updatedAt: "-" };
+                        }
+                        else {
+                            return { ...chld, children: updatedChildren2 }
+                        }
+                    }
+                    else {
+                        if (chld.updatedAt === "0001-01-01T00:00:00+00:00") {
+                            return { ...chld, updatedAt: "-" };
+                        }
+                    }
+                    return chld;
+                });
+                if (item.updatedAt === "0001-01-01T00:00:00+00:00") {
+                    return { ...item, children: updatedChildren, updatedAt: "-" };
+                }
+                else {
+                    return { ...item, children: updatedChildren }
+                }
+
+            }
+            else {
+                if (item.updatedAt === "0001-01-01T00:00:00+00:00") {
+                    return { ...item, updatedAt: "-" };
+                }
+            }
+
+            return item;
+        });
+        setData(newData);
+    };
 
     const setData = (data) => {
         const formattedData = [...data].sort((a, b) => a.order - b.order).map((data) => {
@@ -228,6 +271,7 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
     useEffect(() => {
         if (!isLoading && !error && visitsData) {
             setData(visitsData);
+            handleDataChange();
             dispatch(endloading());
         } else if (!isLoading && error) {
             toastRef.current.setToast({
