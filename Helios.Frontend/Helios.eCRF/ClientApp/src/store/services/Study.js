@@ -20,7 +20,7 @@ export const StudyApi = createApi({
     }),
     endpoints: (builder) => ({
         studyListGet: builder.query({
-            query: (isLock) => `/Study/GetStudyList/${isLock}`,
+            query: (data) => `/Study/GetStudyList/${data.isLocked}/${data.tenantId}`,
             providesTags: ['Study'],
         }),
         studyGet: builder.query({

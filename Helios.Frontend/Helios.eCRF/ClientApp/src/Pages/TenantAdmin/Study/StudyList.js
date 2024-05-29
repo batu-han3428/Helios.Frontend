@@ -25,6 +25,8 @@ const StudyList = props => {
 
     const dispatch = useDispatch();
 
+    const tenantId = userInformation.tenantId;
+
     const studyUpdate = (id) => {
         navigate(`/addstudy`, { state: { studyId: id } });
     };
@@ -180,7 +182,7 @@ const StudyList = props => {
 
     useEffect(() => {
         if (isLocked) {
-            trigger(isLocked === 'true' ? true : false);
+            trigger({ isLocked: isLocked === 'true' ? true : false, tenantId: tenantId });
         }
     }, [isLocked]);
 
