@@ -728,7 +728,7 @@ class Properties extends React.Component {
             StartDay: data.startDay,
             EndDay: data.endDay,
             StartMonth: data.startMonth,
-            EndMonth: data.startMonth,
+            EndMonth: data.EndMonth,
             StartYear: data.startYear,
             EndYear: data.endYear,
             IsRequired: data.isRequired,
@@ -747,7 +747,10 @@ class Properties extends React.Component {
             DependentTargetFieldId: data.dependentTargetFieldId,
             DependentCondition: data.dependentCondition === 0 ? 3 : data.dependentCondition,
             DependentAction: data.dependentAction === 0 ? 1 : data.dependentAction,
-            DependentFieldValue: data.dependentFieldValue == "" ? [] : JSON.parse(data.dependentFieldValue),
+            DependentFieldValue: data.dependentFieldValue === "" ? [] : JSON.parse(data.dependentFieldValue),
+
+            showWhereElementPropeties: GetElementPropertiesPlace(data.elementType),
+            fieldWidthsW: GetElementPropertiesWidth(data.elementType)
         });
 
         var rel = data.relationSourceInputs !== "" ? JSON.parse(data.relationSourceInputs) : '';

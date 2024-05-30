@@ -16,6 +16,7 @@ import Properties from '../../FormBuilder/properties.js';
 import ElementList from '../../FormBuilder/elementList.js';
 import Preview from '../../FormBuilder/preview.js';
 import SubjectDetailElementList from '../../../../Subject/Subject/SubjectDetailElementList.js';
+import { GetElementPropertiesPlace, GetElementPropertiesWidth } from '../Common/ElementPropertiesPlace'
 
 class DatagridElement extends Component {
     constructor(props) {
@@ -33,6 +34,8 @@ class DatagridElement extends Component {
             IsFromDesign: props.IsFromDesign,
             datagridAndTableProperties: props.DatagridAndTableProperties !== "" && props.DatagridAndTableProperties !== null ? JSON.parse(props.DatagridAndTableProperties) : [],
             childElementList: props.ChildElementList.length === 0 ? [] : props.ChildElementList,
+            showWhereElementPropeties: 0,
+            fieldWidthsW: "",
             tableRows: [],
             dgrdModalState: false,
             elementListOptionGroup: GetAllElementListForSelect(16),
@@ -60,6 +63,8 @@ class DatagridElement extends Component {
             dgrdModalState: !prevState.dgrdModalState,
             propertiesdgrdModalState: !prevState.propertiesdgrdModalState,
             elementType: e.value,
+            showWhereElementPropeties: GetElementPropertiesPlace(e.value),
+            fieldWidthsW: GetElementPropertiesWidth(e.value),
             elementName: GetElementNameByKey(this.props, e.value) + " " + this.props.t("Properties")
         }));
     };

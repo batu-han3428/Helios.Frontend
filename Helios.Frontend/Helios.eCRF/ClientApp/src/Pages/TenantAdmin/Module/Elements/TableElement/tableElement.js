@@ -18,6 +18,7 @@ import Properties from '../../FormBuilder/properties.js';
 import ElementList from '../../FormBuilder/elementList.js';
 import SubjectDetailElementList from '../../../../Subject/Subject/SubjectDetailElementList.js';
 import AccordionComp from '../../../../../../src/components/Common/AccordionComp/AccordionComp';
+import { GetElementPropertiesPlace, GetElementPropertiesWidth } from '../Common/ElementPropertiesPlace'
 
 const baseUrl = "http://localhost:3300/";
 
@@ -38,6 +39,8 @@ class TableElement extends Component {
             IsFromDesign: props.IsFromDesign,
             datagridAndTableProperties: props.DatagridAndTableProperties !== "" && props.DatagridAndTableProperties !== null ? JSON.parse(props.DatagridAndTableProperties) : [],
             childElementList: props.ChildElementList.length === 0 ? [] : props.ChildElementList,
+            showWhereElementPropeties: 0,
+            fieldWidthsW: "",
             modalState: false,
             elementListOptionGroup: GetAllElementListForSelect(16),
             elementListSelectedGroup: null,
@@ -64,6 +67,8 @@ class TableElement extends Component {
             modalState: !prevState.modalState,
             propertiesModalState: !prevState.propertiesModalState,
             elementType: e.value,
+            showWhereElementPropeties: GetElementPropertiesPlace(e.value),
+            fieldWidthsW: GetElementPropertiesWidth(e.value),
             elementName: GetElementNameByKey(this.props, e.value) + " " + this.props.t("Properties")
         }));
     };
