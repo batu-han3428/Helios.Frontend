@@ -60,9 +60,12 @@ function ElementList(props) {
 
         if (id !== 0) {
             setElementId(id);
+            setElementType(0);
+        }
+        else {
+            setElementType(type);
         }
 
-        setElementType(type);
         setActiveTab(tabid);
         setpropModal(!propModal);
         removeBodyCss();
