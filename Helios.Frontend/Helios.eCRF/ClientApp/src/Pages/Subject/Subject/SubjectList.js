@@ -200,7 +200,7 @@ const SubjectList = props => {
     
     const addSubject = (id) => {
         Swal.fire({
-            title: props.t("You have unsaved changes"),
+            title: props.t("You will add a new subject"),
             text: props.t("Do you confirm?"),
             icon: "warning",
             showCancelButton: true,
