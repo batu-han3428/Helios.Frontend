@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
+import { formatDate } from "../../../helpers/format_date";
 import { useDispatch } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useAddSubjectMutation, useGetSubjectListQuery } from '../../../store/services/Subject';
@@ -24,6 +25,7 @@ const SubjectList = props => {
             const updatedSubjectsData = subjectsData.map(item => {
                 return {
                     ...item,
+                    updatedAt: formatDate(item.updatedAt),
                     actions: getActions(item)
                 };
             });
@@ -83,15 +85,58 @@ const SubjectList = props => {
     
     const columns = [
         {
-            title: props.t('subjectNumber'),
-            dataIndex: 'subjectNumber',
-            key:'subjectNumber'
+            title: props.t('Country'),
+            dataIndex: 'country',
+            sorter: (a, b) => a.country.localeCompare(b.country),
+            sortDirections: ['ascend', 'descend'],
         },
         {
-            title: 'firstPageId',
-            dataIndex: 'firstPageId',
-            key: 'firstPageId',
-            className: 'hidden-column'
+            title: props.t('subjectNumber'),
+            dataIndex: 'subjectNumber',
+            sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Site'),
+            dataIndex: 'siteName',
+            sorter: (a, b) => a.siteName.localeCompare(b.siteName),
+            sortDirections: ['ascend', 'descend'],
+        },    
+        {
+            title: props.t('Added by'),
+            dataIndex: 'addedByName',
+            sorter: (a, b) => a.addedByName.localeCompare(b.addedByName),
+            sortDirections: ['ascend', 'descend'],
+        },      
+        {
+            title: props.t('Created on'),
+            dataIndex: 'createdAt',
+            sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Last updated on'),
+            dataIndex: 'updatedAt',
+            sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Randomization'),
+            dataIndex: 'randomData',
+            sorter: (a, b) => a.randomData.localeCompare(b.randomData),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Query'),
+            dataIndex: 'query',
+            sorter: (a, b) => a.query.localeCompare(b.query),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('SDV'),
+            dataIndex: 'sdv',
+            sorter: (a, b) => a.sdv.localeCompare(b.sdv),
+            sortDirections: ['ascend', 'descend'],
         },
         {
             title: props.t('Actions'),

@@ -475,7 +475,7 @@ namespace Helios.eCRF.Services
             }
         }
 
-        private async Task<RestResponse<List<AspNetUserDTO>>> GetUserList(List<Int64> AuthUserIds)
+        public async Task<RestResponse<List<AspNetUserDTO>>> GetUserList(List<Int64> AuthUserIds)
         {
             using (var client = AuthServiceClient)
             {

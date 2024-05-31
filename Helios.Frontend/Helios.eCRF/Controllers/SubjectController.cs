@@ -12,9 +12,11 @@ namespace Helios.eCRF.Controllers
     public class SubjectController : Controller
     {
         private ISubjectService _subjectService;
-        public SubjectController(ISubjectService subjectService)
+        private IUserService _userService;
+        public SubjectController(ISubjectService subjectService, IUserService userService)
         {
             _subjectService = subjectService;
+            _userService = userService;
         }
 
         /// <summary>
@@ -27,6 +29,12 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> GetSubjectList(Int64 studyId)
         {
             var result = await _subjectService.GetSubjectList(studyId);
+            var addedbyids = result.Data.Select(x => x.AddedById).Distinct().ToList();           
+            var users = await _userService.GetUserList(addedbyids);           
+            foreach (var user in result.Data) {
+                var addedby= users.Data.FirstOrDefault(x => x.Id == user.AddedById);
+                user.AddedByName = addedby.Name + ' ' + addedby.LastName;
+            }
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 

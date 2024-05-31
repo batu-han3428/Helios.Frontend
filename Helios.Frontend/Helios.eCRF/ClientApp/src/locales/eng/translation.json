@@ -234,6 +234,7 @@
   "Roles": "Roles",
   "Site name": "Site name",
   "Sites": "Sites",
+  "Site": "Site",
   "User active/passive status will be changed.": "User active/passive status will be changed.",
   "State": "State",
   "Active": "Active",
@@ -573,5 +574,9 @@
   "Hide": "Hide",
   "New tag": "New tag",
   "Has updated the table": "User {user} has updated the table.",
-  "Your account has been deactivated, please contact the system administrator.": "Your account has been deactivated, please contact the system administrator."
+  "Your account has been deactivated, please contact the system administrator.": "Your account has been deactivated, please contact the system administrator.",
+  "Investigators": "Investigators",
+  "subjectNumber": "Subject number",
+  "SDV": "SDV",
+  "Added by": "Added by"
 }

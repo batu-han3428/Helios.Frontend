@@ -80,6 +80,7 @@
   "Roles": "Roller",
   "Site name": "Merkez adı",
   "Sites": "Merkezler",
+  "Site": "Merkez",
   "User active/passive status will be changed.": "Kullanıcı aktif/pasif durumu değiştirilecektir.",
   "State": "Durum",
   "Active": "Aktif",
@@ -420,5 +421,9 @@
   "Hide": "Gizle",
   "New tag": "Yeni etiket",
   "Has updated the table": "{user} kullanıcısı tabloda güncelleme yapmıştır.",
-  "Your account has been deactivated, please contact the system administrator.": "Hesabınız pasife alınmıştır, lütfen sistem yöneticisi ile iletişime geçiniz."
+  "Your account has been deactivated, please contact the system administrator.": "Hesabınız pasife alınmıştır, lütfen sistem yöneticisi ile iletişime geçiniz.",
+  "Investigators": "Araştırıcılar",
+  "subjectNumber": "Hasta numarası",
+  "SDV": "SDV",
+  "Added by": "Ekleyen kişi"
 }
