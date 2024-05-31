@@ -1,7 +1,7 @@
 ﻿import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef } from "react";
 import {
-    Row, Col, Card, CardBody, FormFeedback, Label, Input, Form, Button
+    Row, Col, Card, CardBody, FormFeedback, Label, Form, Button
 } from "reactstrap";
 import { withTranslation } from "react-i18next";
 import {
@@ -21,7 +21,8 @@ import { useFormik } from "formik";
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { exportToExcel } from '../../../helpers/ExcelDownload';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Table } from 'antd';
+import { Table, Input } from 'antd';
+import { SearchOutlined } from '@ant-design/icons';
 
 
 const TenantUsers = props => {
@@ -38,6 +39,8 @@ const TenantUsers = props => {
     const [demoTableData, setDemoTableData] = useState([]);
     const [basicActive, setBasicActive] = useState('tab1');
     const [excelData, setExcelData] = useState([]);
+    const [filteredInfo, setFilteredInfo] = useState({});
+    const [sortedInfo, setSortedInfo] = useState({});
 
     const handleBasicClick = (value) => {
         if (value === basicActive) {
@@ -45,6 +48,12 @@ const TenantUsers = props => {
         }
 
         setBasicActive(value);
+    };
+
+    const handleChange = (pagination, filters, sorter) => {
+        setFilteredInfo(filters);
+        setSortedInfo(sorter);
+
     };
 
     const generateInfoLabel = () => {
@@ -82,6 +91,12 @@ const TenantUsers = props => {
         return actions;
     };
 
+    const [firstNamesearchText, firstNameSetSearchText] = useState('');
+    const [lastNamesearchText, lastNameSetSearchText] = useState('');
+    const [emailSearchText, emailSetSearchText] = useState('');
+    const uniqueRoleNamesLive = Array.from(new Set(liveTableData.map(item => item.roleName)));
+    const uniqueStudyNamesLive = Array.from(new Set(liveTableData.map(item => item.studyName)));
+
     const liveData = {      
         columns: [
             {
@@ -89,30 +104,78 @@ const TenantUsers = props => {
                 dataIndex: 'studyName',
                 sorter: (a, b) => a.studyName.localeCompare(b.studyName),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: filteredInfo.studyName || null,
+                filters: uniqueStudyNamesLive.map(item => ({ ...item, text: item, value: item })),
+                onFilter: (value, record) => record.studyName === value,
             },
             {
                 title: props.t('First name'),
                 dataIndex: 'name',
                 sorter: (a, b) => a.name.localeCompare(b.name),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [firstNamesearchText],
+                onFilter: (value, record) => String(record.name).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search name"
+                                value={selectedKeys[0]}
+                                onChange={(e) => firstNameSetSearchText(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },
             {
                 title: props.t('Last name'),
                 dataIndex: 'lastName',
                 sorter: (a, b) => a.lastName.localeCompare(b.lastName),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [lastNamesearchText],
+                onFilter: (value, record) => String(record.lastName).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search name"
+                                value={selectedKeys[0]}
+                                onChange={(e) => lastNameSetSearchText(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },
             {
                 title: props.t('Email'),
                 dataIndex: 'email',
                 sorter: (a, b) => a.email.localeCompare(b.email),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [emailSearchText],
+                onFilter: (value, record) => String(record.email).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search name"
+                                value={selectedKeys[0]}
+                                onChange={(e) => emailSetSearchText(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },     
             {
                 title: props.t('Study role name'),
                 dataIndex: 'userRoleName',
                 sorter: (a, b) => a.userRoleName.localeCompare(b.userRoleName),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: filteredInfo.userRoleName || null,
+                filters: uniqueRoleNamesLive.map(item => ({ ...item, text: item, value: item })),
+                onFilter: (value, record) => record.userRoleName === value,
             },     
             {
                 title: props.t('Created on'),
@@ -141,6 +204,12 @@ const TenantUsers = props => {
         rows: liveTableData
     }
 
+    const [firstNamesearchTextDemo, firstNameSetSearchTextDemo] = useState('');
+    const [lastNamesearchTextDemo, lastNameSetSearchTextDemo] = useState('');
+    const [emailSearchTextDemo, emailSetSearchTextDemo] = useState('');
+    const uniqueRoleNamesDemo = Array.from(new Set(demoTableData.map(item => item.roleName)));
+    const uniqueStudyNamesDemo = Array.from(new Set(demoTableData.map(item => item.studyName)));
+
     const demoData = {
         columns: [
             {
@@ -148,30 +217,78 @@ const TenantUsers = props => {
                 dataIndex: 'studyName',
                 sorter: (a, b) => a.studyName.localeCompare(b.studyName),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: filteredInfo.studyName || null,
+                filters: uniqueStudyNamesDemo.map(item => ({ ...item, text: item, value: item })),
+                onFilter: (value, record) => record.studyName === value,
             },
             {
                 title: props.t('First name'),
                 dataIndex: 'name',
                 sorter: (a, b) => a.name.localeCompare(b.name),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [firstNamesearchTextDemo],
+                onFilter: (value, record) => String(record.name).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search name"
+                                value={selectedKeys[0]}
+                                onChange={(e) => firstNameSetSearchTextDemo(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },
             {
                 title: props.t('Last name'),
                 dataIndex: 'lastName',
                 sorter: (a, b) => a.lastName.localeCompare(b.lastName),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [lastNamesearchTextDemo],
+                onFilter: (value, record) => String(record.lastName).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search name"
+                                value={selectedKeys[0]}
+                                onChange={(e) => lastNameSetSearchTextDemo(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },
             {
                 title: props.t('Email'),
                 dataIndex: 'email',
                 sorter: (a, b) => a.email.localeCompare(b.email),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [emailSearchTextDemo],
+                onFilter: (value, record) => String(record.email).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search name"
+                                value={selectedKeys[0]}
+                                onChange={(e) => emailSetSearchTextDemo(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },
             {
                 title: props.t('Study role name'),
                 dataIndex: 'userRoleName',
                 sorter: (a, b) => a.userRoleName.localeCompare(b.userRoleName),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: filteredInfo.userRoleName || null,
+                filters: uniqueRoleNamesDemo.map(item => ({ ...item, text: item, value: item })),
+                onFilter: (value, record) => record.userRoleName === value,
             },                
             {
                 title: props.t('Created on'),
@@ -397,6 +514,9 @@ const TenantUsers = props => {
                                             onExpand={handleExpand}
                                             pagination={true}
                                             scroll={{ x: 'max-content' }}
+                                            onChange={handleChange}
+                                            filteredInfo={filteredInfo}
+                                            sortedInfo={sortedInfo}
                                         />
 
 

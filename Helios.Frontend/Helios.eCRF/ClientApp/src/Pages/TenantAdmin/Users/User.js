@@ -1,7 +1,7 @@
 ﻿import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef } from "react";
 import {
-    Row, Col, Button, Card, CardBody, FormFeedback, Label, Input, Form, Dropdown, DropdownToggle, DropdownMenu, DropdownItem
+    Row, Col, Button, Card, CardBody, FormFeedback, Label, Form, Dropdown, DropdownToggle, DropdownMenu, DropdownItem
 } from "reactstrap";
 import { withTranslation } from "react-i18next";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -14,7 +14,7 @@ import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2'
 import { formatDate } from "../../../helpers/format_date";
-import { Table } from 'antd';
+import { Table, Input } from 'antd';
 import Select from "react-select";
 import { useLazyRoleListGetQuery } from '../../../store/services/Permissions';
 import { useLazySiteListGetQuery } from '../../../store/services/SiteLaboratories';
@@ -22,6 +22,7 @@ import makeAnimated from "react-select/animated";
 import "./user.css";
 import { arraysHaveSameItems } from '../../../helpers/General/index';
 import { exportToExcel } from '../../../helpers/ExcelDownload';
+import { SearchOutlined } from '@ant-design/icons';
 
 const User = props => {
 
@@ -45,6 +46,8 @@ const User = props => {
     const [dropdownOpen, setDropdownOpen] = useState({});
     const [menu, setMenu] = useState(false);
     const [excelData, setExcelData] = useState([]);
+    const [filteredInfo, setFilteredInfo] = useState({});
+    const [sortedInfo, setSortedInfo] = useState({});
 
     const animatedComponents = makeAnimated();
 
@@ -52,6 +55,11 @@ const User = props => {
         setMenu(!menu);
     };
 
+    const handleChange = (pagination, filters, sorter) => {
+        setFilteredInfo(filters);      
+        setSortedInfo(sorter);
+
+    };
     const toggle = (userId) => {
         setDropdownOpen(prevState => {
             return {
@@ -89,32 +97,83 @@ const User = props => {
             infoDiv.innerHTML = props.t("Showing entries").replace("{from}", from).replace("{to}", to).replace("{total}", total);
         }
     };
-
+    const [firstNamesearchText, firstNameSetSearchText] = useState('');
+    const [lastNamesearchText, lastNameSetSearchText] = useState('');
+    const [emailSearchText, emailSetSearchText] = useState('');
+    const uniqueNames = Array.from(new Set(tableData.map(item => item.roleName)));
+    
     const data = {
+
         columns: [
             {
                 title: props.t('First name'),
                 dataIndex: 'name',
                 sorter: (a, b) => a.name.localeCompare(b.name),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [firstNamesearchText],
+                onFilter: (value, record) => String(record.name).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search name"
+                                value={selectedKeys[0]}
+                                onChange={(e) => firstNameSetSearchText(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },
             {
                 title: props.t('Last name'),
                 dataIndex: 'lastName',
                 sorter: (a, b) => a.lastName.localeCompare(b.lastName),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [lastNamesearchText],
+                onFilter: (value, record) => String(record.lastName).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search name"
+                                value={selectedKeys[0]}
+                                onChange={(e) => lastNameSetSearchText(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },
             {
                 title: props.t('e-Mail'),
                 dataIndex: 'email',
                 sorter: (a, b) => a.email.localeCompare(b.email),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [emailSearchText],
+                onFilter: (value, record) => String(record.email).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search name"
+                                value={selectedKeys[0]}
+                                onChange={(e) => emailSetSearchText(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },
             {
                 title: props.t('Study role name'),
                 dataIndex: 'roleName',
                 sorter: (a, b) => a.roleName.localeCompare(b.roleName),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: filteredInfo.roleName || null,
+                filters: uniqueNames.map(item => ({ ...item, text: item, value: item })),
+                onFilter: (value, record) => record.roleName===value,
+               
             },
             {
                 title: props.t('Site name'),
@@ -148,7 +207,7 @@ const User = props => {
         ],
         rows: tableData
     }
-  
+
     const getActions = (item) => {
         const actions = (
             <div className="icon-container">
@@ -175,7 +234,7 @@ const User = props => {
         );
         return siteDropdown;
     }
-   
+
     const [trigger, result] = useLazyUserListGetQuery();
     const { data: usersData, error, isLoading } = result;
 
@@ -191,7 +250,7 @@ const User = props => {
             triggerRoles(studyInformation.studyId);
             triggerSites(studyInformation.studyId);
         }
-    }, [studyInformation.studyId]) 
+    }, [studyInformation.studyId])
 
     useEffect(() => {
         dispatch(startloading());
@@ -568,7 +627,7 @@ const User = props => {
         });
     }
 
-    const [userDelete] = useUserDeleteMutation(); 
+    const [userDelete] = useUserDeleteMutation();
 
     const deleteUser = (item) => {
         Swal.fire({
@@ -721,12 +780,12 @@ const User = props => {
                     stateToast: false
                 });
             }
-        } 
+        }
     }, [userData, isErrorUser, isLoadingUser]);
 
     return (
         <React.Fragment>
-        
+
             <ModalComp
                 refs={modalRef}
                 title={studyUserId === 0 ? props.t("Add a user") : props.t("Update user")}
@@ -907,7 +966,7 @@ const User = props => {
                                                 } else {
                                                     const allOptions = optionGroupResponsiblePerson[0].options;
                                                     const selectedOptions = [];
-                                                    for (const option of allOptions) {  
+                                                    for (const option of allOptions) {
                                                         if (option.label !== "Select All" && updateItem.authUserId !== option.value) {
                                                             selectedOptions.push(option.value);
                                                         }
@@ -948,7 +1007,7 @@ const User = props => {
                                 <h6 className="page-title">{props.t("User list")}</h6>
                             </Col>
                             <Col md="4">
-                                <div className="float-end d-none d-md-block" style={{marginLeft: "10px"}}>
+                                <div className="float-end d-none d-md-block" style={{ marginLeft: "10px" }}>
                                     <Button
                                         color="success"
                                         className="btn btn-success waves-effect waves-light"
@@ -977,8 +1036,8 @@ const User = props => {
                                                 ],
                                                 rows: excelData
                                             },
-                                            studyInformation.studyName + " - " + props.t("User list"),
-                                            studyInformation.studyName + " - " + props.t("User list")
+                                                studyInformation.studyName + " - " + props.t("User list"),
+                                                studyInformation.studyName + " - " + props.t("User list")
                                             )}>
                                                 <FontAwesomeIcon style={{ marginRight: "10px" }} icon="fa-solid fa-download" />
                                                 <span>{props.t("Excel Download")}</span>
@@ -998,12 +1057,15 @@ const User = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>
-                                   
+
                                     <Table
                                         dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
                                         columns={data.columns}
                                         pagination={true}
                                         scroll={{ x: 'max-content' }}
+                                        onChange={handleChange}
+                                        filteredInfo={filteredInfo}
+                                        sortedInfo={sortedInfo}
                                     />
                                 </CardBody>
                             </Card>
