@@ -420,5 +420,6 @@
   "Hide": "Gizle",
   "New tag": "Yeni etiket",
   "Has updated the table": "{user} kullanıcısı tabloda güncelleme yapmıştır.",
-  "Your account has been deactivated, please contact the system administrator.": "Hesabınız pasife alınmıştır, lütfen sistem yöneticisi ile iletişime geçiniz."
+  "Your account has been deactivated, please contact the system administrator.": "Hesabınız pasife alınmıştır, lütfen sistem yöneticisi ile iletişime geçiniz.",
+  "Switch to tenant": "Aboneliği değiştir"
 }
