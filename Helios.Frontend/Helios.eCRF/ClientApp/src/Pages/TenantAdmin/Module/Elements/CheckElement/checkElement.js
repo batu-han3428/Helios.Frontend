@@ -9,7 +9,7 @@ class CheckElement extends Component {
             isDisable: props.IsDisable,
             layout: props.Layout,
             checkedOptions: [],
-            ElementOptions: JSON.parse(props.ElementOptions),
+            ElementOptions: props.ElementOptions !== undefined && props.ElementOptions !== null && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value
         }
 
