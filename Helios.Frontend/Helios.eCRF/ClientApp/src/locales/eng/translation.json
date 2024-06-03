@@ -573,5 +573,9 @@
   "Hide": "Hide",
   "New tag": "New tag",
   "Has updated the table": "User {user} has updated the table.",
-  "Your account has been deactivated, please contact the system administrator.": "Your account has been deactivated, please contact the system administrator."
+  "Your account has been deactivated, please contact the system administrator.": "Your account has been deactivated, please contact the system administrator.",
+  "Operations for this field": "Operations for this field",
+  "Clear data": "Clear data",
+  "Comments": "Comments",
+  "Audit trail": "Audit trail"
 }
