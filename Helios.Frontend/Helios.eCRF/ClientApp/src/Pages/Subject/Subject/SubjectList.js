@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { Table, Row, Col, Typography } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Form } from 'reactstrap';
+import { Button, Form, FormFeedback, Label, Input } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { useFormik } from "formik";
@@ -61,21 +61,22 @@ const SubjectList = props => {
     const validationType = useFormik({
         enableReinitialize: true,
         initialValues: {
-            studyId: 8,
-            siteId: selectSites.length === 1 ? selectSites[0].id : 0,
-            initialName: "",
+            studyid: 8,
+            siteid: 0,
+            initialname: "",
 
         },
         validationSchema: Yup.object().shape({
-            siteId: Yup.string().required(
+            siteid: Yup.string().required(
                 props.t("This field is required")
             ),
-            initialName: Yup.string().required(
+            initialname: Yup.string().required(
                 props.t("This field is required")
             ),
 
         }),
         onSubmit: async (values) => {
+            debugger
             values.id = 0;
             values.firstPageId = 0;
             values.subjectNumber = "";
@@ -107,6 +108,7 @@ const SubjectList = props => {
                 dispatch(endloading());
             }
         }
+
     });
 
     const modalContent2 = () => {
@@ -118,40 +120,46 @@ const SubjectList = props => {
                         validationType.handleSubmit();
                         return false;
                     }}>
-                    <div className='row'>
-                        <div className='form-group'>
-                            {selectSites.length > 1 &&
-                                <div className="mb-12" style={{ marginBottom: "15px" }}>
-                                    <label className="form-label"> {props.t('Site')}</label>
-                                    <Select
-                                        name='siteId'
-                                        onChange={(selectedOptions) => {
-                                            const selectedValues = selectedOptions.id;
-                                            validationType.setFieldValue('siteId', selectedValues);
 
-                                        }}
-                                        value={validationType.values.id}
-                                        onBlur={(e) => {
-                                            validationType.handleBlur(e);
-                                        }}
-                                        options={selectSites}
-                                        getOptionLabel={(option) => option.name}
-                                        getOptionValue={(option) => option.id}
-                                        placeholder={props.t("Select")}
-                                        classNamePrefix="select2-selection" />
-                                </div>
-                            }
-                            <div className="mb-12" >
-                                <label className="control-label">
-                                    {props.t('Subject initial')}
-                                </label>
-                                <input className='form-control' type='text' name='initialName' onChange={validationType.handleChange}
-                                    onBlur={(e) => {
-                                        validationType.handleBlur(e);
-                                    }} />
-                            </div>
+                    {selectSites.length > 1 &&
+                        <div className="mb-12" style={{ marginBottom: "15px" }}>
+                            <Label className="form-label"> {props.t('Site')}</Label>
+                            <Select
+                                name='siteid'
+                                id='sitei'
+                                onChange={(selectedOptions) => {
+                                    const selectedValues = selectedOptions.id;
+                                    validationType.setFieldValue('siteid', selectedValues);
+                                }}
+
+                                onBlur={(e) => {
+                                    validationType.handleBlur(e);
+                                }}
+                                options={selectSites}
+                                getOptionLabel={(option) => option.name}
+                                getOptionValue={(option) => option.id}
+                                placeholder={props.t("Select")}
+                                classNamePrefix="select2-selection" />
+                            {validationType.touched.siteid === 0 ? (
+                                <div type="invalid" className="invalid-feedback" style={{ display: "block" }}>{props.t("This field is required")}</div>
+                            ) : null}
                         </div>
+
+                    }
+                    <div className="mb-12" >
+                        <Label className="control-label">
+                            {props.t('Subject initial')}
+                        </Label>
+                        <Input className='form-control' type='text' name='initialname' id='initialname' onChange={validationType.handleChange}
+                            onBlur={(e) => {
+                                validationType.handleBlur(e);
+                            }} />
+                        {validationType.touched.initialname === "" ? (
+                            <div type="invalid" className="invalid-feedback" style={{ display: "block" }}>{props.t("This field is required")}</div>
+                        ) : null}
                     </div>
+
+
                 </Form>
             </>
         );
@@ -197,7 +205,7 @@ const SubjectList = props => {
 
             });
     };
-    
+
     const addSubject = (id) => {
         Swal.fire({
             title: props.t("You will add a new subject"),
@@ -210,7 +218,7 @@ const SubjectList = props => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 dispatch(startloading());
-                const response = await addingSubject({studyId: 8, siteId: 3, initialName: "", id: 0, firstPageId: 0, subjectNumber: "", updatedAt: new Date(), createdAt:new Date()});
+                const response = await addingSubject({ studyId: 8, siteId: 3, initialName: "", id: 0, firstPageId: 0, subjectNumber: "", updatedAt: new Date(), createdAt: new Date() });
                 if (response.data.isSuccess) {
                     dispatch(endloading());
                     Swal.fire({
