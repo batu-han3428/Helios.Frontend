@@ -10,7 +10,7 @@ class DropdownCheckListElement extends Component {
         this.state = {
             id: props.Id,
             isDisable: props.IsDisable,
-            orgElementOptions: JSON.parse(props.ElementOptions),
+            orgElementOptions: props.ElementOptions !== undefined && props.ElementOptions !== null && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
             ElementOptions: [],
             selectedOption: null
