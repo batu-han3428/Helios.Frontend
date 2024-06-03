@@ -4,7 +4,6 @@ import { getLocalStorage, removeLocalStorage } from '../local-storage/localStora
 
 
 export const onLogin = () => {
-
     let token = getLocalStorage("accessToken");
 
     if (token !== null) {
@@ -22,6 +21,7 @@ export const onLogin = () => {
         return {
             token: token,
             name: auth.name,
+            lastName: auth.lastName,
             roles: roles,
             isAuthenticated: auth.isAuthenticated,
             exp: exp.toISOString(),
