@@ -16,7 +16,8 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import '../../TenantAdmin/Module/FormBuilder/formBuilder.css';
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
-import Swal from 'sweetalert2'
+import { Dropdown } from 'antd';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import TextElement from '../../TenantAdmin/Module/Elements/TextElement/textElement.js';
 import NumericElement from '../../TenantAdmin/Module/Elements/NumericElement/numericElement.js';
@@ -33,7 +34,6 @@ import DatagridElement from '../../TenantAdmin/Module/Elements/DatagridElement/d
 import TableElement from '../../TenantAdmin/Module/Elements/TableElement/tableElement.js';
 import CalculationElement from '../../TenantAdmin/Module/Elements/CalculationElement/calculationElement.js';
 import AdverseEventElement from '../../TenantAdmin/Module/Elements/AdverseEventElement/adverseEventElement.js';
-import HiddenElement from '../../TenantAdmin/Module/Elements/HiddenElement/hiddenElement.js';
 import ConcomittantMedicationElement from '../../TenantAdmin/Module/Elements/ConcomittantMedicationElement/concomittantMedicationElement.js';
 import { withTranslation } from "react-i18next";
 import { API_BASE_URL } from '../../../constants/endpoints';
@@ -46,6 +46,7 @@ function SubjectDetailElementList(props) {
     const [isDisable] = useState(props.IsDisable);
     const [ElementList, setElementList] = useState([]);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     useEffect(() => {
         setElementList(props.ElementList);
@@ -206,7 +207,7 @@ function SubjectDetailElementList(props) {
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
                     Dispatch={dispatch}
-                    IsFromDesign={false }
+                    IsFromDesign={false}
                 />
             case 16:
                 return <DatagridElement
@@ -218,7 +219,7 @@ function SubjectDetailElementList(props) {
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
                     Dispatch={dispatch}
-                    IsFromDesign={false }
+                    IsFromDesign={false}
                 />
             case 17:
                 return <AdverseEventElement
@@ -228,6 +229,53 @@ function SubjectDetailElementList(props) {
             default:
                 return "";
         }
+    }
+
+    const getItems = () => {
+        let items = [];
+        items.push({
+            key: '1',
+            label: (
+                <a onClick={() => navigate(``)}>{props.t("Clear data")}</a>
+            ),
+            icon: <FontAwesomeIcon icon="fas fa-ban" style={{ color: "#5b626b", }} />,
+            style: { color: "#5b626b" },
+        });
+        items.push({
+            key: '2',
+            label: (
+                <a onClick={() => navigate(``)}>{props.t("Missing data")}</a>
+                //<a onClick={() => handleAddModule(openModal, record, modalRef, toastRef, toggleModal)}>{t("Add module")}</a>
+            ),
+            icon: <FontAwesomeIcon icon="fas fa-check-square" style={{ color: "#5b626b", }} />,
+            style: { color: "#5b626b" },
+        });
+        items.push({
+            key: '3',
+            label: (
+                <a onClick={() => navigate(``)}>{props.t("Comments")}</a>
+            ),
+            icon: <FontAwesomeIcon icon="fas fa-comment" style={{ color: "#5b626b", }} />,
+            style: { color: "#5b626b" },
+        });
+        items.push({
+            key: '4',
+            label: (
+                <a onClick={() => navigate(``)}>{props.t("Audit trail")}</a>
+            ),
+            icon: <FontAwesomeIcon icon="fas fa-directions" style={{ color: "#5b626b", }} />,
+            style: { color: "#5b626b" },
+        });
+        items.push({
+            key: '5',
+            label: (
+                <a onClick={() => navigate(``)}>{props.t("Query")}</a>
+            ),
+            icon: <FontAwesomeIcon icon="fas fa-exclamation" style={{ color: "#5b626b", }} />,
+            style: { color: "#5b626b" },
+        });
+
+        return { items };
     }
 
     const content = Array.isArray(ElementList)
@@ -243,7 +291,19 @@ function SubjectDetailElementList(props) {
                             {item.elementType !== 1 && item.title}
                         </label>
                     </div>
-                    {renderElementsSwitch(item)}
+                    <Row><div className="col-md-11">{renderElementsSwitch(item)}</div>
+                        {item.elementType !== 1 &&
+                            <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
+                                <Dropdown menu={getItems()} trigger={['click']} placement="bottomLeft">
+                                    <div style={{ alignItems: 'center' }}>
+                                        <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                            <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
+                                        </a>
+                                    </div>
+                                </Dropdown>
+                            </div>
+                        }
+                    </Row>
                     <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
                         {item.description}
                     </label>
