@@ -110,7 +110,7 @@ const mapStatetoProps = state => {
     const avatar = state.rootReducer.Login.name.charAt(0).toUpperCase() + state.rootReducer.Login.lastName.charAt(0).toUpperCase();
     const { error, success } = state.rootReducer.Profile;
     const roles = state.rootReducer.Login.roles;
-    return { error, success,avatar,roles  };
+    return { error, success,avatar,roles };
 };
 
 export default withRouter(

@@ -41,7 +41,11 @@ namespace Helios.eCRF.Services
                 StudyId = studyId,
                 SiteId = 3,
                 SubjectNumber = "",
-                InitialName=""
+                InitialName="",
+                AddedByName="",
+                Country="",
+                RandomData="",
+                SiteName="",
             };
 
             using (var client = CoreServiceClient)
