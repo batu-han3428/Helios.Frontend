@@ -20,21 +20,37 @@ import user1 from "../../../assets/images/users/user-4.jpg";
 const ProfileMenu = props => {
     // Declare a new state variable, which we'll call "menu"
     const [menu, setMenu] = useState(false);
-
     const [username, setusername] = useState("Admin");
 
     const roletatu = props.roles.length > 0 ? props.roles.includes('TenantAdmin') : false;
     
-    useEffect(() => {
+    //profile resim ayarlarý
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    canvas.width = 45;
+    canvas.height = 45;
+    // Arka plan rengini ve metni stilize et
+    context.fillStyle = '#0089ff';
+    context.fillRect(0, 0, canvas.width, canvas.height);
+    context.fillStyle = '#ffffff';
+    context.font = '20px Arial';
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
+    context.fillText(props.avatar, canvas.width / 2, canvas.height / 2);
+    const dataURI = canvas.toDataURL();
+    
+    
+    useEffect(() => {       
+        
         if (localStorage.getItem("authUser")) {
             if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
-                const obj = JSON.parse(localStorage.getItem("authUser"));
+                const obj = JSON.parse(localStorage.getItem("authUser"));               
                 setusername(obj.displayName);
             } else if (
                 process.env.REACT_APP_DEFAULTAUTH === "fake" ||
                 process.env.REACT_APP_DEFAULTAUTH === "jwt"
             ) {
-                const obj = JSON.parse(localStorage.getItem("authUser"));
+                const obj = JSON.parse(localStorage.getItem("authUser"));               
                 setusername(obj.username);
             }
         }
@@ -52,11 +68,8 @@ const ProfileMenu = props => {
                     id="page-header-user-dropdown"
                     tag="button"
                 >
-                    <img
-                        className="rounded-circle header-profile-user"
-                        src={user1}
-                        alt="Header Avatar"
-                    />
+                   
+                    <img src={dataURI} alt="Profile Avatar" style={{ borderRadius: '50%' }} />
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-menu-end">
                     <DropdownItem tag="a" href="/profile">
@@ -71,6 +84,7 @@ const ProfileMenu = props => {
                             {props.t("Switch to tenant")}{" "}
                         </DropdownItem>
                     }
+                   
                    
                     <DropdownItem tag="a" href="auth-lock-screen">
                         <i className="bx bx-lock-open font-size-16 align-middle me-1" />
@@ -93,9 +107,10 @@ ProfileMenu.propTypes = {
 };
 
 const mapStatetoProps = state => {
+    const avatar = state.rootReducer.Login.name.charAt(0).toUpperCase() + state.rootReducer.Login.lastName.charAt(0).toUpperCase();
     const { error, success } = state.rootReducer.Profile;
     const roles = state.rootReducer.Login.roles;
-    return { error, success, roles };
+    return { error, success,avatar,roles  };
 };
 
 export default withRouter(

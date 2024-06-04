@@ -93,27 +93,7 @@ const Header = props => {
                             </Link>
                         </div>
                        
-
-                        <div className="d-none d-sm-block">
-
-                            <Dropdown
-                                isOpen={singlebtn}
-                                toggle={() => setSinglebtn(!singlebtn)}
-                                className="pt-3 d-inline-block"
-                            >
-                                <DropdownToggle className="btn btn-secondary" caret>
-                                    Create <i className="mdi mdi-chevron-down"></i>
-                                </DropdownToggle>
-                                <DropdownMenu>
-                                    <DropdownItem>Action</DropdownItem>
-                                    <DropdownItem>Another action</DropdownItem>
-                                    <DropdownItem>Something else here</DropdownItem>
-                                    <div className="dropdown-divider"></div>
-                                    <DropdownItem>Separated link</DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
-
-                        </div>
+                      
                     </div>
 
                     <div className="d-flex">
@@ -156,36 +136,7 @@ const Header = props => {
                         </Dropdown>
 
                         <LanguageDropdown />
-
-                        <div className="dropdown d-none d-lg-inline-block">
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    toggleFullscreen();
-                                }}
-                                className="btn header-item noti-icon waves-effect"
-                                data-toggle="fullscreen"
-                            >
-                                <i className="mdi mdi-fullscreen"></i>
-                            </button>
-                        </div>
-
-                        <NotificationDropdown />
-                        <ProfileMenu />
-
-                        <div
-                            onClick={() => {
-                                props.showRightSidebarAction(!props.showRightSidebar);
-                            }}
-                            className="dropdown d-inline-block"
-                        >
-                            <button
-                                type="button"
-                                className="btn header-item noti-icon right-bar-toggle waves-effect"
-                            >
-                                <i className="mdi mdi-cog-outline"></i>
-                            </button>
-                        </div>
+                        <ProfileMenu />                      
                     </div>
                 </div>
             </header>
