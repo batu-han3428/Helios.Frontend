@@ -273,69 +273,83 @@ const SubjectList = props => {
             }
         });
     };
-
-    const columns = [
-        {
+    const columns = []
+    if (AskSubjectInitial) {
+        columns.push({
             title: props.t('Country'),
             dataIndex: 'country',
             sorter: (a, b) => a.country.localeCompare(b.country),
             sortDirections: ['ascend', 'descend'],
-        },
-        {
+        });    
+        columns.push({
             title: props.t('subjectNumber'),
             dataIndex: 'subjectNumber',
             sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
             sortDirections: ['ascend', 'descend'],
-        },
-        {
+        });
+        columns.push({
             title: props.t('Site'),
             dataIndex: 'siteName',
             sorter: (a, b) => a.siteName.localeCompare(b.siteName),
             sortDirections: ['ascend', 'descend'],
-        },    
-        {
+        });
+        columns.push({
             title: props.t('Added by'),
             dataIndex: 'addedByName',
             sorter: (a, b) => a.addedByName.localeCompare(b.addedByName),
             sortDirections: ['ascend', 'descend'],
-        },      
-        {
-            title: props.t('Created on'),
-            dataIndex: 'createdAt',
-            sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+        });
+        columns.push({
+            title: 'Subject initial',
+            dataIndex: 'initialName',
+            sorter: (a, b) => a.initialName.localeCompare(b.initialName),
             sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('Last updated on'),
-            dataIndex: 'updatedAt',
-            sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+        });
+    }
+    else {
+        columns.push({
+            title: props.t('subjectNumber'),
+            dataIndex: 'subjectNumber',
+            sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
             sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('Randomization'),
-            dataIndex: 'randomData',
-            sorter: (a, b) => a.randomData.localeCompare(b.randomData),
-            sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('Query'),
-            dataIndex: 'query',
-            sorter: (a, b) => a.query.localeCompare(b.query),
-            sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('SDV'),
-            dataIndex: 'sdv',
-            sorter: (a, b) => a.sdv.localeCompare(b.sdv),
-            sortDirections: ['ascend', 'descend'],
-        },
-        {
-            title: props.t('Actions'),
-            dataIndex: 'actions',
-            key: 'actions'
-        },
-    ];
-
+        });
+    }
+    columns.push({
+        title: props.t('Created on'),
+        dataIndex: 'createdAt',
+        sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+        sortDirections: ['ascend', 'descend'],
+    });
+    columns.push({
+        title: props.t('Last updated on'),
+        dataIndex: 'updatedAt',
+        sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+        sortDirections: ['ascend', 'descend'],
+    });
+    columns.push({
+        title: props.t('Randomization'),
+        dataIndex: 'randomData',
+        sorter: (a, b) => a.randomData.localeCompare(b.randomData),
+        sortDirections: ['ascend', 'descend'],
+    });
+    columns.push({
+        title: props.t('Query'),
+        dataIndex: 'query',
+        sorter: (a, b) => a.query.localeCompare(b.query),
+        sortDirections: ['ascend', 'descend'],
+    });
+    columns.push({
+        title: props.t('SDV'),
+        dataIndex: 'sdv',
+        sorter: (a, b) => a.sdv.localeCompare(b.sdv),
+        sortDirections: ['ascend', 'descend'],
+    });
+    columns.push({
+        title: props.t('Actions'),
+        dataIndex: 'actions',
+        key: 'actions'
+    });
+   
     const [data, setData] = useState([]);
 
     const handleClick = () => {
