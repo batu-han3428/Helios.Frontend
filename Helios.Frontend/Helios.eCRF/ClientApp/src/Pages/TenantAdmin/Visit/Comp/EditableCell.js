@@ -93,8 +93,9 @@ const EditableCell = ({
                                 message: t("This field is required"),
                             },
                         ]}
+                        
                     >
-                        <Input id={inputId} placeholder={record.placeholder ? record.type === 'page' ? t("Add page") : t("Add visit") : undefined} onPressEnter={save} onBlur={save} />
+                        <Input id={inputId} placeholder={record.placeholder ? record.type === 'page' ? t("Add page") : t("Add visit") : undefined} onPressEnter={save} onBlur={save} onDoubleClick={record.type === 'module' ? () => navigate(`/formBuilder/${record.id}/true`):""} />
                     </Form.Item>
                     <Dropdown menu={getItems()} trigger={['click']} placement="bottomLeft">
                         <div style={{ position: 'absolute', right: 7, top: 22, display: 'flex', alignItems: 'center' }}>
