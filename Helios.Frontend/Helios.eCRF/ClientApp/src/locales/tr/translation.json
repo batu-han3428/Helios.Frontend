@@ -430,5 +430,8 @@
   "Investigators": "Araştırıcılar",
   "subjectNumber": "Hasta numarası",
   "SDV": "SDV",
-  "Added by": "Ekleyen kişi"
+  "Added by": "Ekleyen kişi",
+  "Add new subject": "Yeni hasta ekle",
+  "Subject initial": "Hastanın baş harfleri",
+  "You will add a new subject.": "Yeni bir hasta oluşturacaksınız."
 }

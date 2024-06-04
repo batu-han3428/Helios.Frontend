@@ -24,30 +24,41 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<ApiResponse<dynamic>> AddSubject(Int64 studyId)
+        public async Task<ApiResponse<dynamic>> AddSubject(SubjectDTO SubjectDTO)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/AddSubject", Method.Post);
+                req.AddJsonBody(SubjectDTO);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+        public async Task<RestResponse<List<SiteModel>>> GetSites(Int64 studyId)
         {
             var model = new SubjectDTO
             {
                 StudyId = studyId,
                 SiteId = 3,
-                SubjectNumber = ""
+                SubjectNumber = "",
+                InitialName=""
             };
 
             using (var client = CoreServiceClient)
             {
-                var req = new RestRequest("CoreSubject/AddSubject", Method.Post);
+                var req = new RestRequest("CoreSubject/GetSites", Method.Post);
                 req.AddJsonBody(model);
-                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
-                return result.Data;
+                var result = await client.ExecuteAsync<List<SiteModel>>(req);
+                return result;
             }
         }
 
-        public async Task<RestResponse<List<SubjectDetailMenuModel>>> GetSubjectDetailMenu(Int64 studyId)
+        public async Task<RestResponse<List<SubjectDetailMenuModel>>> GetSubjectDetailMenu(Int64 subjectId)
         {
             using (var client = SharedServiceClient)
             {
                 var req = new RestRequest("Cache/GetSubjectDetailMenu", Method.Get);
-                req.AddParameter("studyId", studyId);
+                req.AddParameter("subjectId", subjectId);
                 var result = await client.ExecuteAsync<List<SubjectDetailMenuModel>>(req);
                 return result;
             }
@@ -72,6 +83,17 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreSubject/AutoSaveSubjectData", Method.Post);
                 req.AddJsonBody(model);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
+        public async Task<bool> GetStudyAskSubjectInitial(Int64 studyId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/GetStudyAskSubjectInitial", Method.Get);
+                req.AddParameter("studyId", studyId);
+                var result = await client.ExecuteAsync<bool>(req);
                 return result.Data;
             }
         }

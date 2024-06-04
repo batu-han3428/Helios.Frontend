@@ -40,7 +40,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="studyId">çalışma id</param>
         /// <returns>çalışma bilgileri</returns>
         [HttpGet("{studyId}")]
-        [RoleAttribute(Roles.TenantAdmin)]
+        [RoleAttribute(Roles.TenantAdmin,Roles.StudyUser)]
         public async Task<IActionResult> GetStudy(Int64 studyId)
         {
             var result = await _studyService.GetStudy(studyId);
