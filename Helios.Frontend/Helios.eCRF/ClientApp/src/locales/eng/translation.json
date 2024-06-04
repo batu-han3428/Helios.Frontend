@@ -234,6 +234,7 @@
   "Roles": "Roles",
   "Site name": "Site name",
   "Sites": "Sites",
+  "Site": "Site",
   "User active/passive status will be changed.": "User active/passive status will be changed.",
   "State": "State",
   "Active": "Active",
@@ -578,5 +579,9 @@
   "Clear data": "Clear data",
   "Comments": "Comments",
   "Audit trail": "Audit trail",
-  "Switch to tenant": "Switch to tenant"
+  "Switch to tenant": "Switch to tenant",
+  "Investigators": "Investigators",
+  "subjectNumber": "Subject number",
+  "SDV": "SDV",
+  "Added by": "Added by"
 }

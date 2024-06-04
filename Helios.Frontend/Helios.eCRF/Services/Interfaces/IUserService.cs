@@ -9,6 +9,7 @@ namespace Helios.eCRF.Services.Interfaces
     public interface IUserService
     {
         Task<UserDTO> GetUserByEmail(string mail);
+        Task<RestResponse<List<AspNetUserDTO>>> GetUserList(List<Int64> AuthUserIds);
         Task<dynamic> AddUser(UserDTO model);
         Task<bool> PassiveOrActiveUser(UserDTO model);
         Task<ApiResponse<dynamic>> UpdateUser(AspNetUserDTO model);

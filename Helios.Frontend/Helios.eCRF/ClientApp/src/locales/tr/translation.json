@@ -80,6 +80,7 @@
   "Roles": "Roller",
   "Site name": "Merkez adı",
   "Sites": "Merkezler",
+  "Site": "Merkez",
   "User active/passive status will be changed.": "Kullanıcı aktif/pasif durumu değiştirilecektir.",
   "State": "Durum",
   "Active": "Aktif",
@@ -425,5 +426,9 @@
   "Clear data": "Veri temizle",
   "Comments": "Yorumlar ",
   "Audit trail": "Değişikliklerin takibi",
-  "Switch to tenant": "Aboneliği değiştir"
+  "Switch to tenant": "Aboneliği değiştir",
+  "Investigators": "Araştırıcılar",
+  "subjectNumber": "Hasta numarası",
+  "SDV": "SDV",
+  "Added by": "Ekleyen kişi"
 }
