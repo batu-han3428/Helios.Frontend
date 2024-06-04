@@ -101,6 +101,7 @@ const ProfileMenu = props => {
     );
 };
 
+
 ProfileMenu.propTypes = {
     success: PropTypes.any,
     t: PropTypes.any
