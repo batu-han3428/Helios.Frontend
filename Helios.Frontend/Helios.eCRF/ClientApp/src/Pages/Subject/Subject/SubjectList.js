@@ -30,6 +30,21 @@ const SubjectList = props => {
     const [addingSubject] = useAddSubjectMutation();
     const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
 
+    const [modal, setModal] = useState(false);
+    const [changeSiteId, setchangeSiteId] = useState("");
+    const [changeInitialName, setchangeInitialName] = useState("");
+
+    const changeValidSiteId = (value) => {
+        setchangeSiteId(value);
+    };
+    const changeValidInitialname = (value) => {
+        setchangeInitialName(value);
+    };
+    const [count, setCount] = useState(0);
+    const [formData, setFormData] = useState({
+        changeInitialName: '',
+        changeSiteId: ''
+    });
 
     useEffect(() => {
         optionGroup(8);
@@ -58,6 +73,11 @@ const SubjectList = props => {
         return actions;
     };
 
+
+    const refreshContent = () => {
+        setCount(count + 1);
+    };
+
     const validationType = useFormik({
         enableReinitialize: true,
         initialValues: {
@@ -66,44 +86,51 @@ const SubjectList = props => {
             initialname: "",
 
         },
-        validationSchema: Yup.object().shape({
-            siteid: Yup.string().required(
-                props.t("This field is required")
-            ),
-            initialname: Yup.string().required(
-                props.t("This field is required")
-            ),
-
-        }),
         onSubmit: async (values) => {
-            debugger
             values.id = 0;
             values.firstPageId = 0;
             values.subjectNumber = "";
             values.updatedAt = new Date();
             values.createdAt = new Date();
             try {
-                dispatch(startloading());
-                const response = await addingSubject(values);
-                if (response.data.isSuccess) {
-                    Swal.fire({
-                        title: "",
-                        text: props.t(response.data.message),
-                        icon: "success",
-                        confirmButtonText: props.t("Ok"),
-                    });
-                    modalRef.current.tog_backdrop();
-                    dispatch(endloading());
+                changeValidInitialname(values.initialname);
+                changeValidSiteId(values.siteid === 0 ? "" : values.siteid);
+                if (values.siteid !== 0 && values.initialname !== "") {
+                    dispatch(startloading());
+                    const response = await addingSubject(values);
+                    if (response.data.isSuccess) {
+                        Swal.fire({
+                            title: "",
+                            text: props.t(response.data.message),
+                            icon: "success",
+                            confirmButtonText: props.t("Ok"),
+                        });
+                        modalRef.current.tog_backdrop();
+                        dispatch(endloading());
 
-                } else {
-                    Swal.fire({
-                        title: "",
-                        text: response.data.message,
-                        icon: "error",
-                        confirmButtonText: props.t("Ok"),
-                    });
-                    dispatch(endloading());
+                    } else {
+                        Swal.fire({
+                            title: "",
+                            text: response.data.message,
+                            icon: "error",
+                            confirmButtonText: props.t("Ok"),
+                        });
+                        dispatch(endloading());
+                    }
                 }
+                else {
+                    setFormData({
+                        ...formData,
+                        [changeSiteId]: values.siteid === 0 ? "" : values.siteid,
+                        [changeInitialName]: values.initialname,
+
+                    });
+                    refreshContent();
+                    setModalContent(modalContent2(count === 0 ? 1 : count, changeSiteId, changeInitialName));
+                    //toggleModal();
+
+                }
+
             } catch (e) {
                 dispatch(endloading());
             }
@@ -111,7 +138,7 @@ const SubjectList = props => {
 
     });
 
-    const modalContent2 = () => {
+    const modalContent2 = (part, contentSiteId, contentInitialName) => {
         const content = (
             <>
                 <Form
@@ -131,16 +158,16 @@ const SubjectList = props => {
                                     const selectedValues = selectedOptions.id;
                                     validationType.setFieldValue('siteid', selectedValues);
                                 }}
-
                                 onBlur={(e) => {
-                                    validationType.handleBlur(e);
+                                    setchangeSiteId(e);
                                 }}
+
                                 options={selectSites}
                                 getOptionLabel={(option) => option.name}
                                 getOptionValue={(option) => option.id}
                                 placeholder={props.t("Select")}
                                 classNamePrefix="select2-selection" />
-                            {validationType.touched.siteid === 0 ? (
+                            {(contentSiteId === "" || contentSiteId === undefined || contentSiteId === 0) && part !== 0 ? (
                                 <div type="invalid" className="invalid-feedback" style={{ display: "block" }}>{props.t("This field is required")}</div>
                             ) : null}
                         </div>
@@ -152,9 +179,9 @@ const SubjectList = props => {
                         </Label>
                         <Input className='form-control' type='text' name='initialname' id='initialname' onChange={validationType.handleChange}
                             onBlur={(e) => {
-                                validationType.handleBlur(e);
+                                setchangeInitialName(e);
                             }} />
-                        {validationType.touched.initialname === "" ? (
+                        {(contentInitialName === "" || contentInitialName === undefined) && part !== 0 ? (
                             <div type="invalid" className="invalid-feedback" style={{ display: "block" }}>{props.t("This field is required")}</div>
                         ) : null}
                     </div>
@@ -165,11 +192,13 @@ const SubjectList = props => {
         );
         return content;
     };
-    const openModal = () => {
+    const openModal = (par) => {
+        toggleModal();
+        setCount(par);
         setModalTitle(props.t('Add new subject'));
         setModalButtonText(props.t('Save'));
-        setModalContent(modalContent2());
-        toggleModal();
+        setModalContent(modalContent2(par, changeSiteId, changeInitialName));
+
     }
     const resetValue = () => {
         validationType.validateForm().then(errors => {
@@ -265,7 +294,9 @@ const SubjectList = props => {
 
     const handleClick = () => {
         if (AskSubjectInitial) {
-            openModal();
+            setchangeSiteId();
+            setchangeInitialName();
+            openModal(0);
         } else {
             addSubject();
         }
