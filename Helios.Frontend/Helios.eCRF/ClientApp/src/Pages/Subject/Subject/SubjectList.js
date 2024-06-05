@@ -388,6 +388,13 @@ const SubjectList = props => {
                                 dataSource={data}
                                 pagination={true}
                                 scroll={{ x: 'max-content' }}
+                                onRow={(record, rowIndex) => {
+                                    return {
+                                        onDoubleClick: () => {
+                                            goToSubjectDetail(studyId, record.firstPageId, record.id)
+                                        }
+                                    }
+                                }}
                             />
                         </Col>
                     </Row>
