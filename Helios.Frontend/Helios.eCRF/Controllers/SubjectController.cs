@@ -30,9 +30,9 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> GetSubjectList(Int64 studyId)
         {
             var result = await _subjectService.GetSubjectList(studyId);
-            var addedbyids = result.Data.Select(x => x.AddedById).Distinct().ToList();           
+            var addedbyids = result.Data.SubjectList.Select(x => x.AddedById).Distinct().ToList();           
             var users = await _userService.GetUserList(addedbyids);           
-            foreach (var user in result.Data) {
+            foreach (var user in result.Data.SubjectList) {
                 var addedby= users.Data.FirstOrDefault(x => x.Id == user.AddedById);
                 user.AddedByName = addedby.Name + ' ' + addedby.LastName;
             }
