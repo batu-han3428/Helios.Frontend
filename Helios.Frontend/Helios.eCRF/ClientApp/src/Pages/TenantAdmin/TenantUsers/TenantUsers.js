@@ -94,7 +94,7 @@ const TenantUsers = props => {
     const [firstNamesearchText, firstNameSetSearchText] = useState('');
     const [lastNamesearchText, lastNameSetSearchText] = useState('');
     const [emailSearchText, emailSetSearchText] = useState('');
-    const uniqueRoleNamesLive = Array.from(new Set(liveTableData.map(item => item.roleName)));
+    const uniqueRoleNamesLive = Array.from(new Set(liveTableData.map(item => item.userRoleName)));
     const uniqueStudyNamesLive = Array.from(new Set(liveTableData.map(item => item.studyName)));
 
     const liveData = {      
@@ -207,9 +207,9 @@ const TenantUsers = props => {
     const [firstNamesearchTextDemo, firstNameSetSearchTextDemo] = useState('');
     const [lastNamesearchTextDemo, lastNameSetSearchTextDemo] = useState('');
     const [emailSearchTextDemo, emailSetSearchTextDemo] = useState('');
-    const uniqueRoleNamesDemo = Array.from(new Set(demoTableData.map(item => item.roleName)));
+    const uniqueRoleNamesDemo = Array.from(new Set(demoTableData.map(item => item.userRoleName)));
     const uniqueStudyNamesDemo = Array.from(new Set(demoTableData.map(item => item.studyName)));
-
+    
     const demoData = {
         columns: [
             {
