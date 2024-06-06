@@ -18,6 +18,7 @@ import { API_BASE_URL } from '../../../constants/endpoints';
 import "./Subject.css";
 
 const SubjectList = props => {
+    
     const modalRef = useRef();
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
@@ -27,12 +28,13 @@ const SubjectList = props => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    
+
     const [studyId, setStudyId] = useState(8);
     const [addingSubject] = useAddSubjectMutation();
     const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
-
+    
     const [modal, setModal] = useState(false);
+    const [data, setData] = useState([]);
     const [changeSiteId, setchangeSiteId] = useState("");
     const [changeInitialName, setchangeInitialName] = useState("");
 
@@ -51,15 +53,20 @@ const SubjectList = props => {
     useEffect(() => {
         optionGroup(8);
         getStudy(8);
-        if (!error && !isLoading && subjectsData) {
-            const updatedSubjectsData = subjectsData.map(item => {
+        if (!error && !isLoading && subjectsData) {            
+            const updatedSubjectsData = subjectsData.subjectList.map(item => {
                 return {
                     ...item,
                     updatedAt: formatDate(item.updatedAt),
                     actions: getActions(item)
                 };
-            });
-            setData(updatedSubjectsData);
+            });          
+            const newData = { ...data };
+            newData.subjectList = updatedSubjectsData;
+            newData.hasQuery = subjectsData.hasQuery;
+            newData.hasSdv = subjectsData.hasSdv;
+            newData.hasRandomizasyon = subjectsData.hasRandomizasyon;
+            setData(newData);
             dispatch(endloading());
         }
     }, [subjectsData, error, isLoading]);
@@ -95,6 +102,10 @@ const SubjectList = props => {
             values.subjectNumber = "";
             values.updatedAt = new Date();
             values.createdAt = new Date();
+            values.country = "";
+            values.siteName = "";
+            values.randomData = "";
+            values.addedByName = "";
             try {
                 changeValidInitialname(values.initialname);
                 changeValidSiteId(values.siteid === 0 ? "" : values.siteid);
@@ -280,7 +291,7 @@ const SubjectList = props => {
             dataIndex: 'country',
             sorter: (a, b) => a.country.localeCompare(b.country),
             sortDirections: ['ascend', 'descend'],
-        });    
+        });
         columns.push({
             title: props.t('subjectNumber'),
             dataIndex: 'subjectNumber',
@@ -326,31 +337,40 @@ const SubjectList = props => {
         sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
         sortDirections: ['ascend', 'descend'],
     });
-    columns.push({
-        title: props.t('Randomization'),
-        dataIndex: 'randomData',
-        sorter: (a, b) => a.randomData.localeCompare(b.randomData),
-        sortDirections: ['ascend', 'descend'],
-    });
-    columns.push({
-        title: props.t('Query'),
-        dataIndex: 'query',
-        sorter: (a, b) => a.query.localeCompare(b.query),
-        sortDirections: ['ascend', 'descend'],
-    });
-    columns.push({
-        title: props.t('SDV'),
-        dataIndex: 'sdv',
-        sorter: (a, b) => a.sdv.localeCompare(b.sdv),
-        sortDirections: ['ascend', 'descend'],
-    });
+    if (data.hasRandomizasyon) {
+        columns.push({
+            title: props.t('Randomization'),
+            dataIndex: 'randomData',
+            sorter: (a, b) => a.randomData.localeCompare(b.randomData),
+            sortDirections: ['ascend', 'descend'],
+        });
+    }
+    if (data.hasQuery) {
+        columns.push({
+            title: props.t('Query'),
+            dataIndex: 'query',
+            sorter: (a, b) => a.query.localeCompare(b.query),
+            sortDirections: ['ascend', 'descend'],
+        });
+    }
+    if (data.hasSdv) {
+        columns.push({
+            title: props.t('SDV'),
+            dataIndex: 'sdv',
+            sorter: (a, b) => a.sdv.localeCompare(b.sdv),
+            sortDirections: ['ascend', 'descend'],
+        });
+    }
+
+
+
     columns.push({
         title: props.t('Actions'),
         dataIndex: 'actions',
         key: 'actions'
     });
-   
-    const [data, setData] = useState([]);
+
+  
 
     const handleClick = () => {
         if (AskSubjectInitial) {
@@ -385,7 +405,7 @@ const SubjectList = props => {
                         <Col className="col-12">
                             <Table
                                 columns={columns}
-                                dataSource={data}
+                                dataSource={data.subjectList}
                                 pagination={true}
                                 scroll={{ x: 'max-content' }}
                                 onRow={(record, rowIndex) => {

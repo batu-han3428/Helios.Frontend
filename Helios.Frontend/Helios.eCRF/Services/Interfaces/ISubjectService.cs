@@ -6,7 +6,7 @@ namespace Helios.eCRF.Services.Interfaces
 {
     public interface ISubjectService
     {
-        Task<RestResponse<List<SubjectDTO>>> GetSubjectList(Int64 studyId);
+        Task<RestResponse<SubjectListModel>> GetSubjectList(Int64 studyId);
         Task<ApiResponse<dynamic>> AddSubject(SubjectDTO subject);
         Task<RestResponse<List<SiteModel>>> GetSites(Int64 studyId);
         Task<RestResponse<List<SubjectDetailMenuModel>>> GetSubjectDetailMenu(Int64 subjectId);

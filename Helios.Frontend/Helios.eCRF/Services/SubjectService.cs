@@ -12,14 +12,14 @@ namespace Helios.eCRF.Services
         {
         }
 
-        public async Task<RestResponse<List<SubjectDTO>>> GetSubjectList(Int64 studyId)
+        public async Task<RestResponse<SubjectListModel>> GetSubjectList(Int64 studyId)
         {
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreSubject/GetSubjectList", Method.Get);
                 req.AddParameter("studyId", studyId);
                 req.AddParameter("userId", UserId);
-                var result = await client.ExecuteAsync<List<SubjectDTO>>(req);
+                var result = await client.ExecuteAsync<SubjectListModel>(req);
                 return result;
             }
         }
