@@ -1,9 +1,9 @@
 ﻿import PropTypes from 'prop-types';
 import React, { useEffect, useState, useRef } from "react";
 import { withTranslation } from "react-i18next";
-import { Table, Row, Col, Typography } from 'antd';
+import { Table, Row, Col, Typography, Input } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Form, FormFeedback, Label, Input } from 'reactstrap';
+import { Button, Form, FormFeedback, Label  } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { formatDate } from "../../../helpers/format_date";
@@ -15,6 +15,7 @@ import { startloading, endloading } from '../../../store/loader/actions';
 import { useAddSubjectMutation, useGetSubjectListQuery } from '../../../store/services/Subject';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
+import { SearchOutlined } from '@ant-design/icons';
 import "./Subject.css";
 
 const SubjectList = props => {
@@ -284,6 +285,15 @@ const SubjectList = props => {
             }
         });
     };
+
+    const handleChange = (pagination, filters) => {
+        setFilteredInfo(filters);
+    };
+    const uniqueCountry = Array.from(new Set(data.map(item => item.country)));
+    const uniqueAddedBy = Array.from(new Set(data.map(item => item.addedByName)));
+    const uniqueSite = Array.from(new Set(data.map(item => item.siteName)));
+    const [filteredInfo, setFilteredInfo] = useState({});
+    const [searchsubjectNumberText, setSearchsubjectNumberText] = useState('');
     const columns = []
     if (AskSubjectInitial) {
         columns.push({
@@ -291,24 +301,47 @@ const SubjectList = props => {
             dataIndex: 'country',
             sorter: (a, b) => a.country.localeCompare(b.country),
             sortDirections: ['ascend', 'descend'],
-        });
+            filteredValue: filteredInfo.country || null,
+            filters: uniqueCountry.map(item => ({ ...item, text: item, value: item })),
+            onFilter: (value, record) => record.country === value,
+        });    
         columns.push({
             title: props.t('subjectNumber'),
             dataIndex: 'subjectNumber',
-            sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
+            sorter: (a, b) => a.subjectNumber.localeCompare(b.subjectNumber),
             sortDirections: ['ascend', 'descend'],
+            filteredValue: [searchsubjectNumberText],
+            onFilter: (value, record) => String(record.subjectNumber).toLowerCase().includes(value.toLowerCase()),
+            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                return (
+                    <div style={{ padding: 8 }}>
+                        <Input.Search
+                            placeholder="Search name"
+                            value={selectedKeys[0]}
+                            onChange={(e) => setSearchsubjectNumberText(e.target.value)}
+                        />
+                    </div>
+                );
+            },
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         });
         columns.push({
             title: props.t('Site'),
             dataIndex: 'siteName',
             sorter: (a, b) => a.siteName.localeCompare(b.siteName),
             sortDirections: ['ascend', 'descend'],
+            filteredValue: filteredInfo.siteName || null,
+            filters: uniqueSite.map(item => ({ ...item, text: item, value: item })),
+            onFilter: (value, record) => record.siteName === value,
         });
         columns.push({
             title: props.t('Added by'),
             dataIndex: 'addedByName',
             sorter: (a, b) => a.addedByName.localeCompare(b.addedByName),
             sortDirections: ['ascend', 'descend'],
+            filteredValue: filteredInfo.addedByName || null,
+            filters: uniqueAddedBy.map(item => ({ ...item, text: item, value: item })),
+            onFilter: (value, record) => record.addedByName === value,
         });
         columns.push({
             title: 'Subject initial',
@@ -321,8 +354,22 @@ const SubjectList = props => {
         columns.push({
             title: props.t('subjectNumber'),
             dataIndex: 'subjectNumber',
-            sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
+            sorter: (a, b) => a.subjectNumber.localeCompare(b.subjectNumber),
             sortDirections: ['ascend', 'descend'],
+            filteredValue: [searchsubjectNumberText],
+            onFilter: (value, record) => String(record.subjectNumber).toLowerCase().includes(value.toLowerCase()),
+            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                return (
+                    <div style={{ padding: 8 }}>
+                        <Input.Search
+                            placeholder="Search name"
+                            value={selectedKeys[0]}
+                            onChange={(e) => setSearchsubjectNumberText(e.target.value)}
+                        />
+                    </div>
+                );
+            },
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         });
     }
     columns.push({
@@ -369,8 +416,10 @@ const SubjectList = props => {
         dataIndex: 'actions',
         key: 'actions'
     });
-
+   
   
+    
+
 
     const handleClick = () => {
         if (AskSubjectInitial) {
@@ -415,6 +464,8 @@ const SubjectList = props => {
                                         }
                                     }
                                 }}
+                                onChange={handleChange}
+                                filteredInfo={filteredInfo}
                             />
                         </Col>
                     </Row>
