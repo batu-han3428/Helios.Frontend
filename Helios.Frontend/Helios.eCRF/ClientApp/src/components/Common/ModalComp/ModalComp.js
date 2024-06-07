@@ -9,7 +9,7 @@ const ModalComp = ({ title, body, resetValue = null, handle, buttonText, t, refs
 
     useEffect(() => {
         if (!modal_backdrop) {
-            if (resetValue !== null) resetValue();
+            if (resetValue.length !== 0) resetValue();
         }
         else {
             const observer = new MutationObserver(() => {
@@ -19,7 +19,7 @@ const ModalComp = ({ title, body, resetValue = null, handle, buttonText, t, refs
                     const secondParentDiv = firstParentDiv.parentNode;
                     secondParentDiv.style.zIndex = '1010';
                     observer.disconnect();
-                    if (resetValue !== null) resetValue();
+                    if (resetValue.length !== 0) resetValue();
                 }
             });
 
