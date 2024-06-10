@@ -33,7 +33,6 @@ function ElementList(props) {
     const [moduleId] = useState(props.ModuleId);
     const [studyId] = useState(props.StudyId);
     const [isDisable] = useState(props.IsDisable);
-    const [formType] = useState(props.FormType);
     const [elementId, setElementId] = useState(0);
     const [moduleElementList, setModuleElementList] = useState([]);
     const [elements] = useState(GetAllElementList());
@@ -299,7 +298,7 @@ function ElementList(props) {
         : null;
 
     const elementItems = elements.map((l) =>
-        (l.key !== 3 && l.key !== 14) || formType === 2 ? (/*hidden & concomitantd elements don't show in formbuilder*/
+        (l.key !== 3 && l.key !== 14) || props.FormType === 2 ? (/*hidden & concomitantd elements don't show in formbuilder*/
             <Button className="elmlst" id={l.key} key={l.key} onClick={e => togglePropModal(e, l.key, 0, "1")}>
                 <i className={l.icon} style={{ color: '#00a8f3' }}></i> &nbsp; {GetElementNameByKey(props, l.key)}
             </Button>
