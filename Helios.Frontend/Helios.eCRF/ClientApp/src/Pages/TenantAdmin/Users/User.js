@@ -303,13 +303,13 @@ const User = props => {
             option[0].options.push(...responsiblePersons);
             setOptionGroupResponsiblePerson(option);
 
-            const timer = setTimeout(() => {
-                generateInfoLabel();
-            }, 10)
+            //const timer = setTimeout(() => {
+            //    generateInfoLabel();
+            //}, 10)
 
             dispatch(endloading());
 
-            return () => clearTimeout(timer);
+           /* return () => clearTimeout(timer);*/
         }
         else if (!isLoading && error) {
             toastRef.current.setToast({
