@@ -11,6 +11,7 @@ import {
 } from "../../store/actions";
 import UiSessionTimeoutComp from '../Common/UiSessionTimeoutComp/UiSessionTimeoutComp';
 import Header from "./Header";
+import { API_BASE_URL } from '../../constants/endpoints';
 
 
 class Layout extends Component {
@@ -18,12 +19,33 @@ class Layout extends Component {
         super(props);
         this.state = {
             isMobile: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent),
+            permissiondata: []
         };
     }
 
     capitalizeFirstLetter = string => {
         return string.charAt(1).toUpperCase() + string.slice(2);
     };
+    useUserPermissionsListGetQuery() {
+        
+        fetch(API_BASE_URL + 'User/GetUserPermissionsList?studyId=' + 8, {
+            method: 'GET',
+        })
+            .then(response => response.json())
+            .then(data => {
+                debugger
+                this.state.permissiondata = data;
+
+
+            })
+            .catch(error => {
+                //console.error('Error:', error);
+            });
+
+        //else {
+        //    this.fillDependentFieldList();
+        //}
+    }
 
     componentDidMount() {
         window.scrollTo(0, 0);
