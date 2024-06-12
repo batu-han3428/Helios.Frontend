@@ -7,12 +7,17 @@ import {
     Label, Input, Form, Container, Row, Col, Card, CardBody, FormFeedback, InputGroup, InputGroupText, Button
 } from "reactstrap";
 import { startloading, endloading } from '../../store/loader/actions';
-import { useDispatch } from 'react-redux';
+import { loginuser } from "../../store/actions";
+import { connect, useDispatch } from "react-redux";
+import withRouter from '../../components/Common/withRouter';
 import { useParams, Link, useNavigate } from "react-router-dom";
 import logoSm from "../../assets/images/logo-sm.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useLazyResetPasswordGetQuery, useResetPasswordPostMutation } from '../../store/services/Login';
 import ToastComp from '../../components/Common/ToastComp/ToastComp';
+import { useLoginPostMutation } from '../../store/services/Login';
+import { setLocalStorage } from '../../helpers/local-storage/localStorageProcess';
+import { onLogin } from '../../helpers/Auth/useAuth';
 
 const ResetPassword = props => {
 
@@ -22,6 +27,8 @@ const ResetPassword = props => {
 
     const usernameParams = new URLSearchParams(username);
     const codeParams = new URLSearchParams(code);
+
+    const [loginPost, { isLoading }] = useLoginPostMutation();
 
     const dispatch = useDispatch();
 
@@ -74,7 +81,7 @@ const ResetPassword = props => {
             email: Yup.string().required(
                 props.t("This field is required")
             ).email(
-                   props.t("Invalid email format")
+                props.t("Invalid email format")
             ),
             password: Yup.string()
                 .required(props.t("This field is required"))
@@ -85,19 +92,38 @@ const ResetPassword = props => {
                 .oneOf([Yup.ref("password"), null], props.t("The entered password and confirmation password do not match. Please try again.")),
         }),
         onSubmit: async (values) => {
+            values.language = props.i18n.language;
             try {
                 dispatch(startloading());
                 const response = await resetPasswordPost(values);
                 if (response.data.isSuccess) {
-                    dispatch(endloading());
-                    navigate(`/login`, { state: { email: validationType.values.email }});
-                } else {
-                    toastRef.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: false
-                    });
+                    const responselogin = await loginPost(values);
 
-                    dispatch(endloading());
+                    if (responselogin.data.isSuccess) {
+                        setLocalStorage("accessToken", responselogin.data.values.accessToken);
+                        let result = onLogin();
+
+                        dispatch(endloading())
+                        if (result === false) {
+                            toastRef.current.setToast({
+                                message: props.t("An unexpected error occurred."),
+                                stateToast: false
+                            });
+                        } else {
+                            dispatch(loginuser(result));
+                            navigate("/");
+                        }
+                        dispatch(endloading());
+                       
+                    } else {
+                        toastRef.current.setToast({
+                            message: props.t(response.data.message),
+                            stateToast: false
+                        });
+
+                        dispatch(endloading());
+                    }
+
                 }
             } catch (e) {
                 dispatch(endloading());
@@ -223,9 +249,17 @@ const ResetPassword = props => {
         </>
     )
 }
-
-ResetPassword.propTypes = {
-    t: PropTypes.any
+const mapStateToProps = state => {
+    const { error } = state.rootReducer.Login;
+    return { error };
 };
 
-export default withTranslation()(ResetPassword);
+export default withTranslation()(withRouter(
+    connect(mapStateToProps, { loginuser })(ResetPassword)
+));
+ResetPassword.propTypes = {
+    error: PropTypes.any,
+    history: PropTypes.object,
+    loginuser: PropTypes.func,
+    t: PropTypes.any
+};
