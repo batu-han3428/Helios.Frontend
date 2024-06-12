@@ -105,16 +105,29 @@ const SSO_TenantsOrStudies = props => {
                                                 ) : null}
 
                                                 {((tsCount.studyCount && tsCount.studyCount > 1) || (tsCount.tenantCount && tsCount.tenantCount > 0 && tsCount.studyCount && tsCount.studyCount > 0)) ? (
-                                                    <div className="col-lg-2" style={{ border: "1px solid rgb(231, 234, 236)", margin: "10px", padding: "0px" }}>
-                                                        <div className="ibox float-e-margins" style={{ marginBottom: "0" }}>
-                                                            <div className="ibox-content" style={{ padding: "0" }}>
+                                                    <div className="col-lg-2">
+                                                        <div className="ibox float-e-margins" style={{ marginBottom: "0", marginTop: "25px" }}>
+                                                            <div className="" style={{ padding: "0" }}>
                                                                 <div>
                                                                     <div style={{ width: "90%" }}>
-                                                                        Study
-                                                                    </div>
-                                                                    <div style={{ width: "10%" }}>
-                                                                        <FontAwesomeIcon onClick={() => goToTenants(4)} style={{ cursor: "pointer", color: "#868686" }} icon="fa-solid fa-caret-right" />
-                                                                    </div>
+                                                                        <ConfigProvider
+                                                                            theme={{
+                                                                                components: {
+                                                                                    Button: {
+                                                                                        colorPrimary: `linear-gradient(135deg, ${colors1.join(', ')})`,
+                                                                                        colorPrimaryHover: `linear-gradient(135deg, ${getHoverColors(colors1).join(', ')})`,
+                                                                                        colorPrimaryActive: `linear-gradient(135deg, ${getActiveColors(colors1).join(', ')})`,
+                                                                                        lineWidth: 0,
+                                                                                    },
+                                                                                },
+                                                                            }}
+                                                                        >
+                                                                            <Button type="primary" size="large" onClick={() => goToTenants(3)} style={{ width: "100%" }}>
+                                                                                Study
+                                                                            </Button>
+                                                                        </ConfigProvider>
+                                                                    </div>                             
+                                                                   
                                                                 </div>
                                                             </div>
                                                         </div>
