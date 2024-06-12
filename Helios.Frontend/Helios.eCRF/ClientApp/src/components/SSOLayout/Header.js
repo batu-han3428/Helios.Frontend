@@ -3,7 +3,6 @@ import React, { useState } from "react";
 
 import { connect } from "react-redux";
 import { Form, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Input, Button } from "reactstrap";
-
 import { Link } from "react-router-dom";
 
 // Import menuDropdown
@@ -13,6 +12,7 @@ import ProfileMenu from "../CommonForBoth/TopbarDropdown/ProfileMenu";
 
 import logoheliosImg from "../../assets/images/helios-logo.png";
 import logoheliossmImg from "../../assets/images/helios-sm-logo.png";
+import { useUserPermissionsListGetQuery } from '../../store/services/Permissions';
 
 //i18n
 import { withTranslation } from "react-i18next";
@@ -25,11 +25,13 @@ import {
 } from "../../store/actions";
 
 const Header = props => {
+
     const [search, setsearch] = useState(false);
     const [singlebtn, setSinglebtn] = useState(false);
 
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+    const { data: permissionData, isLoading, isError } = useUserPermissionsListGetQuery(8);
     function toggleFullscreen() {
         if (
             !document.fullscreenElement &&
@@ -92,8 +94,43 @@ const Header = props => {
                                 </span>
                             </Link>
                         </div>
-                       
-                      
+                        <div className="" style={{ marginTop: '30px' }}>
+                            {!isLoading && !isError && permissionData && (
+                                <>
+                                    { permissionData.hasSubject && (
+                                            <Link to="/" className="" >
+                                                <label style={{ color: "#757575", textDecoration: 'underline', marginRight: '30px' }}>{props.t("Subject")}</label>
+                                            </Link>
+                                        )
+                                    }
+                                    {permissionData.hasQuery && (
+                                        <Link to="/" className="" >
+                                            <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("Query")}</label>
+                                        </Link>
+                                    )}
+                                    {permissionData.hasSdv && (
+                                        <Link to="/" className="" >
+                                            <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("SDV")}</label>
+                                        </Link>
+                                    )}
+                                    {permissionData.hasStudyDocument && (
+                                        <Link to="/" className="" >
+                                            <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("Study documents")}</label>
+                                        </Link>
+                                    )}
+                                    {permissionData.hasMedicalCoding && (
+                                        <Link to="/" className="" >
+                                            <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("Medical coding")}</label>
+                                        </Link>
+                                    )}
+                                    {permissionData.hasIwrs && (
+                                        <Link to="/" className="" >
+                                            <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("IWRS")}</label>
+                                        </Link>
+                                    )}
+                                </>
+                            )}
+                        </div>
                     </div>
 
                     <div className="d-flex">
@@ -136,7 +173,7 @@ const Header = props => {
                         </Dropdown>
 
                         <LanguageDropdown />
-                        <ProfileMenu />                      
+                        <ProfileMenu />
                     </div>
                 </div>
             </header>
@@ -151,7 +188,8 @@ Header.propTypes = {
     showRightSidebar: PropTypes.any,
     showRightSidebarAction: PropTypes.func,
     t: PropTypes.any,
-    toggleLeftmenu: PropTypes.func
+    toggleLeftmenu: PropTypes.func,
+    useUserPermissionsListGetQuery: PropTypes.func
 };
 
 const mapStatetoProps = state => {
@@ -165,7 +203,7 @@ const mapStatetoProps = state => {
 };
 
 export default connect(mapStatetoProps, {
-    showRightSidebarAction,
+    showRightSidebarAction, useUserPermissionsListGetQuery,
     toggleLeftmenu,
     changeSidebarType,
 })(withTranslation()(Header));

@@ -25,7 +25,7 @@ const SubjectList = props => {
     const [modalButtonText, setModalButtonText] = useState("");
     const [modalContent, setModalContent] = useState(null);
     const [selectSites, setselectSites] = useState([]);
-    const [AskSubjectInitial, setAskSubjectInitial] = useState([]);
+    const [AskSubjectInitial, setAskSubjectInitial] = useState(false);
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -33,6 +33,7 @@ const SubjectList = props => {
     const [studyId, setStudyId] = useState(8);
     const [addingSubject] = useAddSubjectMutation();
     const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
+
     
     const [modal, setModal] = useState(false);
     const [data, setData] = useState([]);
@@ -289,20 +290,23 @@ const SubjectList = props => {
     const handleChange = (pagination, filters) => {
         setFilteredInfo(filters);
     };
-    const uniqueCountry = Array.from(new Set(data.map(item => item.country)));
-    const uniqueAddedBy = Array.from(new Set(data.map(item => item.addedByName)));
-    const uniqueSite = Array.from(new Set(data.map(item => item.siteName)));
+   
+  
+   
     const [filteredInfo, setFilteredInfo] = useState({});
     const [searchsubjectNumberText, setSearchsubjectNumberText] = useState('');
     const columns = []
     if (AskSubjectInitial) {
+        const uniqueCountry = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.country))) : "";
+        const uniqueAddedBy = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.addedByName))) : "";
+        const uniqueSite = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.siteName))) : "";
         columns.push({
             title: props.t('Country'),
             dataIndex: 'country',
             sorter: (a, b) => a.country.localeCompare(b.country),
             sortDirections: ['ascend', 'descend'],
             filteredValue: filteredInfo.country || null,
-            filters: uniqueCountry.map(item => ({ ...item, text: item, value: item })),
+            filters: uniqueCountry.length>0? uniqueCountry.map(item => ({ ...item, text: item, value: item })):"",
             onFilter: (value, record) => record.country === value,
         });    
         columns.push({
@@ -331,7 +335,7 @@ const SubjectList = props => {
             sorter: (a, b) => a.siteName.localeCompare(b.siteName),
             sortDirections: ['ascend', 'descend'],
             filteredValue: filteredInfo.siteName || null,
-            filters: uniqueSite.map(item => ({ ...item, text: item, value: item })),
+            filters: uniqueSite.length>0? uniqueSite.map(item => ({ ...item, text: item, value: item })):"",
             onFilter: (value, record) => record.siteName === value,
         });
         columns.push({
@@ -340,7 +344,7 @@ const SubjectList = props => {
             sorter: (a, b) => a.addedByName.localeCompare(b.addedByName),
             sortDirections: ['ascend', 'descend'],
             filteredValue: filteredInfo.addedByName || null,
-            filters: uniqueAddedBy.map(item => ({ ...item, text: item, value: item })),
+            filters: uniqueAddedBy.length>0? uniqueAddedBy.map(item => ({ ...item, text: item, value: item })):"",
             onFilter: (value, record) => record.addedByName === value,
         });
         columns.push({

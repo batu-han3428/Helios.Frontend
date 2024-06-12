@@ -58,6 +58,10 @@ export const PermissionsApi = createApi({
         studyRolePermissionsListGet: builder.query({
             query: () => `/User/GetStudyRolePermissionsList`
         }),
+        userPermissionsListGet: builder.query({
+            query: (studyId) => `/User/GetUserPermissionsList/${studyId}`,
+            providesTags: ['UserPermissions'],
+        }),
         permissionsVisitListGet: builder.query({
             query: (roleId) => `/User/GetPermissionsVisitList/${roleId}`,
             providesTags: ['RoleVisitPermission'],
@@ -89,6 +93,8 @@ export const { useLazyRoleUsersListGetQuery } = PermissionsApi;
 export const { useLazyStudyRoleUsersListGetQuery } = PermissionsApi;
 
 export const { useLazyStudyRolePermissionsListGetQuery } = PermissionsApi;
+
+export const { useUserPermissionsListGetQuery } = PermissionsApi;
 
 export const { useLazyPermissionsVisitListGetQuery } = PermissionsApi;
 

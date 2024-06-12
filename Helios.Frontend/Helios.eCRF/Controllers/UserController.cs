@@ -172,6 +172,13 @@ namespace Helios.eCRF.Controllers
         }
 
 
+        [HttpGet("{studyId}")]
+        public async Task<IActionResult> GetUserPermissionsList(Int64 studyId)
+        {
+            var result = await _userService.GetUserPermissionsList(studyId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
         /// <summary>
         /// çalışmanın rollerini getirir
         /// </summary>
