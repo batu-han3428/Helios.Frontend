@@ -48,27 +48,32 @@ class HiddenElementProperties extends Component {
         this.handleModuleChange = this.handleModuleChange.bind(this);
         this.handleElementChange = this.handleElementChange.bind(this);
         this.getVisitList = this.getVisitList.bind(this);
+        this.resetSelects = this.resetSelects.bind(this);
 
         this.getVisitList();
     }
 
     getVisitList() {
-        var vstOptionGroup = [];
+        //var vstOptionGroup = [];
+        this.state.visitOptionGroup = [];
 
-        fetch(API_BASE_URL + `/Study/GetVisits/${this.state.StudyId}`, {
+        fetch(API_BASE_URL + `Study/GetVisits/${this.state.StudyId}`, {
             method: 'GET',
         })
             .then(response => response.json())
             .then(data => {
-                this.state.visitList = data;
-
                 data.map(item => {
                     var itm = { label: item.name, value: item.id };
-                    vstOptionGroup.push(itm);
-
+                    //vstOptionGroup.push(itm);
+                    this.state.visitOptionGroup.push(itm);
                 });
 
-                this.state.visitOptionGroup = vstOptionGroup;
+                this.setState({
+                    visitList: data,
+                    //visitOptionGroup: vstOptionGroup
+                });
+
+                //this.state.visitOptionGroup.push(vstOptionGroup);
 
                 if (this.state.TargetElementId !== 0) {
                     this.fillSelects();
@@ -80,7 +85,7 @@ class HiddenElementProperties extends Component {
     }
 
     fillSelects() {
-        fetch(API_BASE_URL + "/Study/GetVisitCollectionInfo?elementId=" + this.state.TargetElementId, {
+        fetch(API_BASE_URL + "Study/GetVisitCollectionInfo?elementId=" + this.state.TargetElementId, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -108,71 +113,104 @@ class HiddenElementProperties extends Component {
                 });
 
                 this.state.moduleSelectedGroup = selectedOption;
-                this.fillElementSelect();                
+                this.fillElementSelect();
             })
             .catch(error => {
             });
     }
 
     handleVisitChange(e) {
-        this.state.pageList = [];
-        this.state.visitSelectedGroup = e;
+        this.setState({
+            visitSelectedGroup:e
+        });
 
+        this.resetSelects();
         this.fillPageSelect(e.value);
     };
 
-    fillPageSelect(id) {
-        var pageOptionGroup = [];
+    resetSelects() {
+        this.setState({
+            pageSelectedGroup: null,
+            pageDisable: true,
+            moduleSelectedGroup: null,
+            moduleDisable: true,
+            elementSelectedGroup: null,
+            elementDisable: true
+        })
+    }
 
+    fillPageSelect(id) {
+        //var pageOptionGroup = [];
+        //var allPageOptionGroup = [];
+        this.state.pageList = [];
+        this.state.pageOptionGroup = [];
+        
         this.state.visitList.map(item => {
             if (item.id === id) {
                 item.children.map(chld => {
                     this.state.pageList.push(chld);
                     var itm = { label: chld.name, value: chld.id };
-                    pageOptionGroup.push(itm);
+                    //pageOptionGroup.push(itm);
+                    this.state.pageOptionGroup.push(itm);
                 });
 
-                this.state.pageDisable = false;
-                this.state.pageOptionGroup = pageOptionGroup;
+                this.setState({
+                    pageDisable: false,
+                    //pageOptionGroup: pageOptionGroup,
+                    //pageList: allPageOptionGroup
+                });
             }
         });
     }
 
     handlePageChange(e) {
-        this.state.moduleList = [];
-        this.state.pageSelectedGroup = e;
+        this.setState({
+            moduleList: [],
+            pageSelectedGroup: e
+        });
+
         this.fillModuleSelect(e.value);
     };
 
     fillModuleSelect(id) {
-        var mdlOptionGroup = [];
+        //var mdlOptionGroup = [];
+        //var allMdlOptionGroup = [];
+        this.state.moduleList = [];
+        this.state.moduleOptionGroup = [];
 
         this.state.pageList.map(item => {
             if (item.id === id) {
                 item.children.map(chld => {
+                    //allMdlOptionGroup.push(chld);
                     this.state.moduleList.push(chld);
                     var itm = { label: chld.name, value: chld.id };
-                    mdlOptionGroup.push(itm);
+                    //mdlOptionGroup.push(itm);
+                    this.state.moduleOptionGroup.push(itm);
                 });
-
-                this.state.moduleDisable = false;
-                this.state.moduleOptionGroup = mdlOptionGroup;
+                
+                this.setState({
+                    moduleDisable: false,
+                    //moduleOptionGroup: mdlOptionGroup,
+                    //moduleList: allMdlOptionGroup
+                });
             }
         });
     }
 
     handleModuleChange(e) {
+        this.setState({ moduleSelectedGroup: e });
         this.state.moduleSelectedGroup = e;
         this.fillElementSelect();
     };
 
 
     fillElementSelect() {
-        var elmOptionGroup = [];
+        //var elmOptionGroup = [];
+        this.state.elementOptionGroup = [];
         var tarId = this.state.TargetElementId;
         var selectedOption = [];
 
-        fetch(API_BASE_URL + '/Study/GetModuleAllElements?id=' + this.state.moduleSelectedGroup.value, {
+        fetch(API_BASE_URL + 'Study/GetModuleAllElements?id=' + this.state.moduleSelectedGroup.value, {
             method: 'GET',
         })
             .then(response => response.json())
@@ -180,16 +218,16 @@ class HiddenElementProperties extends Component {
                 data.map(item => {
                     var itm = { label: item.elementName + " - " + GetElementNameByKey(this.props, item.elementType), value: item.id };
 
-                    elmOptionGroup.push(itm);
-
+                    //elmOptionGroup.push(itm);
+                    this.state.elementOptionGroup.push(itm);
                     if (itm.value === tarId)
                         selectedOption = itm;
                 });
 
-                this.state.elementOptionGroup = elmOptionGroup;
+                //this.setState({ elementOptionGroup: elmOptionGroup });
 
                 if (tarId !== 0) {
-                    this.state.elementSelectedGroup = selectedOption;
+                    this.setState({ elementSelectedGroup: selectedOption });
                     this.props.changeTargetElementId(selectedOption.value);
                 }
             })
@@ -199,7 +237,7 @@ class HiddenElementProperties extends Component {
     }
 
     handleElementChange(e) {
-        this.state.elementSelectedGroup = e;
+        this.setState({ elementSelectedGroup: e });
         this.props.changeTargetElementId(e.value);
     };
 

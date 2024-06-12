@@ -11,8 +11,12 @@ import ModalComp from '../../../../components/Common/ModalComp/ModalComp.js';
 import RankingList from './RankingList.js';
 import ToastComp from '../../../../components/Common/ToastComp/ToastComp.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { decodeToken } from "../../../../helpers/Util/tokenUtil";
+import { getLocalStorage } from '../../../../helpers/local-storage/localStorageProcess.js';
 
 const FormBuilder = props => {
+    let token = getLocalStorage("accessToken");
+    var auth = decodeToken(token);
     const userInformation = useSelector(state => state.rootReducer.Login);
     const { moduleId, isStudy } = useParams();
     const [moduleElementList, setModuleElementList] = useState([]);
@@ -22,29 +26,30 @@ const FormBuilder = props => {
     const toastRef = useRef();
     const [path, setPath] = useState([]);
     const [formType, setFormType] = useState(0);
+    const [StudyId] = useState(isStudy === "true" ? auth.studyId : 0);
 
     const fetchData = () => {
         fetch(API_BASE_URL + path[0] + moduleId, {
             method: 'GET',
         })
-        .then(response => response.json())
-        .then(data => {
-            setModuleElementList(data);
-        })
-        .catch(error => {
-            //console.error('Error:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                setModuleElementList(data);
+            })
+            .catch(error => {
+                //console.error('Error:', error);
+            });
 
         fetch(API_BASE_URL + path[1] + moduleId, {
             method: 'GET',
         })
-        .then(response => response.json())
-        .then(data => {
-            setModuleName(data.name);
-        })
-        .catch(error => {
-            //console.error('Error:', error);
-        });
+            .then(response => response.json())
+            .then(data => {
+                setModuleName(data.name);
+            })
+            .catch(error => {
+                //console.error('Error:', error);
+            });
     };
 
     useEffect(() => {
@@ -124,7 +129,7 @@ const FormBuilder = props => {
                             </Row>
                         </div>
                         <div>
-                            <ElementList toast={toastRef} TenantId={userInformation.TenantId} StudyId={0} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={formType} />
+                            <ElementList toast={toastRef} TenantId={userInformation.TenantId} StudyId={StudyId} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={formType} />
                         </div>
                     </div>
                 </div>

@@ -9,7 +9,7 @@ const ModalComp = ({ title, body, resetValue = null, handle, buttonText, t, refs
 
     useEffect(() => {
         if (!modal_backdrop) {
-            if (resetValue!==null && resetValue.length !== 0) resetValue();
+            if (resetValue !== null && resetValue.length !== 0) resetValue();
         }
         else {
             const observer = new MutationObserver(() => {
