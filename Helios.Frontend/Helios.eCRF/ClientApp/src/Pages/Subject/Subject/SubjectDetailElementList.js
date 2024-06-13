@@ -292,7 +292,7 @@ function SubjectDetailElementList(props) {
                         </label>
                     </div>
                     <Row><div className="col-md-11">{renderElementsSwitch(item)}</div>
-                        {item.elementType !== 1 &&
+                        {item.elementType !== 1 && item.elementType !== 3 &&
                             <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
                                 <Dropdown menu={getItems()} trigger={['click']} placement="bottomLeft">
                                     <div style={{ alignItems: 'center' }}>
