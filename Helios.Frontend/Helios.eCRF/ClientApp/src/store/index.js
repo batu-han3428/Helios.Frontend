@@ -16,10 +16,18 @@ import { TenantsApi } from './services/Tenants'
 import { SystemUsersApi } from './services/SystemAdmin/Users/SystemUsers'
 import { VisitApi } from './services/Visit'
 import { ModuleApi } from "./services/Module"
+import { setLocalStorage } from '../../src/helpers/local-storage/localStorageProcess';
+
+const preloadedState = {
+    rootReducer: {
+        Login: setLocalStorage()
+    }
+};
 
 export const store = configureStore({
     reducer: {
         rootReducer,
+        preloadedState,
         [LoginApi.reducerPath]: LoginApi.reducer,
         [StudyApi.reducerPath]: StudyApi.reducer,
         [SubjectApi.reducerPath]: SubjectApi.reducer,

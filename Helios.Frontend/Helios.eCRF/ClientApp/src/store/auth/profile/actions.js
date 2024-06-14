@@ -1,6 +1,9 @@
 import { PROFILE_ERROR, PROFILE_SUCCESS, EDIT_PROFILE, RESET_PROFILE_FLAG } from "./actionTypes"
 
 export const editProfile = user => {
+    const currentUser = JSON.parse(localStorage.getItem('user'));
+    const updatedUser = { ...currentUser, ...user };
+    localStorage.setItem('user', JSON.stringify(updatedUser));
   return {
     type: EDIT_PROFILE,
     payload: { user },

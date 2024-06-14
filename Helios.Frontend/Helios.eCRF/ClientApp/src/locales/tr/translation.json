@@ -433,5 +433,14 @@
   "Added by": "Ekleyen kişi",
   "Add new subject": "Yeni hasta ekle",
   "Subject initial": "Hastanın baş harfleri",
-  "You will add a new subject.": "Yeni bir hasta oluşturacaksınız."
+  "You will add a new subject.": "Yeni bir hasta oluşturacaksınız.",
+  "Enter first name": "Adını gir",
+  "Enter last name": "Soyadını gir",
+  "Enter email": "E-posta gir",
+  "Email": "E-posta",
+  "Enter phone number": "Telefon numarası gir",
+  "Please Enter First Name": "Lütfen Adını Gir",
+  "Please Enter Last Name": "Lütfen Soyadını Gir",
+  "Please Enter Email": "Lütfen E-posta Gir",
+  "Please Enter Phone Number": "Lütfen Telefon Numarası Gir"
 }

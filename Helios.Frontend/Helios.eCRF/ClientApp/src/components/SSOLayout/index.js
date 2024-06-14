@@ -33,7 +33,6 @@ class Layout extends Component {
         })
             .then(response => response.json())
             .then(data => {
-                debugger
                 this.state.permissiondata = data;
 
 

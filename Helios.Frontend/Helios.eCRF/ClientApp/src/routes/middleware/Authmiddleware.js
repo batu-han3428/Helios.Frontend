@@ -10,7 +10,7 @@ import { onLogin } from "../../helpers/Auth/useAuth";
 import { userRoutes } from "../allRoutes";
 import { API_BASE_URL } from "../../constants/endpoints";
 
-const AuthMiddleware = (props) => {
+const AuthMiddleware = (props) => {  
     const dispatch = useDispatch();
     const user = getLocalStorage("accessToken");
     const { path: Path, element: Element, roles } = props;
@@ -21,7 +21,7 @@ const AuthMiddleware = (props) => {
     const [error, setError] = useState(false);
     var result = null;
 
-    const updateJwt = (token, studyId) => {
+    const updateJwt = (token, studyId) => {       
         const apiUrl = API_BASE_URL+`Account/UpdateJwt`;
         fetch(apiUrl, {
             method: 'POST',

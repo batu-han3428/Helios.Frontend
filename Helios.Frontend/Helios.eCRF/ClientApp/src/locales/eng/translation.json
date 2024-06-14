@@ -586,5 +586,13 @@
   "Added by": "Added by",
   "Add new subject": "Add new subject",
   "Subject initial": "Subject initial",
-  "You will add a new subject.": "You will add a new subject."
+  "You will add a new subject.": "You will add a new subject.",
+  "Enter first name": "Enter first name",
+  "Enter last name": "Enter last name",
+  "Enter email": "Enter email",
+  "Enter phone number": "Enter phone number",
+  "Please Enter First Name": "Please Enter First Name",
+  "Please Enter Last Name": "Please Enter Last Name",
+  "Please Enter Email": "Please Enter Email",
+  "Please Enter Phone Number": "Please Enter Phone Number"
 }

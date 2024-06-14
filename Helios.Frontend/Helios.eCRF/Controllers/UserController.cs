@@ -323,7 +323,12 @@ namespace Helios.eCRF.Controllers
             var result = await _userService.SetStudyUser(studyUserModel);
             return Ok(result);
         }
-
+        [HttpPost]
+        public async Task<IActionResult> UserProfileEdit(AspNetUserDTO userModel)
+        {
+            var result = await _userService.UpdateUser(userModel);
+            return Ok(result);
+        }
 
         /// <summary>
         /// seçili kullanıcıyı aktif veya pasif hale getirir
