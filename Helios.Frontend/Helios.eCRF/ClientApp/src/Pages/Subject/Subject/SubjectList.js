@@ -350,7 +350,11 @@ const SubjectList = props => {
         columns.push({
             title: 'Subject initial',
             dataIndex: 'initialName',
-            sorter: (a, b) => a.initialName.localeCompare(b.initialName),
+            sorter: (a, b) => {
+                const nameA = a.initialName || ''; 
+                const nameB = b.initialName || '';
+                return nameA.localeCompare(nameB);
+            },
             sortDirections: ['ascend', 'descend'],
         });
     }
@@ -408,7 +412,11 @@ const SubjectList = props => {
         columns.push({
             title: props.t('SDV'),
             dataIndex: 'sdv',
-            sorter: (a, b) => a.sdv.localeCompare(b.sdv),
+            sorter: (a, b) => {
+                const nameA = a.sdv || '';
+                const nameB = b.sdv || '';
+                return nameA.localeCompare(nameB);
+            },
             sortDirections: ['ascend', 'descend'],
         });
     }
