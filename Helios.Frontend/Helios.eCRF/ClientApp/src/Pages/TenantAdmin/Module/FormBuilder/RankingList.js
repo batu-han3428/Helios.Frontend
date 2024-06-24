@@ -299,7 +299,6 @@ const RankingList = props => {
 
     const generateTreeNodes = (data) =>
         data.map((item, index) => {
-            debugger
             if (item.children) {
                 return {
                     title: item.title + "-" + item.elementType,

@@ -179,7 +179,7 @@ const userRoutes = [
     { path: "/dashboard", component: <Dashboard />, menuType: "admin", roles: ['TenantAdmin'] },
 
    //profile
-    { path: "/profile", component: <UserProfile />, menuType: "admin", roles: ['TenantAdmin'] },
+    { path: "/profile", component: <UserProfile />, menuType: ["admin", "StudyUser", "superadmin", "systemadmin", "sso", "study"], roles: ['StudyUser', 'TenantAdmin', 'SystemAdmin'] },
 
   //Email
     { path: "/email-inbox", component: <EmailInbox />, menuType: "admin", roles: ['TenantAdmin'] },

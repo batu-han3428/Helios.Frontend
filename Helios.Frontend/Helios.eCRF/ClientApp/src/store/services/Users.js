@@ -66,6 +66,14 @@ export const UsersApi = createApi({
             }),
             invalidatesTags: ['User'],
         }),
+        userProfileEdit: builder.mutation({
+            query: (data) => ({
+                url: '/User/UserProfileEdit',
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['User'],
+        }),
     }),
 });
 
@@ -83,3 +91,4 @@ export const { useUsersActivePassiveMutation } = UsersApi;
 export const { useUserDeleteMutation } = UsersApi;
 
 export const { useUserResetPasswordMutation } = UsersApi;
+export const { useUserProfileEditMutation } = UsersApi;

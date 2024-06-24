@@ -26,6 +26,7 @@ export const onLogin = () => {
             isAuthenticated: auth.isAuthenticated,
             exp: exp.toISOString(),
             mail: auth.mail,
+            phoneNumber: auth.phoneNumber,
             userId: auth.userId,
             tenantId: auth.tenantId,
             studyId: auth.studyId
