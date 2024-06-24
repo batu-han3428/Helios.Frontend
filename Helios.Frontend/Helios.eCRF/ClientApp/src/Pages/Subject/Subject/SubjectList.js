@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { Table, Row, Col, Typography, Input } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Form, FormFeedback, Label  } from 'reactstrap';
+import { Button, Form, FormFeedback, Label } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { formatDate } from "../../../helpers/format_date";
@@ -19,7 +19,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import "./Subject.css";
 
 const SubjectList = props => {
-    
+
     const modalRef = useRef();
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
@@ -34,7 +34,6 @@ const SubjectList = props => {
     const [addingSubject] = useAddSubjectMutation();
     const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
 
-    
     const [modal, setModal] = useState(false);
     const [data, setData] = useState([]);
     const [changeSiteId, setchangeSiteId] = useState("");
@@ -43,10 +42,13 @@ const SubjectList = props => {
     const changeValidSiteId = (value) => {
         setchangeSiteId(value);
     };
+
     const changeValidInitialname = (value) => {
         setchangeInitialName(value);
     };
+
     const [count, setCount] = useState(0);
+
     const [formData, setFormData] = useState({
         changeInitialName: '',
         changeSiteId: ''
@@ -55,14 +57,16 @@ const SubjectList = props => {
     useEffect(() => {
         optionGroup(8);
         getStudy(8);
-        if (!error && !isLoading && subjectsData) {            
+
+        if (!error && !isLoading && subjectsData) {
             const updatedSubjectsData = subjectsData.subjectList.map(item => {
                 return {
                     ...item,
                     updatedAt: formatDate(item.updatedAt),
                     actions: getActions(item)
                 };
-            });          
+            });
+
             const newData = { ...data };
             newData.subjectList = updatedSubjectsData;
             newData.hasQuery = subjectsData.hasQuery;
@@ -108,12 +112,16 @@ const SubjectList = props => {
             values.siteName = "";
             values.randomData = "";
             values.addedByName = "";
+
             try {
                 changeValidInitialname(values.initialname);
                 changeValidSiteId(values.siteid === 0 ? "" : values.siteid);
                 if (values.siteid !== 0 && values.initialname !== "") {
                     dispatch(startloading());
+
                     const response = await addingSubject(values);
+                    var retVal = response.data.values;
+
                     if (response.data.isSuccess) {
                         Swal.fire({
                             title: "",
@@ -121,9 +129,10 @@ const SubjectList = props => {
                             icon: "success",
                             confirmButtonText: props.t("Ok"),
                         });
-                        modalRef.current.tog_backdrop();
-                        dispatch(endloading());
 
+                        modalRef.current.tog_backdrop();
+                        goToSubjectDetail(retVal.studyId, retVal.firstPageId, retVal.id);
+                        dispatch(endloading());
                     } else {
                         Swal.fire({
                             title: "",
@@ -141,14 +150,16 @@ const SubjectList = props => {
                         [changeInitialName]: values.initialname,
 
                     });
+
                     refreshContent();
                     setModalContent(modalContent2(count === 0 ? 1 : count, changeSiteId, changeInitialName));
                     //toggleModal();
 
                 }
-
-            } catch (e) {
                 dispatch(endloading());
+
+            }
+            catch {
             }
         }
 
@@ -187,8 +198,8 @@ const SubjectList = props => {
                                 <div type="invalid" className="invalid-feedback" style={{ display: "block" }}>{props.t("This field is required")}</div>
                             ) : null}
                         </div>
-
                     }
+
                     <div className="mb-12" >
                         <Label className="control-label">
                             {props.t('Subject initial')}
@@ -201,13 +212,12 @@ const SubjectList = props => {
                             <div type="invalid" className="invalid-feedback" style={{ display: "block" }}>{props.t("This field is required")}</div>
                         ) : null}
                     </div>
-
-
                 </Form>
             </>
         );
         return content;
     };
+
     const openModal = (par) => {
         toggleModal();
         setCount(par);
@@ -216,12 +226,14 @@ const SubjectList = props => {
         setModalContent(modalContent2(par, changeSiteId, changeInitialName));
 
     }
+
     const resetValue = () => {
         validationType.validateForm().then(errors => {
             validationType.setErrors({});
             validationType.resetForm();
         });
     };
+
     const toggleModal = () => {
         modalRef.current.tog_backdrop();
     }
@@ -238,6 +250,7 @@ const SubjectList = props => {
 
             });
     };
+
     const getStudy = (id) => {
         fetch(API_BASE_URL + 'Subject/GetStudyAskSubjectInitial?studyId=' + id, {
             method: 'GET',
@@ -264,6 +277,8 @@ const SubjectList = props => {
             if (result.isConfirmed) {
                 dispatch(startloading());
                 const response = await addingSubject({ studyId: 8, siteId: 3, initialName: "", id: 0, firstPageId: 0, subjectNumber: "", updatedAt: new Date(), createdAt: new Date() });
+                var retVal = response.data.values;
+
                 if (response.data.isSuccess) {
                     dispatch(endloading());
                     Swal.fire({
@@ -272,6 +287,8 @@ const SubjectList = props => {
                         icon: "success",
                         confirmButtonText: props.t("Ok"),
                     });
+
+                    goToSubjectDetail(retVal.studyId, retVal.firstPageId, retVal.id);
                 } else {
                     dispatch(endloading());
                     Swal.fire({
@@ -290,9 +307,7 @@ const SubjectList = props => {
     const handleChange = (pagination, filters) => {
         setFilteredInfo(filters);
     };
-   
-  
-   
+
     const [filteredInfo, setFilteredInfo] = useState({});
     const [searchsubjectNumberText, setSearchsubjectNumberText] = useState('');
     const columns = []
@@ -306,9 +321,10 @@ const SubjectList = props => {
             sorter: (a, b) => a.country.localeCompare(b.country),
             sortDirections: ['ascend', 'descend'],
             filteredValue: filteredInfo.country || null,
-            filters: uniqueCountry.length>0? uniqueCountry.map(item => ({ ...item, text: item, value: item })):"",
+            filters: uniqueCountry.length > 0 ? uniqueCountry.map(item => ({ ...item, text: item, value: item })) : "",
             onFilter: (value, record) => record.country === value,
-        });    
+        });
+
         columns.push({
             title: props.t('subjectNumber'),
             dataIndex: 'subjectNumber',
@@ -329,24 +345,27 @@ const SubjectList = props => {
             },
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         });
+
         columns.push({
             title: props.t('Site'),
             dataIndex: 'siteName',
             sorter: (a, b) => a.siteName.localeCompare(b.siteName),
             sortDirections: ['ascend', 'descend'],
             filteredValue: filteredInfo.siteName || null,
-            filters: uniqueSite.length>0? uniqueSite.map(item => ({ ...item, text: item, value: item })):"",
+            filters: uniqueSite.length > 0 ? uniqueSite.map(item => ({ ...item, text: item, value: item })) : "",
             onFilter: (value, record) => record.siteName === value,
         });
+
         columns.push({
             title: props.t('Added by'),
             dataIndex: 'addedByName',
             sorter: (a, b) => a.addedByName.localeCompare(b.addedByName),
             sortDirections: ['ascend', 'descend'],
             filteredValue: filteredInfo.addedByName || null,
-            filters: uniqueAddedBy.length>0? uniqueAddedBy.map(item => ({ ...item, text: item, value: item })):"",
+            filters: uniqueAddedBy.length > 0 ? uniqueAddedBy.map(item => ({ ...item, text: item, value: item })) : "",
             onFilter: (value, record) => record.addedByName === value,
         });
+
         columns.push({
             title: 'Subject initial',
             dataIndex: 'initialName',
@@ -380,18 +399,21 @@ const SubjectList = props => {
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         });
     }
+
     columns.push({
         title: props.t('Created on'),
         dataIndex: 'createdAt',
         sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
         sortDirections: ['ascend', 'descend'],
     });
+
     columns.push({
         title: props.t('Last updated on'),
         dataIndex: 'updatedAt',
         sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
         sortDirections: ['ascend', 'descend'],
     });
+
     if (data.hasRandomizasyon) {
         columns.push({
             title: props.t('Randomization'),
@@ -400,6 +422,7 @@ const SubjectList = props => {
             sortDirections: ['ascend', 'descend'],
         });
     }
+
     if (data.hasQuery) {
         columns.push({
             title: props.t('Query'),
@@ -408,6 +431,7 @@ const SubjectList = props => {
             sortDirections: ['ascend', 'descend'],
         });
     }
+
     if (data.hasSdv) {
         columns.push({
             title: props.t('SDV'),
@@ -421,16 +445,14 @@ const SubjectList = props => {
         });
     }
 
-
-
     columns.push({
         title: props.t('Actions'),
         dataIndex: 'actions',
         key: 'actions'
     });
-   
-  
-    
+
+
+
 
 
     const handleClick = () => {
