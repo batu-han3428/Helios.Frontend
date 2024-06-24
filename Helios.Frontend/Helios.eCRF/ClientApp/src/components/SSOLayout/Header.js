@@ -133,17 +133,7 @@ const Header = props => {
                         </div>
                     </div>
 
-                    <div className="d-flex">
-                        <form className="app-search d-none d-lg-block">
-                            <div className="position-relative">
-                                <input
-                                    type="text"
-                                    className="form-control"
-                                    placeholder={props.t("Search") + "..."}
-                                />
-                                <span className="fa fa-search"></span>
-                            </div>
-                        </form>
+                    <div className="d-flex">                       
 
                         <Dropdown
                             className="d-inline-block d-lg-none ms-2"
