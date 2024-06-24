@@ -586,5 +586,7 @@
   "Added by": "Added by",
   "Add new subject": "Add new subject",
   "Subject initial": "Subject initial",
-  "You will add a new subject.": "You will add a new subject."
+  "You will add a new subject.": "You will add a new subject.",
+  "Choose file": "Choose file",
+  "No file chosen": "No file chosen"
 }
