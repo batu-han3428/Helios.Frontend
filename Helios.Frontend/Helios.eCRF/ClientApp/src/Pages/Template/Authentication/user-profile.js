@@ -50,17 +50,19 @@ const UserProfile = props => {
     const [phoneNumber, setphoneNumber] = useState("");
     const [idx, setidx] = useState(1);
 
-    useEffect(() => {        
-        setname(updatedUserInformation.name);
-        setemail(updatedUserInformation.mail);
-        setLastName(updatedUserInformation.lastName);
-        setphoneNumber(updatedUserInformation.phoneNumber);
-        setidx(updatedUserInformation.userId || 1);
-        //setTimeout(() => {
-        //    props.resetProfileFlag();
-        //}, 3000);
+    useEffect(() => {     
+        if (userInformation) {
+            setname(updatedUserInformation.name);
+            setemail(updatedUserInformation.mail);
+            setLastName(updatedUserInformation.lastName);
+            setphoneNumber(updatedUserInformation.phoneNumber);
+            setidx(updatedUserInformation.userId || 1);
+            //setTimeout(() => {
+            //    props.resetProfileFlag();
+            //}, 3000);
+        }
 
-    }, [props.success]);
+    }, [props.success, userInformation]);
 
     //profile resim ayarlarý
     const canvas = document.createElement('canvas');
@@ -313,6 +315,6 @@ const mapStatetoProps = state => {
     return { error, success, avatar };
 };
 
-export default withRouter(
+export default withRouter(    
     connect(mapStatetoProps, { editProfile, resetProfileFlag })(withTranslation()(UserProfile))
 );
