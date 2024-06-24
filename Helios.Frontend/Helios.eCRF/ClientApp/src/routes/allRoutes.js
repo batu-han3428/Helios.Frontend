@@ -125,6 +125,9 @@ import AddOrUpdateTenant from "../Pages/SystemAdmin/Tenants/AddOrUpdateTenant.js
 //System admin users
 import ListTenantAndSystemAdmin from "../Pages/SystemAdmin/Users/ListTenantAndSystemAdmin";
 
+//Sdv
+import SdvList from "../Pages/SDV/SdvList";
+
 //Subject
 import SubjectList from "../Pages/Subject/Subject/SubjectList";
 import SubjectDetail from "../Pages/Subject/Subject/SubjectDetail";
@@ -234,6 +237,8 @@ const userRoutes = [
     { path: "/ui-session-timeout", component: <UiSessionTimeout />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/ui-offcanvas", component: <UiOffcanvas />, menuType: "admin", roles: ['TenantAdmin'] },
 
+    //Sdv
+    { path: "/sdv", component: <SdvList />, menuType: "sso", roles: ['StudyUser'] },
 
     //Subject
     { path: "/subjectlist", component: <SubjectList />, menuType: "sso", roles: ['StudyUser'] },
