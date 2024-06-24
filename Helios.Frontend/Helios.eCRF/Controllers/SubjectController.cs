@@ -85,7 +85,7 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> GetSubjectDetailMenu(Int64 studyId)
         {
             var result = await _subjectService.GetSubjectDetailMenu(studyId);
-            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+            return new ObjectResult(result);
         }
 
 
