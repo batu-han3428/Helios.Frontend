@@ -41,11 +41,11 @@ namespace Helios.eCRF.Services
                 StudyId = studyId,
                 SiteId = 3,
                 SubjectNumber = "",
-                InitialName="",
-                AddedByName="",
-                Country="",
-                RandomData="",
-                SiteName="",
+                InitialName = "",
+                AddedByName = "",
+                Country = "",
+                RandomData = "",
+                SiteName = "",
             };
 
             using (var client = CoreServiceClient)
@@ -57,15 +57,31 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<RestResponse<List<SubjectDetailMenuModel>>> GetSubjectDetailMenu(Int64 studyId)
+        public async Task<List<SubjectDetailMenuModel>> GetSubjectDetailMenu(Int64 studyId)
         {
+            var retResult = new List<SubjectDetailMenuModel>();
+
             using (var client = SharedServiceClient)
             {
                 var req = new RestRequest("Cache/GetSubjectDetailMenu", Method.Get);
                 req.AddParameter("studyId", studyId);
                 var result = await client.ExecuteAsync<List<SubjectDetailMenuModel>>(req);
-                return result;
+                retResult = result.Data;
             }
+
+
+            if (retResult == null)
+            {
+                using (var client = CoreServiceClient)
+                {
+                    var req = new RestRequest("CoreSubject/SetSubjectDetailMenu", Method.Get);
+                    req.AddParameter("studyId", studyId);
+                    var result = await client.ExecuteAsync<List<SubjectDetailMenuModel>>(req);
+                    retResult = result.Data;
+                }
+            }
+
+            return retResult;
         }
 
         public async Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId)
