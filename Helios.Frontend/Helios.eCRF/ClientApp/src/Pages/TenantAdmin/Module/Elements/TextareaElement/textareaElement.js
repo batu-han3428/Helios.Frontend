@@ -31,7 +31,6 @@ class TextareaElement extends Component {
                 <Input
                     type="textarea"
                     id="textarea"
-                    maxLength="225"
                     rows="3"
                     placeholder={this.state.defaultValue}
                     disabled={this.state.isDisable}
