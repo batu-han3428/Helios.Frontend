@@ -12,14 +12,30 @@ import { withTranslation } from "react-i18next"
 import i18n from "../../../i18n"
 import languages from "../../../common/languages"
 
-const LanguageDropdown = () => {
+const LanguageDropdown = ({ studyData }) => {
   // Declare a new state variable, which we'll call "menu"
   const [selectedLang, setSelectedLang] = useState("")
   const [menu, setMenu] = useState(false)
-
+  
   useEffect(() => {
-    const currentLanguage = localStorage.getItem("I18N_LANGUAGE")
-    setSelectedLang(currentLanguage)
+      const currentLanguage = localStorage.getItem("I18N_LANGUAGE")
+      if (studyData !== undefined) {
+          if (studyData.studyLanguage===2) {
+              setSelectedLang("tr")
+              i18n.changeLanguage("tr")
+              localStorage.setItem("I18N_LANGUAGE", "tr")
+          }
+          else {
+              setSelectedLang("en")
+              i18n.changeLanguage("en")
+              localStorage.setItem("I18N_LANGUAGE", "en")
+          }
+          
+      }
+      else {
+          setSelectedLang(currentLanguage)
+      }
+   
   }, [])
 
   const changeLanguageAction = lang => {
