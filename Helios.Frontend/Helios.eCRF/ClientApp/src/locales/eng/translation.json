@@ -600,5 +600,7 @@
   "Last message in query": "Last message in query",
   "Sdv list": "Sdv list",
   "Visit": "Visit",
-  "Page": "Page"
+  "Page": "Page",
+  "Choose file": "Choose file",
+  "No file chosen": "No file chosen"
 }
