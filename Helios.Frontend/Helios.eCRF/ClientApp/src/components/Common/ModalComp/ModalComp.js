@@ -19,7 +19,7 @@ const ModalComp = ({ title, body, resetValue = null, handle, buttonText, t, refs
                     const secondParentDiv = firstParentDiv.parentNode;
                     secondParentDiv.style.zIndex = '1010';
                     observer.disconnect();
-                    if (resetValue.length !== 0) resetValue();
+                    if (resetValue !== null && resetValue.length !== 0) resetValue();
                 }
             });
 
