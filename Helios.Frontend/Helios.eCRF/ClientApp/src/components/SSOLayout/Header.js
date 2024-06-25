@@ -32,6 +32,33 @@ const Header = props => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     const { data: permissionData, isLoading, isError } = useUserPermissionsListGetQuery(8);
+
+    const initialLink = localStorage.getItem('clickedLink') || '';
+
+    const [clickedLinks, setClickedLinks] = useState({
+        query: initialLink === 'query',
+        subject: initialLink === 'subject' || initialLink==='',
+        sdv: initialLink === 'sdv',
+        studyDocuments: initialLink ==='studyDocuments',
+        medicalCoding: initialLink === 'medicalCoding',
+        iwrs: initialLink==='iwrs'
+    });    
+    const handleClick = (linkName) => {
+        const resetLinks = {
+            query: false,
+            subject: false,
+            sdv: false,
+            studyDocuments: false,
+            medicalCoding: false,
+            iwrs: false,
+        };
+        setClickedLinks({
+            ...resetLinks,
+            [linkName]: true,
+        });
+        localStorage.setItem('clickedLink', linkName);
+    };
+
     function toggleFullscreen() {
         if (
             !document.fullscreenElement &&
@@ -98,34 +125,34 @@ const Header = props => {
                             {!isLoading && !isError && permissionData && (
                                 <>
                                     { permissionData.hasSubject && (
-                                            <Link to="/" className="" >
-                                                <label style={{ color: "#757575", textDecoration: 'underline', marginRight: '30px' }}>{props.t("Subject")}</label>
+                                        <Link to="/" className="" onClick={() => handleClick('subject')} >
+                                            <label style={{ color: "#757575", textDecoration: clickedLinks.subject ? 'underline' : 'none', backgroundColor: clickedLinks.subject ? 'white' : '', marginRight: '30px' }}>{props.t("Subject")}</label>
                                             </Link>
                                         )
                                     }
                                     {permissionData.hasQuery && (
-                                        <Link to="/query" className="" >
-                                            <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("Query")}</label>
+                                        <Link to="/query" className="" onClick={() => handleClick('query')} >
+                                            <label style={{ color: "#757575", textDecoration: clickedLinks.query ? 'underline' : 'none', backgroundColor: clickedLinks.query ? 'white' : '', marginRight: '30px' }}>{props.t("Query")}</label>
                                         </Link>
                                     )}
                                     {permissionData.hasSdv && (
-                                        <Link to="/sdv" className="" >
-                                            <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("SDV")}</label>
+                                        <Link to="/sdv" className="" onClick={() => handleClick('sdv')}>
+                                            <label style={{ color: "#757575", textDecoration: clickedLinks.sdv ? 'underline' : 'none', backgroundColor: clickedLinks.sdv ? 'white' : '', marginRight: '30px' }}>{props.t("SDV")}</label>
                                         </Link>
                                     )}
                                     {permissionData.hasStudyDocument && (
-                                        <Link to="/" className="" >
-                                            <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("Study documents")}</label>
+                                        <Link to="/" className="" onClick={() => handleClick('studyDocuments')}>
+                                            <label style={{ color: "#757575", textDecoration: clickedLinks.studyDocuments ? 'underline' : 'none', backgroundColor: clickedLinks.studyDocuments ? 'white' : '', marginRight: '30px' }}>{props.t("Study documents")}</label>
                                         </Link>
                                     )}
                                     {permissionData.hasMedicalCoding && (
-                                        <Link to="/" className="" >
-                                            <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("Medical coding")}</label>
+                                        <Link to="/" className="" onClick={() => handleClick('medicalCoding')} >
+                                            <label style={{ color: "#757575", textDecoration: clickedLinks.medicalCoding ? 'underline' : 'none', backgroundColor: clickedLinks.medicalCoding ? 'white' : '', marginRight: '30px' }}>{props.t("Medical coding")}</label>
                                         </Link>
                                     )}
                                     {permissionData.hasIwrs && (
-                                        <Link to="/" className="" >
-                                            <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("IWRS")}</label>
+                                        <Link to="/" className="" onClick={() => handleClick('iwrs')} >
+                                            <label style={{ color: "#757575", textDecoration: clickedLinks.iwrs ? 'underline' : 'none', backgroundColor: clickedLinks.iwrs ? 'white' : '', marginRight: '30px' }}>{props.t("IWRS")}</label>
                                         </Link>
                                     )}
                                 </>
