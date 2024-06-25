@@ -62,6 +62,7 @@ const SubjectList = props => {
             const updatedSubjectsData = subjectsData.subjectList.map(item => {
                 return {
                     ...item,
+                    createdAt: formatDate(item.createdAt),
                     updatedAt: formatDate(item.updatedAt),
                     actions: getActions(item)
                 };
