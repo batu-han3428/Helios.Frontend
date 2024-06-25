@@ -104,7 +104,7 @@ const Header = props => {
                                         )
                                     }
                                     {permissionData.hasQuery && (
-                                        <Link to="/" className="" >
+                                        <Link to="/query" className="" >
                                             <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("Query")}</label>
                                         </Link>
                                     )}
