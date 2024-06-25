@@ -109,7 +109,7 @@ const Header = props => {
                                         </Link>
                                     )}
                                     {permissionData.hasSdv && (
-                                        <Link to="/" className="" >
+                                        <Link to="/sdv" className="" >
                                             <label style={{ color: "#757575", marginRight: '30px' }}>{props.t("SDV")}</label>
                                         </Link>
                                     )}

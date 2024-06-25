@@ -127,6 +127,8 @@ import ListTenantAndSystemAdmin from "../Pages/SystemAdmin/Users/ListTenantAndSy
 
 //Query
 import QueryList from "../Pages/Query/QueryList";
+//Sdv
+import SdvList from "../Pages/SDV/SdvList";
 
 //Subject
 import SubjectList from "../Pages/Subject/Subject/SubjectList";
@@ -237,7 +239,8 @@ const userRoutes = [
     { path: "/ui-session-timeout", component: <UiSessionTimeout />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/ui-offcanvas", component: <UiOffcanvas />, menuType: "admin", roles: ['TenantAdmin'] },
 
-
+    //Sdv
+    { path: "/sdv", component: <SdvList />, menuType: "sso", roles: ['StudyUser'] },
     //Query
     { path: "/query", component: <QueryList />, menuType: "sso", roles: ['StudyUser'] },
 
