@@ -110,6 +110,7 @@ const SubjectDetailMenu = props => {
     };
 
     const onClick = (e) => {
+        debugger
         const parentKey = findParentKey(e.key, items);
         if (parentKey) {
             const newOpenKeys = props.openKeys.includes(parentKey) ? [] : [parentKey];
@@ -122,6 +123,7 @@ const SubjectDetailMenu = props => {
     };
 
     const handleSubMenuOpenChange = (keys) => {
+        debugger
         props.setOpenSubMenuKeys(keys);
     };
 
