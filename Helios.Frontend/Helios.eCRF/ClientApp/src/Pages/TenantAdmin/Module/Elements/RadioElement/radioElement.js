@@ -7,14 +7,14 @@ import {
 class RadioElement extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = {
             id: props.Id,
             isDisable: props.IsDisable,
             layout: props.Layout,
             ElementOptions: props.ElementOptions !== null && props.ElementOptions !== undefined && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
-            selectedOption: null,
+            selectedOption: props.Value,
         }
 
         this.handleRadioChange = this.handleRadioChange.bind(this);

@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import Slider from 'react-slider';
 import './rangeSliderElement.css';
 
-
-const sliderRef = '0px';
 class RangeSliderElement extends Component {
     constructor(props) {
         super(props);
@@ -20,7 +18,7 @@ class RangeSliderElement extends Component {
         this.myRef = React.createRef();
 
         this.handleChangeHorizontal = this.handleChangeHorizontal.bind(this);
-        this.handleComplete = this.handleComplete.bind(this);
+        this.handleAfterChange = this.handleAfterChange.bind(this);
     }
 
     handleChangeHorizontal = value => {
@@ -29,7 +27,7 @@ class RangeSliderElement extends Component {
         })
     };
 
-    handleComplete() {
+    handleAfterChange(value) {
         this.props.HandleAutoSave(this.state.id, this.state.horizontal.toString());
     };  
 
@@ -44,8 +42,8 @@ class RangeSliderElement extends Component {
                     max={parseInt(this.props.UpperLimit)}
                     value={this.state.horizontal !== "" ? parseInt(this.state.horizontal) : parseInt(this.props.LowerLimit)}
                     getAriaValueText={this.state.horizontalLabels}                  
-                    onChange={this.handleChangeHorizontal}                   
-                    onChangeComplete={this.handleComplete}
+                    onChange={this.handleChangeHorizontal} 
+                    onAfterChange={this.handleAfterChange}
                     disabled={this.state.isDisable}
                     className="customSlider"
                     trackClassName="customSlider-track"
