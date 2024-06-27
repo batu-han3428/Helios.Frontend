@@ -74,6 +74,10 @@ export const UsersApi = createApi({
             }),
             invalidatesTags: ['User'],
         }),
+        userGetHasRole: builder.query({
+            query: (studyId) => `/User/GetHasRole/${studyId}`,
+            providesTags: ['User'],
+        }),            
     }),
 });
 
@@ -92,3 +96,4 @@ export const { useUserDeleteMutation } = UsersApi;
 
 export const { useUserResetPasswordMutation } = UsersApi;
 export const { useUserProfileEditMutation } = UsersApi;
+export const { useUserGetHasRoleQuery } = UsersApi;

@@ -60,6 +60,8 @@ export const PermissionsApi = createApi({
         }),
         userPermissionsListGet: builder.query({
             query: (studyId) => `/User/GetUserPermissionsList/${studyId}`,
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0,
             providesTags: ['UserPermissions'],
         }),
         permissionsVisitListGet: builder.query({

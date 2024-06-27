@@ -602,5 +602,6 @@
   "Visit": "Visit",
   "Page": "Page",
   "Choose file": "Choose file",
-  "No file chosen": "No file chosen"
+  "No file chosen": "No file chosen",
+  "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator.": "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator."
 }

@@ -19,8 +19,10 @@ export const SubjectApi = createApi({
     endpoints: (builder) => ({
         getSubjectList: builder.query({
             query: (studyId) => `/Subject/GetSubjectList/${studyId}`,
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0,
             providesTags: ['Subject'],
-        }),
+        }),           
         addSubject: builder.mutation({
             query: (values) => ({
                 url: '/Subject/AddSubject',
@@ -40,7 +42,6 @@ export const SubjectApi = createApi({
 
 
 export const { useGetSubjectListQuery } = SubjectApi;
-
 export const { useAddSubjectMutation } = SubjectApi;
 
 export const { useLazyGetSubjectDetailMenuQuery } = SubjectApi;

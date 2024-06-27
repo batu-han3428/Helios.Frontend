@@ -22,8 +22,7 @@ namespace Helios.eCRF.Services
                 var result = await client.ExecuteAsync<SubjectListModel>(req);
                 return result;
             }
-        }
-
+        }      
         public async Task<ApiResponse<dynamic>> AddSubject(SubjectDTO SubjectDTO)
         {
             using (var client = CoreServiceClient)

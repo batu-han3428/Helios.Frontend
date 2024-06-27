@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { Table, Row, Col, Typography, Input } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Form, FormFeedback, Label } from 'reactstrap';
+import { Button, Form, FormFeedback, Label, Container, Card, CardBody } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { formatDate } from "../../../helpers/format_date";
@@ -13,9 +13,11 @@ import { useDispatch } from "react-redux";
 import Select from "react-select";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useAddSubjectMutation, useGetSubjectListQuery } from '../../../store/services/Subject';
+import { useUserGetHasRoleQuery } from '../../../store/services/Users';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
 import { SearchOutlined } from '@ant-design/icons';
+import RoleNotFound from '../../../Pages/Common/NotFound/RoleNotFound ';
 import "./Subject.css";
 
 const SubjectList = props => {
@@ -29,10 +31,15 @@ const SubjectList = props => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
     const [studyId, setStudyId] = useState(8);
     const [addingSubject] = useAddSubjectMutation();
-    const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
+    const { data: subjectsData, error: errorSubject, isLoading: isLoadingSubject } = useGetSubjectListQuery(8, { refetchOnMountOrArgChange: true});
+   
+    useEffect(() => {      
+        optionGroup(8);
+        getStudy(8);     
+       
+    }, []);
 
     const [modal, setModal] = useState(false);
     const [data, setData] = useState([]);
@@ -53,30 +60,39 @@ const SubjectList = props => {
         changeInitialName: '',
         changeSiteId: ''
     });
-
     useEffect(() => {
-        optionGroup(8);
-        getStudy(8);
-
-        if (!error && !isLoading && subjectsData) {
-            const updatedSubjectsData = subjectsData.subjectList.map(item => {
-                return {
-                    ...item,
-                    createdAt: formatDate(item.createdAt),
-                    updatedAt: formatDate(item.updatedAt),
-                    actions: getActions(item)
-                };
-            });
-
+        if (!errorSubject && !isLoadingSubject && subjectsData) {
             const newData = { ...data };
-            newData.subjectList = updatedSubjectsData;
+            if (subjectsData.subjectList !== null) {
+                const updatedSubjectsData = subjectsData.subjectList.map(item => {
+                    return {
+                        ...item,
+                        createdAt: formatDate(item.createdAt),
+                        updatedAt: formatDate(item.updatedAt),
+                        actions: getActions(item)
+                    };
+                });
+                newData.subjectList = updatedSubjectsData;
+            }         
             newData.hasQuery = subjectsData.hasQuery;
             newData.hasSdv = subjectsData.hasSdv;
             newData.hasRandomizasyon = subjectsData.hasRandomizasyon;
+            newData.hasRole = subjectsData.hasRole;
             setData(newData);
             dispatch(endloading());
+          
         }
-    }, [subjectsData, error, isLoading]);
+        else {
+            const newData = { ...data };
+            newData.hasQuery = false;
+            newData.hasSdv = false;
+            newData.hasRandomizasyon = false;
+            newData.hasRole = false;
+            newData.subjectList = null;
+            setData(newData);
+            dispatch(endloading());          
+        }
+    }, [subjectsData, errorSubject, isLoadingSubject]);
 
     const goToSubjectDetail = (studyId, pageId, subjectId) => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}`);
@@ -312,7 +328,7 @@ const SubjectList = props => {
     const [filteredInfo, setFilteredInfo] = useState({});
     const [searchsubjectNumberText, setSearchsubjectNumberText] = useState('');
     const columns = []
-    if (AskSubjectInitial) {
+    if (AskSubjectInitial && !errorSubject && !isLoadingSubject && data.hasRole) {
         const uniqueCountry = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.country))) : "";
         const uniqueAddedBy = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.addedByName))) : "";
         const uniqueSite = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.siteName))) : "";
@@ -371,7 +387,7 @@ const SubjectList = props => {
             title: 'Subject initial',
             dataIndex: 'initialName',
             sorter: (a, b) => {
-                const nameA = a.initialName || ''; 
+                const nameA = a.initialName || '';
                 const nameB = b.initialName || '';
                 return nameA.localeCompare(nameB);
             },
@@ -415,7 +431,7 @@ const SubjectList = props => {
         sortDirections: ['ascend', 'descend'],
     });
 
-    if (data.hasRandomizasyon) {
+    if (!errorSubject && !isLoadingSubject && data.hasRandomizasyon) {
         columns.push({
             title: props.t('Randomization'),
             dataIndex: 'randomData',
@@ -424,7 +440,7 @@ const SubjectList = props => {
         });
     }
 
-    if (data.hasQuery) {
+    if (!errorSubject && !isLoadingSubject && data.hasQuery) {
         columns.push({
             title: props.t('Query'),
             dataIndex: 'query',
@@ -433,7 +449,7 @@ const SubjectList = props => {
         });
     }
 
-    if (data.hasSdv) {
+    if (!errorSubject && !isLoadingSubject && data.hasSdv) {
         columns.push({
             title: props.t('SDV'),
             dataIndex: 'sdv',
@@ -467,45 +483,52 @@ const SubjectList = props => {
     };
 
     return (
-        <React.Fragment>
-            <div className="page-content">
-                <div className="container-fluid">
-                    <div className="page-title-box">
-                        <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
-                            <Col md={8}>
-                                <h6 className="page-title">{props.t('Subject list')}</h6>
+        < React.Fragment >
+            {!isLoadingSubject && !errorSubject && subjectsData.subjectList!==null &&
+                < div className="page-content">
+                    <div className="container-fluid">
+                        <div className="page-title-box">
+                            <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
+                                <Col md={8}>
+                                    <h6 className="page-title">{props.t('Subject list')}</h6>
+                                </Col>
+                            </Row>
+                        </div>
+                        <Row>
+                            <Col className="col-12">
+                                <div style={{ display: 'inline-block', float: 'right' }} onClick={handleClick}>
+                                    <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>{props.t('Add new subject')}</Typography.Text>
+                                    <Button color="success" className="rounded-circle">
+                                        <FontAwesomeIcon icon="fa-plus" />
+                                    </Button>
+                                </div>
+                            </Col>
+                            <Col className="col-12">
+                                <Table
+                                    columns={columns}
+                                    dataSource={data.subjectList}
+                                    pagination={true}
+                                    scroll={{ x: 'max-content' }}
+                                    onRow={(record, rowIndex) => {
+                                        return {
+                                            onDoubleClick: () => {
+                                                goToSubjectDetail(studyId, record.firstPageId, record.id)
+                                            }
+                                        }
+                                    }}
+                                    onChange={handleChange}
+                                    filteredInfo={filteredInfo}
+                                />
                             </Col>
                         </Row>
                     </div>
-                    <Row>
-                        <Col className="col-12">
-                            <div style={{ display: 'inline-block', float: 'right' }} onClick={handleClick}>
-                                <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>{props.t('Add new subject')}</Typography.Text>
-                                <Button color="success" className="rounded-circle">
-                                    <FontAwesomeIcon icon="fa-plus" />
-                                </Button>
-                            </div>
-                        </Col>
-                        <Col className="col-12">
-                            <Table
-                                columns={columns}
-                                dataSource={data.subjectList}
-                                pagination={true}
-                                scroll={{ x: 'max-content' }}
-                                onRow={(record, rowIndex) => {
-                                    return {
-                                        onDoubleClick: () => {
-                                            goToSubjectDetail(studyId, record.firstPageId, record.id)
-                                        }
-                                    }
-                                }}
-                                onChange={handleChange}
-                                filteredInfo={filteredInfo}
-                            />
-                        </Col>
-                    </Row>
                 </div>
-            </div>
+            }
+            {
+                !isLoadingSubject && !errorSubject && subjectsData.subjectList===null &&
+                <RoleNotFound />
+            }
+
             <ModalComp
                 refs={modalRef}
                 title={modalTitle}
@@ -516,7 +539,8 @@ const SubjectList = props => {
                 isButton={true}
                 size="lg"
             />
-        </React.Fragment>
+        </React.Fragment >
+
     )
 }
 

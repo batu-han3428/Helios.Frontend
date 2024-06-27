@@ -254,7 +254,17 @@ namespace Helios.eCRF.Services
                 return result;
             }
         }
-
+        public async Task<RestResponse<bool>> GetHasRole(Int64 studyId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreUser/GetHasRole", Method.Get);
+                req.AddParameter("studyId", studyId);
+                req.AddParameter("userId", UserId);
+                var result = await client.ExecuteAsync<bool>(req);
+                return result;
+            }
+        }
         public async Task<RestResponse<List<UserPermissionDTO>>> GetRoleList(Int64 studyId)
         {
             using (var client = CoreServiceClient)

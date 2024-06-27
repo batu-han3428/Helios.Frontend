@@ -1,5 +1,5 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { connect } from "react-redux";
 import { Form, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Input, Button } from "reactstrap";
@@ -31,7 +31,10 @@ const Header = props => {
 
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-    const { data: permissionData, isLoading, isError } = useUserPermissionsListGetQuery(8);
+    const { data: permissionData, isLoading, isError, refetch } = useUserPermissionsListGetQuery(8,{ refetchOnMountOrArgChange: true });
+    useEffect(() => {      
+        refetch();
+    }, [refetch]);
     function toggleFullscreen() {
         if (
             !document.fullscreenElement &&

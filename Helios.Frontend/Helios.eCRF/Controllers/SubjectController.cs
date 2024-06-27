@@ -30,15 +30,19 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> GetSubjectList(Int64 studyId)
         {
             var result = await _subjectService.GetSubjectList(studyId);
-            var addedbyids = result.Data.SubjectList.Select(x => x.AddedById).Distinct().ToList();           
-            var users = await _userService.GetUserList(addedbyids);           
-            foreach (var user in result.Data.SubjectList) {
-                var addedby= users.Data.FirstOrDefault(x => x.Id == user.AddedById);
-                user.AddedByName = addedby.Name + ' ' + addedby.LastName;
+            if (result.Data.SubjectList!=null)
+            {
+                var addedbyids = result.Data.SubjectList.Select(x => x.AddedById).Distinct().ToList();
+                var users = await _userService.GetUserList(addedbyids);
+                foreach (var user in result.Data.SubjectList)
+                {
+                    var addedby = users.Data.FirstOrDefault(x => x.Id == user.AddedById);
+                    user.AddedByName = addedby.Name + ' ' + addedby.LastName;
+                }
             }
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
-
+        
         /// <summary>
         /// Hasta eklenir
         /// </summary>

@@ -450,5 +450,6 @@
   "Visit": "Vizit",
   "Page": "Sayfa",
   "Choose file": "Dosya seçiniz",
-  "No file chosen": "Dosya seçilmedi"
+  "No file chosen": "Dosya seçilmedi",
+  "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator.": "Çalışma rolünüz yönetici tarafından henüz tanımlanmamış. Bir sorun olduğunu düşünüyorsanız lütfen sistem yöneticisi ile iletişime geçiniz."
 }
