@@ -13,6 +13,7 @@ import ProfileMenu from "../CommonForBoth/TopbarDropdown/ProfileMenu";
 import logoheliosImg from "../../assets/images/helios-logo.png";
 import logoheliossmImg from "../../assets/images/helios-sm-logo.png";
 import { useUserPermissionsListGetQuery } from '../../store/services/Permissions';
+import { useStudyGetQuery } from '../../store/services/Study';
 
 //i18n
 import { withTranslation } from "react-i18next";
@@ -25,7 +26,6 @@ import {
 } from "../../store/actions";
 
 const Header = props => {
-
     const [search, setsearch] = useState(false);
     const [singlebtn, setSinglebtn] = useState(false);
 
@@ -58,6 +58,7 @@ const Header = props => {
         });
         localStorage.setItem('clickedLink', linkName);
     };
+    const { data: studyData, isLoadingStudy, isErrorStudy } = useStudyGetQuery(8);
 
     function toggleFullscreen() {
         if (
@@ -188,8 +189,9 @@ const Header = props => {
                                 </Form>
                             </DropdownMenu>
                         </Dropdown>
-
-                        <LanguageDropdown />
+                        {!isLoadingStudy && !isErrorStudy && studyData &&
+                            <LanguageDropdown studyData={studyData} />
+                        }
                         <ProfileMenu />
                     </div>
                 </div>
