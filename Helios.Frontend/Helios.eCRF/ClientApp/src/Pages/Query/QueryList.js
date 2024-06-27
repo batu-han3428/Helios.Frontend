@@ -65,11 +65,11 @@ const QueryList = props => {
             <div className="page-content">
                 <div className="container-fluid">
                     <div className="page-title-box">
-                        <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
-                            <Col md={8}>
-                                <h6 className="page-title">{props.t('Sdv list')}</h6>
-                            </Col>
-                        </Row>
+                        {/*<Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>*/}
+                        {/*    <Col md={8}>*/}
+                        {/*        <h6 className="page-title">{props.t('Sdv list')}</h6>*/}
+                        {/*    </Col>*/}
+                        {/*</Row>*/}
                     </div>
                     <Row>
                         <Col className="col-12">
