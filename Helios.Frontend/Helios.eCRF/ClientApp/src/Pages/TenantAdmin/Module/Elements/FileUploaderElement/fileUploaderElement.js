@@ -6,8 +6,7 @@ class FileUploaderElement extends Component {
         super(props);       
         this.state = {
             isDisable: props.IsDisable,
-            selectedFile: null, 
-            fileName: props.t('No file chosen')
+            selectedFile: null,           
         };
 
         this.handleFileChange = this.handleFileChange.bind(this);
@@ -18,8 +17,7 @@ class FileUploaderElement extends Component {
     handleFileChange(event) {
         const file = event.target.files[0];
         this.setState({
-            selectedFile: file,
-            fileName: (file !== null && file !== undefined) ? file.name : this.props.t('No file chosen')
+            selectedFile: file,          
         });
 
         this.handleUpload();
@@ -53,7 +51,7 @@ class FileUploaderElement extends Component {
                 >
                   {this.props.t('Choose file')}
                 </button>
-                <label style={{ marginLeft: '4px', fontFamily: 'AvenirNext-Regular', fontSize: '16px' }}  >{this.state.fileName}</label>
+                <label style={{ marginLeft: '4px', fontFamily: 'AvenirNext-Regular', fontSize: '16px' }}  >{(this.state.selectedFile === null || this.state.selectedFile === undefined) ? this.props.t('No file chosen') : this.state.selectedFile.name}</label>
             </div>
         )
     }
