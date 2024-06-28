@@ -9,17 +9,18 @@ import Swal from 'sweetalert2';
 import { formatDate } from "../../../helpers/format_date";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useDispatch } from "react-redux";
+import { useDispatch, connect } from "react-redux";
+import withRouter from '../../../components/Common/withRouter';
 import Select from "react-select";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useAddSubjectMutation, useGetSubjectListQuery } from '../../../store/services/Subject';
+import { useStudyUserSitesGetQuery } from '../../../store/services/Users';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
 import { SearchOutlined } from '@ant-design/icons';
 import "./Subject.css";
 
 const SubjectList = props => {
-
     const modalRef = useRef();
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
@@ -33,6 +34,8 @@ const SubjectList = props => {
     const [studyId, setStudyId] = useState(8);
     const [addingSubject] = useAddSubjectMutation();
     const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
+
+    const { data: studyUserSitesGet } = useStudyUserSitesGetQuery({ authUserId: props.authUserId, studyId: 8 });
 
     const [modal, setModal] = useState(false);
     const [data, setData] = useState([]);
@@ -176,12 +179,12 @@ const SubjectList = props => {
                         return false;
                     }}>
 
-                    {selectSites.length > 1 &&
+                    {selectSites.length > 1 && studyUserSitesGet.sites.length > 1 &&
                         <div className="mb-12" style={{ marginBottom: "15px" }}>
                             <Label className="form-label"> {props.t('Site')}</Label>
                             <Select
                                 name='siteid'
-                                id='sitei'
+                                id='siteid'
                                 onChange={(selectedOptions) => {
                                     const selectedValues = selectedOptions.id;
                                     validationType.setFieldValue('siteid', selectedValues);
@@ -190,7 +193,7 @@ const SubjectList = props => {
                                     setchangeSiteId(e);
                                 }}
 
-                                options={selectSites}
+                                options={studyUserSitesGet.sites}
                                 getOptionLabel={(option) => option.name}
                                 getOptionValue={(option) => option.id}
                                 placeholder={props.t("Select")}
@@ -200,19 +203,20 @@ const SubjectList = props => {
                             ) : null}
                         </div>
                     }
-
-                    <div className="mb-12" >
-                        <Label className="control-label">
-                            {props.t('Subject initial')}
-                        </Label>
-                        <Input className='form-control' type='text' name='initialname' id='initialname' onChange={validationType.handleChange}
-                            onBlur={(e) => {
-                                setchangeInitialName(e);
-                            }} />
-                        {(contentInitialName === "" || contentInitialName === undefined) && part !== 0 ? (
-                            <div type="invalid" className="invalid-feedback" style={{ display: "block" }}>{props.t("This field is required")}</div>
-                        ) : null}
-                    </div>
+                    {AskSubjectInitial &&
+                        <div className="mb-12" >
+                            <Label className="control-label">
+                                {props.t('Subject initial')}
+                            </Label>
+                            <Input className='form-control' type='text' name='initialname' id='initialname' onChange={validationType.handleChange}
+                                onBlur={(e) => {
+                                    setchangeInitialName(e);
+                                }} />
+                            {(contentInitialName === "" || contentInitialName === undefined) && part !== 0 ? (
+                                <div type="invalid" className="invalid-feedback" style={{ display: "block" }}>{props.t("This field is required")}</div>
+                            ) : null}
+                        </div>
+                    }
                 </Form>
             </>
         );
@@ -371,7 +375,7 @@ const SubjectList = props => {
             title: 'Subject initial',
             dataIndex: 'initialName',
             sorter: (a, b) => {
-                const nameA = a.initialName || ''; 
+                const nameA = a.initialName || '';
                 const nameB = b.initialName || '';
                 return nameA.localeCompare(nameB);
             },
@@ -461,7 +465,13 @@ const SubjectList = props => {
             setchangeSiteId();
             setchangeInitialName();
             openModal(0);
-        } else {
+        }
+        else if (selectSites.length > 1 && studyUserSitesGet.sites.length > 1) {
+            setchangeSiteId();
+            setchangeInitialName();
+            openModal(0);
+        }
+        else {
             addSubject();
         }
     };
@@ -523,5 +533,12 @@ const SubjectList = props => {
 SubjectList.propTypes = {
     t: PropTypes.any
 };
+const mapStateToProps = state => {
+    const authUserId = state.rootReducer.Login.userId;
+    const { error } = state.rootReducer.Login;
+    return { error, authUserId };
+};
 
-export default withTranslation()(SubjectList);
+export default withTranslation()(withRouter(
+    connect(mapStateToProps)(SubjectList)
+));

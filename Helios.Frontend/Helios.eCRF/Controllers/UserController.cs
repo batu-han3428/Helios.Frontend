@@ -297,7 +297,12 @@ namespace Helios.eCRF.Controllers
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
-
+        [HttpGet("{authUserId}/{studyId}")]
+        public async Task<IActionResult> GetStudyUserSites(Int64 authUserId, Int64 studyId)
+        {
+            var result = await _userService.GetStudyUserSites(authUserId, studyId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
         /// <summary>
         /// mail adresi girilen kullanıcının bilgilerini getirir. kullanıcı yoksa boş döner. kullanıcı çalışmada kayıtlı ise uyarı döner
         /// </summary>
