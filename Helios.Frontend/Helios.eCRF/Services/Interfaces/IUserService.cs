@@ -10,6 +10,7 @@ namespace Helios.eCRF.Services.Interfaces
     {
         Task<UserDTO> GetUserByEmail(string mail);
         Task<RestResponse<List<AspNetUserDTO>>> GetUserList(List<Int64> AuthUserIds);
+        Task<RestResponse<StudyUserDTO>> GetStudyUserSites(Int64 authUserId, Int64 studyId);
         Task<dynamic> AddUser(UserDTO model);
         Task<bool> PassiveOrActiveUser(UserDTO model);
         Task<ApiResponse<dynamic>> UpdateUser(AspNetUserDTO model);

@@ -21,6 +21,11 @@ export const UsersApi = createApi({
             query: (studyId) => `/User/GetStudyUserList/${studyId}`,
             providesTags: ['User'],
         }),
+        studyUserSitesGet: builder.query({            
+            query: (data) => `/User/GetStudyUserSites/${data.authUserId}/${data.studyId}`,
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0,
+        }),
         userGet: builder.query({
             query: (data) => `/User/GetStudyUser/${data.email}/${data.studyId}`,
             refetchOnMountOrArgChange: true,
@@ -81,6 +86,7 @@ export const UsersApi = createApi({
 export const { useLazyUserListGetQuery } = UsersApi;
 
 export const { useUserGetQuery } = UsersApi;
+export const { useStudyUserSitesGetQuery } = UsersApi;
 
 export const { useUserSetMutation } = UsersApi;
 
