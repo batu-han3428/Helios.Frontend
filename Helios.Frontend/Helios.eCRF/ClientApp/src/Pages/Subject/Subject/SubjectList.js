@@ -466,7 +466,7 @@ const SubjectList = props => {
             setchangeInitialName();
             openModal(0);
         }
-        else if (selectSites.length > 1) {
+        else if (selectSites.length > 1 && studyUserSitesGet.sites.length > 1) {
             setchangeSiteId();
             setchangeInitialName();
             openModal(0);
