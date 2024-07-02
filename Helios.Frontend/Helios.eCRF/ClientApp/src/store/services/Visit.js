@@ -98,6 +98,57 @@ export const VisitApi = createApi({
                 body: data,
             }),
         }),
+        studyVisitAnnotatedCrfGet: builder.query({
+            query: (params) => {
+                const queryParams = new URLSearchParams(
+                    Object.entries(params).reduce((acc, [key, value]) => {
+                        if (typeof value === 'boolean') {
+                            acc[key] = value ? 'true' : 'false';
+                        } else {
+                            acc[key] = value;
+                        }
+                        return acc;
+                    }, {})
+                ).toString();
+                return `/Study/GetStudyVisitAnnotatedCrf?${queryParams}`;
+            },
+            keepUnusedDataFor: 0,
+            transformResponse: async (rawData, d) => {
+                if (d.response.status === 200) {
+                    const arrayBuffer = Uint8Array.from(atob(rawData.fileContents), c => c.charCodeAt(0));   
+                    const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    return {
+                        data: url
+                    };
+                } else {
+                    return {
+                        data: null
+                    }
+                }
+            },
+        }),
+        studyVisitAnnotatedCrfHistoryGet: builder.query({
+            query: () => `/Study/GetStudyVisitAnnotatedCrfHistory`
+        }),
+        studyVisitAnnotatedCrfHistoryPdfGet: builder.query({
+            query: (id) => `/Study/GetStudyVisitAnnotatedCrfHistoryPdf/${id}`,
+            keepUnusedDataFor: 0,
+            transformResponse: async (rawData, d) => {
+                if (d.response.status === 200) {
+                    const arrayBuffer = Uint8Array.from(atob(rawData.fileContents), c => c.charCodeAt(0));
+                    const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    return {
+                        data: url
+                    };
+                } else {
+                    return {
+                        data: null
+                    }
+                }
+            },
+        }),
     }),
 });
 
@@ -129,3 +180,9 @@ export const { useTransferDataSetMutation } = VisitApi;
 export const { useLazyVisitRelationGetQuery } = VisitApi;
 
 export const { useVisitRelationSetMutation } = VisitApi;
+
+export const { useLazyStudyVisitAnnotatedCrfGetQuery } = VisitApi;
+
+export const { useLazyStudyVisitAnnotatedCrfHistoryGetQuery } = VisitApi;
+
+export const { useLazyStudyVisitAnnotatedCrfHistoryPdfGetQuery } = VisitApi;

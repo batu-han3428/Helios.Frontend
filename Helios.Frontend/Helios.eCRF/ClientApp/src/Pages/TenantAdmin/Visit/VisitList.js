@@ -4,7 +4,7 @@ import { withTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Table, Row, Col, Switch, Dropdown, Tooltip, Space, FloatButton } from 'antd';
-import { CheckOutlined, CloseOutlined, DownOutlined } from '@ant-design/icons';
+import { CheckOutlined, DownOutlined } from '@ant-design/icons';
 import EditableRow from '../Visit/Comp/EditableRow';
 import EditableCell from '../Visit/Comp/EditableCell';
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';

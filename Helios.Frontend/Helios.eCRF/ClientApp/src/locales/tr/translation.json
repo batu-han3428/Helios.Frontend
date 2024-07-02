@@ -419,5 +419,15 @@
   "Target page": "Hedef sayfa",
   "Hide": "Gizle",
   "New tag": "Yeni etiket",
-  "Has updated the table": "{user} kullanıcısı tabloda güncelleme yapmıştır."
+  "Has updated the table": "{user} kullanıcısı tabloda güncelleme yapmıştır.",
+  "Print with additional info": "Ek bilgilerle yazdırın",
+  "Include calculation field": "Hesaplamaları dahil et",
+  "Include hidden fields": "Gizli elementleri dahil et",
+  "Include labels": "Etiketleri dahil et",
+  "Include field descriptions": "Alan açıklamalarını dahil et",
+  "Include page name": "Sayfa isimlerini dahil et",
+  "Include document version": "Belge versiyonu dahil et",
+  "Version": "Versiyon",
+  "To save a .pdf file, you need to select “yes” for “Include document version” option and enter a version number.": ".pdf dosyasını kaydetmek için “Belge versiyonu dahil et” seçeneğinde “evet” işaretleyip, sürüm numarasını girmeniz gerekmektedir.",
+  "Print options": "Yazdırma seçenekleri"
 }

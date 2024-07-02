@@ -44,5 +44,9 @@ namespace Helios.eCRF.Services.Interfaces
         Task<VisitCollectionModel> GetVisitCollectionInfo(Int64 elementId);
         Task<RestResponse<StudyVisitRelationModel>> GetVisitRelation();
         Task<ApiResponse<dynamic>> SetVisitRelation(List<StudyVisitRelationDTO> dto);
+        Task<RestResponse<byte[]>> GetStudyVisitAnnotatedCrf(AnnotatedDTO dto);
+        Task<ApiResponse<dynamic>> AddStudyVisitAnnotatedCrfVersion(AnnotatedVersionDTO dto);
+        Task<RestResponse<List<AnnotatedCrfHistoryModel>>> GetStudyVisitAnnotatedCrfHistory();
+        Task<RestResponse<byte[]>> GetStudyVisitAnnotatedCrfHistoryPdf(Int64 id);
     }
 }
