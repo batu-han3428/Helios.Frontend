@@ -11,6 +11,8 @@ import Swal from 'sweetalert2';
 import { arrayMove } from '@dnd-kit/sortable';
 import TransferData from '../Comp/TransferData';
 import Relation from '../Comp/Relation';
+import AnnotatedCrfPdf from '../Comp/AnnotatedCrfPdf';
+import AnnotatedCrfPdfHistory from '../Comp/AnnotatedCrfPdfHistory';
 
 export const findItemRecursive = (items, key) => {
     for (const item of items) {
@@ -652,6 +654,16 @@ const handleRelation = (openModal, studyId, activeStudyId, ref, toastRef, modalR
     openModal({ title: i18n.t("Relation"), buttonText: i18n.t("Save"), content: content });
 };
 
+const handleAnnotatedCrfPdf = (openModal, studyId, activeStudyId, ref, toastRef, modalRef) => {
+    const content = <AnnotatedCrfPdf studyId={studyId} activeStudyId={activeStudyId} toast={toastRef} refs={modalRef} />;
+    openModal({ title: i18n.t("Print options"), buttonText: i18n.t("Preview"), content: content });
+};
+
+const handleAnnotatedCrfPdfHistory = (openModal, studyId, activeStudyId, ref, toastRef, modalRef) => {
+    const content = <AnnotatedCrfPdfHistory studyId={studyId} activeStudyId={activeStudyId} toast={toastRef} refs={modalRef} />;
+    openModal({ title: i18n.t("Print options"), buttonText: i18n.t("Preview"), content: content });
+};
+
 export function visitSettingsItems(openModal, studyId, activeStudyId, ref, toastRef, modalRef) {
     let items = [];
     items.push({
@@ -673,6 +685,7 @@ export function visitSettingsItems(openModal, studyId, activeStudyId, ref, toast
         key: '3',
         icon: <FontAwesomeIcon icon="fa-regular fa-file-pdf" style={{ color: "#fdc16d", }} />,
         style: { color: "#fdc16d" },
+        onClick: () => handleAnnotatedCrfPdf(openModal, studyId, activeStudyId, ref, toastRef, modalRef)
     });
     items.push({
         label: i18n.t('Annotated CRF Excel'),
@@ -685,6 +698,7 @@ export function visitSettingsItems(openModal, studyId, activeStudyId, ref, toast
         key: '5',
         icon: <FontAwesomeIcon icon="fa-solid fa-clock-rotate-left" style={{ color: "#ff85fb", }} />,
         style: { color: "#ff85fb" },
+        onClick: () => handleAnnotatedCrfPdfHistory(openModal, studyId, activeStudyId, ref, toastRef, modalRef)
     });
     items.push({
         label: i18n.t('Study design audit trail'),

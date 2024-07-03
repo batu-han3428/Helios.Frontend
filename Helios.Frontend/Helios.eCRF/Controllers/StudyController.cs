@@ -442,6 +442,42 @@ namespace Helios.eCRF.Controllers
             return Ok(result);
         }
 
+        /// <summary>
+        /// visitleri pdf dosyası olarak döner
+        /// </summary>
+        /// <param name="dto">pdf oluşturma seçenekleri</param>
+        /// <returns>pdf dosyası</returns>
+        [HttpGet]
+        [RoleAttribute(Roles.TenantAdmin)]
+        public async Task<IActionResult> GetStudyVisitAnnotatedCrf([FromQuery] AnnotatedDTO dto)
+        {
+            var result = await _studyService.GetStudyVisitAnnotatedCrf(dto);
+            return new ObjectResult(result.Data != null ? File(result.Data, "application/pdf") : null) { StatusCode = (int)result.StatusCode };
+        }
+
+        /// <summary>
+        /// daha önceden oluşturulmuş versiyonlu pdf listesini listeler
+        /// </summary>
+        /// <returns>versiyon pdf listesi</returns>
+        [HttpGet]
+        [RoleAttribute(Roles.TenantAdmin)]
+        public async Task<IActionResult> GetStudyVisitAnnotatedCrfHistory()
+        {
+            var result = await _studyService.GetStudyVisitAnnotatedCrfHistory();
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
+        /// <summary>
+        /// seçili olan versiyon pdfi döner
+        /// </summary>
+        /// <param name="id">pdf id</param>
+        /// <returns>pdf dosyası</returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetStudyVisitAnnotatedCrfHistoryPdf(Int64 id)
+        {
+            var result = await _studyService.GetStudyVisitAnnotatedCrfHistoryPdf(id);
+            return new ObjectResult(result.Data != null ? File(result.Data, "application/pdf") : null) { StatusCode = (int)result.StatusCode };
+        }
         #endregion
 
         #region Module
@@ -539,6 +575,6 @@ namespace Helios.eCRF.Controllers
 
             return result;
         }
-        #endregion
+        #endregion     
     }
 }

@@ -450,5 +450,15 @@
   "Visit": "Vizit",
   "Page": "Sayfa",
   "Choose file": "Dosya seçiniz",
-  "No file chosen": "Dosya seçilmedi"
+  "No file chosen": "Dosya seçilmedi",
+  "Print with additional info": "Ek bilgilerle yazdırın",
+  "Include calculation field": "Hesaplamaları dahil et",
+  "Include hidden fields": "Gizli elementleri dahil et",
+  "Include labels": "Etiketleri dahil et",
+  "Include field descriptions": "Alan açıklamalarını dahil et",
+  "Include page name": "Sayfa isimlerini dahil et",
+  "Include document version": "Belge versiyonu dahil et",
+  "Version": "Versiyon",
+  "To save a .pdf file, you need to select “yes” for “Include document version” option and enter a version number.": ".pdf dosyasını kaydetmek için “Belge versiyonu dahil et” seçeneğinde “evet” işaretleyip, sürüm numarasını girmeniz gerekmektedir.",
+  "Print options": "Yazdırma seçenekleri"
 }

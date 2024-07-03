@@ -602,5 +602,15 @@
   "Visit": "Visit",
   "Page": "Page",
   "Choose file": "Choose file",
-  "No file chosen": "No file chosen"
+  "No file chosen": "No file chosen",
+  "Print with additional info": "Print with additional info",
+  "Include calculation field": "Include calculation field",
+  "Include hidden fields": "Include hidden fields",
+  "Include labels": "Include labels",
+  "Include field descriptions": "Include field descriptions",
+  "Include page name": "Include page name",
+  "Include document version": "Include document version",
+  "Version": "Version",
+  "To save a .pdf file, you need to select “yes” for “Include document version” option and enter a version number.": "To save a .pdf file, you need to select “yes” for “Include document version” option and enter a version number.",
+  "Print options": "Print options"
 }

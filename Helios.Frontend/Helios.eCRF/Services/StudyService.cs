@@ -1,4 +1,5 @@
-﻿using Helios.Common.DTO;
+﻿using Helios.Common;
+using Helios.Common.DTO;
 using Helios.Common.Enums;
 using Helios.Common.Model;
 using Helios.eCRF.Hubs;
@@ -6,7 +7,13 @@ using Helios.eCRF.Services.Base;
 using Helios.eCRF.Services.Interfaces;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
+using PuppeteerSharp.Media;
+using PuppeteerSharp;
 using RestSharp;
+using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
+using System.Text.RegularExpressions;
+using HtmlAgilityPack;
 
 namespace Helios.eCRF.Services
 {
@@ -365,6 +372,484 @@ namespace Helios.eCRF.Services
                 req.AddJsonBody(dto);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
+            }
+        }
+        class ElementOption
+        {
+            public int id { get; set; }
+            public string tagName { get; set; }
+            public string tagValue { get; set; }
+            public string tagNameInpCls { get; set; }
+            public string tagValueInpCls { get; set; }
+        }
+        public static bool IsJson(string input)
+        {
+            input = input.Trim();
+            return (input.StartsWith("{") && input.EndsWith("}")) ||
+                   (input.StartsWith("[") && input.EndsWith("]"));
+        }
+
+        public async Task<ApiResponse<dynamic>> AddStudyVisitAnnotatedCrfVersion(AnnotatedVersionDTO dto)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/AddStudyVisitAnnotatedCrfVersion", Method.Post);
+                AddApiHeaders(req);
+                req.AddJsonBody(dto);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
+        public async Task<RestResponse<byte[]>> GetStudyVisitAnnotatedCrf(AnnotatedDTO dto)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetStudyVisitAnnotatedCrf", Method.Get);
+                AddApiHeaders(req);
+                req.AddJsonBody(dto);
+                var result = await client.ExecuteAsync<StudyVisitAnnotatedCrfModel>(req);
+
+                if (result.IsSuccessful && result.Data != null)
+                {
+                    try
+                    {
+                        string today = DateTime.Now.ToString("dd.MM.yyyy");
+                        string htmlContent = @"<!DOCTYPE html><html lang=""en""><head><meta charset=""UTF-8""><meta name=""viewport"" content=""width=device-width, initial-scale=1.0""><title>PDF Oluştur</title><style>
+table {
+    border: dashed #ccc;
+    border-width: 0 1px 0 1px;
+}
+table td {
+    border: dashed #ccc;
+border-width: 1px 0 1px 0;
+}
+.page-break { 
+    page-break-before: always; 
+}
+</style>
+        </head>
+        <body>
+<p align=""center"" ><strong>Olgu rapor formu<br><br></strong></p>
+<p align=""center"" >" + result.Data.StudyModel.Title + @"<br><br>"+ result.Data.StudyModel.Description+ @"<br><br>Protokol Kod: <span id=""protocolcode"">" + result.Data.StudyModel.ProtocolCode + @"</span><br>Versiyon: "+dto.IsVersion+"<br>Tarih: "+ today + @"</p>
+<br><br><br><br><br><br><br><br>
+<div align=""center""><table style=""border:none"" cellspacing=""0"" cellpadding=""0"" width=""100%""><tbody><tr><td style=""border:none;font-size:12px""><p><strong>Hazırlayan kişi:</strong></p></td></tr><tr><td width=""246"" colspan=""2""><p><strong style=""font-size:12px"">Ad-Soyad, Ünvan</strong></p></td><td width=""178""><p><strong style=""font-size:12px"">Tarih</strong></p></td><td width=""218""><p><strong style=""font-size:12px"">İmza</strong></p></td></tr></tbody></table></div>
+<br><br><br><br>
+<div align=""center"" style=""font-weight:bold""><table style=""border:none"" cellspacing=""0"" cellpadding=""0"" width=""100%""><tbody><tr><td style=""border:none; font-size:12px""><p><strong>Onaylayan kişi:</strong></p></td></tr><tr><td width=""246"" colspan=""2""><p><strong style=""font-size:12px"">Ad-Soyad, Ünvan</strong></p></td><td width=""178""><p><strong style=""font-size:12px"">Tarih</strong></p></td><td width=""218""><p><strong style=""font-size:12px"">İmza</strong></p></td></tr></tbody></table><br><br><br><br><br><br><br><br><br><br><br><br><br></div>
+<p align=""center"" style=""font-size:12px""><strong><em>GİZLİ BEYAN </em></strong><em><br>" + result.Data.StudyModel.SubDescription + @"</em><em></em></p>";
+
+                        List<string> bookmarks = new List<string>();
+                        htmlContent += "<div class='page-break'></div>";
+                        int visitNo = 1;
+                        int elmNo = 1;
+                        result.Data.VisitModel.ForEach(visit =>
+                        {
+                            bookmarks.Add(visit.Title);
+                            htmlContent += $"<div class=\"col-md-12\"><h2 class=\"header\">{visit.Title}</h2></div><table style=\"width:100%;\"><tbody><tr style=\"border-bottom:1px solid #ccc\"><th style=\"width:15%;\">No</th><th style=\"width:60%;\">Soru</th><th style=\"width:25%;\">Cevap</th></tr>";
+                            visit.Children.ForEach(page =>
+                            {
+                                if (page.Title != null)
+                                {
+                                    htmlContent += $"<tr style=\"color:#fff; background-color:#6D6E70; font-size:18px; text-align:Center;\"><td colspan=\"3\"><div style=\"margin:10px\"><b>{page.Title}</b></div></td></tr>";
+                                }
+                                page.Children.ForEach(module =>
+                                {
+                                    htmlContent += $"<tr><td colspan=\"3\"><div class=\"panel-heading\" style=\"color:#000000; background-color:#e5e5e5; font-size:18px; text-align:Center; border:1px solid #ccc;\"><b>{module.Title}</b></div></td></tr>";
+                                    module.Children.ForEach(elm =>
+                                    {
+                                        string input = "";
+                                         
+                                        switch (elm.Input)
+                                        {
+                                            case ElementType.Text:
+                                            case ElementType.Numeric:
+                                            case ElementType.Calculated:
+                                                input = "<input type=\"text\" style=\"width:126px; border:1px #cfd1d2 solid;color:#6D6E70;\" />";
+                                                break;
+                                            case ElementType.RadioList:
+                                            case ElementType.DropDown:
+                                                if (elm.ElementOptions != "")
+                                                {
+                                                    List<ElementOption>? elmOpts = System.Text.Json.JsonSerializer.Deserialize<List<ElementOption>>(elm.ElementOptions);
+                                                    if (elmOpts != null)
+                                                    {
+                                                        input = "<div class=\"input-group animated fadeInLeft  helios-input helios-radio \" style=\"margin:5px 0px\"><ul style=\"list-style-type:none;margin-left:-40px;\">";
+                                                        elmOpts.ForEach(elmOpt =>
+                                                        {
+                                                            input += $"<li><input type=\"radio\" class=\"formInputClassName\"><label> {elmOpt.tagName}</label></li>";
+                                                        });
+                                                        input += "</ul></div>";
+                                                    }
+                                                }
+                                                break;
+                                            case ElementType.DateOption:
+                                                input += "<input type=\"date\">";
+                                                break;
+                                            case ElementType.CheckList:
+                                            case ElementType.DropDownMulti:
+                                                if (elm.ElementOptions != "")
+                                                {
+                                                    List<ElementOption>? elmOpts = System.Text.Json.JsonSerializer.Deserialize<List<ElementOption>>(elm.ElementOptions);
+                                                    if (elmOpts != null)
+                                                    {
+                                                        input = "<div class=\"input-group animated fadeInLeft  helios-input helios-radio \" style=\"margin:5px 0px\"><ul style=\"list-style-type:none;margin-left:-40px;\">";
+                                                        elmOpts.ForEach(elmOpt =>
+                                                        {
+                                                            input += $"<li><input type=\"checkbox\" class=\"formInputClassName\"><label> {elmOpt.tagName}</label></li>";
+                                                        });
+                                                        input += "</ul></div>";
+                                                    }
+                                                }
+                                                break;
+                                            case ElementType.Textarea:
+                                                input += "<textarea rows=\"3\" cols=\"15\"></textarea>";
+                                                break;
+                                            case ElementType.File:
+                                                input += "<label style=\"display: inline-block; padding: 6px 12px; cursor: pointer; background-color: #E5E5E5; color: black; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px; user-select: none;\">Select File</label>";
+                                                break;
+                                            case ElementType.RangeSlider:
+                                                input += "<input type=\"range\" min=\"0\" max=\"100\" step=\"1\" value=\"50\">";
+                                                break;
+                                            case ElementType.DataGrid:
+                                                input += @"<table border=""1""><tbody>";
+                                                foreach (KeyValuePair<string, string> entry in elm.DatagridAndTableValue)
+                                                {
+                                                    string cInput = "";
+                                                    if (IsJson(entry.Value))
+                                                    {
+                                                        List<ElementOption>? elmOpts = System.Text.Json.JsonSerializer.Deserialize<List<ElementOption>>(entry.Value);
+                                                        if (elmOpts != null)
+                                                        {
+                                                            cInput = "<div class=\"input-group animated fadeInLeft  helios-input helios-radio \" style=\"margin:5px 0px\"><ul style=\"list-style-type:none;margin-left:-40px;\">";
+                                                            elmOpts.ForEach(elmOpt =>
+                                                            {
+                                                                cInput += $"<li><input type=\"checkbox\" class=\"formInputClassName\"><label> {elmOpt.tagName}</label></li>";
+                                                            });
+                                                            cInput += "</ul></div>";
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        if (entry.Value == ElementType.Text.ToString() || entry.Value == ElementType.Numeric.ToString() || entry.Value == ElementType.Calculated.ToString())
+                                                        {
+                                                            cInput = "<input type=\"text\" style=\"width:126px; border:1px #cfd1d2 solid;color:#6D6E70;\" />";
+                                                        }
+                                                        else if (entry.Value == ElementType.DateOption.ToString())
+                                                        {
+                                                            cInput += "<input type=\"date\">";
+                                                        }
+                                                        else if (entry.Value == ElementType.Textarea.ToString())
+                                                        {
+                                                            cInput += "<textarea rows=\"3\" cols=\"15\"></textarea>";
+                                                        }
+                                                        else if (entry.Value == ElementType.File.ToString())
+                                                        {
+                                                            cInput += "<label style=\"display: inline-block; padding: 6px 12px; cursor: pointer; background-color: #E5E5E5; color: black; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px; user-select: none;\">Select File</label>";
+                                                        }
+                                                        else if (entry.Value == ElementType.RangeSlider.ToString())
+                                                        {
+                                                            cInput += "<input type=\"range\" min=\"0\" max=\"100\" step=\"1\" value=\"50\">";
+                                                        }
+                                                    }
+                                                    input += $@"<tr><th>{entry.Key}</th><td>{cInput}</td>";
+                                                }
+                                                input += @"</tbody></table>";
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        if (elm.Input != ElementType.Table)
+                                        {
+                                            htmlContent += $"<tr style=\"border-bottom:1px dashed #ccc\"><td>{visitNo}-{elmNo}</td>";
+                                            if(elm.Input == ElementType.Label)
+                                            {
+                                                Match match = Regex.Match(elm.Title, @"font-size\s*:\s*\d+px;");
+                                                Match textAlignMatch = Regex.Match(elm.Title, @"text-align\s*:\s*\w+;");
+                                                Match strongMatch = Regex.Match(elm.Title, @"<strong>");
+                                                string labelElm = elm.Title;
+                                                if (match.Success)
+                                                {
+                                                    labelElm = labelElm.Replace(match.Value, "font-size:13px;");
+                                                }
+                                                if (textAlignMatch.Success)
+                                                {
+                                                    labelElm = labelElm.Replace(textAlignMatch.Value, "text-align:start;");
+                                                }
+                                                if (strongMatch.Success)
+                                                {
+                                                    labelElm = labelElm.Replace(strongMatch.Value, "");
+                                                }
+                                                htmlContent += $"<td colspan=\"2\">{labelElm}<br>";
+                                            }
+                                            else if (elm.Input == ElementType.DataGrid)
+                                            {
+                                                htmlContent += $"<td colspan=\"2\">{input}";
+                                            }
+                                            else
+                                            {
+                                                htmlContent += $"<td><span>{elm.Title}<br></span>";
+                                            }
+                                            if (elm.Description != "")
+                                            {
+                                                htmlContent += $"<span style=\"font-size:10px\">{elm.Description}<br></span>";
+                                            }
+                                            if (elm.IsRequired)
+                                            {
+                                                htmlContent += "<span style=\"font-size:10px\">Bu alan zorunludur.<br></span>";
+                                            }
+                                            if ((elm.Input == ElementType.Numeric || elm.Input == ElementType.RangeSlider) && elm.LowerLimit != "" && elm.UpperLimit != "")
+                                            {
+                                                htmlContent += $"<span style=\"font-size:10px\">Minimum değer:{elm.LowerLimit} - Maksimum değer:{elm.UpperLimit}</span>";
+                                            }
+                                            if (elm.Input == ElementType.DataGrid)
+                                            {
+                                                htmlContent += $"</td><td colspan=\"0\"></td></tr>";
+                                            }
+                                            else
+                                            {
+                                                htmlContent += $"</td><td>{input}</td></tr>";
+                                            }                               
+                                            elmNo++;
+                                        }
+                                    });
+                                });
+                            });
+                            htmlContent += "</tbody></table>";
+                            visitNo++;
+                            elmNo = 1;
+                        });
+                        htmlContent += "</body></html>";
+
+                        if (dto.IsVersion != null)
+                        {
+                            await AddStudyVisitAnnotatedCrfVersion(new AnnotatedVersionDTO { Version = dto.IsVersion, Pdf = htmlContent });
+                        }
+
+                        var browserFetcher = new BrowserFetcher();
+                        var revisionInfo = await browserFetcher.DownloadAsync();
+                        var launchOptions = new LaunchOptions
+                        {
+                            Headless = true,
+                            Args = new[] { "--no-sandbox", "--disable-setuid-sandbox" }
+                        };
+
+                        await using var browser = await Puppeteer.LaunchAsync(launchOptions);
+                        await using var page = await browser.NewPageAsync();
+
+                        await page.SetContentAsync(htmlContent);
+
+                        var pdfStream = await page.PdfStreamAsync(new PdfOptions
+                        {
+                            Format = PaperFormat.A4,
+                            PrintBackground = true,
+                            MarginOptions = new MarginOptions
+                            {
+                                Top = "60px",
+                                Right = "60px",
+                                Bottom = "60px",
+                                Left = "60px"
+                            },
+                            DisplayHeaderFooter = true,
+                            HeaderTemplate = "<div></div>",
+                            FooterTemplate = $@"
+                            <div style='width:100%;text-align:left;font-size:12px;position:absolute;left:60px;bottom:20px;'>
+                               {result.Data.StudyModel.ProtocolCode}, {today}
+                            </div>
+                            <div style='width:100%;text-align:right;font-size:12px;position:absolute;right:60px;bottom:20px;'>
+                                <span class='pageNumber'></span>/<span class='totalPages'></span>
+                            </div>"
+                        });
+                        await browser.CloseAsync();
+
+                        byte[] pdfBytes = new byte[pdfStream.Length];
+                        pdfStream.Read(pdfBytes, 0, (int)pdfStream.Length);
+
+                        byte[] pdfWithBookmarks = AddBookmarkToPdf(pdfBytes, bookmarks);
+
+                        return new RestResponse<byte[]>(req)
+                        {
+                            Data = pdfWithBookmarks,
+                            StatusCode = result.StatusCode,
+                            ErrorMessage = null
+                        };
+                    }
+                    catch (Exception e)
+                    {
+                        return new RestResponse<byte[]>(req)
+                        {
+                            Data = null,
+                            StatusCode = result.StatusCode,
+                            ErrorMessage = e.Message
+                        };
+                    }
+                }
+
+                return new RestResponse<byte[]>(req)
+                {
+                    Data = null,
+                    StatusCode = result.StatusCode,
+                    ErrorMessage = result.ErrorMessage
+                };
+            }
+        }
+
+        public byte[] AddBookmarkToPdf(byte[] pdfBytes, List<string> bookmarkTitles)
+        {
+            using (MemoryStream memoryStream = new MemoryStream())
+            {
+                PdfReader reader = new PdfReader(pdfBytes);
+                using (PdfStamper stamper = new PdfStamper(reader, memoryStream))
+                {
+                    List<Dictionary<string, object>> outlines = new List<Dictionary<string, object>>();
+
+                    for (int i = 0; i < bookmarkTitles.Count; i++)
+                    {
+                        string bookmarkTitle = bookmarkTitles[i];
+                        int pageNumber = FindPageNumber(pdfBytes, bookmarkTitle);
+
+                        if (pageNumber != -1)
+                        {
+                            Dictionary<string, object> bookmarkDictionary = new Dictionary<string, object>
+                        {
+                            { "Title", bookmarkTitle },
+                            { "Action", "GoTo" },
+                            { "Page", $"{pageNumber} XYZ 0 800 0" }
+                        };
+
+                            outlines.Add(bookmarkDictionary);
+                        }
+                    }
+
+                    stamper.Writer.Outlines = outlines;
+                }
+                return memoryStream.ToArray();
+            }
+        }
+
+        private int FindPageNumber(byte[] pdfBytes, string visitTitle)
+        {
+            using (PdfReader reader = new PdfReader(pdfBytes))
+            {
+                for (int pageNumber = 1; pageNumber <= reader.NumberOfPages; pageNumber++)
+                {
+                    string pageText = PdfTextExtractor.GetTextFromPage(reader, pageNumber);
+                    if (pageText.Contains(visitTitle))
+                    {
+                        return pageNumber;
+                    }
+                }
+            }
+            return -1;
+        }
+ 
+        public async Task<RestResponse<List<AnnotatedCrfHistoryModel>>> GetStudyVisitAnnotatedCrfHistory()
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetStudyVisitAnnotatedCrfHistory", Method.Get);
+                AddApiHeaders(req);
+                var result = await client.ExecuteAsync<List<AnnotatedCrfHistoryModel>>(req);
+                if (result.IsSuccessful)
+                {
+                    var ids = result.Data?.Select(x => Convert.ToInt64(x.CreatedBy)).ToList();
+
+                    var usersData = await GetUserList(ids);
+
+                    if (usersData.IsSuccessful)
+                    {
+                        foreach (var ann in result.Data)
+                        {
+                            var usr = usersData.Data.FirstOrDefault(user => Convert.ToInt64(ann.CreatedBy) == user.Id);
+                            if (usr != null)
+                            {
+                                ann.CreatedBy = usr.Email;
+                            }
+                        }
+                    }
+                }
+                return result;
+            }
+        }
+
+        async Task<RestResponse<List<AspNetUserDTO>>> GetUserList(List<Int64> AuthUserIds)
+        {
+            using (var client = AuthServiceClient)
+            {
+                string authUserIdsString = string.Join(",", AuthUserIds);
+                var req = new RestRequest("AdminUser/GetUserList", Method.Get);
+                req.AddParameter("AuthUserIds", authUserIdsString);
+                var users = await client.ExecuteAsync<List<AspNetUserDTO>>(req);
+                return users;
+            }
+        }
+
+        public async Task<RestResponse<byte[]>> GetStudyVisitAnnotatedCrfHistoryPdf(Int64 id)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetStudyVisitAnnotatedCrfHistoryPdf", Method.Get);
+                req.AddParameter("id", id);
+                var result = await client.ExecuteAsync<string?>(req);
+
+                string protocolCode = "";
+                string today = DateTime.Now.ToString("dd.MM.yyyy");
+                var browserFetcher = new BrowserFetcher();
+                var revisionInfo = await browserFetcher.DownloadAsync();
+                var launchOptions = new LaunchOptions
+                {
+                    Headless = true,
+                    Args = new[] { "--no-sandbox", "--disable-setuid-sandbox" }
+                };
+
+                await using var browser = await Puppeteer.LaunchAsync(launchOptions);
+                await using var page = await browser.NewPageAsync();
+
+                await page.SetContentAsync(result.Data);
+
+                HtmlDocument htmlDoc = new HtmlDocument();
+                htmlDoc.LoadHtml(result.Data);
+
+                var protocolCodeNode = htmlDoc.DocumentNode.SelectSingleNode("//*[@id='protocolcode']");
+
+                if (protocolCodeNode != null)
+                {
+                    protocolCode = protocolCodeNode.InnerText;
+                }
+
+                var pdfStream = await page.PdfStreamAsync(new PdfOptions
+                {
+                    Format = PaperFormat.A4,
+                    PrintBackground = true,
+                    MarginOptions = new MarginOptions
+                    {
+                        Top = "60px",
+                        Right = "60px",
+                        Bottom = "60px",
+                        Left = "60px"
+                    },
+                    DisplayHeaderFooter = true,
+                    HeaderTemplate = "<div></div>",
+                    FooterTemplate = $@"
+                            <div style='width:100%;text-align:left;font-size:12px;position:absolute;left:60px;bottom:20px;'>
+                                {protocolCode}, {today}
+                            </div>
+                            <div style='width:100%;text-align:right;font-size:12px;position:absolute;right:60px;bottom:20px;'>
+                                <span class='pageNumber'></span>/<span class='totalPages'></span>
+                            </div>"
+                });
+                await browser.CloseAsync();
+
+                byte[] pdfBytes = new byte[pdfStream.Length];
+                pdfStream.Read(pdfBytes, 0, (int)pdfStream.Length);
+
+
+                return new RestResponse<byte[]>(req)
+                {
+                    Data = pdfBytes,
+                    StatusCode = result.StatusCode,
+                    ErrorMessage = null
+                };
+
             }
         }
         #endregion
