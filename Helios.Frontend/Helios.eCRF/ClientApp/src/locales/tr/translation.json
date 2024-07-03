@@ -450,5 +450,9 @@
   "Visit": "Vizit",
   "Page": "Sayfa",
   "Choose file": "Dosya seçiniz",
-  "No file chosen": "Dosya seçilmedi"
+  "No file chosen": "Dosya seçilmedi",
+  "will be deleted": " silinecek.",
+  "You cannot recover this data. Do you confirm?": "Bu verileri kurtaramazsınız. Onaylıyor musunuz?",
+  "This data will be archived.": "Bu veriler arşivlenecektir.",
+  "Comment cannot be empty!": "Yorumlar boş olamaz!"
 }

@@ -102,5 +102,12 @@ namespace Helios.eCRF.Controllers
             var result = await _subjectService.GetStudyAskSubjectInitial(studyId);
             return result;
         }
+
+        [HttpPost]
+        public async Task<ApiResponse<dynamic>> DeleteOrArchiveSubject(SubjectArchiveOrDeleteModel model)
+        {
+            var result = await _subjectService.DeleteOrArchiveSubject(model);
+            return result;
+        }
     }
 }

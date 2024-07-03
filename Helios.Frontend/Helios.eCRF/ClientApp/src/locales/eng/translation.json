@@ -602,5 +602,9 @@
   "Visit": "Visit",
   "Page": "Page",
   "Choose file": "Choose file",
-  "No file chosen": "No file chosen"
+  "No file chosen": "No file chosen",
+  "will be deleted": " will be deleted.",
+  "You cannot recover this data. Do you confirm?": "You cannot recover this data. Do you confirm?",
+  "This data will be archived.": "This data will be archived.",
+  "Comment cannot be empty!": "Comment cannot be empty!"
 }
