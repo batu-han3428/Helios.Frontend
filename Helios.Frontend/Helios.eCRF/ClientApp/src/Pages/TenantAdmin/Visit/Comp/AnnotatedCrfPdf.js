@@ -13,7 +13,7 @@ const AnnotatedCrfPdf = props => {
     const items = [
         { name: 'IsAdditional', label: 'Print with additional info' },
         { name: 'IsCalculated', label: 'Include calculation field' },
-        //{ name: 'IsHiddenFields', label: 'Include hidden fields' },
+        { name: 'IsHiddenElement', label: 'Include hidden fields' },
         { name: 'IsLabel', label: 'Include labels' },
         { name: 'IsDesc', label: 'Include field descriptions' },
         { name: 'IsPage', label: 'Include page name' },

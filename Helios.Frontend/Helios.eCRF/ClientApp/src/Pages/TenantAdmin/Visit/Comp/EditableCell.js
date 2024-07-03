@@ -95,7 +95,7 @@ const EditableCell = ({
                         ]}
                         
                     >
-                        <Input id={inputId} placeholder={record.placeholder ? record.type === 'page' ? t("Add page") : t("Add visit") : undefined} onPressEnter={save} onBlur={save} onDoubleClick={record.type === 'module' ? () => navigate(`/formBuilder/${record.id}/true`):""} />
+                        <Input id={inputId} placeholder={record.placeholder ? record.type === 'page' ? t("Add page") : t("Add visit") : undefined} onPressEnter={save} onBlur={save} onDoubleClick={record.type === 'module' ? () => navigate(`/formBuilder/${record.id}/true`) : undefined} />
                     </Form.Item>
                     <Dropdown menu={getItems()} trigger={['click']} placement="bottomLeft">
                         <div style={{ position: 'absolute', right: 7, top: 22, display: 'flex', alignItems: 'center' }}>

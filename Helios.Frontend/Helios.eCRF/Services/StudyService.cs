@@ -466,6 +466,9 @@ border-width: 1px 0 1px 0;
                                             case ElementType.Calculated:
                                                 input = "<input type=\"text\" style=\"width:126px; border:1px #cfd1d2 solid;color:#6D6E70;\" />";
                                                 break;
+                                            case ElementType.Hidden:
+                                                input = "<input type=\"text\" style=\"width:126px; border:1px #cfd1d2 solid;color:#6D6E70;\" value=\"[]\" />";
+                                                break;
                                             case ElementType.RadioList:
                                             case ElementType.DropDown:
                                                 if (elm.ElementOptions != "")
