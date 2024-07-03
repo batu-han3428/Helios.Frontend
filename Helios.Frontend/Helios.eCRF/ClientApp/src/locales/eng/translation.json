@@ -612,5 +612,9 @@
   "Include document version": "Include document version",
   "Version": "Version",
   "To save a .pdf file, you need to select “yes” for “Include document version” option and enter a version number.": "To save a .pdf file, you need to select “yes” for “Include document version” option and enter a version number.",
-  "Print options": "Print options"
+  "Print options": "Print options",
+  "will be deleted": " will be deleted.",
+  "You cannot recover this data. Do you confirm?": "You cannot recover this data. Do you confirm?",
+  "This data will be archived.": "This data will be archived.",
+  "Comment cannot be empty!": "Comment cannot be empty!"
 }

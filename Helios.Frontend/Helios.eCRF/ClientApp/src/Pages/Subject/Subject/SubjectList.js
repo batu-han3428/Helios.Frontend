@@ -13,7 +13,7 @@ import { useDispatch, connect } from "react-redux";
 import withRouter from '../../../components/Common/withRouter';
 import Select from "react-select";
 import { startloading, endloading } from '../../../store/loader/actions';
-import { useAddSubjectMutation, useGetSubjectListQuery } from '../../../store/services/Subject';
+import { useAddSubjectMutation, useGetSubjectListQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
 import { useStudyUserSitesGetQuery } from '../../../store/services/Users';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
@@ -22,25 +22,36 @@ import "./Subject.css";
 
 const SubjectList = props => {
     const modalRef = useRef();
+    const modalRefDel = useRef();
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
     const [modalContent, setModalContent] = useState(null);
     const [selectSites, setselectSites] = useState([]);
     const [AskSubjectInitial, setAskSubjectInitial] = useState(false);
-
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-
     const [studyId, setStudyId] = useState(8);
-    const [addingSubject] = useAddSubjectMutation();
-    const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
-
-    const { data: studyUserSitesGet } = useStudyUserSitesGetQuery({ authUserId: props.authUserId, studyId: 8 });
-
-    const [modal, setModal] = useState(false);
+    const [comment, setComment] = useState("");
+    const [subjectNumber, setSubjectNumber] = useState("");
+    const [isDelete, setIsDelete] = useState(false);
+    const [subjectId, setSubjectId] = useState(0);
     const [data, setData] = useState([]);
     const [changeSiteId, setchangeSiteId] = useState("");
     const [changeInitialName, setchangeInitialName] = useState("");
+    const [count, setCount] = useState(0);
+    const [filteredInfo, setFilteredInfo] = useState({});
+    const [searchsubjectNumberText, setSearchsubjectNumberText] = useState('');
+    const [formData, setFormData] = useState({
+        changeInitialName: '',
+        changeSiteId: ''
+    });
+
+    const columns = [];
+    const [addingSubject] = useAddSubjectMutation();
+    const [deleteOrArchiveSubject] = useDeleteOrArchiveSubjectMutation();
+    const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
+    const { data: studyUserSitesGet } = useStudyUserSitesGetQuery({ authUserId: props.authUserId, studyId: 8 });
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const changeValidSiteId = (value) => {
         setchangeSiteId(value);
@@ -49,13 +60,6 @@ const SubjectList = props => {
     const changeValidInitialname = (value) => {
         setchangeInitialName(value);
     };
-
-    const [count, setCount] = useState(0);
-
-    const [formData, setFormData] = useState({
-        changeInitialName: '',
-        changeSiteId: ''
-    });
 
     useEffect(() => {
         optionGroup(8);
@@ -85,14 +89,15 @@ const SubjectList = props => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}`);
     };
 
-    const getActions = ({ id, firstPageId }) => {
+    const getActions = ({ id, firstPageId, subjectNumber }) => {
         const actions = (
             <div className="icon-container">
                 <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(studyId, firstPageId, id) }}></div>
+                <div title={props.t("Delete")} className="icon icon-delete" onClick={() => { toggleDeleteModal(id, subjectNumber, true) }}></div>
+                <div title={props.t("Archive")} className="ti-archive" onClick={() => { toggleDeleteModal(id, subjectNumber, false) }}></div>
             </div>);
         return actions;
     };
-
 
     const refreshContent = () => {
         setCount(count + 1);
@@ -243,6 +248,17 @@ const SubjectList = props => {
         modalRef.current.tog_backdrop();
     }
 
+    const toggleDeleteModal = (id, subjectNumber, isDeleted) => {
+        setSubjectId(id);
+        setIsDelete(isDeleted);
+        setSubjectNumber(subjectNumber);
+        modalRefDel.current.tog_backdrop();
+    }
+
+    const handleChangeComment = (e) => {
+        setComment(e.target.value)
+    }
+
     const optionGroup = (id) => {
         fetch(API_BASE_URL + 'Subject/GetSites?studyId=' + id, {
             method: 'GET',
@@ -269,7 +285,7 @@ const SubjectList = props => {
             });
     };
 
-    const addSubject = (id) => {
+    const addSubject = () => {
         Swal.fire({
             title: props.t("You will add a new subject"),
             text: props.t("Do you confirm?"),
@@ -313,9 +329,6 @@ const SubjectList = props => {
         setFilteredInfo(filters);
     };
 
-    const [filteredInfo, setFilteredInfo] = useState({});
-    const [searchsubjectNumberText, setSearchsubjectNumberText] = useState('');
-    const columns = []
     if (AskSubjectInitial) {
         const uniqueCountry = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.country))) : "";
         const uniqueAddedBy = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.addedByName))) : "";
@@ -456,10 +469,6 @@ const SubjectList = props => {
         key: 'actions'
     });
 
-
-
-
-
     const handleClick = () => {
         if (AskSubjectInitial) {
             setchangeSiteId();
@@ -475,6 +484,53 @@ const SubjectList = props => {
             addSubject();
         }
     };
+
+    const handleDeleteOrArchiveSubmit = async () => {
+        if (comment == null || comment === "") {
+            Swal.fire({
+                title: "",
+                text: props.t("Comment cannot be empty!"),
+                icon: "error",
+                confirmButtonText: props.t("Ok"),
+            });
+
+            return;
+        }
+        else {
+            let values = {
+                SubjectId: subjectId,
+                IsDelete: isDelete,
+                Comment: comment
+            };
+
+            dispatch(startloading());
+
+            const response = await deleteOrArchiveSubject(values);
+
+            if (response.data !== undefined)
+                if (response.data.isSuccess) {
+                    Swal.fire({
+                        title: "",
+                        text: props.t(response.data.message),
+                        icon: "success",
+                        confirmButtonText: props.t("Ok"),
+                    });
+
+                    modalRefDel.current.tog_backdrop();
+                    comment = "";
+                    dispatch(endloading());
+                } else {
+                    Swal.fire({
+                        title: "",
+                        text: response.data.message,
+                        icon: "error",
+                        confirmButtonText: props.t("Ok"),
+                    });
+
+                    dispatch(endloading());
+                }
+        }
+    }
 
     return (
         <React.Fragment>
@@ -526,6 +582,28 @@ const SubjectList = props => {
                 isButton={true}
                 size="lg"
             />
+            <ModalComp
+                refs={modalRefDel}
+                title={isDelete ? props.t("Delete") : props.t("Archive")}
+                size={"md"}
+                body={
+                    <div className="row">
+                        <div className="mb-3 col-md-12">
+                            <Label className="form-label">{isDelete ? subjectNumber + props.t("will be deleted") : props.t("This data will be archived.")}</Label>
+                            <div className="form-label">{isDelete ? props.t("You cannot recover this data. Do you confirm?") : props.t("Do you confirm?")}</div>
+                            <Input
+                                type="textarea"
+                                rows="3"
+                                placeholder={props.t("Comments")}
+                                value={comment}
+                                onChange={handleChangeComment}
+                            />
+                        </div>
+                    </div>
+                }
+                handle={() => handleDeleteOrArchiveSubmit()}
+                buttonText={props.t("Yes")}
+            />
         </React.Fragment>
     )
 }
@@ -533,6 +611,7 @@ const SubjectList = props => {
 SubjectList.propTypes = {
     t: PropTypes.any
 };
+
 const mapStateToProps = state => {
     const authUserId = state.rootReducer.Login.userId;
     const { error } = state.rootReducer.Login;

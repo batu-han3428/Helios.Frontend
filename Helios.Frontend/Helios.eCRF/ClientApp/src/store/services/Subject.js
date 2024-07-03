@@ -34,6 +34,14 @@ export const SubjectApi = createApi({
         }),
         getSubjectElementList: builder.query({
             query: (data) => '/Subject/GetSubjectElementList?subjectId=' + data.subjectId + '&subjectVisitModulePageId=' + data.pageId
+        }),
+        deleteOrArchiveSubject: builder.mutation({
+            query: (values) => ({
+                url: '/Subject/DeleteOrArchiveSubject',
+                method: 'POST',
+                body: values
+            }),
+            invalidatesTags: ['Subject'],
         })
     }),
 });
@@ -46,3 +54,5 @@ export const { useAddSubjectMutation } = SubjectApi;
 export const { useLazyGetSubjectDetailMenuQuery } = SubjectApi;
 
 export const { useGetSubjectElementListQuery } = SubjectApi;
+
+export const { useDeleteOrArchiveSubjectMutation } = SubjectApi;
