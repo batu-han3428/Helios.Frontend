@@ -1,5 +1,5 @@
 ﻿import PropTypes from 'prop-types';
-import React from "react";
+import React, { useEffect } from "react";
 import { withTranslation } from "react-i18next";
 import { Menu, Tooltip } from 'antd';
 import { UserOutlined, LockOutlined, BulbOutlined, FolderOutlined, FileOutlined } from '@ant-design/icons';
@@ -108,9 +108,34 @@ const SubjectDetailMenu = props => {
         }
         return null;
     };
+    const findMenuItemPathById = (items, id, path = []) => {
+        for (let i = 0; i < items.length; i++) {
+            const item = items[i];
+            const newPath = [...path, i + 1];
+            if (item.id === id) {
+                return newPath;
+            }
+            if (item.children) {
+                const found = findMenuItemPathById(item.children, id, newPath);
+                if (found) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    };
+
+    useEffect(() => {
+        const path = findMenuItemPathById(props.data, parseInt(props.pageId, 10));
+        if (path) {
+            const key = path.join('-');
+            props.setSelectedKeys(key);
+            props.setOpenSubMenuKeys(['sub' + path[0]]);
+            props.setPrevNextButton(props.data, parseInt(props.pageId, 10));
+        }
+    }, [props.data, props.pageId]);
 
     const onClick = (e) => {
-        debugger
         const parentKey = findParentKey(e.key, items);
         if (parentKey) {
             const newOpenKeys = props.openKeys.includes(parentKey) ? [] : [parentKey];
@@ -123,7 +148,6 @@ const SubjectDetailMenu = props => {
     };
 
     const handleSubMenuOpenChange = (keys) => {
-        debugger
         props.setOpenSubMenuKeys(keys);
     };
 
@@ -131,8 +155,6 @@ const SubjectDetailMenu = props => {
         <Menu
             onClick={onClick}
             className={!props.isMobil ? "menu-container" : ""}
-            defaultSelectedKeys={['1']}
-            defaultOpenKeys={['sub1']}
             mode="inline"
             items={items}
             selectedKeys={props.selectedKeys}

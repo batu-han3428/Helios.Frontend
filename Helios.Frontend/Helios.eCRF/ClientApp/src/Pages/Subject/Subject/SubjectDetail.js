@@ -29,7 +29,7 @@ const SubjectDetail = props => {
     const [openMobileMenu, setOpenMobileMenu] = useState(false);
     const [leftMenuData, setLeftMenuData] = useState([]);
     const [subjectElementList, setSubjectElementList] = useState([]);   
-
+  
     const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery({ studyId });
     const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId });
 
@@ -65,10 +65,58 @@ const SubjectDetail = props => {
         }
     }, [elementList, error1, isLoading1]);
 
+    const findPageIdInChildren = (data, pageId) => {
+        for (const item of data) {
+            if (item.children) {
+                const index = item.children.findIndex(child => child.id === pageId);
+                if (index !== -1) {
+                    return {
+                        parentIndex: data.findIndex(parent => parent.id === item.id),
+                        childIndex: index,
+                        isFirstChild: index === 0,
+                        isLastChild: index === item.children.length - 1,
+                        childrenCount: item.children.length,
+                    };
+                } else {
+                    const result = findPageIdInChildren(item.children, pageId);
+                    if (result) {
+                        return {
+                            parentIndex: data.findIndex(parent => parent.id === item.id),
+                            ...result,
+                        };
+                    }
+                }
+            }
+        }
+
+        return null;
+    };
+
+    const [isPrevButton, setIsPrevButton] = useState(true);
+    const [isNextButton, setIsNextButton] = useState(true);
+
+    const setPrevNextButton = (data, id) => {
+        const result = findPageIdInChildren(data, parseInt(id, 10));
+        if (result.childrenCount <= 2) {
+            setIsPrevButton(false);
+            setIsNextButton(false);
+        } else if (result.isFirstChild) {
+            setIsPrevButton(false);
+            setIsNextButton(true);
+        } else if (result.isLastChild) {
+            setIsPrevButton(true);
+            setIsNextButton(false);
+        } else {
+            setIsPrevButton(true);
+            setIsNextButton(true);
+        }
+    };
+
     useEffect(() => {
         if (menuData && !error && !isLoading) {
             dispatch(endloading());
             setLeftMenuData(menuData);
+            setPrevNextButton(menuData, pageId);
         }
         else if (!isLoading && error) {
             toastRef.current.setToast({
@@ -105,7 +153,7 @@ const SubjectDetail = props => {
                 <div className="container-fluid" style={{ paddingLeft: 0 }}>
                     <Row gutter={16}>
                         <Col xs={0} sm={0} md={6} lg={6} xl={5}>
-                            <SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} />
+                            <SubjectDetailMenu setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} />
                         </Col>
                         <Col xs={1} sm={1} md={0} lg={0} xl={0}>
                             <Button style={{ position: "fixed", top: "80px", left: "10px", zIndex: "1000" }} onClick={showDrawer} shape="circle" icon={<MenuOutlined />} />
@@ -124,10 +172,10 @@ const SubjectDetail = props => {
             </div>
             <footer style={{ position: 'fixed', bottom: 0, right: 0, width: '81%', background: '#f1f1f1', padding: '10px', textAlign: 'right' }}>
                 <div style={{ textAlign: 'right', display: 'flex',alignItems: 'center', justifyContent: 'flex-end' }}>
-                    <div style={{ display: 'inline-block', marginRight: '10px' }}>
+                    <div style={{ display: isPrevButton ? 'inline-block' : 'none', marginRight: '10px' }}>
                         <Button className="btn btn-outline-dark waves-effect waves-light" onClick={goToPreviousPage} icon={<LeftOutlined />}>{props.t("Previous page")}</Button>
                     </div>
-                    <div style={{ display: 'inline-block' }}>
+                    <div style={{ display: isNextButton ? 'inline-block' : 'none' }}>
                         <Button className="btn btn-outline-dark waves-effect waves-light" onClick={goToNextPage}>{props.t("Next page")}<RightOutlined /></Button>
                     </div>
                 </div>
