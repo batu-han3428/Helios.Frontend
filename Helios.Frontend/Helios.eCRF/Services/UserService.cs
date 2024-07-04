@@ -276,8 +276,8 @@ namespace Helios.eCRF.Services
                 return result;
             }
         }
-
-        public async Task<RestResponse<List<UserPermissionRoleModel>>> GetRoleUsers(Int64 roleId)
+        
+        public async Task<RestResponse<List<UserRoleModel>>> GetRoleUsers(Int64 roleId)
         {
             RestRequest restRequest = new RestRequest();
 
@@ -285,7 +285,7 @@ namespace Helios.eCRF.Services
 
             if (!userIdsRole.IsSuccessful && userIdsRole.Data == null)
             {
-                return new RestResponse<List<UserPermissionRoleModel>>(restRequest)
+                return new RestResponse<List<UserRoleModel>>(restRequest)
                 {
                     Data = null,
                     StatusCode = HttpStatusCode.InternalServerError
@@ -300,13 +300,13 @@ namespace Helios.eCRF.Services
                 {
                     try
                     {
-                        var data = result.Data.Select(x => new UserPermissionRoleModel
+                        var data = result.Data.Select(x => new UserRoleModel
                         {
                             Role = userIdsRole.Data.Role,
                             Name = x.Name + " " + x.LastName
                         }).ToList();
 
-                        return new RestResponse<List<UserPermissionRoleModel>>(restRequest)
+                        return new RestResponse<List<UserRoleModel>>(restRequest)
                         {
                             Data = data,
                             StatusCode = HttpStatusCode.OK
@@ -314,7 +314,7 @@ namespace Helios.eCRF.Services
                     }
                     catch (Exception)
                     {
-                        return new RestResponse<List<UserPermissionRoleModel>>(restRequest)
+                        return new RestResponse<List<UserRoleModel>>(restRequest)
                         {
                             Data = null,
                             StatusCode = HttpStatusCode.InternalServerError
@@ -323,7 +323,7 @@ namespace Helios.eCRF.Services
                 }
                 else
                 {
-                    return new RestResponse<List<UserPermissionRoleModel>>(restRequest)
+                    return new RestResponse<List<UserRoleModel>>(restRequest)
                     {
                         Data = null,
                         StatusCode = HttpStatusCode.InternalServerError
@@ -332,9 +332,9 @@ namespace Helios.eCRF.Services
             }
             else
             {
-                return new RestResponse<List<UserPermissionRoleModel>>(restRequest)
+                return new RestResponse<List<UserRoleModel>>(restRequest)
                 {
-                    Data = new List<UserPermissionRoleModel>(),
+                    Data = new List<UserRoleModel>(),
                     StatusCode = HttpStatusCode.OK
                 };
             }
@@ -351,7 +351,7 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<RestResponse<List<UserPermissionRoleModel>>> GetStudyRoleUsers(Int64 studyId)
+        public async Task<RestResponse<List<UserRoleModel>>> GetStudyRoleUsers(Int64 studyId)
         {
             RestRequest restRequest = new RestRequest();
 
@@ -359,7 +359,7 @@ namespace Helios.eCRF.Services
 
             if (!userIdsRole.IsSuccessful && userIdsRole.Data == null)
             {
-                return new RestResponse<List<UserPermissionRoleModel>>(restRequest)
+                return new RestResponse<List<UserRoleModel>>(restRequest)
                 {
                     Data = null,
                     StatusCode = HttpStatusCode.InternalServerError
@@ -368,28 +368,26 @@ namespace Helios.eCRF.Services
 
             if (userIdsRole.Data.Count > 0)
             {
-                var result = await GetUserList(userIdsRole.Data.Select(x => x.Id).ToList());
+                var result = await GetUserList(userIdsRole.Data.Select(x=>x.Id).ToList());
 
-                if (result.IsSuccessful && result.Data != null && result.Data.Count > 0)
-                {
+                if (result.IsSuccessful && result.Data != null && result.Data.Count > 0) {
                     try
                     {
                         var data = result.Data.Join(userIdsRole.Data, aspNetUser => aspNetUser.Id, studyUser => studyUser.Id, (aspNetUser, studyUser) =>
-                                    new UserPermissionRoleModel
+                                    new UserRoleModel
                                     {
                                         Role = studyUser.RoleName,
                                         Name = aspNetUser.Name + " " + aspNetUser.LastName
                                     }).ToList();
 
-                        return new RestResponse<List<UserPermissionRoleModel>>(restRequest)
-                        {
+                        return new RestResponse<List<UserRoleModel>>(restRequest){
                             Data = data,
                             StatusCode = HttpStatusCode.OK
                         };
                     }
                     catch (Exception)
                     {
-                        return new RestResponse<List<UserPermissionRoleModel>>(restRequest)
+                        return new RestResponse<List<UserRoleModel>>(restRequest)
                         {
                             Data = null,
                             StatusCode = HttpStatusCode.InternalServerError
@@ -398,7 +396,7 @@ namespace Helios.eCRF.Services
                 }
                 else
                 {
-                    return new RestResponse<List<UserPermissionRoleModel>>(restRequest)
+                    return new RestResponse<List<UserRoleModel>>(restRequest)
                     {
                         Data = null,
                         StatusCode = HttpStatusCode.InternalServerError
@@ -407,9 +405,9 @@ namespace Helios.eCRF.Services
             }
             else
             {
-                return new RestResponse<List<UserPermissionRoleModel>>(restRequest)
+                return new RestResponse<List<UserRoleModel>>(restRequest)
                 {
-                    Data = new List<UserPermissionRoleModel>(),
+                    Data = new List<UserRoleModel>(),
                     StatusCode = HttpStatusCode.OK
                 };
             }
@@ -427,11 +425,11 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<ApiResponse<dynamic>> AddOrUpdatePermissionRol(UserPermissionModel userPermission)
+        public async Task<ApiResponse<dynamic>> AddOrUpdatePermissionRole(UserPermissionModel userPermission)
         {
             using (var client = CoreServiceClient)
             {
-                var req = new RestRequest("CoreUser/AddOrUpdatePermissionRol", Method.Post);
+                var req = new RestRequest("CoreUser/AddOrUpdatePermissionRole", Method.Post);
                 AddApiHeaders(req);
                 req.AddJsonBody(userPermission);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
@@ -488,6 +486,7 @@ namespace Helios.eCRF.Services
                 return result;
             }
         }
+
         public async Task<RestResponse<StudyUserDTO>> GetStudyUserSites(Int64 authUserId, Int64 studyId)
         {
             using (var client = CoreServiceClient)
@@ -752,7 +751,7 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
-
+        
         public async Task<ApiResponse<DeleteStudyUserDTO>> DeleteStudyUser(StudyUserModel studyUserModel)
         {
             var result = await DeleteCoreStudyUser(studyUserModel);
@@ -823,15 +822,14 @@ namespace Helios.eCRF.Services
                                                                 LastName = aspNetUser.LastName,
                                                                 IsActive = tenantUser.IsActive,
                                                                 Email = aspNetUser.Email,
-                                                                UserRoleName = tenantUser.UserRoleName,
+                                                                UserRoleName=tenantUser.UserRoleName,
                                                                 StudyName = tenantUser.StudyName,
                                                                 StudyDemoLive = tenantUser.StudyDemoLive,
                                                                 CreatedOn = tenantUser.CreatedOn,
                                                                 LastUpdatedOn = tenantUser.LastUpdatedOn
                                                             }).ToList();
 
-                        return new RestResponse<List<TenantUserDTO>>(restRequest)
-                        {
+                        return new RestResponse<List<TenantUserDTO>>(restRequest) { 
                             Data = data,
                             StatusCode = HttpStatusCode.OK
                         };
@@ -870,7 +868,7 @@ namespace Helios.eCRF.Services
                 LastName = tenantUserModel.LastName
             });
         }
-
+ 
         #endregion
 
         #region System Admin User
@@ -1155,7 +1153,7 @@ namespace Helios.eCRF.Services
 
             return new RestResponse<SSOModel>(restRequest)
             {
-                Data = new SSOModel { TenantCount = tenantCount.Data, StudyCount = studyCount.Data },
+                Data = new SSOModel { TenantCount = tenantCount.Data, StudyCount = studyCount.Data},
                 StatusCode = HttpStatusCode.OK
             };
         }
@@ -1190,7 +1188,7 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreUser/GetUserTenantList", Method.Get);
                 req.AddParameter("userId", userId);
                 var result = await client.ExecuteAsync<List<Int64>>(req);
-
+                
                 if (result.IsSuccessful)
                 {
                     return await GetTenantsList(result.Data);

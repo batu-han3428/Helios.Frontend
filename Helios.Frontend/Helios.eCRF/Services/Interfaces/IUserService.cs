@@ -16,7 +16,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> UpdateUser(AspNetUserDTO model);
         Task<bool> AddRole(UserDTO model);
         Task<RestResponse<List<TenantModel>>> GetTenantList();
-        Task<ApiResponse<dynamic>> AddOrUpdatePermissionRol(UserPermissionModel userPermission);
+        Task<ApiResponse<dynamic>> AddOrUpdatePermissionRole(UserPermissionModel userPermission);
         Task<ApiResponse<dynamic>> DeleteRole(UserPermissionModel userPermission);
         Task<RestResponse<List<RoleVisitPermissionsModel>>> GetPermissionsVisitList(Int64 roleId);
         Task<ApiResponse<dynamic>> SetPermissionsVisitPage(PermissionsRoleVisitPageDTO dto);
@@ -37,8 +37,8 @@ namespace Helios.eCRF.Services.Interfaces
         Task<List<SSOUserTenantModel>> GetUserTenantList(Int64 userId, Roles role);
         Task<List<SSOUserStudyModel>> GetUserStudiesList(Int64 tenantId, Int64 userId);
         Task<ApiResponse<dynamic>> SSOLogin(SSOLoginDTO sSOLoginDTO);
-        Task<RestResponse<List<UserPermissionRoleModel>>> GetRoleUsers(Int64 roleId);
-        Task<RestResponse<List<UserPermissionRoleModel>>> GetStudyRoleUsers(Int64 studyId);
+        Task<RestResponse<List<UserRoleModel>>> GetRoleUsers(Int64 roleId);
+        Task<RestResponse<List<UserRoleModel>>> GetStudyRoleUsers(Int64 studyId);
         Task<ApiResponse<SystemAdminDTO>> SetSystemAdminUser(SystemAdminDTO systemAdminDTO);
         Task<RestResponse<List<SystemUserModel>>> GetSystemAdminUserList();
         Task<ApiResponse<dynamic>> SystemAdminActivePassive(SystemAdminDTO systemAdminDTO);

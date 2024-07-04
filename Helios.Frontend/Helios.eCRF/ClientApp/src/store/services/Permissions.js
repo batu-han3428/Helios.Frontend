@@ -23,7 +23,7 @@ export const PermissionsApi = createApi({
         }),
         roleSave: builder.mutation({
             query: (data) => ({
-                url: '/User/AddOrUpdatePermissionRol',
+                url: '/User/AddOrUpdatePermissionRole',
                 method: 'POST',
                 body: data,
             }),

@@ -32,6 +32,7 @@ const SubjectList = props => {
     const [comment, setComment] = useState("");
     const [subjectNumber, setSubjectNumber] = useState("");
     const [isDelete, setIsDelete] = useState(false);
+    const [showArchivedSubjects, setShowArchivedSubjects] = useState(false);
     const [subjectId, setSubjectId] = useState(0);
     const [data, setData] = useState([]);
     const [changeSiteId, setchangeSiteId] = useState("");
@@ -532,6 +533,11 @@ const SubjectList = props => {
         }
     }
 
+    const handleShowArchivedSubjectsChange = (value) => {
+        debugger;
+        setShowArchivedSubjects(value);
+    }
+
     return (
         <React.Fragment>
             <div className="page-content">
@@ -545,7 +551,18 @@ const SubjectList = props => {
                     </div>
                     <Row>
                         <Col className="col-12">
-                            <div style={{ display: 'inline-block', float: 'right' }} onClick={handleClick}>
+                            <div style={{ display: 'inline-block', float: 'left' }} className="col-md-6">
+                                <input
+                                    type="checkbox"
+                                    className="form-check-input"
+                                    onChange={() => handleShowArchivedSubjectsChange}
+                                    value={showArchivedSubjects }
+                                />
+                                <label className="form-check-label">
+                                    {props.t("Show archived patients")}
+                                </label>
+                            </div>
+                        <div style={{ display: 'inline-block', float: 'right' }} className="col-md-6" onClick={handleClick}>
                                 <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>{props.t('Add new subject')}</Typography.Text>
                                 <Button color="success" className="rounded-circle">
                                     <FontAwesomeIcon icon="fa-plus" />
