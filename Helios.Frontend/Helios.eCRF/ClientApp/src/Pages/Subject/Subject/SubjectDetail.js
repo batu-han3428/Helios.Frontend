@@ -30,7 +30,7 @@ const SubjectDetail = props => {
     const [leftMenuData, setLeftMenuData] = useState([]);
     const [subjectElementList, setSubjectElementList] = useState([]);   
   
-    const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery({ studyId });
+    const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery();
     const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId });
 
     const [currentPage, setCurrentPage] = useState(pageId); 
@@ -52,11 +52,11 @@ const SubjectDetail = props => {
 
 
     useEffect(() => {
-        if (studyId) {
+        if (studyId && subjectId) {
             dispatch(startloading());
-            trigger(studyId);
+            trigger({ studyId: studyId, subjectId: subjectId });
         }
-    }, [studyId]);
+    }, [studyId, subjectId]);
 
     useEffect(() => {
         if (!error1 && !isLoading1 && elementList) {

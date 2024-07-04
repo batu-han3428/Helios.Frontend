@@ -78,13 +78,14 @@ namespace Helios.eCRF.Controllers
         /// <summary>
         /// Hasta detay sayfasındaki sol menü verilerini listeler
         /// </summary>
+        /// <param name="studyId">çalışma id</param>
         /// <param name="subjectId">hasta id</param>
         /// <returns>menü listesi</returns>
-        [HttpGet("{studyId}")]
+        [HttpGet("{studyId}/{subjectId}")]
         [RoleAttribute(Roles.StudyUser)]
-        public async Task<IActionResult> GetSubjectDetailMenu(Int64 studyId)
+        public async Task<IActionResult> GetSubjectDetailMenu(Int64 studyId, Int64 subjectId)
         {
-            var result = await _subjectService.GetSubjectDetailMenu(studyId);
+            var result = await _subjectService.GetSubjectDetailMenu(studyId, subjectId);
             return new ObjectResult(result);
         }
 

@@ -30,7 +30,7 @@ export const SubjectApi = createApi({
             invalidatesTags: ['Subject'],
         }),
         getSubjectDetailMenu: builder.query({
-            query: (studyId) => `/Subject/GetSubjectDetailMenu/${studyId}`
+            query: (data) => `/Subject/GetSubjectDetailMenu/${data.studyId}/${data.subjectId}`
         }),
         getSubjectElementList: builder.query({
             query: (data) => '/Subject/GetSubjectElementList?subjectId=' + data.subjectId + '&subjectVisitModulePageId=' + data.pageId
