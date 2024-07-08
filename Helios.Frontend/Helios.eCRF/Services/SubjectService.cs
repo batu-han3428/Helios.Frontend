@@ -84,15 +84,16 @@ namespace Helios.eCRF.Services
             return retResult;
         }
 
-         public async Task<List<SubjectDetailMenuModel>> GetUserPermissions(Int64 studyId)
+         public async Task<UserPermissionModel> GetUserPermissions(Int64 studyId)
         {
-            var retResult = new List<SubjectDetailMenuModel>();
+            var retResult = new UserPermissionModel();
 
             using (var client = SharedServiceClient)
             {
-                var req = new RestRequest("Cache/GetSubjectDetailMenu", Method.Get);
+                var req = new RestRequest("Cache/GetUserPermissions", Method.Get);
                 req.AddParameter("studyId", studyId);
-                var result = await client.ExecuteAsync<List<SubjectDetailMenuModel>>(req);
+                req.AddParameter("userId", UserId);
+                var result = await client.ExecuteAsync<UserPermissionModel>(req);
                 retResult = result.Data;
             }
 
@@ -101,9 +102,9 @@ namespace Helios.eCRF.Services
             {
                 using (var client = CoreServiceClient)
                 {
-                    var req = new RestRequest("CoreSubject/SetSubjectDetailMenu", Method.Get);
+                    var req = new RestRequest("CoreSubject/SetUserPermissions", Method.Get);
                     req.AddParameter("studyId", studyId);
-                    var result = await client.ExecuteAsync<List<SubjectDetailMenuModel>>(req);
+                    var result = await client.ExecuteAsync<UserPermissionModel>(req);
                     retResult = result.Data;
                 }
             }

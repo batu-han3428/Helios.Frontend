@@ -43,28 +43,6 @@ namespace Helios.eCRF.Controllers
         }
 
         /// <summary>
-        /// Hasta listesi verilerini listeler
-        /// </summary>
-        /// <param name="studyId">çalışma id</param>
-        /// <returns>hasta listesi</returns>
-        [HttpGet("{studyId}")]
-        //[Authorize(Roles = "StudyUser")]
-        public async Task<IActionResult> GetUserPermissions(Int64 studyId)
-        {
-            var result = await _subjectService.GetSubjectList(studyId);
-            //var addedByIds = result.Data.Select(x => x.AddedById).Distinct().ToList();
-            //var users = await _userService.GetUserList(addedByIds);
-
-            //foreach (var user in result.Data)
-            //{
-            //    var addedby = users.Data.FirstOrDefault(x => x.Id == user.AddedById);
-            //    user.AddedByName = addedby.Name + ' ' + addedby.LastName;
-            //}
-
-            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
-        }
-
-        /// <summary>
         /// Hasta eklenir
         /// </summary>
         /// <param name="studyId">çalışma id</param>
@@ -113,6 +91,13 @@ namespace Helios.eCRF.Controllers
             return new ObjectResult(result);
         }
 
+        [HttpGet("{studyId}")]
+        //[Authorize(Roles = "StudyUser")]
+        public async Task<IActionResult> GetUserPermissions(Int64 studyId)
+        {
+            var result = await _subjectService.GetUserPermissions(studyId);
+            return new ObjectResult(result);
+        }
 
         [HttpPost]
         public async Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model)
