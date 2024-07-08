@@ -91,14 +91,6 @@ namespace Helios.eCRF.Controllers
             return new ObjectResult(result);
         }
 
-        [HttpGet("{studyId}")]
-        //[Authorize(Roles = "StudyUser")]
-        public async Task<IActionResult> GetUserPermissions(Int64 studyId)
-        {
-            var result = await _subjectService.GetUserPermissions(studyId);
-            return new ObjectResult(result);
-        }
-
         [HttpPost]
         public async Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model)
         {

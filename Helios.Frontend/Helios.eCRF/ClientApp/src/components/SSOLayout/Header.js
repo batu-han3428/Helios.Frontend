@@ -125,33 +125,33 @@ const Header = props => {
                         <div className="" style={{ marginTop: '30px' }}>
                             {!isLoading && !isError && permissionData && (
                                 <>
-                                    { permissionData.hasSubject && (
+                                    {permissionData.canSubjectView && (
                                         <Link to="/" className="" onClick={() => handleClick('subject')} >
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.subject ? 'underline' : 'none', backgroundColor: clickedLinks.subject ? 'white' : '', marginRight: '30px' }}>{props.t("Subject")}</label>
                                             </Link>
                                         )
                                     }
-                                    {permissionData.hasQuery && (
+                                    {permissionData.canMonitoringQueryView && (
                                         <Link to="/query" className="" onClick={() => handleClick('query')} >
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.query ? 'underline' : 'none', backgroundColor: clickedLinks.query ? 'white' : '', marginRight: '30px' }}>{props.t("Query")}</label>
                                         </Link>
                                     )}
-                                    {permissionData.hasSdv && (
+                                    {(permissionData.canMonitoringSdv || permissionData.canMonitoringVerification || permissionData.canMonitoringRemoteSdv) && (
                                         <Link to="/sdv" className="" onClick={() => handleClick('sdv')}>
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.sdv ? 'underline' : 'none', backgroundColor: clickedLinks.sdv ? 'white' : '', marginRight: '30px' }}>{props.t("SDV")}</label>
                                         </Link>
                                     )}
-                                    {permissionData.hasStudyDocument && (
+                                    {permissionData.canStudyFoldersView && (
                                         <Link to="/" className="" onClick={() => handleClick('studyDocuments')}>
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.studyDocuments ? 'underline' : 'none', backgroundColor: clickedLinks.studyDocuments ? 'white' : '', marginRight: '30px' }}>{props.t("Study documents")}</label>
                                         </Link>
                                     )}
-                                    {permissionData.hasMedicalCoding && (
+                                    {permissionData.canMedicalCodingCanCode && (
                                         <Link to="/" className="" onClick={() => handleClick('medicalCoding')} >
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.medicalCoding ? 'underline' : 'none', backgroundColor: clickedLinks.medicalCoding ? 'white' : '', marginRight: '30px' }}>{props.t("Medical coding")}</label>
                                         </Link>
                                     )}
-                                    {permissionData.hasIwrs && (
+                                    {(permissionData.canIwrsMarkAsRecieved || permissionData.canIwrsTransfer) && (
                                         <Link to="/" className="" onClick={() => handleClick('iwrs')} >
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.iwrs ? 'underline' : 'none', backgroundColor: clickedLinks.iwrs ? 'white' : '', marginRight: '30px' }}>{props.t("IWRS")}</label>
                                         </Link>

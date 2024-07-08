@@ -84,7 +84,7 @@ namespace Helios.eCRF.Services
             return retResult;
         }
 
-         public async Task<UserPermissionModel> GetUserPermissions(Int64 studyId)
+        public async Task<UserPermissionModel> GetUserPermissions(Int64 studyId)
         {
             var retResult = new UserPermissionModel();
 
@@ -104,6 +104,7 @@ namespace Helios.eCRF.Services
                 {
                     var req = new RestRequest("CoreSubject/SetUserPermissions", Method.Get);
                     req.AddParameter("studyId", studyId);
+                    req.AddParameter("userId", UserId);
                     var result = await client.ExecuteAsync<UserPermissionModel>(req);
                     retResult = result.Data;
                 }

@@ -13,7 +13,7 @@ import { useDispatch, connect } from "react-redux";
 import withRouter from '../../../components/Common/withRouter';
 import Select from "react-select";
 import { startloading, endloading } from '../../../store/loader/actions';
-import { useAddSubjectMutation, useGetSubjectListQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
+import { useAddSubjectMutation, useGetSubjectListQuery, useGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
 import { useStudyUserSitesGetQuery } from '../../../store/services/Users';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
@@ -35,6 +35,7 @@ const SubjectList = props => {
     const [showArchivedSubjects, setShowArchivedSubjects] = useState(false);
     const [subjectId, setSubjectId] = useState(0);
     const [data, setData] = useState([]);
+    const [permissions, setPermissions] = useState([]);
     const [changeSiteId, setchangeSiteId] = useState("");
     const [changeInitialName, setchangeInitialName] = useState("");
     const [count, setCount] = useState(0);
@@ -49,6 +50,7 @@ const SubjectList = props => {
     const [addingSubject] = useAddSubjectMutation();
     const [deleteOrArchiveSubject] = useDeleteOrArchiveSubjectMutation();
     const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
+    const { data: permissionsData, error1, isLoading1 } = useGetUserPermissionsQuery(8);
     const { data: studyUserSitesGet } = useStudyUserSitesGetQuery({ authUserId: props.authUserId, studyId: 8 });
 
     const dispatch = useDispatch();
@@ -65,9 +67,9 @@ const SubjectList = props => {
     useEffect(() => {
         optionGroup(8);
         getStudy(8);
-
+       
         if (!error && !isLoading && subjectsData) {
-            const updatedSubjectsData = subjectsData.subjectList.map(item => {
+            const updatedSubjectsData = subjectsData.map(item => {
                 return {
                     ...item,
                     createdAt: formatDate(item.createdAt),
@@ -78,13 +80,17 @@ const SubjectList = props => {
 
             const newData = { ...data };
             newData.subjectList = updatedSubjectsData;
-            newData.hasQuery = subjectsData.hasQuery;
-            newData.hasSdv = subjectsData.hasSdv;
-            newData.hasRandomizasyon = subjectsData.hasRandomizasyon;
             setData(newData);
             dispatch(endloading());
         }
     }, [subjectsData, error, isLoading]);
+
+    useEffect(() => {
+        if (!error1 && !isLoading1 && permissionsData) {
+            setPermissions(permissionsData);
+            dispatch(endloading());
+        }
+    }, [permissionsData, error, isLoading]);
 
     const goToSubjectDetail = (studyId, pageId, subjectId) => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}`);
@@ -432,8 +438,8 @@ const SubjectList = props => {
         sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
         sortDirections: ['ascend', 'descend'],
     });
-
-    if (data.hasRandomizasyon) {
+    
+    if (permissions.canSubjectRandomize || permissions.canSubjectViewRandomization) {
         columns.push({
             title: props.t('Randomization'),
             dataIndex: 'randomData',
@@ -442,7 +448,7 @@ const SubjectList = props => {
         });
     }
 
-    if (data.hasQuery) {
+    if (permissions.canMonitoringQueryView) {
         columns.push({
             title: props.t('Query'),
             dataIndex: 'query',
@@ -451,7 +457,7 @@ const SubjectList = props => {
         });
     }
 
-    if (data.hasSdv) {
+    if (data.canMonitoringSdv || data.canMonitoringVerification || data.canMonitoringRemoteSdv) {
         columns.push({
             title: props.t('SDV'),
             dataIndex: 'sdv',
@@ -533,9 +539,9 @@ const SubjectList = props => {
         }
     }
 
-    const handleShowArchivedSubjectsChange = (value) => {
+    const handleShowArchivedSubjectsChange = (e) => {
         debugger;
-        setShowArchivedSubjects(value);
+        setShowArchivedSubjects(e);
     }
 
     return (
@@ -555,18 +561,20 @@ const SubjectList = props => {
                                 <input
                                     type="checkbox"
                                     className="form-check-input"
-                                    onChange={() => handleShowArchivedSubjectsChange}
-                                    value={showArchivedSubjects }
+                                    onChange={() => handleShowArchivedSubjectsChange()}
+                                    value={showArchivedSubjects}
                                 />
-                                <label className="form-check-label">
+                                <label className="form-check-label" style={{ marginLeft:'5px' }}>
                                     {props.t("Show archived patients")}
                                 </label>
                             </div>
-                        <div style={{ display: 'inline-block', float: 'right' }} className="col-md-6" onClick={handleClick}>
-                                <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>{props.t('Add new subject')}</Typography.Text>
-                                <Button color="success" className="rounded-circle">
-                                    <FontAwesomeIcon icon="fa-plus" />
-                                </Button>
+                            <div style={{ display: 'inline-block', float: 'right' }} className="col-md-6" onClick={handleClick}>
+                                <div style={{ float: 'right' }}>
+                                    <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>{props.t('Add new subject')}</Typography.Text>
+                                    <Button color="success" className="rounded-circle">
+                                        <FontAwesomeIcon icon="fa-plus" />
+                                    </Button>
+                                </div>
                             </div>
                         </Col>
                         <Col className="col-12">
