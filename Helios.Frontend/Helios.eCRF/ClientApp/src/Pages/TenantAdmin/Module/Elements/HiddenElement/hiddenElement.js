@@ -15,7 +15,8 @@ class HiddenElement extends Component {
                     className="form-control"
                     type="text"
                     disabled={"disabled"}
-                    value="Hidden field" />
+                    value={this.props.value !== null && this.props.value !== undefined ? `[${this.props.value}]` : '[]'}
+                />
             </div>
         )
     }

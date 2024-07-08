@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Helios.Common" Version="1.0.0.83" />
+    <PackageReference Include="Helios.Common" Version="1.0.0.86" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.61" />
     <PackageReference Include="iTextSharp" Version="5.5.13.3" />
     <PackageReference Include="MassTransit" Version="8.2.2" />
