@@ -24,12 +24,13 @@ namespace Helios.eCRF.Controllers
         /// Hasta listesi verilerini listeler
         /// </summary>
         /// <param name="studyId">çalışma id</param>
+        /// <param name="showArchivedSubjects">arşivlenmiş hastaları göster</param>
         /// <returns>hasta listesi</returns>
-        [HttpGet("{studyId}")]
+        [HttpGet("{studyId}/{showArchivedSubjects}")]
         //[Authorize(Roles = "StudyUser")]
-        public async Task<IActionResult> GetSubjectList(Int64 studyId)
+        public async Task<IActionResult> GetSubjectList(Int64 studyId, bool showArchivedSubjects)
         {
-            var result = await _subjectService.GetSubjectList(studyId);
+            var result = await _subjectService.GetSubjectList(studyId, showArchivedSubjects);
             var addedByIds = result.Data.Select(x => x.AddedById).Distinct().ToList();
             var users = await _userService.GetUserList(addedByIds);
 

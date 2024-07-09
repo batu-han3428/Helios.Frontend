@@ -607,5 +607,6 @@
   "You cannot recover this data. Do you confirm?": "You cannot recover this data. Do you confirm?",
   "This data will be archived.": "This data will be archived.",
   "Comment cannot be empty!": "Comment cannot be empty!",
-  "Show archived patients": "Show archived patients"
+  "Show archived patients": "Show archived patients",
+  "Unarchive": "Unarchive"
 }

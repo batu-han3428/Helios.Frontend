@@ -28,10 +28,11 @@ const SubjectList = props => {
     const [modalContent, setModalContent] = useState(null);
     const [selectSites, setselectSites] = useState([]);
     const [AskSubjectInitial, setAskSubjectInitial] = useState(false);
-    const [studyId, setStudyId] = useState(8);
+    const [studyId] = useState(8);
     const [comment, setComment] = useState("");
     const [subjectNumber, setSubjectNumber] = useState("");
     const [isDelete, setIsDelete] = useState(false);
+    const [isArchived, setIsArchived] = useState(false);
     const [showArchivedSubjects, setShowArchivedSubjects] = useState(false);
     const [subjectId, setSubjectId] = useState(0);
     const [data, setData] = useState([]);
@@ -49,9 +50,9 @@ const SubjectList = props => {
     const columns = [];
     const [addingSubject] = useAddSubjectMutation();
     const [deleteOrArchiveSubject] = useDeleteOrArchiveSubjectMutation();
-    const { data: subjectsData, error, isLoading } = useGetSubjectListQuery(8);
-    const { data: permissionsData, error1, isLoading1 } = useGetUserPermissionsQuery(8);
-    const { data: studyUserSitesGet } = useStudyUserSitesGetQuery({ authUserId: props.authUserId, studyId: 8 });
+    const { data: permissionsData, errorPerm, isLoadingPerm } = useGetUserPermissionsQuery(studyId);
+    const { data: subjectsData, error, isLoading } = useGetSubjectListQuery({ studyId: studyId, showArchivedSubjects: showArchivedSubjects });
+    const { data: studyUserSitesGet } = useStudyUserSitesGetQuery({ authUserId: props.authUserId, studyId: studyId });
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -65,11 +66,29 @@ const SubjectList = props => {
     };
 
     useEffect(() => {
-        optionGroup(8);
-        getStudy(8);
-       
+        if (!errorPerm && !isLoadingPerm && permissionsData) {
+            setPermissions(permissionsData);
+            dispatch(endloading());
+        }
+
+        optionGroup(studyId);
+        getStudy(studyId);
+        updateSubjectsList(studyId, showArchivedSubjects);
+
+    }, [permissionsData, errorPerm, isLoadingPerm, subjectsData, error, isLoading, showArchivedSubjects, studyId]);
+
+
+    const updateSubjectsList = (id, showArchived) => {
         if (!error && !isLoading && subjectsData) {
-            const updatedSubjectsData = subjectsData.map(item => {
+            const filteredSubjectsData = subjectsData.filter(item => {
+                if (showArchived) {
+                    return true;
+                }
+
+                return !item.isArchived;
+            });
+
+            const updatedSubjectsData = filteredSubjectsData.map(item => {
                 return {
                     ...item,
                     createdAt: formatDate(item.createdAt),
@@ -83,25 +102,35 @@ const SubjectList = props => {
             setData(newData);
             dispatch(endloading());
         }
-    }, [subjectsData, error, isLoading]);
-
-    useEffect(() => {
-        if (!error1 && !isLoading1 && permissionsData) {
-            setPermissions(permissionsData);
-            dispatch(endloading());
-        }
-    }, [permissionsData, error, isLoading]);
+    };
 
     const goToSubjectDetail = (studyId, pageId, subjectId) => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}`);
     };
 
-    const getActions = ({ id, firstPageId, subjectNumber }) => {
+    const getActions = ({ id, firstPageId, subjectNumber, isActive }) => {
         const actions = (
             <div className="icon-container">
                 <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(studyId, firstPageId, id) }}></div>
                 <div title={props.t("Delete")} className="icon icon-delete" onClick={() => { toggleDeleteModal(id, subjectNumber, true) }}></div>
-                <div title={props.t("Archive")} className="ti-archive" onClick={() => { toggleDeleteModal(id, subjectNumber, false) }}></div>
+                {permissions.canSubjectArchive && (
+                    <>
+                        {isActive ? (
+                            <div
+                                title={props.t("Archive")}
+                                className="ti-archive"
+                                onClick={() => toggleDeleteModal(id, subjectNumber, false)}
+                            ></div>
+                        ) : (
+                            <div
+                                title={props.t("Unarchive")}
+                                className="ti-back-left"
+                                onClick={() => toggleDeleteModal(id, subjectNumber, false, true)}
+                            ></div>
+                        )}
+                    </>
+                )}
+
             </div>);
         return actions;
     };
@@ -113,7 +142,7 @@ const SubjectList = props => {
     const validationType = useFormik({
         enableReinitialize: true,
         initialValues: {
-            studyid: 8,
+            studyid: studyId,
             siteid: 0,
             initialname: "",
 
@@ -255,10 +284,11 @@ const SubjectList = props => {
         modalRef.current.tog_backdrop();
     }
 
-    const toggleDeleteModal = (id, subjectNumber, isDeleted) => {
+    const toggleDeleteModal = (id, subjectNumber, isDeleted, unarchive = false) => {
         setSubjectId(id);
         setIsDelete(isDeleted);
         setSubjectNumber(subjectNumber);
+        setIsArchived(unarchive);
         modalRefDel.current.tog_backdrop();
     }
 
@@ -304,7 +334,7 @@ const SubjectList = props => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 dispatch(startloading());
-                const response = await addingSubject({ studyId: 8, siteId: 3, initialName: "", id: 0, firstPageId: 0, subjectNumber: "", updatedAt: new Date(), createdAt: new Date() });
+                const response = await addingSubject({ studyId: studyId, siteId: 3, initialName: "", id: 0, firstPageId: 0, subjectNumber: "", updatedAt: new Date(), createdAt: new Date() });
                 var retVal = response.data.values;
 
                 if (response.data.isSuccess) {
@@ -438,7 +468,7 @@ const SubjectList = props => {
         sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
         sortDirections: ['ascend', 'descend'],
     });
-    
+
     if (permissions.canSubjectRandomize || permissions.canSubjectViewRandomization) {
         columns.push({
             title: props.t('Randomization'),
@@ -507,7 +537,8 @@ const SubjectList = props => {
             let values = {
                 SubjectId: subjectId,
                 IsDelete: isDelete,
-                Comment: comment
+                Comment: comment,
+                IsArchived: isArchived
             };
 
             dispatch(startloading());
@@ -524,7 +555,7 @@ const SubjectList = props => {
                     });
 
                     modalRefDel.current.tog_backdrop();
-                    comment = "";
+                    setComment("");
                     dispatch(endloading());
                 } else {
                     Swal.fire({
@@ -540,8 +571,8 @@ const SubjectList = props => {
     }
 
     const handleShowArchivedSubjectsChange = (e) => {
-        debugger;
-        setShowArchivedSubjects(e);
+        setShowArchivedSubjects(e.target.checked);
+        updateSubjectsList(studyId, showArchivedSubjects);
     }
 
     return (
@@ -558,17 +589,19 @@ const SubjectList = props => {
                     <Row>
                         <Col className="col-12">
                             <div style={{ display: 'inline-block', float: 'left' }} className="col-md-6">
-                                <input
-                                    type="checkbox"
-                                    className="form-check-input"
-                                    onChange={() => handleShowArchivedSubjectsChange()}
-                                    value={showArchivedSubjects}
-                                />
-                                <label className="form-check-label" style={{ marginLeft:'5px' }}>
-                                    {props.t("Show archived patients")}
-                                </label>
+                                {permissions.canSubjectArchive && 
+                                    <>
+                                        <input
+                                        type="checkbox"
+                                        className="form-check-input"
+                                        onChange={handleShowArchivedSubjectsChange}
+                                        checked={showArchivedSubjects} /><label className="form-check-label" style={{ marginLeft: '5px' }}>
+                                            {props.t("Show archived patients")}
+                                    </label>
+                                </>
+                                }
                             </div>
-                            <div style={{ display: 'inline-block', float: 'right' }} className="col-md-6" onClick={handleClick}>
+                            <div style={{ display: 'inline-block', float: 'right', marginBottom:'5px' }} className="col-md-6" onClick={handleClick}>
                                 <div style={{ float: 'right' }}>
                                     <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>{props.t('Add new subject')}</Typography.Text>
                                     <Button color="success" className="rounded-circle">

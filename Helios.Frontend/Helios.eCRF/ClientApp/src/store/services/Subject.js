@@ -18,7 +18,7 @@ export const SubjectApi = createApi({
     }),
     endpoints: (builder) => ({
         getSubjectList: builder.query({
-            query: (studyId) => `/Subject/GetSubjectList/${studyId}`,
+            query: (data) => `/Subject/GetSubjectList/${data.studyId}/${data.showArchivedSubjects}`,
             providesTags: ['Subject'],
         }),
         getUserPermissions: builder.query({
