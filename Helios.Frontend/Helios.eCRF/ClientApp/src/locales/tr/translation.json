@@ -456,5 +456,7 @@
   "This data will be archived.": "Bu veriler arşivlenecektir.",
   "Comment cannot be empty!": "Yorumlar boş olamaz!",
   "Show archived patients": "Arşivlenmiş hastaları göster",
-  "Unarchive": "Arşivden çıkar"
+  "Unarchive": "Arşivden çıkar",
+  "Value should not be less than": "Değer aralığı gereğı: en az ",
+  "and greater than": " ve en fazla "
 }
