@@ -277,38 +277,42 @@ function SubjectDetailElementList(props) {
 
         return { items };
     }
-
+    
     const content = Array.isArray(ElementList)
         ? ElementList.map((item) => {
             var w = item.width === 0 ? 12 : item.width;
             var cls = "mb-6 col-md-" + w;
 
-            return (
-                <Row className={cls} key={item.subjectVisitPageModuleElementId}>
-                    <div style={{ marginBottom: '3px', marginTop: '10px' }}>
-                        <label style={{ marginRight: '5px' }}>
-                            {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
-                            {item.elementType !== 1 && item.title}
+            if (item.isHidden)
+                return ("");
+            else
+                return (
+                    <Row className={cls} key={item.subjectVisitPageModuleElementId}>
+                        <div style={{ marginBottom: '3px', marginTop: '10px' }}>
+                            <label style={{ marginRight: '5px' }}>
+                                {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
+                                {item.elementType !== 1 && item.title}
+                            </label>
+                        </div>
+                        <Row>
+                            <div className="col-md-11">{renderElementsSwitch(item)}</div>
+                            {item.elementType !== 1 && item.elementType !== 3 &&
+                                <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
+                                    <Dropdown menu={getItems()} trigger={['click']} placement="bottomLeft">
+                                        <div style={{ alignItems: 'center' }}>
+                                            <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                                <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
+                                            </a>
+                                        </div>
+                                    </Dropdown>
+                                </div>
+                            }
+                        </Row>
+                        <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
+                            {item.description}
                         </label>
-                    </div>
-                    <Row><div className="col-md-11">{renderElementsSwitch(item)}</div>
-                        {item.elementType !== 1 && item.elementType !== 3 &&
-                            <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
-                                <Dropdown menu={getItems()} trigger={['click']} placement="bottomLeft">
-                                    <div style={{ alignItems: 'center' }}>
-                                        <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                                            <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
-                                        </a>
-                                    </div>
-                                </Dropdown>
-                            </div>
-                        }
                     </Row>
-                    <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
-                        {item.description}
-                    </label>
-                </Row>
-            );
+                );
         })
         : null;
 
