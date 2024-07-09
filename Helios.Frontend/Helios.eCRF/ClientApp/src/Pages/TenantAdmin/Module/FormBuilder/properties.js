@@ -187,7 +187,7 @@ class Properties extends React.Component {
         this.handleRelationInputChange = this.handleRelationInputChange.bind(this);
         this.isRelationVariableNameDuplicate = this.isRelationVariableNameDuplicate.bind(this);
         this.removeRelationRow = this.removeRelationRow.bind(this);
-        this.saveModule = this.saveModule.bind(this);
+        this.saveModule = this.postModuleContent.bind(this);
         this.changeUnit.bind(this);
         this.changeMask.bind(this);
         this.changeLowerLimit.bind(this);
@@ -800,7 +800,7 @@ class Properties extends React.Component {
         this.setState({ ValidationList: data.validationList });
     }
 
-    saveModule() {
+    postModuleContent() {
         var bdy = JSON.stringify({
             Id: this.state.Id,
             ModuleId: this.state.ModuleId,
@@ -829,12 +829,12 @@ class Properties extends React.Component {
             LowerLimit: this.state.LowerLimit,
             UpperLimit: this.state.UpperLimit,
             Layout: this.state.Layout,
-            StartDay: this.state.StartDay,
-            EndDay: this.state.EndDay,
-            StartMonth: this.state.StartMonth,
-            EndMonth: this.state.EndMonth,
-            StartYear: this.state.StartYear,
-            EndYear: this.state.EndYear,
+            StartDay: this.state.StartDay !== undefined ? this.state.StartDay : 0,
+            EndDay: this.state.EndDay !== undefined ? this.state.EndDay : 0,
+            StartMonth: this.state.StartMonth !== undefined ? this.state.StartMonth : 0,
+            EndMonth: this.state.EndMonth !== undefined ? this.state.EndMonth : 0,
+            StartYear: this.state.StartYear !== undefined ? this.state.StartYear : 0,
+            EndYear: this.state.EndYear !== undefined ? this.state.EndYear : 0,
             AddTodayDate: this.state.AddTodayDate,
             ElementOptions: this.state.SavedTagList != null && this.state.SavedTagList.length > 0 ? JSON.stringify(this.state.SavedTagList) : "",
             LeftText: this.state.LeftText,
@@ -846,8 +846,9 @@ class Properties extends React.Component {
             DatagridAndTableProperties: this.state.DatagridAndTableProperties === null ? "" : this.state.DatagridAndTableProperties,
             RowIndex: this.state.RowIndex,
             ColumnIndex: this.state.ColumnIndex,
-            AdverseEventType: this.state.AdverseEventType,
+            AdverseEventType: this.state.AdverseEventType !== null ? this.state.AdverseEventType : 0,
             TargetElementId: this.state.TargetElementId,
+            TargetElementName: "",
             ButtonText: this.state.ButtonText,
 
             // Dependency properties
@@ -946,10 +947,10 @@ class Properties extends React.Component {
                 this.setState({
                     DatagridAndTableProperties: JSON.stringify(newDatagridTable)
                 }, () => {
-                    this.saveModule();
+                    this.postModuleContent();
                 });
             } else {
-                this.saveModule();
+                this.postModuleContent();
             }
         }
         else {
