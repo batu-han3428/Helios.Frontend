@@ -87,6 +87,19 @@ namespace Helios.eCRF.Services
                 }
             }
 
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetRelationHidePage", Method.Get);
+                req.AddParameter("subjectId", subjectId);
+                req.AddParameter("studyId", studyId);
+                var result = await client.ExecuteAsync<List<Int64>>(req);
+
+                if (result.IsSuccessful)
+                {
+                    RemoveHiddenPages(retResult, result.Data);
+                }
+            }
+
             return retResult;
         }
 
@@ -113,19 +126,6 @@ namespace Helios.eCRF.Services
                     req.AddParameter("userId", UserId);
                     var result = await client.ExecuteAsync<UserPermissionModel>(req);
                     retResult = result.Data;
-                }
-            }
-
-            using (var client = CoreServiceClient)
-            {
-                var req = new RestRequest("CoreStudy/GetRelationHidePage", Method.Get);
-                req.AddParameter("subjectId", subjectId);
-                req.AddParameter("studyId", studyId);
-                var result = await client.ExecuteAsync<List<Int64>>(req);
-
-                if (result.IsSuccessful)
-                {
-                    RemoveHiddenPages(retResult, result.Data);
                 }
             }
 
