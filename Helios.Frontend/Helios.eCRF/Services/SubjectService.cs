@@ -63,7 +63,7 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<List<SubjectDetailMenuModel>> GetSubjectDetailMenu(Int64 studyId)
+        public async Task<List<SubjectDetailMenuModel>> GetSubjectDetailMenu(Int64 studyId, Int64 subjectId)
         {
             var retResult = new List<SubjectDetailMenuModel>();
 
@@ -116,7 +116,51 @@ namespace Helios.eCRF.Services
                 }
             }
 
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetRelationHidePage", Method.Get);
+                req.AddParameter("subjectId", subjectId);
+                req.AddParameter("studyId", studyId);
+                var result = await client.ExecuteAsync<List<Int64>>(req);
+
+                if (result.IsSuccessful)
+                {
+                    RemoveHiddenPages(retResult, result.Data);
+                }
+            }
+
             return retResult;
+        }
+
+        private static void RemoveHiddenPages(List<SubjectDetailMenuModel> menus, List<Int64> hidePages)
+        {
+            menus.RemoveAll(menu =>
+            {
+                if (menu.Children != null)
+                {
+                    menu.Children.RemoveAll(child =>
+                    {
+                        RemoveHiddenPagesRecursive(child, hidePages);
+                        return hidePages.Contains(child.Id);
+                    });
+
+                    return menu.Children.Count == 0;
+                }
+
+                return hidePages.Contains(menu.Id);
+            });
+        }
+
+        private static void RemoveHiddenPagesRecursive(SubjectDetailMenuModel menu, List<long> hidePages)
+        {
+            if (menu.Children != null)
+            {
+                menu.Children.RemoveAll(child =>
+                {
+                    RemoveHiddenPagesRecursive(child, hidePages);
+                    return hidePages.Contains(child.Id);
+                });
+            }
         }
 
         public async Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId)

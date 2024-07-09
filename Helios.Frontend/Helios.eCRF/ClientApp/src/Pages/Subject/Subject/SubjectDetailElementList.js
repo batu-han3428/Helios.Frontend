@@ -1,20 +1,8 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
-import {
-    Row,
-    Col,
-    Card,
-    CardBody,
-    CardTitle,
-    Modal,
-    Container,
-    ModalBody,
-    ModalHeader,
-    ModalFooter,
-    Button,
-} from "reactstrap";
-import { Routes, Route, useNavigate } from "react-router-dom";
+﻿import React, { useState, useRef } from 'react';
+import { Row } from "reactstrap";
+import { useNavigate } from "react-router-dom";
 import '../../TenantAdmin/Module/FormBuilder/formBuilder.css';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { Dropdown } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -36,7 +24,7 @@ import CalculationElement from '../../TenantAdmin/Module/Elements/CalculationEle
 import AdverseEventElement from '../../TenantAdmin/Module/Elements/AdverseEventElement/adverseEventElement.js';
 import ConcomittantMedicationElement from '../../TenantAdmin/Module/Elements/ConcomittantMedicationElement/concomittantMedicationElement.js';
 import { withTranslation } from "react-i18next";
-import { API_BASE_URL } from '../../../constants/endpoints';
+import { useAutoSaveSubjectMutation } from '../../../store/services/Subject';
 
 function SubjectDetailElementList(props) {
     const toastRef = useRef();
@@ -44,244 +32,123 @@ function SubjectDetailElementList(props) {
     const [moduleId] = useState(props.ModuleId);
     const [studyId] = useState(props.StudyId);
     const [isDisable] = useState(props.IsDisable);
-    const [ElementList, setElementList] = useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        setElementList(props.ElementList);
-    }, [props.ElementList]);
+    const [autoSaveSubject] = useAutoSaveSubjectMutation();
 
-    const AutoSave = (id, value, type = 0) => {
-        if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) { /*when uncheck all options in dropdownCheck or check elements, value can be empty string*/
-            fetch(API_BASE_URL + 'Subject/AutoSaveSubjectData', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json, text/plain, */*',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    Id: id,
-                    Value: value
-                })
-            }).then(res => {
-                return res.json()
-            }).then(data => {
-                dispatch(startloading());
-                if (data.isSuccess) {
-                    toastRef.current.setToast({
-                        message: data.message,
-                        stateToast: true
-                    });
-                } else {
-                    toastRef.current.setToast({
-                        message: data.message,
-                        stateToast: false
-                    });
-                }
-                dispatch(endloading());
-            }).catch(error => {
-                console.log(error)
+    const AutoSave = async (id, value, type = 0) => {
+        if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
+            dispatch(startloading());
+            const response = await autoSaveSubject({
+                Id: id,
+                Value: value
             });
+            if (response.data.isSuccess) {
+                toastRef.current.setToast({
+                    message: response.data.message,
+                    stateToast: true
+                });
+            } else {
+                toastRef.current.setToast({
+                    message: response.data.message,
+                    stateToast: false
+                });
+            }
+            dispatch(endloading());
         }
     }
 
     const renderElementsSwitch = (param) => {
-        var dsbl = isDisable ? "disabled" : "";
+        const dsbl = isDisable ? "disabled" : "";
+        const commonProps = {
+            Id: param.subjectVisitPageModuleElementId,
+            Value: param.userValue ?? "",
+            IsDisable: dsbl,
+            HandleAutoSave: AutoSave,
+        };
+
         switch (param.elementType) {
             case 1:
                 return <LabelElement Title={param.title} />;
             case 2:
-                return <TextElement IsDisable={dsbl}
-                    Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue === null ? "" : param.userValue}
-                    HandleAutoSave={AutoSave}
-                />;
+                return <TextElement {...commonProps} />;
             case 3:
                 return "";
             case 4:
-                return <NumericElement
-                    Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue}
-                    IsDisable={dsbl}
-                    Unit={""}
-                    Mask={""}
-                    LowerLimit={param.lowerLimit}
-                    UpperLimit={param.upperLimit}
-                    HandleAutoSave={AutoSave}
-                />;
+                return <NumericElement {...commonProps} Unit={""} Mask={""} LowerLimit={0} UpperLimit={0} />;
             case 5:
-                return <TextareaElement
-                    Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue === null ? "" : param.userValue}
-                    IsDisable={isDisable}
-                    DefaultValue={param.defaultValue}
-                    HandleAutoSave={AutoSave}
-                />
+                return <TextareaElement {...commonProps} DefaultValue={param.defaultValue} />;
             case 6:
-                return <DateElement
-                    Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue}
-                    Title={param.title}
-                    IsRequired={param.isRequired}
-                    IsDisable={isDisable}
-                    AddTodayDate={param.addTodayDate}
-                    StartDay={param.startDay}
-                    EndDay={param.endDay}
-                    StartMonth={param.startMonth}
-                    EndMonth={param.endMonth}
-                    StartYear={param.startYear}
-                    EndYear={param.endYear}
-                    DefaultValue={param.defaultValue}
-                    IsPreview={false}
-                    HandleAutoSave={AutoSave}
-                />
+                return <DateElement {...commonProps} Title={param.title} IsRequired={param.isRequired} AddTodayDate={param.addTodayDate} StartDay={param.startDay} EndDay={param.endDay} StartMonth={param.startMonth} EndMonth={param.endMonth} StartYear={param.startYear} EndYear={param.endYear} DefaultValue={param.defaultValue} IsPreview={false} />;
             case 7:
-                return <CalculationElement
-                    Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue === null ? "" : param.userValue}
-                />
+                return <CalculationElement {...commonProps} />;
             case 8:
-                return <RadioElement
-                    Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue === null ? "" : param.userValue}
-                    IsDisable={dsbl}
-                    Layout={param.layout}
-                    ElementOptions={param.elementOptions}
-                    HandleAutoSave={AutoSave}
-                />
+                return <RadioElement {...commonProps} Layout={param.layout} ElementOptions={param.elementOptions} />;
             case 9:
-                return <CheckElement
-                    Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue === null ? [] : JSON.parse(param.userValue)}
-                    IsDisable={dsbl}
-                    Layout={param.layout}
-                    ElementOptions={param.elementOptions}
-                    HandleAutoSave={AutoSave}
-                />
+                return <CheckElement {...commonProps} Layout={param.layout} ElementOptions={param.elementOptions} />;
             case 10:
-                return <DropdownElement
-                    Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue === null ? "" : param.userValue}
-                    IsDisable={isDisable}
-                    ElementOptions={param.elementOptions}
-                    HandleAutoSave={AutoSave}
-                />
+                return <DropdownElement {...commonProps} ElementOptions={param.elementOptions} />;
             case 11:
-                return <DropdownCheckListElement
-                    Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue}
-                    IsDisable={isDisable}
-                    ElementOptions={param.elementOptions}
-                    HandleAutoSave={AutoSave}
-                />
+                return <DropdownCheckListElement {...commonProps} ElementOptions={param.elementOptions} />;
             case 12:
-                return <FileUploaderElement
-                    IsDisable={isDisable}
-                />
+                return <FileUploaderElement IsDisable={isDisable} />;
             case 13:
-                return <RangeSliderElement
-                    Id={param.subjectVisitPageModuleElementId}
-                    Value={param.userValue === null ? 0 : param.userValue}
-                    IsDisable={isDisable}
-                    LowerLimit={param.lowerLimit}
-                    UpperLimit={param.upperLimit}
-                    LeftText={param.leftText}
-                    RightText={param.rightText}
-                    DefaultValue={param.defaultValue === null ? 0 : param.userValue}
-                    HandleAutoSave={AutoSave}
-                />
+                return <RangeSliderElement {...commonProps} LowerLimit={param.lowerLimit} UpperLimit={param.upperLimit} LeftText={param.leftText} RightText={param.rightText} DefaultValue={param.defaultValue ?? 0} />;
             case 14:
-                return <ConcomittantMedicationElement
-                    IsDisable={isDisable}
-                    ButtonText={param.buttonText}
-                />
-
+                return <ConcomittantMedicationElement IsDisable={isDisable} ButtonText={param.buttonText} />;
             case 15:
-                return <TableElement
-                    StudyId={studyId}
-                    FormType={0}
-                    IsDisable={isDisable}
-                    Id={param.id} TenantId={tenantId} ModuleId={moduleId} UserId={0}
-                    ColumnCount={param.columnCount} RowCount={param.rowCount}
-                    DatagridAndTableProperties={param.datagridAndTableProperties}
-                    ChildElementList={param.childElements}
-                    Dispatch={dispatch}
-                    IsFromDesign={false}
-                />
+                return <TableElement {...commonProps} StudyId={studyId} FormType={0} TenantId={tenantId} ModuleId={moduleId} UserId={0} ColumnCount={param.columnCount} RowCount={param.rowCount} DatagridAndTableProperties={param.datagridAndTableProperties} ChildElementList={param.childElements} Dispatch={dispatch} IsFromDesign={false} />;
             case 16:
-                return <DatagridElement
-                    StudyId={studyId}
-                    FormType={0}
-                    IsDisable={isDisable}
-                    Id={param.id} TenantId={tenantId} ModuleId={moduleId} UserId={0}
-                    ColumnCount={param.columnCount}
-                    DatagridAndTableProperties={param.datagridAndTableProperties}
-                    ChildElementList={param.childElements}
-                    Dispatch={dispatch}
-                    IsFromDesign={false}
-                />
+                return <DatagridElement {...commonProps} StudyId={studyId} FormType={0} TenantId={tenantId} ModuleId={moduleId} UserId={0} ColumnCount={param.columnCount} DatagridAndTableProperties={param.datagridAndTableProperties} ChildElementList={param.childElements} Dispatch={dispatch} IsFromDesign={false} />;
             case 17:
-                return <AdverseEventElement
-                    AdverseEventType={param.adverseEventType}
-                    IsDisable={isDisable}
-                />
+                return <AdverseEventElement AdverseEventType={param.adverseEventType} IsDisable={isDisable} />;
             default:
                 return "";
         }
     }
 
     const getItems = () => {
-        let items = [];
-        items.push({
-            key: '1',
-            label: (
-                <a onClick={() => navigate(``)}>{props.t("Clear data")}</a>
-            ),
-            icon: <FontAwesomeIcon icon="fas fa-ban" style={{ color: "#5b626b", }} />,
-            style: { color: "#5b626b" },
-        });
-        items.push({
-            key: '2',
-            label: (
-                <a onClick={() => navigate(``)}>{props.t("Missing data")}</a>
-                //<a onClick={() => handleAddModule(openModal, record, modalRef, toastRef, toggleModal)}>{t("Add module")}</a>
-            ),
-            icon: <FontAwesomeIcon icon="fas fa-check-square" style={{ color: "#5b626b", }} />,
-            style: { color: "#5b626b" },
-        });
-        items.push({
-            key: '3',
-            label: (
-                <a onClick={() => navigate(``)}>{props.t("Comments")}</a>
-            ),
-            icon: <FontAwesomeIcon icon="fas fa-comment" style={{ color: "#5b626b", }} />,
-            style: { color: "#5b626b" },
-        });
-        items.push({
-            key: '4',
-            label: (
-                <a onClick={() => navigate(``)}>{props.t("Audit trail")}</a>
-            ),
-            icon: <FontAwesomeIcon icon="fas fa-directions" style={{ color: "#5b626b", }} />,
-            style: { color: "#5b626b" },
-        });
-        items.push({
-            key: '5',
-            label: (
-                <a onClick={() => navigate(``)}>{props.t("Query")}</a>
-            ),
-            icon: <FontAwesomeIcon icon="fas fa-exclamation" style={{ color: "#5b626b", }} />,
-            style: { color: "#5b626b" },
-        });
+        const items = [
+            {
+                key: '1',
+                label: <a onClick={() => navigate('')}>{props.t("Clear data")}</a>,
+                icon: <FontAwesomeIcon icon="fas fa-ban" style={{ color: "#5b626b" }} />,
+                style: { color: "#5b626b" },
+            },
+            {
+                key: '2',
+                label: <a onClick={() => navigate('')}>{props.t("Missing data")}</a>,
+                icon: <FontAwesomeIcon icon="fas fa-check-square" style={{ color: "#5b626b" }} />,
+                style: { color: "#5b626b" },
+            },
+            {
+                key: '3',
+                label: <a onClick={() => navigate('')}>{props.t("Comments")}</a>,
+                icon: <FontAwesomeIcon icon="fas fa-comment" style={{ color: "#5b626b" }} />,
+                style: { color: "#5b626b" },
+            },
+            {
+                key: '4',
+                label: <a onClick={() => navigate('')}>{props.t("Audit trail")}</a>,
+                icon: <FontAwesomeIcon icon="fas fa-directions" style={{ color: "#5b626b" }} />,
+                style: { color: "#5b626b" },
+            },
+            {
+                key: '5',
+                label: <a onClick={() => navigate('')}>{props.t("Query")}</a>,
+                icon: <FontAwesomeIcon icon="fas fa-exclamation" style={{ color: "#5b626b" }} />,
+                style: { color: "#5b626b" },
+            },
+        ];
 
         return { items };
     }
 
-    const content = Array.isArray(ElementList)
-        ? ElementList.map((item) => {
-            var w = item.width === 0 ? 12 : item.width;
-            var cls = "mb-6 col-md-" + w;
+    const content = Array.isArray(props.ElementList)
+        ? props.ElementList.map((item) => {
+            const w = item.width === 0 ? 12 : item.width;
+            const cls = "mb-6 col-md-" + w;
 
             return (
                 <Row className={cls} key={item.subjectVisitPageModuleElementId}>
@@ -321,7 +188,6 @@ function SubjectDetailElementList(props) {
                 ref={toastRef}
             />
         </div>
-
     );
 }
 
