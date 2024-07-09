@@ -146,7 +146,7 @@ function ElementList(props) {
                 return <TextElement IsDisable={dsbl}
                 />;
             case 3:
-                return <HiddenElement />;
+                return <HiddenElement value={param.targetElementName} />;
             case 4:
                 return <NumericElement
                     Id={param.id}
