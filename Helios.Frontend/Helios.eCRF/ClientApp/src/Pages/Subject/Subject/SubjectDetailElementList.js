@@ -106,8 +106,8 @@ function SubjectDetailElementList(props) {
                     IsDisable={dsbl}
                     Unit={""}
                     Mask={""}
-                    LowerLimit={0}
-                    UpperLimit={0}
+                    LowerLimit={param.lowerLimit}
+                    UpperLimit={param.upperLimit}
                     HandleAutoSave={AutoSave}
                 />;
             case 5:
