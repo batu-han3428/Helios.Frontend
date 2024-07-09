@@ -24,16 +24,20 @@ export const SubjectApi = createApi({
         addSubject: builder.mutation({
             query: (values) => ({
                 url: '/Subject/AddSubject',
-                method: 'POST',              
-                body:values               
+                method: 'POST',
+                body: values
             }),
             invalidatesTags: ['Subject'],
         }),
         getSubjectDetailMenu: builder.query({
-            query: (data) => `/Subject/GetSubjectDetailMenu/${data.studyId}/${data.subjectId}`
+            query: (data) => `/Subject/GetSubjectDetailMenu/${data.studyId}/${data.subjectId}`,
+            providesTags: ['SubjectDetailMenu'],
         }),
         getSubjectElementList: builder.query({
-            query: (data) => '/Subject/GetSubjectElementList?subjectId=' + data.subjectId + '&subjectVisitModulePageId=' + data.pageId
+            query: (data) => '/Subject/GetSubjectElementList?subjectId=' + data.subjectId + '&subjectVisitModulePageId=' + data.pageId,
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0,
+            providesTags: ['SubjectElement'],
         }),
         deleteOrArchiveSubject: builder.mutation({
             query: (values) => ({
@@ -42,7 +46,15 @@ export const SubjectApi = createApi({
                 body: values
             }),
             invalidatesTags: ['Subject'],
-        })
+        }),
+        autoSaveSubject: builder.mutation({
+            query: (values) => ({
+                url: '/Subject/AutoSaveSubjectData',
+                method: 'POST',
+                body: values
+            }),
+            invalidatesTags: ['SubjectElement', 'SubjectDetailMenu'],
+        }),
     }),
 });
 
@@ -56,3 +68,5 @@ export const { useLazyGetSubjectDetailMenuQuery } = SubjectApi;
 export const { useGetSubjectElementListQuery } = SubjectApi;
 
 export const { useDeleteOrArchiveSubjectMutation } = SubjectApi;
+
+export const { useAutoSaveSubjectMutation } = SubjectApi;

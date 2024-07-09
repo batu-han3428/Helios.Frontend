@@ -11,6 +11,14 @@ class CalculationElement extends Component {
         }
     }
 
+    componentDidUpdate(prevProps) {
+        if (prevProps.Value !== this.props.Value) {
+            this.setState({
+                Value: this.props.Value
+            });
+        }
+    }
+
     render() {
         return (
             <div style={{ marginRight: "20px" }} >
