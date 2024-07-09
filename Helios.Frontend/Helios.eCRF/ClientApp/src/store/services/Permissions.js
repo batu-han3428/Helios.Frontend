@@ -23,7 +23,7 @@ export const PermissionsApi = createApi({
         }),
         roleSave: builder.mutation({
             query: (data) => ({
-                url: '/User/AddOrUpdatePermissionRol',
+                url: '/User/AddOrUpdatePermissionRole',
                 method: 'POST',
                 body: data,
             }),
@@ -59,7 +59,7 @@ export const PermissionsApi = createApi({
             query: () => `/User/GetStudyRolePermissionsList`
         }),
         userPermissionsListGet: builder.query({
-            query: (studyId) => `/User/GetUserPermissionsList/${studyId}`,
+            query: (studyId) => `/User/GetUserPermissions/${studyId}`,
             providesTags: ['UserPermissions'],
         }),
         permissionsVisitListGet: builder.query({

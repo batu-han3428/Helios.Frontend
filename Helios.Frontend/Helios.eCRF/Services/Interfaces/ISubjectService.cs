@@ -6,10 +6,11 @@ namespace Helios.eCRF.Services.Interfaces
 {
     public interface ISubjectService
     {
-        Task<RestResponse<SubjectListModel>> GetSubjectList(Int64 studyId);
+        Task<RestResponse<List<SubjectDTO>>> GetSubjectList(Int64 studyId, bool showArchivedSubjects);
         Task<ApiResponse<dynamic>> AddSubject(SubjectDTO subject);
         Task<RestResponse<List<SiteModel>>> GetSites(Int64 studyId);
         Task<List<SubjectDetailMenuModel>> GetSubjectDetailMenu(Int64 studyId);
+        Task<UserPermissionModel> GetUserPermissions(Int64 studyId);
         Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId);
         Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model);
         Task<bool> GetStudyAskSubjectInitial(Int64 studyId);

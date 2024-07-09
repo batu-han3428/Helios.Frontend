@@ -24,18 +24,22 @@ namespace Helios.eCRF.Controllers
         /// Hasta listesi verilerini listeler
         /// </summary>
         /// <param name="studyId">çalışma id</param>
+        /// <param name="showArchivedSubjects">arşivlenmiş hastaları göster</param>
         /// <returns>hasta listesi</returns>
-        [HttpGet("{studyId}")]
+        [HttpGet("{studyId}/{showArchivedSubjects}")]
         //[Authorize(Roles = "StudyUser")]
-        public async Task<IActionResult> GetSubjectList(Int64 studyId)
+        public async Task<IActionResult> GetSubjectList(Int64 studyId, bool showArchivedSubjects)
         {
-            var result = await _subjectService.GetSubjectList(studyId);
-            var addedbyids = result.Data.SubjectList.Select(x => x.AddedById).Distinct().ToList();           
-            var users = await _userService.GetUserList(addedbyids);           
-            foreach (var user in result.Data.SubjectList) {
-                var addedby= users.Data.FirstOrDefault(x => x.Id == user.AddedById);
+            var result = await _subjectService.GetSubjectList(studyId, showArchivedSubjects);
+            var addedByIds = result.Data.Select(x => x.AddedById).Distinct().ToList();
+            var users = await _userService.GetUserList(addedByIds);
+
+            foreach (var user in result.Data)
+            {
+                var addedby = users.Data.FirstOrDefault(x => x.Id == user.AddedById);
                 user.AddedByName = addedby.Name + ' ' + addedby.LastName;
             }
+
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
@@ -71,7 +75,7 @@ namespace Helios.eCRF.Controllers
         [RoleAttribute(Roles.StudyUser)]
         public async Task<IActionResult> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId)
         {
-            var result = await _subjectService.GetSubjectElementList(subjectId,subjectVisitModulePageId);
+            var result = await _subjectService.GetSubjectElementList(subjectId, subjectVisitModulePageId);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
@@ -88,7 +92,6 @@ namespace Helios.eCRF.Controllers
             return new ObjectResult(result);
         }
 
-
         [HttpPost]
         public async Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model)
         {
@@ -96,7 +99,7 @@ namespace Helios.eCRF.Controllers
             return result;
         }
 
-        [HttpGet]     
+        [HttpGet]
         public async Task<bool> GetStudyAskSubjectInitial(Int64 studyId)
         {
             var result = await _subjectService.GetStudyAskSubjectInitial(studyId);

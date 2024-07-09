@@ -12,14 +12,20 @@ namespace Helios.eCRF.Services
         {
         }
 
-        public async Task<RestResponse<SubjectListModel>> GetSubjectList(Int64 studyId)
+        public async Task<RestResponse<List<SubjectDTO>>> GetSubjectList(Int64 studyId, bool showArchivedSubjects)
         {
+            var dto = new SubjectListFilterDTO()
+            {
+                StudyId = studyId,
+                UserId = UserId,
+                ShowArchivedSubjects = showArchivedSubjects,
+            };
+
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreSubject/GetSubjectList", Method.Get);
-                req.AddParameter("studyId", studyId);
-                req.AddParameter("userId", UserId);
-                var result = await client.ExecuteAsync<SubjectListModel>(req);
+                req.AddJsonBody(dto);
+                var result = await client.ExecuteAsync<List<SubjectDTO>>(req);
                 return result;
             }
         }
@@ -84,6 +90,35 @@ namespace Helios.eCRF.Services
             return retResult;
         }
 
+        public async Task<UserPermissionModel> GetUserPermissions(Int64 studyId)
+        {
+            var retResult = new UserPermissionModel();
+
+            using (var client = SharedServiceClient)
+            {
+                var req = new RestRequest("Cache/GetUserPermissions", Method.Get);
+                req.AddParameter("studyId", studyId);
+                req.AddParameter("userId", UserId);
+                var result = await client.ExecuteAsync<UserPermissionModel>(req);
+                retResult = result.Data;
+            }
+
+
+            if (retResult == null)
+            {
+                using (var client = CoreServiceClient)
+                {
+                    var req = new RestRequest("CoreSubject/SetUserPermissions", Method.Get);
+                    req.AddParameter("studyId", studyId);
+                    req.AddParameter("userId", UserId);
+                    var result = await client.ExecuteAsync<UserPermissionModel>(req);
+                    retResult = result.Data;
+                }
+            }
+
+            return retResult;
+        }
+
         public async Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId)
         {
             using (var client = CoreServiceClient)
@@ -120,12 +155,25 @@ namespace Helios.eCRF.Services
 
         public async Task<ApiResponse<dynamic>> DeleteOrArchiveSubject(SubjectArchiveOrDeleteModel model)
         {
-            using (var client = CoreServiceClient)
+            if (model.IsArchived)
             {
-                var req = new RestRequest("CoreSubject/DeleteOrArchiveSubject", Method.Post);
-                req.AddJsonBody(model);
-                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
-                return result.Data;
+                using (var client = CoreServiceClient)
+                {
+                    var req = new RestRequest("CoreSubject/UnArchiveSubject", Method.Post);
+                    req.AddJsonBody(model);
+                    var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                    return result.Data;
+                }
+            }
+            else
+            {
+                using (var client = CoreServiceClient)
+                {
+                    var req = new RestRequest("CoreSubject/DeleteOrArchiveSubject", Method.Post);
+                    req.AddJsonBody(model);
+                    var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                    return result.Data;
+                }
             }
         }
 

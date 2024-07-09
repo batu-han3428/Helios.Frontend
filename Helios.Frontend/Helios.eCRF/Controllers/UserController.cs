@@ -171,12 +171,12 @@ namespace Helios.eCRF.Controllers
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
-
         [HttpGet("{studyId}")]
-        public async Task<IActionResult> GetUserPermissionsList(Int64 studyId)
+        //[Authorize(Roles = "StudyUser")]
+        public async Task<IActionResult> GetUserPermissions(Int64 studyId)
         {
-            var result = await _userService.GetUserPermissionsList(studyId);
-            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+            var result = await _userService.GetUserPermissions(studyId);
+            return new ObjectResult(result);
         }
 
         /// <summary>
@@ -237,9 +237,9 @@ namespace Helios.eCRF.Controllers
         /// <param name="userPermission">rol bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        public async Task<IActionResult> AddOrUpdatePermissionRol(UserPermissionModel userPermission)
+        public async Task<IActionResult> AddOrUpdatePermissionRole(UserPermissionModel userPermission)
         {
-            var result = await _userService.AddOrUpdatePermissionRol(userPermission);
+            var result = await _userService.AddOrUpdatePermissionRole(userPermission);
             return Ok(result);
         }
 

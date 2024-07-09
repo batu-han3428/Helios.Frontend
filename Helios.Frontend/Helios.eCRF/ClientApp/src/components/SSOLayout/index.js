@@ -28,7 +28,7 @@ class Layout extends Component {
     };
     useUserPermissionsListGetQuery() {
         
-        fetch(API_BASE_URL + 'User/GetUserPermissionsList?studyId=' + 8, {
+        fetch(API_BASE_URL + 'User/GetUserPermissions?studyId=' + 8, {
             method: 'GET',
         })
             .then(response => response.json())
