@@ -968,6 +968,11 @@ class Properties extends React.Component {
     //}
 
     render() {
+        const selectedValue = Array.isArray(this.state.widthSelectedGroup)
+            ? (this.state.widthSelectedGroup[0].value === 0
+                ? this.state.widthOptionGroup.find(option => option.value === 12)
+                : this.state.widthOptionGroup.find(option => option.value === this.state.widthSelectedGroup[0].value))
+            : this.state.widthOptionGroup.find(option => option.value === 12);
         return (
             <div>
                 {/*<ElementBase>*/}
@@ -1108,8 +1113,8 @@ class Properties extends React.Component {
                                                                     {this.props.t("Field width")}
                                                                 </label>
                                                                 <div className={this.state.fieldWidthsW}>
-                                                                    <Select
-                                                                        value={this.state.widthSelectedGroup}
+                                                                    <Select                 
+                                                                        value={selectedValue}
                                                                         onChange={this.handleWidthChange}
                                                                         options={this.state.widthOptionGroup}
                                                                         placeholder={this.props.t("Select")}

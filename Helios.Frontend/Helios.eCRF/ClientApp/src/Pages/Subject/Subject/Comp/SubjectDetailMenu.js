@@ -142,7 +142,7 @@ const SubjectDetailMenu = props => {
             props.setOpenKeys(newOpenKeys);
             const parentItem = items.find(item => item.key === parentKey);
             const pageId = parentItem.children.find(child => child.key === e.key).id;
-            navigate(`/subject-detail/${props.studyId}/${pageId}/${props.subjectId}`);
+            navigate(`/subject-detail/${props.studyId}/${pageId}/${props.subjectId}/${props.subjectNumber}`);
         }
         props.setSelectedKeys(e.key);
     };
