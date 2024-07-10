@@ -12,7 +12,7 @@ const SubjectDetailMenu = props => {
     const CustomMenuHeader = () => {
         return (
             <div className="subject-menu-header">
-                123456
+                {props.subjectNumber}
                 <SubjectDetailEllipsis items={[
                     {
                         key: '1',

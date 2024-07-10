@@ -18,7 +18,7 @@ import { useNavigate } from "react-router-dom";
 const SubjectDetail = props => {
 
     const navigate = useNavigate();
-    const { studyId, pageId, subjectId } = useParams();
+    const { studyId, pageId, subjectId, subjectNumber } = useParams();
 
     const dispatch = useDispatch();
     const toastRef = useRef();
@@ -153,7 +153,7 @@ const SubjectDetail = props => {
                 <div className="container-fluid" style={{ paddingLeft: 0 }}>
                     <Row gutter={16}>
                         <Col xs={0} sm={0} md={6} lg={6} xl={5}>
-                            <SubjectDetailMenu setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} />
+                            <SubjectDetailMenu subjectNumber={subjectNumber} setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} />
                         </Col>
                         <Col xs={1} sm={1} md={0} lg={0} xl={0}>
                             <Button style={{ position: "fixed", top: "80px", left: "10px", zIndex: "1000" }} onClick={showDrawer} shape="circle" icon={<MenuOutlined />} />
