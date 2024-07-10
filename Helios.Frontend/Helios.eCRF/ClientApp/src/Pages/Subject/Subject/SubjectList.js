@@ -3,26 +3,27 @@ import React, { useEffect, useState, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { Table, Row, Col, Typography, Input } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Form, FormFeedback, Label } from 'reactstrap';
+import { Button, Label } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { formatDate } from "../../../helpers/format_date";
-import { useFormik } from "formik";
-import * as Yup from "yup";
 import { useDispatch, connect } from "react-redux";
 import withRouter from '../../../components/Common/withRouter';
-import Select from "react-select";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useAddSubjectMutation, useGetSubjectListQuery, useGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
-import { useStudyUserSitesGetQuery } from '../../../store/services/Users';
+import { useLazyStudyUserSitesGetQuery } from '../../../store/services/Users';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
 import { SearchOutlined } from '@ant-design/icons';
 import "./Subject.css";
+import { v4 as uuidv4 } from 'uuid';
+import AddSubjectComp from './Comp/AddSubjectComp';
+import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 
 const SubjectList = props => {
     const modalRef = useRef();
     const modalRefDel = useRef();
+    const toastRef = useRef();
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
     const [modalContent, setModalContent] = useState(null);
@@ -37,33 +38,18 @@ const SubjectList = props => {
     const [subjectId, setSubjectId] = useState(0);
     const [data, setData] = useState([]);
     const [permissions, setPermissions] = useState([]);
-    const [changeSiteId, setchangeSiteId] = useState("");
-    const [changeInitialName, setchangeInitialName] = useState("");
-    const [count, setCount] = useState(0);
     const [filteredInfo, setFilteredInfo] = useState({});
     const [searchsubjectNumberText, setSearchsubjectNumberText] = useState('');
-    const [formData, setFormData] = useState({
-        changeInitialName: '',
-        changeSiteId: ''
-    });
-
+    const [studyUserSiteData, setStudyUserSiteData] = useState({});
     const columns = [];
     const [addingSubject] = useAddSubjectMutation();
     const [deleteOrArchiveSubject] = useDeleteOrArchiveSubjectMutation();
     const { data: permissionsData, errorPerm, isLoadingPerm } = useGetUserPermissionsQuery(studyId);
     const { data: subjectsData, error, isLoading } = useGetSubjectListQuery({ studyId: studyId, showArchivedSubjects: showArchivedSubjects });
-    const { data: studyUserSitesGet } = useStudyUserSitesGetQuery({ authUserId: props.authUserId, studyId: studyId });
+    const [trigger, { data: studyUserSitesData, errorSite, isLoadingSite }] = useLazyStudyUserSitesGetQuery();
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const changeValidSiteId = (value) => {
-        setchangeSiteId(value);
-    };
-
-    const changeValidInitialname = (value) => {
-        setchangeInitialName(value);
-    };
 
     useEffect(() => {
         if (!errorPerm && !isLoadingPerm && permissionsData) {
@@ -76,7 +62,6 @@ const SubjectList = props => {
         updateSubjectsList(studyId, showArchivedSubjects);
 
     }, [permissionsData, errorPerm, isLoadingPerm, subjectsData, error, isLoading, showArchivedSubjects, studyId]);
-
 
     const updateSubjectsList = (id, showArchived) => {
         if (!error && !isLoading && subjectsData) {
@@ -93,7 +78,8 @@ const SubjectList = props => {
                     ...item,
                     createdAt: formatDate(item.createdAt),
                     updatedAt: formatDate(item.updatedAt),
-                    actions: getActions(item)
+                    actions: getActions(item),
+                    key: uuidv4()
                 };
             });
 
@@ -104,8 +90,8 @@ const SubjectList = props => {
         }
     };
 
-    const goToSubjectDetail = (studyId, pageId, subjectId) => {
-        navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}`);
+    const goToSubjectDetail = (studyId, pageId, subjectId, subjectNumber) => {
+        navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}/${subjectNumber}`);
     };
 
     const getActions = ({ id, firstPageId, subjectNumber, isActive }) => {
@@ -135,150 +121,12 @@ const SubjectList = props => {
         return actions;
     };
 
-    const refreshContent = () => {
-        setCount(count + 1);
-    };
-
-    const validationType = useFormik({
-        enableReinitialize: true,
-        initialValues: {
-            studyid: studyId,
-            siteid: 0,
-            initialname: "",
-
-        },
-        onSubmit: async (values) => {
-            values.id = 0;
-            values.firstPageId = 0;
-            values.subjectNumber = "";
-            values.updatedAt = new Date();
-            values.createdAt = new Date();
-            values.country = "";
-            values.siteName = "";
-            values.randomData = "";
-            values.addedByName = "";
-
-            try {
-                changeValidInitialname(values.initialname);
-                changeValidSiteId(values.siteid === 0 ? "" : values.siteid);
-                if (values.siteid !== 0 && values.initialname !== "") {
-                    dispatch(startloading());
-
-                    const response = await addingSubject(values);
-                    var retVal = response.data.values;
-
-                    if (response.data.isSuccess) {
-                        Swal.fire({
-                            title: "",
-                            text: props.t(response.data.message),
-                            icon: "success",
-                            confirmButtonText: props.t("Ok"),
-                        });
-
-                        modalRef.current.tog_backdrop();
-                        goToSubjectDetail(retVal.studyId, retVal.firstPageId, retVal.id);
-                        dispatch(endloading());
-                    } else {
-                        Swal.fire({
-                            title: "",
-                            text: response.data.message,
-                            icon: "error",
-                            confirmButtonText: props.t("Ok"),
-                        });
-                        dispatch(endloading());
-                    }
-                }
-                else {
-                    setFormData({
-                        ...formData,
-                        [changeSiteId]: values.siteid === 0 ? "" : values.siteid,
-                        [changeInitialName]: values.initialname,
-
-                    });
-
-                    refreshContent();
-                    setModalContent(modalContent2(count === 0 ? 1 : count, changeSiteId, changeInitialName));
-                    //toggleModal();
-
-                }
-                dispatch(endloading());
-
-            }
-            catch {
-            }
-        }
-
-    });
-
-    const modalContent2 = (part, contentSiteId, contentInitialName) => {
-        const content = (
-            <>
-                <Form
-                    onSubmit={(e) => {
-                        e.preventDefault();
-                        validationType.handleSubmit();
-                        return false;
-                    }}>
-
-                    {selectSites.length > 1 && studyUserSitesGet.sites.length > 1 &&
-                        <div className="mb-12" style={{ marginBottom: "15px" }}>
-                            <Label className="form-label"> {props.t('Site')}</Label>
-                            <Select
-                                name='siteid'
-                                id='siteid'
-                                onChange={(selectedOptions) => {
-                                    const selectedValues = selectedOptions.id;
-                                    validationType.setFieldValue('siteid', selectedValues);
-                                }}
-                                onBlur={(e) => {
-                                    setchangeSiteId(e);
-                                }}
-
-                                options={studyUserSitesGet.sites}
-                                getOptionLabel={(option) => option.name}
-                                getOptionValue={(option) => option.id}
-                                placeholder={props.t("Select")}
-                                classNamePrefix="select2-selection" />
-                            {(contentSiteId === "" || contentSiteId === undefined || contentSiteId === 0) && part !== 0 ? (
-                                <div type="invalid" className="invalid-feedback" style={{ display: "block" }}>{props.t("This field is required")}</div>
-                            ) : null}
-                        </div>
-                    }
-                    {AskSubjectInitial &&
-                        <div className="mb-12" >
-                            <Label className="control-label">
-                                {props.t('Subject initial')}
-                            </Label>
-                            <Input className='form-control' type='text' name='initialname' id='initialname' onChange={validationType.handleChange}
-                                onBlur={(e) => {
-                                    setchangeInitialName(e);
-                                }} />
-                            {(contentInitialName === "" || contentInitialName === undefined) && part !== 0 ? (
-                                <div type="invalid" className="invalid-feedback" style={{ display: "block" }}>{props.t("This field is required")}</div>
-                            ) : null}
-                        </div>
-                    }
-                </Form>
-            </>
-        );
-        return content;
-    };
-
-    const openModal = (par) => {
-        toggleModal();
-        setCount(par);
+    const openModal = () => {
         setModalTitle(props.t('Add new subject'));
         setModalButtonText(props.t('Save'));
-        setModalContent(modalContent2(par, changeSiteId, changeInitialName));
-
+        setModalContent(<AddSubjectComp studyId={studyId} AskSubjectInitial={AskSubjectInitial} refs={modalRef} selectSites={selectSites} studyUserSiteData={studyUserSiteData} />);
+        toggleModal();
     }
-
-    const resetValue = () => {
-        validationType.validateForm().then(errors => {
-            validationType.setErrors({});
-            validationType.resetForm();
-        });
-    };
 
     const toggleModal = () => {
         modalRef.current.tog_backdrop();
@@ -300,26 +148,26 @@ const SubjectList = props => {
         fetch(API_BASE_URL + 'Subject/GetSites?studyId=' + id, {
             method: 'GET',
         })
-            .then(response => response.json())
-            .then(data => {
-                setselectSites(data);
-            })
-            .catch(error => {
+        .then(response => response.json())
+        .then(data => {
+            setselectSites(data);
+        })
+        .catch(error => {
 
-            });
+        });
     };
 
     const getStudy = (id) => {
         fetch(API_BASE_URL + 'Subject/GetStudyAskSubjectInitial?studyId=' + id, {
             method: 'GET',
         })
-            .then(response => response.json())
-            .then(data => {
-                setAskSubjectInitial(data);
-            })
-            .catch(error => {
+        .then(response => response.json())
+        .then(data => {
+            setAskSubjectInitial(data);
+        })
+        .catch(error => {
 
-            });
+        });
     };
 
     const addSubject = () => {
@@ -333,8 +181,8 @@ const SubjectList = props => {
             cancelButtonText: props.t("Cancel"),
         }).then(async (result) => {
             if (result.isConfirmed) {
-                dispatch(startloading());
-                const response = await addingSubject({ studyId: studyId, siteId: 3, initialName: "", id: 0, firstPageId: 0, subjectNumber: "", updatedAt: new Date(), createdAt: new Date() });
+                dispatch(startloading());      
+                const response = await addingSubject({ studyId: studyId, siteId: 3, initialName: "", id: 0, firstPageId: 0, subjectNumber: "", updatedAt: new Date(), createdAt: new Date(), country: "", siteName: "", randomData: "", addedByName: "" });
                 var retVal = response.data.values;
 
                 if (response.data.isSuccess) {
@@ -507,20 +355,32 @@ const SubjectList = props => {
     });
 
     const handleClick = () => {
-        if (AskSubjectInitial) {
-            setchangeSiteId();
-            setchangeInitialName();
-            openModal(0);
+        if (studyUserSiteData.sites.length < 1) {
+            toastRef.current.setToast({
+                message: props.t("You do not have access to this resource. Please contact the system administrator regarding your privileges."),
+                stateToast: false,
+                autoHide: false
+            });
         }
-        else if (selectSites.length > 1 && studyUserSitesGet.sites.length > 1) {
-            setchangeSiteId();
-            setchangeInitialName();
-            openModal(0);
+        else if (AskSubjectInitial || (selectSites.length > 1 && studyUserSiteData.sites.length > 1)) {
+            openModal();
         }
         else {
             addSubject();
         }
     };
+
+    useEffect(() => {
+        if (props.authUserId && studyId) {
+            trigger({ authUserId: props.authUserId, studyId: studyId });
+        }
+    }, [props.authUserId, studyId]);
+
+    useEffect(() => {
+        if (!isLoadingSite && !errorSite && studyUserSitesData) {
+            setStudyUserSiteData(studyUserSitesData);
+        }
+    }, [studyUserSitesData, errorSite, isLoadingSite]);
 
     const handleDeleteOrArchiveSubmit = async () => {
         if (comment == null || comment === "") {
@@ -590,7 +450,7 @@ const SubjectList = props => {
                         <Col className="col-12">
                             <div style={{ display: 'inline-block', float: 'left' }} className="col-md-6">
                                 {permissions.canSubjectArchive && 
-                                    <>
+                                <>
                                         <input
                                         type="checkbox"
                                         className="form-check-input"
@@ -610,7 +470,7 @@ const SubjectList = props => {
                                 </div>
                             </div>
                         </Col>
-                        <Col className="col-12">
+                        <Col className="col-12">                 
                             <Table
                                 columns={columns}
                                 dataSource={data.subjectList}
@@ -619,7 +479,7 @@ const SubjectList = props => {
                                 onRow={(record, rowIndex) => {
                                     return {
                                         onDoubleClick: () => {
-                                            goToSubjectDetail(studyId, record.firstPageId, record.id)
+                                            goToSubjectDetail(studyId, record.firstPageId, record.id, record.subjectNumber)
                                         }
                                     }
                                 }}
@@ -634,8 +494,6 @@ const SubjectList = props => {
                 refs={modalRef}
                 title={modalTitle}
                 body={modalContent}
-                resetValue={resetValue}
-                handle={() => validationType.handleSubmit()}
                 buttonText={modalButtonText}
                 isButton={true}
                 size="lg"
@@ -661,6 +519,9 @@ const SubjectList = props => {
                 }
                 handle={() => handleDeleteOrArchiveSubmit()}
                 buttonText={props.t("Yes")}
+            />
+            <ToastComp
+                ref={toastRef}
             />
         </React.Fragment>
     )

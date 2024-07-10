@@ -86,7 +86,8 @@ export const UsersApi = createApi({
 export const { useLazyUserListGetQuery } = UsersApi;
 
 export const { useUserGetQuery } = UsersApi;
-export const { useStudyUserSitesGetQuery } = UsersApi;
+
+export const { useLazyStudyUserSitesGetQuery } = UsersApi;
 
 export const { useUserSetMutation } = UsersApi;
 
@@ -97,4 +98,5 @@ export const { useUsersActivePassiveMutation } = UsersApi;
 export const { useUserDeleteMutation } = UsersApi;
 
 export const { useUserResetPasswordMutation } = UsersApi;
+
 export const { useUserProfileEditMutation } = UsersApi;
