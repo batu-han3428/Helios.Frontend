@@ -42,14 +42,39 @@ class DatagridElement extends Component {
             elementListSelectedGroup: null,
             elementName: "",
             elementType: 0,
-            columnIndex: 0
+            columnIndex: 0,
+            totalWidth: ""
         }
 
         this.toggleDgrdAddElementModal = this.toggleDgrdAddElementModal.bind(this);
         this.handleElementListChange = this.handleElementListChange.bind(this);
         this.getTdContent = this.getTdContent.bind(this);
         this.handleAddAnother = this.handleAddAnother.bind(this);
+        this.initial = this.initial.bind(this);
+
+        this.initial();
     }
+
+    initial = () => {
+        var wdth = 0;
+        var num = "";
+        var characher = "";
+
+        this.state.datagridAndTableProperties.map(item => {
+            if (item.width.includes('%')) {
+                num = item.width.slice(0, item.width.length - 1);
+                characher = "%";
+            }
+            else if (item.width.includes('px')) {
+                num = item.width.slice(0, item.width.length - 2);
+                characher = "px";
+            }
+
+            wdth += parseInt(num);
+        });
+
+        this.state.totalWidth = wdth + characher;
+    };
 
     toggleDgrdAddElementModal = (columnIndex) => {
         this.setState(prevState => ({
@@ -117,7 +142,7 @@ class DatagridElement extends Component {
     render() {
         return (
             <div className="table-responsive mb-3">
-                <Table className="table table-hover table-bordered mb-0">
+                <Table className="table table-hover table-bordered mb-0" style={{ width: this.state.totalWidth }}>
                     <thead>
                         <tr>
                             {this.state.datagridAndTableProperties.map((col, index) => (
