@@ -468,5 +468,6 @@
   "Show archived patients": "Arşivlenmiş hastaları göster",
   "Unarchive": "Arşivden çıkar",
   "Value should not be less than": "Değer aralığı gereğı: en az ",
-  "and greater than": " ve en fazla "
+  "and greater than": " ve en fazla ",
+  "Include ishidden fields": "Gizlenmiş alanları dahil et"
 }

@@ -17,6 +17,7 @@ const AnnotatedCrfPdf = props => {
         { name: 'IsLabel', label: 'Include labels' },
         { name: 'IsDesc', label: 'Include field descriptions' },
         { name: 'IsPage', label: 'Include page name' },
+        { name: 'IsHiddenFields', label: 'Include ishidden fields' },
         { name: 'IsVersion', label: 'Include document version' }
     ];
 
