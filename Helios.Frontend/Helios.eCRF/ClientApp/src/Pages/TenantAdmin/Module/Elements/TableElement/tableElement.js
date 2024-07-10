@@ -48,11 +48,36 @@ class TableElement extends Component {
             elementType: 0,
             columnIndex: 0,
             rowIndex: 0,
+            totalWidth: ""
         }
         this.toggleAddElementModal = this.toggleAddElementModal.bind(this);
         this.handleElementListChange = this.handleElementListChange.bind(this);
         this.getTdContent = this.getTdContent.bind(this);
+        this.initial = this.initial.bind(this);
+
+        this.initial();
     }
+
+    initial = () => {
+        var wdth = 0;
+        var num = "";
+        var characher = "";
+
+        this.state.datagridAndTableProperties.map(item => {
+            if (item.width.includes('%')) {
+                num = item.width.slice(0, item.width.length - 1);
+                characher = "%";
+            }
+            else if (item.width.includes('px')) {
+                num = item.width.slice(0, item.width.length - 2);
+                characher = "px";
+            }
+
+            wdth += parseInt(num);
+        });
+
+        this.state.totalWidth = wdth + characher;
+    };
 
     toggleAddElementModal = (columnIndex, rowIndex) => {
         this.setState(prevState => ({
@@ -157,7 +182,7 @@ class TableElement extends Component {
             <AccordionComp title="" isOpened={true} body={
                 <>
                     <div className="table-responsive mb-3">
-                        <Table className="table table-hover table-bordered mb-0">
+                        <Table className="table table-hover table-bordered mb-0" style={{ width: this.state.totalWidth }}>
                             <thead>
                                 <tr>
                                     <th key='0' style={{ width: '', backgroundColor: "#6D6E70", color: "#FFF" }}>#</th>
