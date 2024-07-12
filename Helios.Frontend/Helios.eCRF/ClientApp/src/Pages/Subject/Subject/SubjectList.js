@@ -19,7 +19,7 @@ import "./Subject.css";
 import { v4 as uuidv4 } from 'uuid';
 import AddSubjectComp from './Comp/AddSubjectComp';
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
-
+const { TextArea } = Input;
 const SubjectList = props => {
     const modalRef = useRef();
     const modalRefDel = useRef();
@@ -124,7 +124,7 @@ const SubjectList = props => {
     const openModal = () => {
         setModalTitle(props.t('Add new subject'));
         setModalButtonText(props.t('Save'));
-        setModalContent(<AddSubjectComp studyId={studyId} AskSubjectInitial={AskSubjectInitial} refs={modalRef} selectSites={selectSites} studyUserSiteData={studyUserSiteData} />);
+        setModalContent(<AddSubjectComp toast={toastRef} studyId={studyId} AskSubjectInitial={AskSubjectInitial} refs={modalRef} selectSites={selectSites} studyUserSiteData={studyUserSiteData} />);
         toggleModal();
     }
 
@@ -142,6 +142,12 @@ const SubjectList = props => {
 
     const handleChangeComment = (e) => {
         setComment(e.target.value)
+        if (e.target.value !== "") {
+            setTextError("");
+        } else {
+            setTextError(props.t("This field is required"));
+        }
+        
     }
 
     const optionGroup = (id) => {
@@ -187,14 +193,13 @@ const SubjectList = props => {
 
                 if (response.data.isSuccess) {
                     dispatch(endloading());
-                    Swal.fire({
-                        title: "",
-                        text: props.t(response.data.message),
-                        icon: "success",
-                        confirmButtonText: props.t("Ok"),
+                    let message = props.t(response.data.message).replace("{SubjectNo}", retVal.subjectNumber);
+                    if (retVal.addedById > 0) message = message.replace("{n}", retVal.addedById);
+                    toastRef.current.setToast({
+                        message: message,
+                        stateToast: true,
                     });
-
-                    goToSubjectDetail(retVal.studyId, retVal.firstPageId, retVal.id);
+                    goToSubjectDetail(retVal.studyId, retVal.firstPageId, retVal.id, retVal.subjectNumber);
                 } else {
                     dispatch(endloading());
                     Swal.fire({
@@ -214,21 +219,11 @@ const SubjectList = props => {
         setFilteredInfo(filters);
     };
 
-    if (AskSubjectInitial) {
-        const uniqueCountry = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.country))) : "";
-        const uniqueAddedBy = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.addedByName))) : "";
-        const uniqueSite = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.siteName))) : "";
-        columns.push({
-            title: props.t('Country'),
-            dataIndex: 'country',
-            sorter: (a, b) => a.country.localeCompare(b.country),
-            sortDirections: ['ascend', 'descend'],
-            filteredValue: filteredInfo.country || null,
-            filters: uniqueCountry.length > 0 ? uniqueCountry.map(item => ({ ...item, text: item, value: item })) : "",
-            onFilter: (value, record) => record.country === value,
-        });
-
-        columns.push({
+    const uniqueCountry = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.country))) : "";
+    const uniqueAddedBy = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.addedByName))) : "";
+    const uniqueSite = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.siteName))) : "";
+    const commonColumns = [
+        {
             title: props.t('subjectNumber'),
             dataIndex: 'subjectNumber',
             sorter: (a, b) => a.subjectNumber.localeCompare(b.subjectNumber),
@@ -247,6 +242,89 @@ const SubjectList = props => {
                 );
             },
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        },
+        {
+            title: props.t('Created on'),
+            dataIndex: 'createdAt',
+            sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Last updated on'),
+            dataIndex: 'updatedAt',
+            sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Actions'),
+            dataIndex: 'actions',
+            key: 'actions'
+        },
+        {
+            title: props.t('Randomization'),
+            dataIndex: 'randomData',
+            sorter: (a, b) => a.randomData.localeCompare(b.randomData),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('Query'),
+            dataIndex: 'query',
+            sorter: (a, b) => a.query.localeCompare(b.query),
+            sortDirections: ['ascend', 'descend'],
+        },
+        {
+            title: props.t('SDV'),
+            dataIndex: 'sdv',
+            sorter: (a, b) => {
+                const nameA = a.sdv || '';
+                const nameB = b.sdv || '';
+                return nameA.localeCompare(nameB);
+            },
+            sortDirections: ['ascend', 'descend'],
+        }
+    ];
+
+    if (studyUserSiteData.sites !== undefined && studyUserSiteData.sites.length < 2) {
+        columns.push(commonColumns[0]);
+
+        if (AskSubjectInitial) {
+            columns.push({
+                title: 'Subject initial',
+                dataIndex: 'initialName',
+                sorter: (a, b) => {
+                    const nameA = a.initialName || '';
+                    const nameB = b.initialName || '';
+                    return nameA.localeCompare(nameB);
+                },
+                sortDirections: ['ascend', 'descend'],
+            });
+        }
+
+        columns.push(...commonColumns.slice(1, 3));
+
+        if (permissions.canSubjectRandomize || permissions.canSubjectViewRandomization) {
+            columns.push(commonColumns[4]);
+        }
+
+        if (permissions.canMonitoringQueryView) {
+            columns.push(commonColumns[5]);
+        }
+
+        if (permissions.canMonitoringSdv || permissions.canMonitoringVerification || permissions.canMonitoringRemoteSdv) {
+            columns.push(commonColumns[6]);
+        }
+
+        columns.push(commonColumns[3]);
+
+    } else {
+        columns.push({
+            title: props.t('Country'),
+            dataIndex: 'country',
+            sorter: (a, b) => a.country.localeCompare(b.country),
+            sortDirections: ['ascend', 'descend'],
+            filteredValue: filteredInfo.country || null,
+            filters: uniqueCountry.length > 0 ? uniqueCountry.map(item => ({ ...item, text: item, value: item })) : "",
+            onFilter: (value, record) => record.country === value,
         });
 
         columns.push({
@@ -259,8 +337,23 @@ const SubjectList = props => {
             onFilter: (value, record) => record.siteName === value,
         });
 
+        columns.push(commonColumns[0]);
+
+        if (AskSubjectInitial) {
+            columns.push({
+                title: 'Subject initial',
+                dataIndex: 'initialName',
+                sorter: (a, b) => {
+                    const nameA = a.initialName || '';
+                    const nameB = b.initialName || '';
+                    return nameA.localeCompare(nameB);
+                },
+                sortDirections: ['ascend', 'descend'],
+            });
+        }
+
         columns.push({
-            title: props.t('Added by'),
+            title: props.t('Investigators'),
             dataIndex: 'addedByName',
             sorter: (a, b) => a.addedByName.localeCompare(b.addedByName),
             sortDirections: ['ascend', 'descend'],
@@ -269,90 +362,22 @@ const SubjectList = props => {
             onFilter: (value, record) => record.addedByName === value,
         });
 
-        columns.push({
-            title: 'Subject initial',
-            dataIndex: 'initialName',
-            sorter: (a, b) => {
-                const nameA = a.initialName || '';
-                const nameB = b.initialName || '';
-                return nameA.localeCompare(nameB);
-            },
-            sortDirections: ['ascend', 'descend'],
-        });
+        columns.push(...commonColumns.slice(1, 3));
+
+        if (permissions.canSubjectRandomize || permissions.canSubjectViewRandomization) {
+            columns.push(commonColumns[4]);
+        }
+
+        if (permissions.canMonitoringQueryView) {
+            columns.push(commonColumns[5]);
+        }
+
+        if (permissions.canMonitoringSdv || permissions.canMonitoringVerification || permissions.canMonitoringRemoteSdv) {
+            columns.push(commonColumns[6]);
+        }
+
+        columns.push(commonColumns[3]);
     }
-    else {
-        columns.push({
-            title: props.t('subjectNumber'),
-            dataIndex: 'subjectNumber',
-            sorter: (a, b) => a.subjectNumber.localeCompare(b.subjectNumber),
-            sortDirections: ['ascend', 'descend'],
-            filteredValue: [searchsubjectNumberText],
-            onFilter: (value, record) => String(record.subjectNumber).toLowerCase().includes(value.toLowerCase()),
-            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
-                return (
-                    <div style={{ padding: 8 }}>
-                        <Input.Search
-                            placeholder="Search name"
-                            value={selectedKeys[0]}
-                            onChange={(e) => setSearchsubjectNumberText(e.target.value)}
-                        />
-                    </div>
-                );
-            },
-            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-        });
-    }
-
-    columns.push({
-        title: props.t('Created on'),
-        dataIndex: 'createdAt',
-        sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
-        sortDirections: ['ascend', 'descend'],
-    });
-
-    columns.push({
-        title: props.t('Last updated on'),
-        dataIndex: 'updatedAt',
-        sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
-        sortDirections: ['ascend', 'descend'],
-    });
-
-    if (permissions.canSubjectRandomize || permissions.canSubjectViewRandomization) {
-        columns.push({
-            title: props.t('Randomization'),
-            dataIndex: 'randomData',
-            sorter: (a, b) => a.randomData.localeCompare(b.randomData),
-            sortDirections: ['ascend', 'descend'],
-        });
-    }
-
-    if (permissions.canMonitoringQueryView) {
-        columns.push({
-            title: props.t('Query'),
-            dataIndex: 'query',
-            sorter: (a, b) => a.query.localeCompare(b.query),
-            sortDirections: ['ascend', 'descend'],
-        });
-    }
-
-    if (data.canMonitoringSdv || data.canMonitoringVerification || data.canMonitoringRemoteSdv) {
-        columns.push({
-            title: props.t('SDV'),
-            dataIndex: 'sdv',
-            sorter: (a, b) => {
-                const nameA = a.sdv || '';
-                const nameB = b.sdv || '';
-                return nameA.localeCompare(nameB);
-            },
-            sortDirections: ['ascend', 'descend'],
-        });
-    }
-
-    columns.push({
-        title: props.t('Actions'),
-        dataIndex: 'actions',
-        key: 'actions'
-    });
 
     const handleClick = () => {
         if (studyUserSiteData.sites.length < 1) {
@@ -383,14 +408,8 @@ const SubjectList = props => {
     }, [studyUserSitesData, errorSite, isLoadingSite]);
 
     const handleDeleteOrArchiveSubmit = async () => {
-        if (comment == null || comment === "") {
-            Swal.fire({
-                title: "",
-                text: props.t("Comment cannot be empty!"),
-                icon: "error",
-                confirmButtonText: props.t("Ok"),
-            });
-
+        if (comment == null || comment.trim() === "") {
+            setTextError(props.t("This field is required"));
             return;
         }
         else {
@@ -407,22 +426,17 @@ const SubjectList = props => {
 
             if (response.data !== undefined)
                 if (response.data.isSuccess) {
-                    Swal.fire({
-                        title: "",
-                        text: props.t(response.data.message),
-                        icon: "success",
-                        confirmButtonText: props.t("Ok"),
+                    toastRef.current.setToast({
+                        message: props.t(response.data.message),
+                        stateToast: true,
                     });
-
                     modalRefDel.current.tog_backdrop();
                     setComment("");
                     dispatch(endloading());
                 } else {
-                    Swal.fire({
-                        title: "",
-                        text: response.data.message,
-                        icon: "error",
-                        confirmButtonText: props.t("Ok"),
+                    toastRef.current.setToast({
+                        message: props.t(response.data.message),
+                        stateToast: false,
                     });
 
                     dispatch(endloading());
@@ -434,6 +448,16 @@ const SubjectList = props => {
         setShowArchivedSubjects(e.target.checked);
         updateSubjectsList(studyId, showArchivedSubjects);
     }
+
+    const [textError, setTextError] = useState("");
+
+    const handleBlur = () => {
+        if (comment.trim() === "") {
+            setTextError(props.t("This field is required"));
+        } else {
+            setTextError("");
+        }
+    };
 
     return (
         <React.Fragment>
@@ -500,20 +524,19 @@ const SubjectList = props => {
             />
             <ModalComp
                 refs={modalRefDel}
-                title={isDelete ? props.t("Delete") : props.t("Archive")}
+                title={subjectNumber + " " + (isDelete ? props.t("deletion") : props.t("archiving"))}
                 size={"md"}
                 body={
                     <div className="row">
                         <div className="mb-3 col-md-12">
-                            <Label className="form-label">{isDelete ? subjectNumber + props.t("will be deleted") : props.t("This data will be archived.")}</Label>
-                            <div className="form-label">{isDelete ? props.t("You cannot recover this data. Do you confirm?") : props.t("Do you confirm?")}</div>
-                            <Input
-                                type="textarea"
-                                rows="3"
-                                placeholder={props.t("Comments")}
-                                value={comment}
-                                onChange={handleChangeComment}
-                            />
+                            <Label className="form-label">{isDelete ? props.t("This subject will be deleted.") : props.t("This subject will be archived.")}</Label>
+                            <div className="form-label">{props.t("Do you confirm?")}</div>                   
+                            <TextArea rows={4} placeholder={props.t("Comments")} value={comment} onChange={handleChangeComment} onBlur={handleBlur} />
+                            {textError && (
+                                <div className="text-danger">
+                                    {textError}
+                                </div>
+                            )}
                         </div>
                     </div>
                 }
