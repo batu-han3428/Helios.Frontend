@@ -968,7 +968,7 @@ class Properties extends React.Component {
     //}
 
     render() {
-        const selectedValue = Array.isArray(this.state.widthSelectedGroup)
+        const selectedValue = Array.isArray(this.state.widthSelectedGroup) && this.state.widthSelectedGroup.length > 0
             ? (this.state.widthSelectedGroup[0].value === 0
                 ? this.state.widthOptionGroup.find(option => option.value === 12)
                 : this.state.widthOptionGroup.find(option => option.value === this.state.widthSelectedGroup[0].value))

@@ -55,14 +55,14 @@ const AddSubjectComp = props => {
                 const response = await addingSubject(values);
                 var retVal = response.data.values;
                 if (response.data.isSuccess) {
-                    Swal.fire({
-                        title: "",
-                        text: props.t(response.data.message),
-                        icon: "success",
-                        confirmButtonText: props.t("Ok"),
+                    let message = props.t(response.data.message).replace("{SubjectNo}", retVal.subjectNumber);
+                    if (retVal.addedById > 0) message = message.replace("{n}", retVal.addedById);
+                    props.toast.current.setToast({
+                        message: message,
+                        stateToast: true,
                     });
                     props.refs.current.tog_backdrop();
-                    navigate(`/subject-detail/${retVal.studyId}/${retVal.firstPageId}/${retVal.id}`);
+                    navigate(`/subject-detail/${retVal.studyId}/${retVal.firstPageId}/${retVal.id}/${retVal.subjectNumber}`);
                 } else {
                     Swal.fire({
                         title: "",

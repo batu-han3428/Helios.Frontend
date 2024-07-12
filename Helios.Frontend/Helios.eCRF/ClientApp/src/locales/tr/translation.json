@@ -469,5 +469,11 @@
   "Unarchive": "Arşivden çıkar",
   "Value should not be less than": "Değer aralığı gereğı: en az ",
   "and greater than": " ve en fazla ",
-  "Include ishidden fields": "Gizlenmiş alanları dahil et"
+  "Include ishidden fields": "Gizlenmiş alanları dahil et",
+  "This subject created with subject number {SubjectNo}.": "{SubjectNo} numaralı hasta oluşturulmuştur.",
+  "This subject created with subject number {SubjectNo}. Your remaining subject addition limit for this site : {n}": "{SubjectNo} numaralı hasta oluşturulmuştur. Bu merkez için kalan hasta ekleme limitiniz : {n}",
+  "archiving": "arşivleme",
+  "This subject will be archived.": "Bu hasta arşivlenecektir.",
+  "deletion": "silme",
+  "This subject will be deleted.": "Bu hasta silinecektir."
 }

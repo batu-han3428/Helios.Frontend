@@ -621,5 +621,11 @@
   "Unarchive": "Unarchive",
   "Value should not be less than": "Value should not be less than ",
   "and greater than": " and greater than ",
-  "Include ishidden fields": "Include ishidden fields"
+  "Include ishidden fields": "Include ishidden fields",
+  "This subject created with subject number {SubjectNo}.": "This subject created with subject number {SubjectNo}.",
+  "This subject created with subject number {SubjectNo}. Your remaining subject addition limit for this site : {n}": "This subject created with subject number {SubjectNo}. Your remaining subject addition limit for this site : {n}",
+  "archiving": "archiving",
+  "This subject will be archived.": "This subject will be archived.",
+  "deletion": "deletion",
+  "This subject will be deleted.": "This subject will be deleted."
 }
