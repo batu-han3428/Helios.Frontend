@@ -100,6 +100,13 @@ namespace Helios.eCRF.Controllers
             return result;
         }
 
+        [HttpPost]
+        public async Task<ApiResponse<dynamic>> AddDatagridSubjectElements(List<SubjectVisitPageModuleElementModel> model)
+        {
+            var result = await _subjectService.AddDatagridSubjectElements(model);
+            return result;
+        }
+
         [HttpGet]
         public async Task<bool> GetStudyAskSubjectInitial(Int64 studyId)
         {

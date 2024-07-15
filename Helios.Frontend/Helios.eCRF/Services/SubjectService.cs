@@ -186,6 +186,17 @@ namespace Helios.eCRF.Services
             }
         }
 
+        public async Task<ApiResponse<dynamic>> AddDatagridSubjectElements(List<SubjectVisitPageModuleElementModel> model)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/AddDatagridSubjectElements", Method.Post);
+                req.AddJsonBody(model);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
         public async Task<bool> GetStudyAskSubjectInitial(Int64 studyId)
         {
             using (var client = CoreServiceClient)

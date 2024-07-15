@@ -29,20 +29,22 @@ import { useAutoSaveSubjectMutation } from '../../../store/services/Subject';
 function SubjectDetailElementList(props) {
     const toastRef = useRef();
     const [tenantId] = useState(props.TenantId);
-    const [moduleId] = useState(props.ModuleId);
+    const [subjectVisitPageModuleId] = useState(props.ModuleId);
     const [studyId] = useState(props.StudyId);
+    const [dataGridRowId] = useState(props.DataGridRowId);
     const [isDisable] = useState(props.IsDisable);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
 
-    const AutoSave = async (id, value, type = 0) => {
+    const AutoSave = async (id, value, dataGridRowId = 0, type = 0) => {
         if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
             dispatch(startloading());
             const response = await autoSaveSubject({
                 Id: id,
-                Value: value
+                Value: value,
+                DataGridRowId: dataGridRowId
             });
             if (response.data.isSuccess) {
                 toastRef.current.setToast({
@@ -63,8 +65,11 @@ function SubjectDetailElementList(props) {
         const dsbl = isDisable ? "disabled" : "";
         const commonProps = {
             Id: param.subjectVisitPageModuleElementId,
+            StudyVisitPageModuleElementId: param.studyVisitPageModuleElementId,
+            SubjectVisitPageModuleId: param.subjectVisitPageModuleId,
             Value: param.userValue ?? "",
             IsDisable: dsbl,
+            DataGridRowId: dataGridRowId,
             HandleAutoSave: AutoSave,
         };
 
@@ -98,9 +103,9 @@ function SubjectDetailElementList(props) {
             case 14:
                 return <ConcomittantMedicationElement IsDisable={isDisable} ButtonText={param.buttonText} />;
             case 15:
-                return <TableElement {...commonProps} StudyId={studyId} FormType={0} TenantId={tenantId} ModuleId={moduleId} UserId={0} ColumnCount={param.columnCount} RowCount={param.rowCount} DatagridAndTableProperties={param.datagridAndTableProperties} ChildElementList={param.childElements} Dispatch={dispatch} IsFromDesign={false} />;
+                return <TableElement {...commonProps} StudyId={studyId} FormType={0} TenantId={tenantId} ModuleId={subjectVisitPageModuleId} UserId={0} ColumnCount={param.columnCount} RowCount={param.rowCount} DatagridAndTableProperties={param.datagridAndTableProperties} ChildElementList={param.childElements} Dispatch={dispatch} IsFromDesign={false} />;
             case 16:
-                return <DatagridElement {...commonProps} StudyId={studyId} FormType={0} TenantId={tenantId} ModuleId={moduleId} UserId={0} ColumnCount={param.columnCount} DatagridAndTableProperties={param.datagridAndTableProperties} ChildElementList={param.childElements} Dispatch={dispatch} IsFromDesign={false} />;
+                return <DatagridElement {...commonProps} StudyId={studyId} FormType={0} TenantId={tenantId} ModuleId={subjectVisitPageModuleId} UserId={0} ColumnCount={param.columnCount} RowCount={param.rowCount} DatagridAndTableProperties={param.datagridAndTableProperties} ChildElementList={param.childElements} Dispatch={dispatch} IsFromDesign={false} />;
             case 17:
                 return <AdverseEventElement AdverseEventType={param.adverseEventType} IsDisable={isDisable} />;
             default:

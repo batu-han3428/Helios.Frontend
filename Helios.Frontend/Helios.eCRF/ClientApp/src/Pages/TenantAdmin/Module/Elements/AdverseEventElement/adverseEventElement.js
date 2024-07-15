@@ -11,6 +11,7 @@ class AdverseEventElement extends Component {
             isDisable: props.IsDisable,
             //Value: props.Value === undefined ? "" : props.Value,
             Value: "",
+            dataGridRowId: props.DataGridRowId
         }
 
         this.handleValueChange = this.handleValueChange.bind(this);

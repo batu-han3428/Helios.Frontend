@@ -28,26 +28,26 @@ const SubjectDetail = props => {
     const [openSubMenuKeys, setOpenSubMenuKeys] = useState(['sub1']);
     const [openMobileMenu, setOpenMobileMenu] = useState(false);
     const [leftMenuData, setLeftMenuData] = useState([]);
-    const [subjectElementList, setSubjectElementList] = useState([]);   
-  
+    const [subjectElementList, setSubjectElementList] = useState([]);
+
     const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery();
     const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId });
 
-    const [currentPage, setCurrentPage] = useState(pageId); 
+    const [currentPage, setCurrentPage] = useState(pageId);
 
-    const goToNextPage = () => {     
+    const goToNextPage = () => {
         const nextPage = Number(pageId) + 1;
         setCurrentPage(nextPage);
         navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}`);
-       
+
     };
 
-    const goToPreviousPage = () => {     
+    const goToPreviousPage = () => {
         if (currentPage > 1) {
             const nextPage = Number(pageId) - 1;
             setCurrentPage(nextPage);
             navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}`);
-        }       
+        }
     };
 
 
@@ -138,7 +138,7 @@ const SubjectDetail = props => {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-   
+
     const showDrawer = () => {
         setOpenMobileMenu(true);
     };
@@ -162,8 +162,11 @@ const SubjectDetail = props => {
                         <Col xs={24} sm={24} md={18} lg={18} xl={19}>
                             <div>
                                 <SubjectDetailElementList
+                                    StudyId={studyId}
+                                    ModuleId={0 }
                                     IsDisable={false}
                                     ElementList={subjectElementList}
+                                    DataGridRowId={null}
                                 />
                             </div>
                         </Col>
@@ -171,7 +174,7 @@ const SubjectDetail = props => {
                 </div>
             </div>
             <footer style={{ position: 'fixed', bottom: 0, right: 0, width: '81%', background: '#f1f1f1', padding: '10px', textAlign: 'right' }}>
-                <div style={{ textAlign: 'right', display: 'flex',alignItems: 'center', justifyContent: 'flex-end' }}>
+                <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                     <div style={{ display: isPrevButton ? 'inline-block' : 'none', marginRight: '10px' }}>
                         <Button className="btn btn-outline-dark waves-effect waves-light" onClick={goToPreviousPage} icon={<LeftOutlined />}>{props.t("Previous page")}</Button>
                     </div>
