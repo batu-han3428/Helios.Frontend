@@ -165,7 +165,7 @@ function ElementList(props) {
                 return <DateElement
                     Title={param.title}
                     IsRequired={param.isRequired}
-                    IsDisable={isDisable}
+                    IsDisable={true}
                     AddTodayDate={param.addTodayDate}
                     StartDay={param.startDay}
                     EndDay={param.endDay}
@@ -174,7 +174,7 @@ function ElementList(props) {
                     StartYear={param.startYear}
                     EndYear={param.endYear}
                     DefaultValue={param.defaultValue}
-                    IsPreview={false}
+                    IsPreview={true}
                 />
             case 7:
                 return <CalculationElement
