@@ -53,14 +53,14 @@ function Preview() {
         fetchData();
         getModule();
         dispatch(endloading());
-    });
+    }, []);
 
     const fetchData = () => {
-        fetch(API_BASE_URL + 'Module/GetModuleElementsWithChildren?id=' + moduleId, {
+        fetch(API_BASE_URL + 'Study/GetStudyModuleElementsWithChildren?studyVisitPageModuleId=' + moduleId, {
             method: 'GET',
         })
             .then(response => response.json())
-            .then(data => {                
+            .then(data => {    
                 setModuleElementList(data);
             })
             .catch(error => {
@@ -80,6 +80,7 @@ function Preview() {
                 //console.error('Error:', error);
             });
     }
+
     const AutoSaveElement = () => {
         fetch(API_BASE_URL + 'Module/AutoSaveElement?id=' + ElementId + '&value=' + ElementValue, {
             method: 'POST',

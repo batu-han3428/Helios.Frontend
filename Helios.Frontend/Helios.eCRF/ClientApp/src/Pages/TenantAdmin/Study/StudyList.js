@@ -181,10 +181,10 @@ const StudyList = props => {
     const { isLocked } = useParams();
 
     useEffect(() => {
-        if (isLocked) {
+        if (isLocked && tenantId) {
             trigger({ isLocked: isLocked === 'true' ? true : false, tenantId: tenantId });
         }
-    }, [isLocked]);
+    }, [isLocked, tenantId]);
 
     useEffect(() => {
         dispatch(startloading());

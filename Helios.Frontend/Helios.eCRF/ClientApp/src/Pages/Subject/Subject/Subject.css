@@ -9,8 +9,7 @@
     color: rgba(0, 0, 0, 0.88) !important;
 }
 
-.menu-container {
-    height: calc(100vh - 70px);
+.menu-container {  
     overflow-y: auto;
     border: 1px solid #ddd;
 }

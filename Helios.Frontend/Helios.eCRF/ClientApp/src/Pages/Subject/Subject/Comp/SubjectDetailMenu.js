@@ -153,6 +153,7 @@ const SubjectDetailMenu = props => {
 
     return (
         <Menu
+            style={{height:props.height}}
             onClick={onClick}
             className={!props.isMobil ? "menu-container" : ""}
             mode="inline"

@@ -728,7 +728,7 @@ class Properties extends React.Component {
             StartDay: data.startDay,
             EndDay: data.endDay,
             StartMonth: data.startMonth,
-            EndMonth: data.EndMonth,
+            EndMonth: data.endMonth,
             StartYear: data.startYear,
             EndYear: data.endYear,
             IsRequired: data.isRequired,

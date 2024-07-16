@@ -202,13 +202,17 @@ class DateElement extends Component {
 
     handleTodayButton = () => {
         const today = new Date();
-
-        this.setState({
+        const updates = {
             DaySelectedGroup: { label: today.getDate(), value: today.getDate() },
             MonthSelectedGroup: { label: today.getMonth() + 1, value: today.getMonth() + 1 },
-            YearSelectedGroup: { label: today.getFullYear(), value: today.getFullYear() },
-        });
-    }
+        };
+
+        if (this.state.EndYear === today.getFullYear()) {
+            updates.YearSelectedGroup = { label: today.getFullYear(), value: today.getFullYear() };
+        }
+
+        this.setState(updates);
+    };
 
     render() {
         return (
@@ -222,7 +226,7 @@ class DateElement extends Component {
                             </label>
                             {this.state.IsPreview && this.state.AddTodayDate &&
 
-                                <Button color="" style={{ border: '1px solid #bebebe', marginLeft: '8px', marginBottom: '10px' }} onClick={this.handleTodayButton}>
+                                <Button disabled={this.state.isDisable} color="" style={{ border: '1px solid #bebebe', marginLeft: '8px', marginBottom: '10px' }} onClick={this.handleTodayButton}>
                                     {this.props.t("Today")}
                                 </Button>
 

@@ -146,21 +146,62 @@ const SubjectDetail = props => {
     const onClose = () => {
         setOpenMobileMenu(false);
     };
+    const myDivRef = useRef(null);
+    const [menuHeight, setMenuHeight] = useState(0);
+    const sidebarRef = useRef(null);
+    const footerRef = useRef(null);
+    const [sidebarWidth, setSidebarWidth] = useState(0);
+
+    const updateMenuHeight = () => {
+        if (myDivRef.current) {
+            setMenuHeight(myDivRef.current.clientHeight);
+        }
+    };
+
+    const updateSidebarWidth = () => {
+        if (sidebarRef.current) {
+            const currentSidebarWidth = sidebarRef.current.getBoundingClientRect().width;
+            setSidebarWidth(currentSidebarWidth);
+        }
+    };
+
+    useEffect(() => {
+        if (subjectElementList) {
+            updateMenuHeight();
+            const handleResize = () => {
+                updateMenuHeight();
+            };
+            window.addEventListener('resize', handleResize);
+            updateSidebarWidth();
+            window.addEventListener('resize', updateSidebarWidth);
+            return () => {
+                window.removeEventListener('resize', handleResize);
+                window.removeEventListener('resize', updateSidebarWidth);
+            };
+        }
+        
+    }, [subjectElementList]);
+
+    useEffect(() => {
+        if (footerRef.current) {
+            footerRef.current.style.width = `calc(100% - (${sidebarWidth}px - 16px))`;
+        }
+    }, [sidebarWidth]);
 
     return (
         <React.Fragment>
-            <div className="page-content" style={{ paddingBottom: '100px', paddingLeft: 0 }}>
+            <div className="page-content" style={{ paddingBottom:0,  paddingLeft: 0 }}>
                 <div className="container-fluid" style={{ paddingLeft: 0 }}>
-                    <Row gutter={16}>
-                        <Col xs={0} sm={0} md={6} lg={6} xl={5}>
-                            <SubjectDetailMenu subjectNumber={subjectNumber} setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} />
+                    <Row gutter={16} >
+                        <Col xs={0} sm={0} md={6} lg={6} xl={5} ref={sidebarRef}>
+                            <SubjectDetailMenu height={menuHeight} subjectNumber={subjectNumber} setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} />
                         </Col>
                         <Col xs={1} sm={1} md={0} lg={0} xl={0}>
                             <Button style={{ position: "fixed", top: "80px", left: "10px", zIndex: "1000" }} onClick={showDrawer} shape="circle" icon={<MenuOutlined />} />
                             <SubjectDetailDrawer onClose={onClose} openMobileMenu={openMobileMenu} content={<SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={true} studyId={studyId} subjectId={subjectId} />} />
                         </Col>
-                        <Col xs={24} sm={24} md={18} lg={18} xl={19}>
-                            <div>
+                        <Col xs={24} sm={24} md={18} lg={18} xl={19} >
+                            <div ref={myDivRef} id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom:"100px" }}>
                                 <SubjectDetailElementList
                                     IsDisable={false}
                                     ElementList={subjectElementList}
@@ -170,8 +211,8 @@ const SubjectDetail = props => {
                     </Row>
                 </div>
             </div>
-            <footer style={{ position: 'fixed', bottom: 0, right: 0, width: '81%', background: '#f1f1f1', padding: '10px', textAlign: 'right' }}>
-                <div style={{ textAlign: 'right', display: 'flex',alignItems: 'center', justifyContent: 'flex-end' }}>
+            <footer ref={footerRef} style={{ position: 'fixed', bottom: 0, right: 0, width: '81%', background: '#f1f1f1', padding: '10px', textAlign: 'right' }}>
+                <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                     <div style={{ display: isPrevButton ? 'inline-block' : 'none', marginRight: '10px' }}>
                         <Button className="btn btn-outline-dark waves-effect waves-light" onClick={goToPreviousPage} icon={<LeftOutlined />}>{props.t("Previous page")}</Button>
                     </div>
