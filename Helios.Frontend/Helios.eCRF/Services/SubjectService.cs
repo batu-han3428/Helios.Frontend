@@ -171,8 +171,28 @@ namespace Helios.eCRF.Services
                 req.AddParameter("subjectId", subjectId);
                 req.AddParameter("pageId", subjectVisitModulePageId);
                 var result = await client.ExecuteAsync<List<SubjectElementModel>>(req);
+
+                if (result.IsSuccessful && result.Data.Count > 0)
+                {
+                    string targetElementIds = string.Join(",", result.Data.Where(x=>x.IsDependent).Select(x=>x.StudyVisitPageModuleElementId));
+                    var req1 = new RestRequest("CoreStudy/GetDependentHideElement", Method.Get);
+                    req1.AddParameter("targetElementString", targetElementIds);
+                    req1.AddParameter("pageId", subjectVisitModulePageId);
+                    req1.AddParameter("subjectId", subjectId);
+                    var result1 = await client.ExecuteAsync<List<Int64>>(req1);
+                    if (result1.IsSuccessful)
+                    {
+                        RemoveHiddenElements(result.Data, result1.Data);
+                    }
+                }
+                
                 return result;
             }
+        }
+
+        private static void RemoveHiddenElements(List<SubjectElementModel> data, List<Int64> hideElements)
+        {
+            data.RemoveAll(element => hideElements.Contains(element.StudyVisitPageModuleElementId));
         }
 
         public async Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model)

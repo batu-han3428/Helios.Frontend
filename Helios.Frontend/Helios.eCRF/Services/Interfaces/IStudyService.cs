@@ -48,5 +48,6 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> AddStudyVisitAnnotatedCrfVersion(AnnotatedVersionDTO dto);
         Task<RestResponse<List<AnnotatedCrfHistoryModel>>> GetStudyVisitAnnotatedCrfHistory();
         Task<RestResponse<byte[]>> GetStudyVisitAnnotatedCrfHistoryPdf(Int64 id);
+        Task<List<Int64>> GetDependentHideElement(string targetElementIds, string? pValue);
     }
 }

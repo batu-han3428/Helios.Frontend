@@ -156,9 +156,7 @@ class Properties extends React.Component {
 
         this.toastRef = React.createRef();
         this.setShowToast.bind(this);
-        this.fillDependentFieldList();
-        this.getElementData();
-
+        
         this.toggleActiveTab = this.toggleActiveTab.bind(this);
         this.handleSaveModuleContent = this.handleSaveModuleContent.bind(this);
         this.getElementData = this.getElementData.bind(this);
@@ -218,6 +216,10 @@ class Properties extends React.Component {
         this.changeIsFormValid.bind(this);
 
         this.changeValidationList.bind(this);
+    }
+
+    componentDidMount() {
+        this.getElementData();
     }
 
     setShowToast() {
@@ -408,11 +410,11 @@ class Properties extends React.Component {
                 if (this.state.Id !== 0 && this.state.Id !== undefined) {
                     var t = this.state.DependentSourceFieldId;
 
-                    var f = this.state.dependentFieldOptionGroup.filter(function (e) {
+                    var f = depFldOptionGroup.filter(function (e) {
                         if (e.value === t)
                             return e;
                     });
-
+    
                     this.setState({
                         dependentFieldsSelectedGroup: f,
                     });
@@ -797,7 +799,7 @@ class Properties extends React.Component {
             this.setState({ dependentEnabled: false });
         }
 
-        this.setState({ ValidationList: data.validationList });
+        this.setState({ ValidationList: data.validationList }, this.fillDependentFieldList());
     }
 
     postModuleContent() {

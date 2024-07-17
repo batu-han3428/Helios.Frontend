@@ -174,7 +174,7 @@ function ElementList(props) {
                     StartYear={param.startYear}
                     EndYear={param.endYear}
                     DefaultValue={param.defaultValue}
-                    IsPreview={true}
+                    IsPreview={false}
                 />
             case 7:
                 return <CalculationElement

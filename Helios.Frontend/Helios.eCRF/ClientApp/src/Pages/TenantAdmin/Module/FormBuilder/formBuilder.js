@@ -77,7 +77,7 @@ const FormBuilder = props => {
     const navigate = useNavigate();
 
     const navigateToPreview = (id) => {
-        navigate(`/preview/${id}`);
+        navigate(`/preview/${id}/${moduleName}/${isStudy}`);
     };
 
     const [modalTitle, setModalTitle] = useState("");
