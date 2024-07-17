@@ -575,6 +575,13 @@ namespace Helios.eCRF.Controllers
 
             return result;
         }
-        #endregion     
+
+        [HttpGet]
+        public async Task<List<Int64>> GetDependentHideElement(string targetElementIds, string? pValue)
+        {
+            var result = await _studyService.GetDependentHideElement(targetElementIds, pValue);
+            return result;
+        }
+        #endregion
     }
 }

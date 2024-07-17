@@ -26,7 +26,7 @@ class DateElement extends Component {
             id: props.Id,
             Title: props.Title,
             IsRequired: props.IsRequired,
-            isDisable: props.IsDisable,
+            isDisable: props.IsDisable === "" ? false : props.IsDisable,
             AddTodayDate: props.AddTodayDate,
             StartDay: props.StartDay,
             EndDay: props.EndDay,
@@ -212,28 +212,28 @@ class DateElement extends Component {
         }
 
         this.setState(updates);
+        var value = updates.DaySelectedGroup.value + '.' + updates.MonthSelectedGroup.value + '.' + updates.YearSelectedGroup.value;
+        this.props.HandleAutoSave(this.state.id, value);
     };
 
     render() {
         return (
             <>
                 <Row>
-                    {this.state.IsPreview && (
-                        <div>
+                   
+                    <div>
+                        {this.state.IsPreview && (
                             <label>
                                 {this.state.IsRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
                                 {this.state.Title}
                             </label>
-                            {this.state.IsPreview && this.state.AddTodayDate &&
-
-                                <Button disabled={this.state.isDisable} color="" style={{ border: '1px solid #bebebe', marginLeft: '8px', marginBottom: '10px' }} onClick={this.handleTodayButton}>
-                                    {this.props.t("Today")}
-                                </Button>
-
-                            }
-                        </div>
-                    )}
-
+                        )}
+                        {this.state.AddTodayDate &&
+                            <Button disabled={this.state.isDisable} color="" style={{ border: '1px solid #bebebe', marginLeft: '8px', marginBottom: '10px' }} onClick={this.handleTodayButton}>
+                                {this.props.t("Today")}
+                            </Button>
+                        }
+                    </div>
                 </Row>
                 <Row>
                     <div className="col-md-3">

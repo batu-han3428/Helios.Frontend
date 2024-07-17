@@ -1,5 +1,4 @@
-﻿using Helios.Common;
-using Helios.Common.DTO;
+﻿using Helios.Common.DTO;
 using Helios.Common.Enums;
 using Helios.Common.Model;
 using Helios.eCRF.Hubs;
@@ -1031,6 +1030,21 @@ border-width: 1px 0 1px 0;
 
             return module;
         }
+
+        public async Task<List<Int64>> GetDependentHideElement(string targetElementIds, string? pValue)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreStudy/GetDependentHideElement", Method.Get);
+                req.AddParameter("targetElementString", targetElementIds);
+                req.AddParameter("padeId", 0);
+                req.AddParameter("subjectId", 0);
+                req.AddParameter("pValue", pValue);
+                var result = await client.ExecuteAsync<List<Int64>>(req);
+                return result.Data;
+            }
+        }
+
         #endregion
     }
 }

@@ -141,7 +141,7 @@ const userRoutes = [
     { path: "/moduleList", component: <Module />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/addModule", component: <AddOrUpdateModule />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/formBuilder/:moduleId/:isStudy", component: <FormBuilder />, menuType: "admin", roles: ['TenantAdmin'] },
-    { path: "/preview/:moduleId", component: <Preview />, menuType: "admin", roles: ['TenantAdmin'] },
+    { path: "/preview/:moduleId/:moduleName/:isStudy", component: <Preview />, menuType: "admin", roles: ['TenantAdmin'] },
 
     //study
     { path: "/studylist/:isLocked", component: <StudyList />, menuType: "admin", roles: ['TenantAdmin'] },

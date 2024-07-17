@@ -1,23 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import {
-    Row,
-    Col,
-    Card,
-    CardBody,
-    CardTitle,
-    Modal,
-    Container,
-    ModalBody,
-    ModalHeader,
-    ModalFooter,
-    Button,
-} from "reactstrap";
+import { Row, Col } from "reactstrap";
 import { useParams, useNavigate } from "react-router-dom";
-import Properties from './properties.js';
 import './formBuilder.css';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { startloading, endloading } from '../../../../store/loader/actions';
-import Swal from 'sweetalert2'
 import ToastComp from '../../../../components/Common/ToastComp/ToastComp';
 import TextElement from '../Elements/TextElement/textElement.js';
 import NumericElement from '../Elements/NumericElement/numericElement.js';
@@ -37,13 +23,15 @@ import AdverseEventElement from '../Elements/AdverseEventElement/adverseEventEle
 import { withTranslation } from "react-i18next";
 import { API_BASE_URL } from '../../../../constants/endpoints';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import HiddenElement from '../Elements/HiddenElement/hiddenElement';
 
 function Preview() {
     const toastRef = useRef();
     const [tenantId, setTenantId] = useState(0);
-    const { moduleId } = useParams();
+    const { moduleId, moduleName, isStudy } = useParams();
+    const [dependentData, setDependentData] = useState([]);
     const [moduleElementList, setModuleElementList] = useState([]);
-    const [moduleName, setModuleName] = useState([]);
+    const [defaultModuleElementList, setDefaultModuleElementList] = useState([]);
     const [ElementId, setElementId] = useState(0);
     const [ElementValue, setElementValue] = useState("");
     const dispatch = useDispatch();
@@ -51,7 +39,6 @@ function Preview() {
     useEffect(() => {
         dispatch(startloading());
         fetchData();
-        getModule();
         dispatch(endloading());
     }, []);
 
@@ -61,25 +48,28 @@ function Preview() {
         })
             .then(response => response.json())
             .then(data => {    
-                setModuleElementList(data);
+                let dependentElm = data.filter(x => x.isDependent === true);
+                setDependentData(dependentElm);
+                setDefaultModuleElementList(data.map(item => ({ ...item })));
+                setModuleElementList(data.map(item => ({ ...item })));
             })
             .catch(error => {
                 //console.error('Error:', error);
             });
     }
 
-    const getModule = () => {
-        fetch(API_BASE_URL + 'Module/GetModule?id=' + moduleId, {
-            method: 'GET',
-        })
-            .then(response => response.json())
-            .then(data => {
-                setModuleName(data.name);
-            })
-            .catch(error => {
-                //console.error('Error:', error);
-            });
-    }
+    useEffect(() => {
+        if (dependentData.length > 0 && defaultModuleElementList.length > 0) {
+            const targetElementIds = defaultModuleElementList.flatMap(d =>
+                dependentData
+                    .filter(x => x.dependentSourceFieldId === d.id)
+                    .map(x => x.id)
+            );
+            if (targetElementIds.length > 0) {
+                hideDependentElement({ tElmIds: targetElementIds, value: null })
+            }
+        }
+    }, [dependentData, defaultModuleElementList])
 
     const AutoSaveElement = () => {
         fetch(API_BASE_URL + 'Module/AutoSaveElement?id=' + ElementId + '&value=' + ElementValue, {
@@ -92,11 +82,36 @@ function Preview() {
             });
     }
 
-    const AutoSave = (value) => {
-        debugger;
+    const AutoSave = (id, value) => {
+        let targetElementIds = dependentData.filter(x => x.dependentSourceFieldId === id).map(x => x.id);
+        if (targetElementIds.length > 0) {
+            hideDependentElement({ tElmIds: targetElementIds, value: value })
+        }
+       
     }
 
+    const hideDependentElement = (data) => {
+        fetch(API_BASE_URL + 'Study/GetDependentHideElement?targetElementIds=' + data.tElmIds + '&pValue=' + data.value, {
+            method: 'GET',
+        })
+            .then(response => response.json())
+            .then(data => {
+                const updatedList = defaultModuleElementList.filter(
+                    element => !data.includes(element.id)
+                );
+                setModuleElementList(updatedList);
+            })
+            .catch(error => {
+                //console.error('Error:', error);
+            });
+    };
+
     const renderElementsSwitch = (param) => {
+        console.log(param)
+        const commonProps = {
+            HandleAutoSave: AutoSave,
+            IsDependent: param.isDependent
+        };
         switch (param.elementType) {
             case 1:
                 return <LabelElement
@@ -106,8 +121,10 @@ function Preview() {
                 return <TextElement
                     Id={param.id}
                     IsDisable={""}
-                    HandleAutoSave={AutoSave}
+                    {...commonProps}
                 />;
+            case 3:
+                return <HiddenElement value={param.targetElementName} />;
             case 4:
                 return <NumericElement
                     Id={param.id} SetElementId={setElementId}
@@ -118,12 +135,14 @@ function Preview() {
                     LowerLimit={0}
                     UpperLimit={0}
                     AutoSaveElement={AutoSaveElement}
+                    {...commonProps}
                 />;
             case 5:
                 return <TextareaElement
                     Id={param.id}
                     IsDisable={false}
                     DefaultValue={param.defaultValue}
+                    {...commonProps}
                 />
             case 6:
                 return <DateElement
@@ -140,10 +159,12 @@ function Preview() {
                     EndYear={param.endYear}
                     DefaultValue={param.defaultValue}
                     IsPreview={true}
+                    {...commonProps}
                 />
             case 7:
                 return <CalculationElement
                     Id={param.id}
+                    {...commonProps}
                 />
             case 8:
                 return <RadioElement
@@ -151,6 +172,7 @@ function Preview() {
                     IsDisable={""}
                     Layout={param.layout}
                     ElementOptions={param.elementOptions}
+                    {...commonProps}
                 />
             case 9:
                 return <CheckElement
@@ -159,23 +181,27 @@ function Preview() {
                     Layout={param.layout}
                     ElementOptions={param.elementOptions}
                     Value={[]}
+                    {...commonProps}
                 />
             case 10:
                 return <DropdownElement
                     Id={param.id}
                     IsDisable={false}
                     ElementOptions={param.elementOptions}
+                    {...commonProps}
                 />
             case 11:
                 return <DropdownCheckListElement
                     Id={param.id}
                     IsDisable={false}
                     ElementOptions={param.elementOptions}
+                    {...commonProps}
                 />
             case 12:
                 return <FileUploaderElement
                     Id={param.id}
                     IsDisable={false}
+                    {...commonProps}
                 />
             case 13:
                 return <RangeSliderElement
@@ -186,6 +212,7 @@ function Preview() {
                     LeftText={param.leftText}
                     RightText={param.rightText}
                     DefaultValue={param.defaultValue}
+                    {...commonProps}
                 />
             case 15:
                 return <TableElement
@@ -194,7 +221,8 @@ function Preview() {
                     ColumnCount={param.columnCount} RowCount={param.rowCount}
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
-                    IsFromDesign={false }
+                    IsFromDesign={false}
+                    {...commonProps}
                 />
             case 16:
                 return <DatagridElement
@@ -203,18 +231,21 @@ function Preview() {
                     ColumnCount={param.columnCount}
                     DatagridAndTableProperties={param.datagridAndTableProperties}
                     ChildElementList={param.childElements}
-                    IsFromDesign={false }
+                    IsFromDesign={false}
+                    {...commonProps}
                 />
             case 17:
                 return <AdverseEventElement
                     Id={param.id}
                     AdverseEventType={param.adverseEventType}
                     IsDisable={false}
+                    {...commonProps}
                 />
             default:
                 return <TextElement
                     Id={param.id}
                     IsDisable={""}
+                    {...commonProps}
                 />;
         }
     }
@@ -244,7 +275,7 @@ function Preview() {
 
     const navigate = useNavigate();
     const backPage = () => {
-        navigate('/formBuilder/' + moduleId);
+        navigate(`/formBuilder/${moduleId}/${isStudy}`);
     };
     return (
         <div>           
