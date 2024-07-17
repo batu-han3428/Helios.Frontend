@@ -475,5 +475,12 @@
   "archiving": "arşivleme",
   "This subject will be archived.": "Bu hasta arşivlenecektir.",
   "deletion": "silme",
-  "This subject will be deleted.": "Bu hasta silinecektir."
+  "This subject will be deleted.": "Bu hasta silinecektir.",
+  "SDV done": "SDV tamamlandı",
+  "Ready for SDV": "SDV için hazır",
+  "Partial SDV": "Kısmi SDV",
+  "Closed": "Kapatıldı",
+  "Unanswered": "Cevaplanmadı",
+  "Answered": "Cevaplandı",
+  "Data change after query": "Sorgudan sonra veri değişikliği"
 }

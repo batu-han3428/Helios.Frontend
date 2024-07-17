@@ -627,5 +627,12 @@
   "archiving": "archiving",
   "This subject will be archived.": "This subject will be archived.",
   "deletion": "deletion",
-  "This subject will be deleted.": "This subject will be deleted."
+  "This subject will be deleted.": "This subject will be deleted.",
+  "SDV done": "SDV done",
+  "Ready for SDV": "Ready for SDV",
+  "Partial SDV": "Partial SDV",
+  "Closed": "Closed",
+  "Unanswered": "Unanswered",
+  "Answered": "Answered",
+  "Data change after query": "Data change after query"
 }
