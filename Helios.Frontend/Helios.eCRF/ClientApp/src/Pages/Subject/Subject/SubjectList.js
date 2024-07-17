@@ -7,6 +7,7 @@ import { Button, Label } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { formatDate } from "../../../helpers/format_date";
+import { IconStatu } from "../../../helpers/icon_helper";
 import { useDispatch, connect } from "react-redux";
 import withRouter from '../../../components/Common/withRouter';
 import { startloading, endloading } from '../../../store/loader/actions';
@@ -79,6 +80,7 @@ const SubjectList = props => {
                     createdAt: formatDate(item.createdAt),
                     updatedAt: formatDate(item.updatedAt),
                     actions: getActions(item),
+                    sdv: IconStatu(0),
                     key: uuidv4()
                 };
             });
@@ -281,6 +283,7 @@ const SubjectList = props => {
                 return nameA.localeCompare(nameB);
             },
             sortDirections: ['ascend', 'descend'],
+            className: 'sdv-center-align', 
         }
     ];
 
