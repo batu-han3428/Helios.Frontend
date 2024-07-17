@@ -1,13 +1,13 @@
 ﻿const menuItems = {
     common: [
-        {
-            label: "Home",
-            to: "/home",
-        },
-        {
-            label: "About",
-            to: "/about",
-        },
+        //{
+        //    label: "Home",
+        //    to: "/home",
+        //},
+        //{
+        //    label: "About",
+        //    to: "/about",
+        //},
     ],
     admin: [
         {
