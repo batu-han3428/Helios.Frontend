@@ -144,7 +144,7 @@ const Login = props => {
     };
 
 
-    document.title = "Login | Veltrix - React Admin & Dashboard Template";
+    document.title = props.t('Login page');
     return (
         loading 
         ||

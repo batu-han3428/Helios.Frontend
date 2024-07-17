@@ -627,5 +627,12 @@
   "archiving": "archiving",
   "This subject will be archived.": "This subject will be archived.",
   "deletion": "deletion",
-  "This subject will be deleted.": "This subject will be deleted."
+  "This subject will be deleted.": "This subject will be deleted.",
+  "Login page": "Login page",
+  "Subject list": "Subject list",
+  "Query list": "Query list",
+  "SDV list": "SDV list",
+  "Data reports": "Data reports",
+  "My profile": "My profile",
+ 
 }

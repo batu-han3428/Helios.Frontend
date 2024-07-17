@@ -59,7 +59,7 @@ const QueryList = props => {
         sorter: (a, b) => a.state.localeCompare(b.state),
         sortDirections: ['ascend', 'descend'],
     });
-
+    document.title = props.t('Query list');
     return (
         <React.Fragment>
             <div className="page-content">

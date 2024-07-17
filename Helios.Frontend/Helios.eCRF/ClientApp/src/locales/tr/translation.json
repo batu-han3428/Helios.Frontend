@@ -475,5 +475,11 @@
   "archiving": "arşivleme",
   "This subject will be archived.": "Bu hasta arşivlenecektir.",
   "deletion": "silme",
-  "This subject will be deleted.": "Bu hasta silinecektir."
+  "This subject will be deleted.": "Bu hasta silinecektir.",
+  "Login page": "Giriş sayfası",
+  "Subject list": "Hasta listesi",
+  "Query list": "Sorgu listesi",
+  "SDV list": "SDV listesi",
+  "Data reports": "Veri raporları",
+  "My profile": "Profilim"
 }
