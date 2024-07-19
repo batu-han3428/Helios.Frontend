@@ -47,12 +47,17 @@ const SubjectList = props => {
     const { data: permissionsData, errorPerm, isLoadingPerm } = useGetUserPermissionsQuery(studyId);
     const { data: subjectsData, error, isLoading } = useGetSubjectListQuery({ studyId: studyId, showArchivedSubjects: showArchivedSubjects });
     const [trigger, { data: studyUserSitesData, errorSite, isLoadingSite }] = useLazyStudyUserSitesGetQuery();
-
+    const [view, setView] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect(() => {
         if (!errorPerm && !isLoadingPerm && permissionsData) {
+            if (!permissionsData.canSubjectView) {
+                navigate('/AccessDenied', { state: { from: props.location } });
+                return;
+            }
+            setView(true);
             setPermissions(permissionsData);
             dispatch(endloading());
         }
@@ -61,7 +66,8 @@ const SubjectList = props => {
         getStudy(studyId);
         updateSubjectsList(studyId, showArchivedSubjects);
 
-    }, [permissionsData, errorPerm, isLoadingPerm, subjectsData, error, isLoading, showArchivedSubjects, studyId]);
+    }, [permissionsData, errorPerm, isLoadingPerm, subjectsData, error, isLoading, showArchivedSubjects, studyId, navigate,
+        dispatch, props.location]);
 
     const updateSubjectsList = (id, showArchived) => {
         if (!error && !isLoading && subjectsData) {
@@ -98,7 +104,7 @@ const SubjectList = props => {
         const actions = (
             <div className="icon-container">
                 <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(studyId, firstPageId, id) }}></div>
-                <div title={props.t("Delete")} className="icon icon-delete" onClick={() => { toggleDeleteModal(id, subjectNumber, true) }}></div>
+                {permissions.canSubjectDelete && <div title={props.t("Delete")} className="icon icon-delete" onClick={() => { toggleDeleteModal(id, subjectNumber, true) }}></div>}
                 {permissions.canSubjectArchive && (
                     <>
                         {isActive ? (
@@ -463,6 +469,7 @@ const SubjectList = props => {
         <React.Fragment>
             <div className="page-content">
                 <div className="container-fluid">
+                    {view && <>
                     <div className="page-title-box">
                         <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
                             <Col md={8}>
@@ -485,6 +492,7 @@ const SubjectList = props => {
                                 </>
                                 }
                             </div>
+                            {permissions.canSubjectAdd && 
                             <div style={{ display: 'inline-block', float: 'right', marginBottom:'5px' }} className="col-md-6" onClick={handleClick}>
                                 <div style={{ float: 'right' }}>
                                     <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>{props.t('Add new subject')}</Typography.Text>
@@ -493,6 +501,7 @@ const SubjectList = props => {
                                     </Button>
                                 </div>
                             </div>
+                            }
                         </Col>
                         <Col className="col-12">                 
                             <Table
@@ -511,7 +520,8 @@ const SubjectList = props => {
                                 filteredInfo={filteredInfo}
                             />
                         </Col>
-                    </Row>
+                        </Row>
+                    </>}
                 </div>
             </div>
             <ModalComp

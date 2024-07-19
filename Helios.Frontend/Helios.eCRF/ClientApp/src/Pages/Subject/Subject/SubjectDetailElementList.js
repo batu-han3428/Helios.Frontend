@@ -60,7 +60,7 @@ function SubjectDetailElementList(props) {
     }
 
     const renderElementsSwitch = (param) => {
-        const dsbl = isDisable ? "disabled" : "";
+        const dsbl = props.IsDisable ? "disabled" : "";
         const commonProps = {
             Id: param.subjectVisitPageModuleElementId,
             Value: param.userValue ?? "",

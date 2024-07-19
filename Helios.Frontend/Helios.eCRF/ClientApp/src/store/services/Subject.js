@@ -24,6 +24,8 @@ export const SubjectApi = createApi({
         getUserPermissions: builder.query({
             query: (studyId) => `/User/GetUserPermissions/${studyId}`,
             providesTags: ['Permissions'],
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0
         }),
         addSubject: builder.mutation({
             query: (values) => ({
