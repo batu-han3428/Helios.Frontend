@@ -180,9 +180,14 @@ namespace Helios.eCRF.Services
                     req1.AddParameter("pageId", subjectVisitModulePageId);
                     req1.AddParameter("subjectId", subjectId);
                     var result1 = await client.ExecuteAsync<List<Int64>>(req1);
-                    if (result1.IsSuccessful)
+                    if (result1.IsSuccessful && result1.Data.Count > 0)
                     {
-                        RemoveHiddenElements(result.Data, result1.Data);
+                        string elementIds = string.Join(",", result1.Data);
+                        var req2 = new RestRequest("CoreSubject/SetDependentElementValue?elementIdString="+elementIds+ "&pageId="+subjectVisitModulePageId+ "&subjectId="+ subjectId, Method.Post);
+                        AddApiHeaders(req2);
+                        var result2 = await client.ExecuteAsync<bool>(req2);
+
+                        if (result2.IsSuccessful && result2.Data) RemoveHiddenElements(result.Data, result1.Data);
                     }
                 }
                 
