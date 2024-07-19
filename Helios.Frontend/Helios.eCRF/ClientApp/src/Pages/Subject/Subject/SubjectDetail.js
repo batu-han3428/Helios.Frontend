@@ -7,7 +7,7 @@ import SubjectDetailMenu from './Comp/SubjectDetailMenu';
 import './Subject.css';
 import SubjectDetailDrawer from './Comp/SubjectDetailDrawer';
 import { useParams } from "react-router-dom";
-import { useLazyGetSubjectDetailMenuQuery, useGetSubjectElementListQuery } from '../../../store/services/Subject';
+import { useLazyGetSubjectDetailMenuQuery, useGetSubjectElementListQuery, useGetUserPermissionsQuery } from '../../../store/services/Subject';
 import { endloading, startloading } from '../../../store/loader/actions';
 import { useDispatch } from "react-redux";
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
@@ -34,6 +34,15 @@ const SubjectDetail = props => {
     const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId });
 
     const [currentPage, setCurrentPage] = useState(pageId); 
+
+    const [permissions, setPermissions] = useState([]);
+    const { data: permissionsData, errorPerm, isLoadingPerm } = useGetUserPermissionsQuery(studyId);
+
+    useEffect(() => {
+        if (!errorPerm && !isLoadingPerm && permissionsData) {
+            setPermissions(permissionsData);
+        }
+    }, [permissionsData, errorPerm, isLoadingPerm]);
 
     const goToNextPage = () => {     
         const nextPage = Number(pageId) + 1;
@@ -203,7 +212,7 @@ const SubjectDetail = props => {
                         <Col xs={24} sm={24} md={18} lg={18} xl={19} >
                             <div ref={myDivRef} id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom:"100px" }}>
                                 <SubjectDetailElementList
-                                    IsDisable={false}
+                                    IsDisable={!permissions.canSubjectEdit}
                                     ElementList={subjectElementList}
                                 />
                             </div>
