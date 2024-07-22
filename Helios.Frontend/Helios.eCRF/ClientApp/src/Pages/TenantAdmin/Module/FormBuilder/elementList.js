@@ -71,6 +71,7 @@ function ElementList(props) {
     };
 
     const copyElement = (e, id) => {
+        dispatch(startloading());
         fetch(baseUrl + '/CopyElement?id=' + id + '&userId=' + userInformation.userId, {
             method: 'POST',
         })
@@ -81,15 +82,15 @@ function ElementList(props) {
                         message: data.message,
                         stateToast: true
                     });
-                    dispatch(endloading());
                     window.location.reload();
                 } else {
                     props.toast.current.setToast({
                         message: data.message,
                         stateToast: false
                     });
-                    dispatch(endloading());
                 }
+
+                dispatch(endloading());
             })
             .catch(error => {
                 //console.error('Error:', error);
@@ -117,21 +118,34 @@ function ElementList(props) {
                         .then(response => response.json())
                         .then(data => {
                             if (data.isSuccess) {
-                                Swal.fire(data.message, '', 'success');
+                                props.toast.current.setToast({
+                                    message: data.message,
+                                    stateToast: true
+                                });
                                 window.location.reload();
                             } else {
-                                Swal.fire(data.message, '', 'error');
+                                props.toast.current.setToast({
+                                    message: data.message,
+                                    stateToast: false
+                                });
                             }
+
+                            dispatch(endloading());
                         })
                         .catch(error => {
                             //console.error('Error:', error);
                         })
                         .finally(() => {
                             dispatch(endloading());
+                            window.location.reload();
                         });
                 } catch (error) {
                     //dispatch(endloading());
-                    Swal.fire('An error occurred', '', 'error');
+                    //Swal.fire('An error occurred', '', 'error');
+                    props.toast.current.setToast({
+                        message: 'An error occurred',
+                        stateToast: false
+                    });
                 }
             }
         })

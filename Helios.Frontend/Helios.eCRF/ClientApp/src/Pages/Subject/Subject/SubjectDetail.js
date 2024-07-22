@@ -28,12 +28,12 @@ const SubjectDetail = props => {
     const [openSubMenuKeys, setOpenSubMenuKeys] = useState(['sub1']);
     const [openMobileMenu, setOpenMobileMenu] = useState(false);
     const [leftMenuData, setLeftMenuData] = useState([]);
-    const [subjectElementList, setSubjectElementList] = useState([]);   
-  
+    const [subjectElementList, setSubjectElementList] = useState([]);
+
     const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery();
     const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId });
 
-    const [currentPage, setCurrentPage] = useState(pageId); 
+    const [currentPage, setCurrentPage] = useState(pageId);
 
     const [permissions, setPermissions] = useState([]);
     const { data: permissionsData, errorPerm, isLoadingPerm } = useGetUserPermissionsQuery(studyId);
@@ -44,19 +44,19 @@ const SubjectDetail = props => {
         }
     }, [permissionsData, errorPerm, isLoadingPerm]);
 
-    const goToNextPage = () => {     
+    const goToNextPage = () => {
         const nextPage = Number(pageId) + 1;
         setCurrentPage(nextPage);
         navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}`);
-       
+
     };
 
-    const goToPreviousPage = () => {     
+    const goToPreviousPage = () => {
         if (currentPage > 1) {
             const nextPage = Number(pageId) - 1;
             setCurrentPage(nextPage);
             navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}`);
-        }       
+        }
     };
 
 
@@ -147,7 +147,7 @@ const SubjectDetail = props => {
             window.removeEventListener('resize', handleResize);
         };
     }, []);
-   
+
     const showDrawer = () => {
         setOpenMobileMenu(true);
     };
@@ -213,7 +213,11 @@ const SubjectDetail = props => {
                             <div ref={myDivRef} id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom:"100px" }}>
                                 <SubjectDetailElementList
                                     IsDisable={!permissions.canSubjectEdit}
+                                    StudyId={studyId}
+                                    ModuleId={0 }
+                                    IsDisable={false}
                                     ElementList={subjectElementList}
+                                    DataGridRowId={null}
                                 />
                             </div>
                         </Col>

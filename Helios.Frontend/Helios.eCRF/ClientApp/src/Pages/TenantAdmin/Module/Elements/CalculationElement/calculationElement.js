@@ -8,6 +8,7 @@ class CalculationElement extends Component {
         this.state = {
             id: props.Id,
             Value: props.Value,
+            dataGridRowId: props.DataGridRowId
         }
     }
 

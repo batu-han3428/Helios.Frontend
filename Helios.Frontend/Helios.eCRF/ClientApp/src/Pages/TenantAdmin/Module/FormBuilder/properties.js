@@ -79,7 +79,7 @@ class Properties extends React.Component {
             CanMissing: false,
 
             widthOptionGroup: GetWidth(),
-            widthSelectedGroup: 0,
+            widthSelectedGroup: 12,
 
             // Dependency properties
             DependentSourceFieldId: 0,
@@ -134,7 +134,7 @@ class Properties extends React.Component {
             RowCount: 1,
             ColumnCount: 0,
             ColumnIndex: props.ColumnIndex == null ? 0 : props.ColumnIndex,
-            RowIndex: props.RowIndex == null ? 0 : props.RowIndex,
+            RowIndex: props.RowIndex == null ? 1 : props.RowIndex,
             AdverseEventType: 1,
             TargetElementId: 0,
             ButtonText: "",
@@ -185,7 +185,7 @@ class Properties extends React.Component {
         this.handleRelationInputChange = this.handleRelationInputChange.bind(this);
         this.isRelationVariableNameDuplicate = this.isRelationVariableNameDuplicate.bind(this);
         this.removeRelationRow = this.removeRelationRow.bind(this);
-        this.saveModule = this.postModuleContent.bind(this);
+        this.postModuleContent = this.postModuleContent.bind(this);
         this.changeUnit.bind(this);
         this.changeMask.bind(this);
         this.changeLowerLimit.bind(this);
@@ -970,11 +970,6 @@ class Properties extends React.Component {
     //}
 
     render() {
-        const selectedValue = Array.isArray(this.state.widthSelectedGroup) && this.state.widthSelectedGroup.length > 0
-            ? (this.state.widthSelectedGroup[0].value === 0
-                ? this.state.widthOptionGroup.find(option => option.value === 12)
-                : this.state.widthOptionGroup.find(option => option.value === this.state.widthSelectedGroup[0].value))
-            : this.state.widthOptionGroup.find(option => option.value === 12);
         return (
             <div>
                 {/*<ElementBase>*/}
@@ -1115,8 +1110,8 @@ class Properties extends React.Component {
                                                                     {this.props.t("Field width")}
                                                                 </label>
                                                                 <div className={this.state.fieldWidthsW}>
-                                                                    <Select                 
-                                                                        value={selectedValue}
+                                                                    <Select
+                                                                        value={this.state.widthSelectedGroup}
                                                                         onChange={this.handleWidthChange}
                                                                         options={this.state.widthOptionGroup}
                                                                         placeholder={this.props.t("Select")}
