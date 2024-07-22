@@ -130,6 +130,12 @@ import ListTenantAndSystemAdmin from "../Pages/SystemAdmin/Users/ListTenantAndSy
 import QueryList from "../Pages/Query/QueryList";
 //Sdv
 import SdvList from "../Pages/SDV/SdvList";
+//Study documents
+import StudyDocuments from "../Pages/StudyDocuments/StudyDocuments";
+//Medical coding
+import MedicalCoding from "../Pages/MedicalCoding/MedicalCoding";
+//Iwrs
+import Iwrs from "../Pages/Iwrs/Iwrs";
 
 //Subject
 import SubjectList from "../Pages/Subject/Subject/SubjectList";
@@ -245,6 +251,12 @@ const userRoutes = [
     { path: "/sdv", component: <SdvList />, menuType: "sso", roles: ['StudyUser'] },
     //Query
     { path: "/query", component: <QueryList />, menuType: "sso", roles: ['StudyUser'] },
+    //Study documents
+    { path: "/studyDocuments", component: <StudyDocuments />, menuType: "sso", roles: ['StudyUser'] },
+    ////Medical coding
+    { path: "/medicalCoding", component: <MedicalCoding />, menuType: "sso", roles: ['StudyUser'] },
+    //Iwrs
+    { path: "/iwrs", component: <Iwrs />, menuType: "sso", roles: ['StudyUser'] },
 
     //Subject
     { path: "/subjectlist", component: <SubjectList />, menuType: "sso", roles: ['StudyUser'] },
