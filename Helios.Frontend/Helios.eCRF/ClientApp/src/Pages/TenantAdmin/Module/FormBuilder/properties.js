@@ -134,7 +134,7 @@ class Properties extends React.Component {
             RowCount: 1,
             ColumnCount: 0,
             ColumnIndex: props.ColumnIndex == null ? 0 : props.ColumnIndex,
-            RowIndex: props.RowIndex == null ? 0 : props.RowIndex,
+            RowIndex: props.RowIndex == null ? 1 : props.RowIndex,
             AdverseEventType: 1,
             TargetElementId: 0,
             ButtonText: "",

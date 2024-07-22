@@ -10,6 +10,8 @@ import {
 } from "reactstrap";
 import { withTranslation } from "react-i18next";
 import Select from "react-select";
+import ToastComp from '../../../../../components/Common/ToastComp/ToastComp';
+import { startloading, endloading } from '../../../../../store/loader/actions';
 import { GetAllElementListForSelect } from '../../FormBuilder/allElementList.js';
 import { GetElementNameByKey } from '../Common/utils.js';
 import Properties from '../../FormBuilder/properties.js';
@@ -30,23 +32,25 @@ class DatagridElement extends Component {
             userId: props.UserId,
             isDisable: props.IsDisable,
             columnCount: props.ColumnCount,
-            rowCount: props.RowCount,
+            rowCount: props.RowCount > 0 && props.RowCount !== undefined ? props.RowCount : 1,
             FormType: props.FormType,
             IsFromDesign: props.IsFromDesign,
             datagridAndTableProperties: props.DatagridAndTableProperties !== "" && props.DatagridAndTableProperties !== null ? JSON.parse(props.DatagridAndTableProperties) : [],
             childElementList: props.ChildElementList.length === 0 ? [] : props.ChildElementList,
+            dispatch: props.Dispatch,
             showWhereElementPropeties: 0,
             fieldWidthsW: "",
             tableRows: [],
             dgrdModalState: false,
-            elementListOptionGroup: GetAllElementListForSelect(16),
+            elementListOptionGroup: GetAllElementListForSelect([7, 15, 16]),
             elementListSelectedGroup: null,
             elementName: "",
             elementType: 0,
             columnIndex: 0,
             totalWidth: "",
-            dataGridRowId: 1,
-            newElements: []
+            dataGridRowId: 0,
+            newElements: [],
+            allRows: [],
         }
 
         this.toastRef = React.createRef();
@@ -65,7 +69,7 @@ class DatagridElement extends Component {
         var num = "";
         var characher = "";
 
-        this.state.datagridAndTableProperties.map(item => {
+        this.state.datagridAndTableProperties.forEach(item => {
             if (item.width.includes('%')) {
                 num = item.width.slice(0, item.width.length - 1);
                 characher = "%";
@@ -79,6 +83,54 @@ class DatagridElement extends Component {
         });
 
         this.state.totalWidth = wdth + characher;
+
+        if (!this.state.IsFromDesign) {
+            var dgrdRowIds = this.state.childElementList.map(item => item.dataGridRowId);
+            var maxDataGridRowId = dgrdRowIds.length > 0 ? Math.max(...dgrdRowIds) : 1;
+            this.state.dataGridRowId = maxDataGridRowId;
+            var rowIdGrps = [];
+
+            rowIdGrps.push(dgrdRowIds.reduce((acc, value) => {
+                acc[value] = (acc[value] || 0) + 1;
+                return acc;
+            }, {}));
+
+            var rowIds = Object.keys(rowIdGrps[0]).map(Number);
+            var rowContent = [];
+
+            rowIds.map(rowIndx => {
+                var colContent = [];
+
+                [...Array(this.state.columnCount === 0 ? 1 : this.state.columnCount)].map((_, colIndx) => {
+                    var elm = this.getTdContent(colIndx, rowIndx, false);
+
+                    var cntnt = { content: elm };
+                    colContent.push(cntnt);
+                });
+
+                rowContent.push(colContent);
+            });
+
+            rowContent.forEach(item => {
+                this.state.allRows.push(item);
+            });
+        } else {
+            var rowContent = [];
+
+            [...Array(this.state.rowCount === 0 ? 1 : this.state.rowCount)].map((_, rowIndex) => {
+                var colContent = [];
+                [...Array(this.state.columnCount)].map((_, columnIndex) => {
+                    var elm = this.getTdContent(columnIndex, rowIndex + 1, false);
+                    var cntnt = { content: elm };
+                    colContent.push(cntnt);
+                });
+                rowContent.push(colContent);
+            });
+
+            rowContent.forEach(item => {
+                this.state.allRows.push(item);
+            });
+        }
     };
 
     setShowToast() {
@@ -112,10 +164,17 @@ class DatagridElement extends Component {
     getTdContent(colIndex, rowIndex, isNew) {
         var result = false;
         var cld = [];
-        this.state.childElementList.map(item => {
-            if (item.columnIndex === colIndex + 1 && item.dataGridRowId === rowIndex) {
-                result = true;
-                cld.push(item);
+        this.state.childElementList.forEach(item => {
+            if (this.state.isDisable) {
+                if (item.columnIndex === colIndex + 1) {
+                    result = true;
+                    cld.push(item);
+                }
+            } else {
+                if (item.columnIndex === colIndex + 1 && item.dataGridRowId === rowIndex) {
+                    result = true;
+                    cld.push(item);
+                }
             }
         });
 
@@ -123,18 +182,16 @@ class DatagridElement extends Component {
 
         if (this.state.isDisable) {
             if (result)
-                return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />
+                return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />;
             else
                 return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleDgrdAddElementModal(colIndex + 1)} />;
-        }
-        else {
+        } else {
             if (result) {
                 if (this.state.IsFromDesign)
-                    return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} FormType={this.state.FormType} />
+                    return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} FormType={this.state.FormType} />;
                 else
-                    elements = <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={false} />
-            }
-            else
+                    elements = <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={false} />;
+            } else
                 return "";
 
         }
@@ -146,15 +203,27 @@ class DatagridElement extends Component {
     }
 
     handleAddAnother = () => {
+        this.state.dispatch(startloading());
         var rowId = this.state.dataGridRowId;
-        this.setState({ dataGridRowId: rowId });
+        var newRowId;
 
-        const newRow = [...Array(this.state.columnCount)].map((_, columnIndex) => (
-            <td key={columnIndex}>{this.getTdContent(columnIndex, rowId, true)}</td>
-        ));
+        for (let item of this.state.allRows[0]) {
+            if (item.content !== "") {
+                newRowId = item.content.props.DataGridRowId;
+                break;
+            }
+        }
 
-        this.setState((prevState) => ({
-            tableRows: [...prevState.tableRows, <tr key={prevState.tableRows.length}>{newRow}</tr>],
+        var objs = [];
+
+        [...Array(this.state.columnCount)].map((_, columnIndex) => {
+            var res = this.getTdContent(columnIndex, newRowId, true);
+            var o = { content: res };
+            objs.push(o);
+        });
+
+        this.setState(prevState => ({
+            allRows: [...prevState.allRows, objs]
         }));
 
         var elems = [];
@@ -184,6 +253,9 @@ class DatagridElement extends Component {
                     throw new Error('Network response was not ok');
                 }
 
+                this.state.dispatch(endloading());
+                this.state.dataGridRowId = rowId + 1;
+
                 this.toastRef.current.setToast({
                     message: "successfully",
                     stateToast: true
@@ -196,25 +268,61 @@ class DatagridElement extends Component {
                 });
             })
             .catch(error => {
-                this.toastRef.current.setToast({
-                    message: this.props.t("An unexpected error occurred."),
-                    stateToast: false
-                });
             });
     };
 
-    getTableRowProp(id, rowindex) {
-        if (this.state.isDisable) {
-            return <div>< Button className="actionBtn" style={{ padding: '0px' }}><i className="far fa-copy" onClick={e => this.copyTableRowElement(e, id, rowindex)}></i></Button><br />
-                < Button className="actionBtn" style={{ padding: '0px' }}><i className="fas fa-trash-alt" onClick={e => this.deleteTableRowElement(e, id, rowindex)}></i></Button></div>;
-        }
-    }
+    handleRemoveRow = (index) => {
+        this.state.dispatch(startloading());
+        var rowId = this.state.dataGridRowId;
+        var delElms = [];
 
-    removeRow = (index) => {
+        this.state.allRows[index].forEach(item => {
+            delElms.push(item);
+        });
+
+        var elems = [];
+
+        delElms.map(item => {
+            if (item.content !== "")
+                elems.push(item.content.props.ElementList[0].subjectVisitPageModuleElementId);
+        })
+
+        var bdy = JSON.stringify(elems);
+
+        fetch(API_BASE_URL + `Subject/RemoveDatagridSubjectElements`, {
+            method: 'POST',
+            body: bdy,
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json, text/plain, */*',
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                this.state.dispatch(endloading());
+                this.state.dataGridRowId = rowId - 1;
+
+                this.toastRef.current.setToast({
+                    message: "successfully",
+                    stateToast: true
+                });
+            })
+            .then(data => {
+                this.toastRef.current.setToast({
+                    message: data.message,
+                    stateToast: data.isSuccess ? true : false
+                });
+            })
+            .catch(error => {
+            });
+
         this.setState((prevState) => {
-            const newRows = [...prevState.rows];
+            const newRows = [...prevState.allRows];
             newRows.splice(index, 1);
-            return { rows: newRows };
+            return { allRows: newRows };
         });
     };
 
@@ -228,29 +336,29 @@ class DatagridElement extends Component {
                             {this.state.datagridAndTableProperties.map((col, index) => (
                                 <th key={index} style={{ width: col.width, backgroundColor: "#6D6E70", color: "#FFF" }}>{col.title}</th>
                             ))}
-                            <th style={{ width: '', backgroundColor: "#6D6E70", color: "#FFF" }}>{this.props.t("Action")}</th>
+                            {!this.state.isDisable &&
+                                <th style={{ width: '', backgroundColor: "#6D6E70", color: "#FFF" }}>{this.props.t("Action")}</th>
+                            }
                         </tr>
                     </thead>
                     <tbody>
-                        {[...Array(this.state.rowCount === 0 ? 1 : this.state.rowCount)].map((_, rowIndex) => (
-                            <tr key={rowIndex}>
-                                <td key='0'>
-
-                                </td>
-                                {[...Array(this.state.columnCount)].map((_, columnIndex) => (
+                        {this.state.allRows.map((row, index) => (
+                            <tr key={index}>
+                                <td key={index}></td>
+                                {[...Array(this.state.allRows[0].length)].map((_, columnIndex) => (
                                     <td key={columnIndex}>
-                                        {this.getTdContent(columnIndex, rowIndex + 1, false)}
+                                        {row[columnIndex].content !== undefined ? row[columnIndex].content : ""}
                                     </td>
-
                                 ))}
-                                <td>
-                                    <Button className="actionBtn" onClick={() => this.removeRow(rowIndex + 1)}>
-                                        <i className="far fa-trash-alt"></i>
-                                    </Button>
-                                </td>
+                                {!this.state.isDisable &&
+                                    <td>
+                                        <Button className="actionBtn" onClick={() => this.handleRemoveRow(index)}>
+                                            <i className="far fa-trash-alt"></i>
+                                        </Button>
+                                    </td>
+                                }
                             </tr>
                         ))}
-                        {/*{this.state.tableRows }*/}
                     </tbody>
                 </Table>
                 {!this.state.isDisable &&
@@ -262,6 +370,9 @@ class DatagridElement extends Component {
                         </div>
                     </Row>
                 }
+                <ToastComp
+                    ref={this.toastRef}
+                />
                 <Modal isOpen={this.state.dgrdModalState} toggle={this.toggleDgrdAddElementModal} size="md">
                     <ModalHeader className="mt-0" toggle={this.toggleDgrdAddElementModal}>{this.props.t("Add a child input")}</ModalHeader>
                     <ModalBody>

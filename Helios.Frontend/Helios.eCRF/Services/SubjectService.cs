@@ -197,6 +197,17 @@ namespace Helios.eCRF.Services
             }
         }
 
+        public async Task<ApiResponse<dynamic>> RemoveDatagridSubjectElements(List<Int64> elementIds)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/RemoveDatagridSubjectElements", Method.Post);
+                req.AddJsonBody(elementIds);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
         public async Task<bool> GetStudyAskSubjectInitial(Int64 studyId)
         {
             using (var client = CoreServiceClient)

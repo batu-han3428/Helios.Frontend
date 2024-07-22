@@ -107,6 +107,13 @@ namespace Helios.eCRF.Controllers
             return result;
         }
 
+        [HttpPost]
+        public async Task<ApiResponse<dynamic>> RemoveDatagridSubjectElements(List<Int64> elementIds)
+        {
+            var result = await _subjectService.RemoveDatagridSubjectElements(elementIds);
+            return result;
+        }
+
         [HttpGet]
         public async Task<bool> GetStudyAskSubjectInitial(Int64 studyId)
         {

@@ -42,7 +42,7 @@ class TableElement extends Component {
             showWhereElementPropeties: 0,
             fieldWidthsW: "",
             modalState: false,
-            elementListOptionGroup: GetAllElementListForSelect(16),
+            elementListOptionGroup: GetAllElementListForSelect([15, 16]),
             elementListSelectedGroup: null,
             elementName: "",
             elementType: 0,
@@ -113,7 +113,7 @@ class TableElement extends Component {
                 cld.push(item);
             }
         })
-        
+
         if (this.state.isDisable) {
             if (result)
                 return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />

@@ -22,12 +22,12 @@ export function GetAllElementList() {
     return elements;
 }
 
-export function GetAllElementListForSelect(excludedKey) {
+export function GetAllElementListForSelect(excludedKeys) {
     var lmOptionGroup = [];
     var data = GetAllElementList();
 
-    // Use filter to exclude the item with the specified key
-    data.filter(item => item.key !== excludedKey)
+    // Use filter to exclude the item with the specified keys
+    data.filter(item => !excludedKeys.includes(item.key))
         .map(item => {
             var itm = { label: item.name, value: item.key };
             lmOptionGroup.push(itm);
