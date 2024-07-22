@@ -791,6 +791,16 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
+        public async Task<ApiResponse<dynamic>> UserProfileChangePassword(ResetUserProfileViewModel resetUserProfileViewModel)
+        {
+            using (var client = AuthServiceClient)
+            {
+                var req = new RestRequest("AdminUser/UserProfileChangePassword", Method.Post);
+                req.AddJsonBody(resetUserProfileViewModel);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
         #endregion
 
         #region Tenant user

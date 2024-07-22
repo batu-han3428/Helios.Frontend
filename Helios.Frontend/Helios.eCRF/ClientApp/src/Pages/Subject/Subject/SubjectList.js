@@ -73,7 +73,7 @@ const SubjectList = props => {
                 return !item.isArchived;
             });
 
-            const updatedSubjectsData = filteredSubjectsData.map(item => {
+            const updatedSubjectsData = filteredSubjectsData.map(item => { 
                 return {
                     ...item,
                     createdAt: formatDate(item.createdAt),

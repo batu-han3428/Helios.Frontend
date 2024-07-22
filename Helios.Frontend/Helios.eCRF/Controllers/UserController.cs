@@ -384,6 +384,17 @@ namespace Helios.eCRF.Controllers
             var result = await _userService.UserResetPassword(studyUserModel);
             return Ok(result);
         }
+        /// <summary>
+        /// Seçili kullanıcının şifresini değiştirir.
+        /// </summary>
+        /// <param name="studyUserModel">kullanıcı bilgileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        public async Task<IActionResult> UserProfileChangePassword(ResetUserProfileViewModel resetUserProfileViewModel)
+        {
+            var result = await _userService.UserProfileChangePassword(resetUserProfileViewModel);
+            return Ok(result);
+        }
         #endregion
 
         #region Tenant User
