@@ -1,8 +1,8 @@
-﻿import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { Row } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import '../../TenantAdmin/Module/FormBuilder/formBuilder.css';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { Dropdown } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -34,9 +34,12 @@ function SubjectDetailElementList(props) {
     const [isDisable] = useState(props.IsDisable);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
+    const [data, setData] = useState([]);
 
+    useEffect(() => {
+        setData(props.ElementList);
+    }, [props.ElementList]);
     const AutoSave = async (id, value, type = 0) => {
         if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
             dispatch(startloading());
@@ -58,13 +61,31 @@ function SubjectDetailElementList(props) {
             dispatch(endloading());
         }
     }
-
+    const ClearData = async (item) => {
+        if (item.userValue !== undefined && item.userValue !== null && item.userValue !== "") {
+            dispatch(startloading());        
+            const response = await autoSaveSubject({
+                Id: item.subjectVisitPageModuleElementId,
+                Value: "",
+            });
+            if (response.data.isSuccess) {
+                const updatedData = data.map(d =>
+                    d.subjectVisitPageModuleElementId === item.subjectVisitPageModuleElementId
+                        ? { ...d, userValue: "" }
+                        : d
+                );
+                setData(updatedData);
+            }
+            dispatch(endloading());
+        }
+    }
     const renderElementsSwitch = (param) => {
         const dsbl = props.IsDisable ? "disabled" : "";
         const commonProps = {
             Id: param.subjectVisitPageModuleElementId,
             Value: param.userValue ?? "",
             IsDisable: dsbl,
+            IsRequired: param.isRequired,
             HandleAutoSave: AutoSave,
         };
 
@@ -108,11 +129,11 @@ function SubjectDetailElementList(props) {
         }
     }
 
-    const getItems = () => {
+    const getItems = (param) => {
         const items = [
             {
                 key: '1',
-                label: <a onClick={() => navigate('')}>{props.t("Clear data")}</a>,
+                label: <a onClick={() => ClearData(param)}>{props.t("Clear data")}</a>,
                 icon: <FontAwesomeIcon icon="fas fa-ban" style={{ color: "#5b626b" }} />,
                 style: { color: "#5b626b" },
             },
@@ -145,43 +166,41 @@ function SubjectDetailElementList(props) {
         return { items };
     }
 
-    const content = Array.isArray(props.ElementList)
-        ? props.ElementList.map((item) => {
-            const w = item.width === 0 ? 12 : item.width;
-            const cls = "mb-6 col-md-" + w;
+    const content = Array.isArray(data) ? data.map((item) => {
+        const w = item.width === 0 ? 12 : item.width;
+        const cls = "mb-6 col-md-" + w;
 
-            if (item.isHidden)
-                return ("");
-            else
-                return (
-                    <Row className={cls} key={item.subjectVisitPageModuleElementId}>
-                        <div style={{ marginBottom: '3px', marginTop: '10px' }}>
-                            <label style={{ marginRight: '5px' }}>
-                                {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
-                                {item.elementType !== 1 && item.title}
-                            </label>
-                        </div>
-                        <Row>
-                            <div className="col-md-11">{renderElementsSwitch(item)}</div>
-                            {item.elementType !== 1 && item.elementType !== 3 &&
-                                <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
-                                    <Dropdown menu={getItems()} trigger={['click']} placement="bottomLeft">
-                                        <div style={{ alignItems: 'center' }}>
-                                            <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                                                <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
-                                            </a>
-                                        </div>
-                                    </Dropdown>
-                                </div>
-                            }
-                        </Row>
-                        <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
-                            {item.description}
+        if (item.isHidden)
+            return ("");
+        else
+            return (
+                <Row className={cls} key={item.subjectVisitPageModuleElementId}>
+                    <div style={{ marginBottom: '3px', marginTop: '10px' }}>
+                        <label style={{ marginRight: '5px' }}>
+                            {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
+                            {item.elementType !== 1 && item.title}
                         </label>
+                    </div>
+                    <Row>
+                        <div className="col-md-11">{renderElementsSwitch(item)}</div>
+                        {item.elementType !== 1 && item.elementType !== 3 &&
+                            <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
+                                <Dropdown menu={getItems(item)} trigger={['click']} placement="bottomLeft">
+                                    <div style={{ alignItems: 'center' }}>
+                                        <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                            <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
+                                        </a>
+                                    </div>
+                                </Dropdown>
+                            </div>
+                        }
                     </Row>
-                );
-        })
-        : null;
+                    <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
+                        {item.description}
+                    </label>
+                </Row>
+            );
+    }):null;
 
     return (
         <div>
