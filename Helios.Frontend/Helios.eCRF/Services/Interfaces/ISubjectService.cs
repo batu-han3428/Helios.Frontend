@@ -15,5 +15,6 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model);
         Task<bool> GetStudyAskSubjectInitial(Int64 studyId);
         Task<ApiResponse<dynamic>> DeleteOrArchiveSubject(SubjectArchiveOrDeleteModel model);
+        Task<RestResponse<byte[]>> GetSubjectVisitAnnotatedCrf(Int64 subjectId);
     }
 }

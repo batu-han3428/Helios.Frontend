@@ -10,11 +10,11 @@ import { formatDate } from "../../../helpers/format_date";
 import { useDispatch, connect } from "react-redux";
 import withRouter from '../../../components/Common/withRouter';
 import { startloading, endloading } from '../../../store/loader/actions';
-import { useAddSubjectMutation, useGetSubjectListQuery, useGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
+import { useAddSubjectMutation, useGetSubjectListQuery, useGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation, useLazySubjectVisitAnnotatedCrfGetQuery } from '../../../store/services/Subject';
 import { useLazyStudyUserSitesGetQuery } from '../../../store/services/Users';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, ExportOutlined } from '@ant-design/icons';
 import "./Subject.css";
 import { v4 as uuidv4 } from 'uuid';
 import AddSubjectComp from './Comp/AddSubjectComp';
@@ -100,6 +100,19 @@ const SubjectList = props => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}/${subjectNumber}`);
     };
 
+    const [triggerCrf, { data: annotatedData, error: errorCrf, isLoading: isLoadingCrf }] = useLazySubjectVisitAnnotatedCrfGetQuery();
+
+    useEffect(() => {
+        if (annotatedData && !errorCrf && !isLoadingCrf) {
+            const openButton = document.getElementById('openPdfButton');
+            openButton.onclick = () => {
+                window.open(`/pdf?url=${annotatedData.data}`, '_blank');
+            };
+            openButton.click();
+            dispatch(endloading());
+        }
+    }, [annotatedData])
+
     const getActions = ({ id, firstPageId, subjectNumber, isActive }) => {
         const actions = (
             <div className="icon-container">
@@ -122,7 +135,10 @@ const SubjectList = props => {
                         )}
                     </>
                 )}
-
+                {permissions.canSubjectExportForm &&
+                    <ExportOutlined onClick={() => triggerCrf(id)} />
+                }
+                
             </div>);
         return actions;
     };
@@ -467,6 +483,7 @@ const SubjectList = props => {
 
     return (
         <React.Fragment>
+            <button id="openPdfButton" style={{ display: "none" }}></button>
             <div className="page-content">
                 <div className="container-fluid">
                     {view && <>

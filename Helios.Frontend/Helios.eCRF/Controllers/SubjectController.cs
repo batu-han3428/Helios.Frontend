@@ -113,5 +113,12 @@ namespace Helios.eCRF.Controllers
             var result = await _subjectService.DeleteOrArchiveSubject(model);
             return result;
         }
+
+        [HttpGet("{subjectId}")]
+        public async Task<IActionResult> GetSubjectVisitAnnotatedCrf(Int64 subjectId)
+        {
+            var result = await _subjectService.GetSubjectVisitAnnotatedCrf(subjectId);
+            return new ObjectResult(result.Data != null ? File(result.Data, "application/pdf") : null) { StatusCode = (int)result.StatusCode };
+        }
     }
 }

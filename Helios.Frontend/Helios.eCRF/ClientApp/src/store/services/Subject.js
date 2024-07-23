@@ -61,6 +61,24 @@ export const SubjectApi = createApi({
             }),
             invalidatesTags: ['SubjectElement', 'SubjectDetailMenu'],
         }),
+        subjectVisitAnnotatedCrfGet: builder.query({
+            query: (subjectId) => `/Subject/GetSubjectVisitAnnotatedCrf/${subjectId}`,
+            keepUnusedDataFor: 0,
+            transformResponse: async (rawData, d) => {
+                if (d.response.status === 200) {
+                    const arrayBuffer = Uint8Array.from(atob(rawData.fileContents), c => c.charCodeAt(0));
+                    const blob = new Blob([arrayBuffer], { type: 'application/pdf' });
+                    const url = URL.createObjectURL(blob);
+                    return {
+                        data: url
+                    };
+                } else {
+                    return {
+                        data: null
+                    }
+                }
+            },
+        }),
     }),
 });
 
@@ -78,3 +96,5 @@ export const { useGetSubjectElementListQuery } = SubjectApi;
 export const { useDeleteOrArchiveSubjectMutation } = SubjectApi;
 
 export const { useAutoSaveSubjectMutation } = SubjectApi;
+
+export const { useLazySubjectVisitAnnotatedCrfGetQuery } = SubjectApi;
