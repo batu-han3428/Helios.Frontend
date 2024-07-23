@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Select from "react-select";
 import { withTranslation } from "react-i18next";
+import "../Element.css";
 
 class DropdownElement extends Component {
     constructor(props) {
@@ -12,7 +13,8 @@ class DropdownElement extends Component {
             orgElementOptions: props.ElementOptions !== null && props.ElementOptions !== undefined && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
             ElementOptions: [],
-            selectedOption: null
+            selectedOption: null,
+            isRequired: props.IsRequired
         }
 
         this.fillElementOptions = this.fillElementOptions.bind(this);
@@ -47,12 +49,17 @@ class DropdownElement extends Component {
         this.setState({ selectedOption: selectedOption });
         this.props.HandleAutoSave(this.state.id, selectedOption.value);
     };
-
+    componentDidUpdate(prevProps) {
+        if (prevProps.Value !== this.props.Value) {
+            this.setState({ selectedOption: this.props.Value });
+        }
+    }
     render() {
         return (
             <div className="mb-3">
                 <Select
                     classNamePrefix="select2-selection"
+                    className={this.state.selectedOption !== null && this.state.isRequired ? 'input-normal' : 'input-error'}
                     options={this.state.ElementOptions}
                     isDisabled={this.state.isDisable}
                     placeholder={this.props.t("Select")}

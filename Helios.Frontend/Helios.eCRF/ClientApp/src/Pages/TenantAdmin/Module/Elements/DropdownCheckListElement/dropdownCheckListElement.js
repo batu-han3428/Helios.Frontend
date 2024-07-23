@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Select from "react-select";
 import { withTranslation } from "react-i18next";
 import './dropdownCheckListElementStyle.css';
+import "../Element.css";
 
 class DropdownCheckListElement extends Component {
     constructor(props) {
@@ -13,7 +14,8 @@ class DropdownCheckListElement extends Component {
             orgElementOptions: props.ElementOptions !== undefined && props.ElementOptions !== null && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
             ElementOptions: [],
-            selectedOption: null
+            selectedOption: null,
+            isRequired: props.IsRequired
         }
 
         this.fillElementOptions = this.fillElementOptions.bind(this);
@@ -58,13 +60,18 @@ class DropdownCheckListElement extends Component {
 
         this.props.HandleAutoSave(this.state.id, val, 11);
     };
-
+    componentDidUpdate(prevProps) {
+        if (prevProps.Value !== this.props.Value) {
+            this.setState({ selectedOption: this.props.Value });
+        }
+    }
     render() {
         return (
             <div className="mb-3" >
                 <Select
                     options={this.state.ElementOptions}
                     classNamePrefix="select2-selection"
+                    className={this.state.selectedOption !== null && this.state.isRequired ? 'input-normal' : 'input-error'}
                     placeholder={this.props.t("Select")}
                     isMulti={true}
                     closeMenuOnSelect={false}

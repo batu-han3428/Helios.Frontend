@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Row } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import '../../TenantAdmin/Module/FormBuilder/formBuilder.css';
@@ -26,7 +26,7 @@ import ConcomittantMedicationElement from '../../TenantAdmin/Module/Elements/Con
 import { withTranslation } from "react-i18next";
 import { useAutoSaveSubjectMutation } from '../../../store/services/Subject';
 
-function SubjectDetailElementList(props) {
+function SubjectDetailElementList(props) { 
     const toastRef = useRef();
     const [tenantId] = useState(props.TenantId);
     const [moduleId] = useState(props.ModuleId);
@@ -35,18 +35,14 @@ function SubjectDetailElementList(props) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
-/*    const [data, setData] = useState([]);*/
 
-    //useEffect(() => {
-    //    setData(props.ElementList);
-    //}, [props.ElementList]);
-    const AutoSave = async (id, value, type = 0) => {
+    const AutoSave = useCallback(async (id, value, type = 0) => {
         if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
-            dispatch(startloading());
+            dispatch(startloading());       
             const response = await autoSaveSubject({
                 Id: id,
                 Value: value
-            });
+            });           
             if (response.data.isSuccess) {
                 toastRef.current.setToast({
                     message: response.data.message,
@@ -60,27 +56,18 @@ function SubjectDetailElementList(props) {
             }
             dispatch(endloading());
         }
-    }
+    }, [autoSaveSubject, dispatch]);
     const ClearData = async (item) => {
         if (item.userValue !== undefined && item.userValue !== null && item.userValue !== "") {
             dispatch(startloading());        
             const response = await autoSaveSubject({
                 Id: item.subjectVisitPageModuleElementId,
                 Value: "",
-            });
-            if (response.data.isSuccess) {
-                console.log(response)
-                //const updatedData = data.map(d =>
-                //    d.subjectVisitPageModuleElementId === item.subjectVisitPageModuleElementId
-                //        ? { ...d, userValue: "" }
-                //        : d
-                //);
-                //setData(updatedData);
-            }
+            });          
             dispatch(endloading());
         }
     }
-    const renderElementsSwitch = (param) => {
+    const renderElementsSwitch = useCallback((param) => {
         const dsbl = props.IsDisable ? "disabled" : "";
         const commonProps = {
             Id: param.subjectVisitPageModuleElementId,
@@ -88,10 +75,7 @@ function SubjectDetailElementList(props) {
             IsDisable: dsbl,
             IsRequired: param.isRequired,
             HandleAutoSave: AutoSave,
-        };
-        if (param.elementName === "Boy") {
-            console.log(param)
-        }
+        };       
       
         switch (param.elementType) {
             case 1:
@@ -131,9 +115,9 @@ function SubjectDetailElementList(props) {
             default:
                 return "";
         }
-    }
+    }, [AutoSave, props.IsDisable, studyId, tenantId, moduleId]);
 
-    const getItems = (param) => {
+    const getItems = useCallback((param) => {
         const items = [
             {
                 key: '1',
@@ -168,17 +152,10 @@ function SubjectDetailElementList(props) {
         ];
 
         return { items };
-    }
-    const [elementList, setElementList] = useState([]);
-
-    useEffect(() => {
-        if (props.ElementList) {
-            console.log(props.ElementList)
-            setElementList([...props.ElementList]);
-        }
-    }, [props.ElementList]);
-    const renderContent = () => {
-        return Array.isArray(elementList) ? elementList.map((item) => {
+    }, [ClearData, navigate, props.t]);
+  
+    const renderContent = useMemo(() => {
+        return Array.isArray(props.ElementList) ? props.ElementList.map((item) => {
             const w = item.width === 0 ? 12 : item.width;
             const cls = "mb-6 col-md-" + w;
 
@@ -214,11 +191,11 @@ function SubjectDetailElementList(props) {
                 );
             }
         }) : null;
-    };
+    }, [props.ElementList, renderElementsSwitch, getItems]);
     return (
         <div>
             <div className="row">
-                {renderContent()}
+                {renderContent}
             </div>
             <ToastComp
                 ref={toastRef}
@@ -227,4 +204,4 @@ function SubjectDetailElementList(props) {
     );
 }
 
-export default withTranslation()(SubjectDetailElementList);
+export default withTranslation()(React.memo(SubjectDetailElementList));

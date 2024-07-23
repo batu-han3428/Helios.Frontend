@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import "../Element.css";
 
 class CheckElement extends Component {
     constructor(props) {
@@ -10,7 +11,8 @@ class CheckElement extends Component {
             layout: props.Layout,
             checkedOptions: [],
             ElementOptions: props.ElementOptions !== undefined && props.ElementOptions !== null && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
-            Value: props.Value
+            Value: props.Value,
+            isRequired: props.IsRequired
         }
 
         this.handleChange = this.handleChange.bind(this);
@@ -38,7 +40,11 @@ class CheckElement extends Component {
 
         this.props.HandleAutoSave(this.state.id, val, 9);
     };
-
+    componentDidUpdate(prevProps) {
+        if (prevProps.Value !== this.props.Value) {
+            this.setState({ selectedOption: this.props.Value });
+        }
+    }
     render() {
         return (
             <>
@@ -49,7 +55,7 @@ class CheckElement extends Component {
                                 <div className="form-check" key={index} style={{ display: 'inline-block', marginRight: '10px' }}>
                                     <input
                                         type="checkbox"
-                                        className="form-check-input"
+                                        className={`form-check-input ${this.state.checkedOptions !== null && this.state.isRequired ? 'input-normal' : 'input-error'}`}
                                         id={`checkbox-${index}`}
                                         onChange={() => this.handleChange(item.tagValue)}
                                         disabled={this.state.isDisable}
@@ -70,7 +76,7 @@ class CheckElement extends Component {
                                 <div className="form-check" key={index}>
                                     <input
                                         type="checkbox"
-                                        className="form-check-input"
+                                        className={`form-check-input ${this.state.checkedOptions !== null && this.state.isRequired ? 'input-normal' : 'input-error'}`}
                                         id={`checkbox-${index}`}
                                         onChange={() => this.handleChange(item.tagValue)}
                                         disabled={this.state.isDisable}
