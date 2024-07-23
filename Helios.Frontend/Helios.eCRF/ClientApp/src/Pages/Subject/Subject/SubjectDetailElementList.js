@@ -81,7 +81,7 @@ function SubjectDetailElementList(props) {
             case 3:
                 return "";
             case 4:
-                return <NumericElement {...commonProps} Unit={""} Mask={""} LowerLimit={0} UpperLimit={0} />;
+                return <NumericElement {...commonProps} Unit={""} Mask={""} LowerLimit={param.lowerLimit} UpperLimit={param.upperLimit} />;
             case 5:
                 return <TextareaElement {...commonProps} DefaultValue={param.defaultValue} />;
             case 6:
