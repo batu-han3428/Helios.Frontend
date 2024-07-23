@@ -260,6 +260,8 @@ class DatagridElement extends Component {
                     message: "successfully",
                     stateToast: true
                 });
+
+                window.location.reload();
             })
             .then(data => {
                 this.toastRef.current.setToast({
@@ -309,6 +311,8 @@ class DatagridElement extends Component {
                     message: "successfully",
                     stateToast: true
                 });
+
+                window.location.reload();
             })
             .then(data => {
                 this.toastRef.current.setToast({
