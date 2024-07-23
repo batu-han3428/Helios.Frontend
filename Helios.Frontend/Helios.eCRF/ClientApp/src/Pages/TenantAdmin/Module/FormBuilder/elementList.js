@@ -167,8 +167,8 @@ function ElementList(props) {
                     IsDisable={dsbl}
                     Unit={""}
                     Mask={""}
-                    LowerLimit={0}
-                    UpperLimit={0}
+                    LowerLimit={param.lowerLimit}
+                    UpperLimit={param.upperLimit}
                 />;
             case 5:
                 return <TextareaElement
