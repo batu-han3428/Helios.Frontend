@@ -469,7 +469,7 @@ const SubjectList = props => {
             setTextError("");
         }
     };
-
+    document.title = props.t('Subject list');
     return (
         <React.Fragment>
             <div className="page-content">

@@ -41,7 +41,8 @@ const SdvList = props => {
         sorter: (a, b) => a.state.localeCompare(b.state),
         sortDirections: ['ascend', 'descend'],
     });     
-    
+
+    document.title = props.t('SDV list');
     return (
         <React.Fragment>
             <div className="page-content">

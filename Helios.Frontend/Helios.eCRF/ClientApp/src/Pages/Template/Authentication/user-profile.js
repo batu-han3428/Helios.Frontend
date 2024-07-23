@@ -137,7 +137,7 @@ const UserProfile = props => {
     });
 
  
-    document.title = "Profile | Veltrix - React Admin & Dashboard Template";
+    document.title = props.t('My profile');;
     return (
         <React.Fragment>
             <div className="page-content">

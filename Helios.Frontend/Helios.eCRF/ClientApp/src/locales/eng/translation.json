@@ -634,5 +634,12 @@
   "Closed": "Closed",
   "Unanswered": "Unanswered",
   "Answered": "Answered",
-  "Data change after query": "Data change after query"
+  "Data change after query": "Data change after query",
+  "Login page": "Login page",
+  "Subject list": "Subject list",
+  "Query list": "Query list",
+  "SDV list": "SDV list",
+  "Data reports": "Data reports",
+  "My profile": "My profile"
+ 
 }

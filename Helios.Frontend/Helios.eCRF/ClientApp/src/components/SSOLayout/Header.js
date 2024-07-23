@@ -142,17 +142,17 @@ const Header = props => {
                                         </Link>
                                     )}
                                     {permissionData.canStudyFoldersView && (
-                                        <Link to="/" className="" onClick={() => handleClick('studyDocuments')}>
+                                        <Link to="/studyDocuments" className="" onClick={() => handleClick('studyDocuments')}>
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.studyDocuments ? 'underline' : 'none', backgroundColor: clickedLinks.studyDocuments ? 'white' : '', marginRight: '30px' }}>{props.t("Study documents")}</label>
                                         </Link>
                                     )}
                                     {permissionData.canMedicalCodingCanCode && (
-                                        <Link to="/" className="" onClick={() => handleClick('medicalCoding')} >
+                                        <Link to="/medicalCoding" className="" onClick={() => handleClick('medicalCoding')} >
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.medicalCoding ? 'underline' : 'none', backgroundColor: clickedLinks.medicalCoding ? 'white' : '', marginRight: '30px' }}>{props.t("Medical coding")}</label>
                                         </Link>
                                     )}
                                     {(permissionData.canIwrsMarkAsRecieved || permissionData.canIwrsTransfer) && (
-                                        <Link to="/" className="" onClick={() => handleClick('iwrs')} >
+                                        <Link to="/iwrs" className="" onClick={() => handleClick('iwrs')} >
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.iwrs ? 'underline' : 'none', backgroundColor: clickedLinks.iwrs ? 'white' : '', marginRight: '30px' }}>{props.t("IWRS")}</label>
                                         </Link>
                                     )}

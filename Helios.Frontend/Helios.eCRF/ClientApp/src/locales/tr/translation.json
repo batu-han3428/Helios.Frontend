@@ -482,5 +482,11 @@
   "Closed": "Kapatıldı",
   "Unanswered": "Cevaplanmadı",
   "Answered": "Cevaplandı",
-  "Data change after query": "Sorgudan sonra veri değişikliği"
+  "Data change after query": "Sorgudan sonra veri değişikliği",
+  "Login page": "Giriş sayfası",
+  "Subject list": "Hasta listesi",
+  "Query list": "Sorgu listesi",
+  "SDV list": "SDV listesi",
+  "Data reports": "Veri raporları",
+  "My profile": "Profilim"
 }
