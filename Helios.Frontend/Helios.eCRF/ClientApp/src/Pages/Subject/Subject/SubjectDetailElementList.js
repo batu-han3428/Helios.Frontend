@@ -35,11 +35,11 @@ function SubjectDetailElementList(props) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
-    const [data, setData] = useState([]);
+/*    const [data, setData] = useState([]);*/
 
-    useEffect(() => {
-        setData(props.ElementList);
-    }, [props.ElementList]);
+    //useEffect(() => {
+    //    setData(props.ElementList);
+    //}, [props.ElementList]);
     const AutoSave = async (id, value, type = 0) => {
         if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
             dispatch(startloading());
@@ -69,12 +69,13 @@ function SubjectDetailElementList(props) {
                 Value: "",
             });
             if (response.data.isSuccess) {
-                const updatedData = data.map(d =>
-                    d.subjectVisitPageModuleElementId === item.subjectVisitPageModuleElementId
-                        ? { ...d, userValue: "" }
-                        : d
-                );
-                setData(updatedData);
+                console.log(response)
+                //const updatedData = data.map(d =>
+                //    d.subjectVisitPageModuleElementId === item.subjectVisitPageModuleElementId
+                //        ? { ...d, userValue: "" }
+                //        : d
+                //);
+                //setData(updatedData);
             }
             dispatch(endloading());
         }
@@ -88,7 +89,10 @@ function SubjectDetailElementList(props) {
             IsRequired: param.isRequired,
             HandleAutoSave: AutoSave,
         };
-
+        if (param.elementName === "Boy") {
+            console.log(param)
+        }
+      
         switch (param.elementType) {
             case 1:
                 return <LabelElement Title={param.title} />;
@@ -165,47 +169,56 @@ function SubjectDetailElementList(props) {
 
         return { items };
     }
+    const [elementList, setElementList] = useState([]);
 
-    const content = Array.isArray(data) ? data.map((item) => {
-        const w = item.width === 0 ? 12 : item.width;
-        const cls = "mb-6 col-md-" + w;
+    useEffect(() => {
+        if (props.ElementList) {
+            console.log(props.ElementList)
+            setElementList([...props.ElementList]);
+        }
+    }, [props.ElementList]);
+    const renderContent = () => {
+        return Array.isArray(elementList) ? elementList.map((item) => {
+            const w = item.width === 0 ? 12 : item.width;
+            const cls = "mb-6 col-md-" + w;
 
-        if (item.isHidden)
-            return ("");
-        else
-            return (
-                <Row className={cls} key={item.subjectVisitPageModuleElementId}>
-                    <div style={{ marginBottom: '3px', marginTop: '10px' }}>
-                        <label style={{ marginRight: '5px' }}>
-                            {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
-                            {item.elementType !== 1 && item.title}
+            if (item.isHidden) {
+                return null;
+            } else {
+                return (
+                    <Row className={cls} key={item.subjectVisitPageModuleElementId}>
+                        <div style={{ marginBottom: '3px', marginTop: '10px' }}>
+                            <label style={{ marginRight: '5px' }}>
+                                {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
+                                {item.elementType !== 1 && item.title}
+                            </label>
+                        </div>
+                        <Row>
+                            <div className="col-md-11">{renderElementsSwitch(item)}</div>
+                            {item.elementType !== 1 && item.elementType !== 3 &&
+                                <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
+                                    <Dropdown menu={getItems(item)} trigger={['click']} placement="bottomLeft">
+                                        <div style={{ alignItems: 'center' }}>
+                                            <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                                <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
+                                            </a>
+                                        </div>
+                                    </Dropdown>
+                                </div>
+                            }
+                        </Row>
+                        <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
+                            {item.description}
                         </label>
-                    </div>
-                    <Row>
-                        <div className="col-md-11">{renderElementsSwitch(item)}</div>
-                        {item.elementType !== 1 && item.elementType !== 3 &&
-                            <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
-                                <Dropdown menu={getItems(item)} trigger={['click']} placement="bottomLeft">
-                                    <div style={{ alignItems: 'center' }}>
-                                        <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                                            <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
-                                        </a>
-                                    </div>
-                                </Dropdown>
-                            </div>
-                        }
                     </Row>
-                    <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
-                        {item.description}
-                    </label>
-                </Row>
-            );
-    }):null;
-
+                );
+            }
+        }) : null;
+    };
     return (
         <div>
             <div className="row">
-                {content}
+                {renderContent()}
             </div>
             <ToastComp
                 ref={toastRef}

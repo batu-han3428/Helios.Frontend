@@ -36,6 +36,11 @@ class NumericElement extends Component {
             });
         }
     }
+    componentDidUpdate(prevProps) {
+        if (prevProps.Value !== this.props.Value) {
+            this.setState({ Value: this.props.Value });
+        }
+    }
 
     handleBlur(e) {
         this.validateValue(e.target.value);
