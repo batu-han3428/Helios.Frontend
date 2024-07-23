@@ -9,9 +9,6 @@ using PuppeteerSharp;
 using RestSharp;
 using System.Text.RegularExpressions;
 using Helios.Common.Enums;
-using System.Globalization;
-using System.Text;
-using System.Drawing;
 
 namespace Helios.eCRF.Services
 {
@@ -255,15 +252,6 @@ namespace Helios.eCRF.Services
             }
         }
 
-        class ElementOption
-        {
-            public int id { get; set; }
-            public string tagName { get; set; }
-            public string tagValue { get; set; }
-            public string tagNameInpCls { get; set; }
-            public string tagValueInpCls { get; set; }
-        }
-
         public static bool IsJson(string input)
         {
             input = input.Trim();
@@ -285,7 +273,7 @@ namespace Helios.eCRF.Services
                     try
                     {
                         string today = DateTime.Now.ToString("dd.MM.yyyy");
-                        string htmlContent = @"<!DOCTYPE html><html lang=""en""><head><meta charset=""UTF-8""><meta name=""viewport"" content=""width=device-width, initial-scale=1.0""><title>PDF Oluştur</title><style>table {border: dashed #ccc;border-width: 0 1px 0 1px;}table td {border: dashed #ccc;border-width: 1px 0 1px 0;}</style></head><body><br>Protokol Kod: <span id=""protocolcode"">" + result.Data.StudyModel.ProtocolCode + @"</span><br>Hasta Numarası: <span><br>" + result.Data.StudyModel.SubjectNumber;
+                        string htmlContent = @"<!DOCTYPE html><html lang=""en""><head><meta charset=""UTF-8""><meta name=""viewport"" content=""width=device-width, initial-scale=1.0""><title>PDF Oluştur</title><style>table {border: dashed #ccc;border-width: 0 1px 0 1px;}table td {border: dashed #ccc;border-width: 1px 0 1px 0;}</style></head><body><br>Protokol Kod: <span id=""protocolcode"">" + result.Data.StudyModel.ProtocolCode + @"</span><br>Hasta Numarası: <span>" + result.Data.StudyModel.SubjectNumber+ "</span><div><br/></div>";
 
                         List<string> bookmarks = new List<string>();
                         int visitNo = 1;
@@ -293,12 +281,12 @@ namespace Helios.eCRF.Services
                         result.Data.VisitModel.ForEach(visit =>
                         {
                             bookmarks.Add(visit.Title);
-                            htmlContent += $"<div class=\"col-md-12\"></div><table style=\"width:100%;\"><tbody><tr style=\"border-bottom:1px solid #ccc\"><th style=\"width:15%;\">No</th><th style=\"width:60%;\">Soru</th><th style=\"width:25%;\">Cevap</th></tr><tr style=\"color:#fff; background-color:#6D6E70; font-size:18px; text-align:Center;\"><td colspan=\"3\"><div style=\"margin:10px\"><b>{visit.Title}</b></div></td></tr>";
+                            htmlContent += $"<table style=\"width:100%;\"><tbody><tr style=\"border-bottom:1px solid #ccc\"><th style=\"width:15%;\">No</th><th style=\"width:60%;\">Soru</th><th style=\"width:25%;\">Cevap</th></tr><tr style=\"color:#fff; background-color:#6D6E70; font-size:18px; text-align:Center;\"><td colspan=\"3\"><div style=\"margin:10px\"><b>{visit.Title}</b></div></td></tr>";
                             visit.Children.ForEach(page =>
                             {
                                 if (page.Title != null)
                                 {
-                                    htmlContent += $"<tr style=\"color:#fff; background-color:#6D6E70; font-size:18px; text-align:Center;\"><td colspan=\"3\"><div style=\"margin:10px\"><b>{page.Title}</b></div></td></tr>";
+                                    htmlContent += $"<tr style=\"color:#fff; background-color:#a4a7ad; font-size:18px; text-align:Center;\"><td colspan=\"3\"><div style=\"margin:10px\"><b>{page.Title}</b></div></td></tr>";
                                     if (page.Children.Count < 1) htmlContent += "<tr style=\"text-align:Center;\"><td colspan=\"3\">No data has been entered on this page</td></tr>";
                                 }
                                 page.Children.ForEach(module =>
@@ -322,17 +310,7 @@ namespace Helios.eCRF.Services
                                             case ElementType.DropDown:
                                                 if (elm.ElementOptions != "")
                                                 {
-                                                    List<ElementOption>? elmOpts = System.Text.Json.JsonSerializer.Deserialize<List<ElementOption>>(elm.ElementOptions);
-                                                    if (elmOpts != null)
-                                                    {
-                                                        //input = "<div class=\"input-group animated fadeInLeft  helios-input helios-radio \" style=\"margin:5px 0px\"><ul style=\"list-style-type:none;margin-left:-40px;\">";
-                                                        //elmOpts.ForEach(elmOpt =>
-                                                        //{
-                                                        //    input += $"<li><input type=\"radio\" class=\"formInputClassName\" {(val == elmOpt.tagValue ? "checked" : "")}><label> {elmOpt.tagName}</label></li>";
-                                                        //});
-                                                        //input += "</ul></div>";
-                                                        input += val;
-                                                    }
+                                                    input += val;
                                                 }
                                                 break;
                                             case ElementType.DateOption:
@@ -342,17 +320,7 @@ namespace Helios.eCRF.Services
                                             case ElementType.DropDownMulti:
                                                 if (elm.ElementOptions != "")
                                                 {
-                                                    List<ElementOption>? elmOpts = System.Text.Json.JsonSerializer.Deserialize<List<ElementOption>>(elm.ElementOptions);
-                                                    if (elmOpts != null)
-                                                    {
-                                                        //input = "<div class=\"input-group animated fadeInLeft  helios-input helios-radio \" style=\"margin:5px 0px\"><ul style=\"list-style-type:none;margin-left:-40px;\">";
-                                                        //elmOpts.ForEach(elmOpt =>
-                                                        //{
-                                                        //    input += $"<li><input type=\"checkbox\" class=\"formInputClassName\" {(val == elmOpt.tagValue ? "checked" : "")}><label> {elmOpt.tagName}</label></li>";
-                                                        //});
-                                                        //input += "</ul></div>";
-                                                        input += val;
-                                                    }
+                                                    input += val;
                                                 }
                                                 break;
                                             case ElementType.Textarea:
@@ -362,7 +330,6 @@ namespace Helios.eCRF.Services
                                                 input += "<label style=\"display: inline-block; padding: 6px 12px; cursor: pointer; background-color: #E5E5E5; color: black; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px; user-select: none;\">Select File</label>";
                                                 break;
                                             case ElementType.RangeSlider:
-                                                //input += "<input type=\"range\" min=\"0\" max=\"100\" step=\"1\" value=\"50\">";
                                                 input += val;
                                                 break;
                                             case ElementType.DataGrid:
@@ -372,17 +339,7 @@ namespace Helios.eCRF.Services
                                                     string cInput = "";
                                                     if (IsJson(entry.Value))
                                                     {
-                                                        List<ElementOption>? elmOpts = System.Text.Json.JsonSerializer.Deserialize<List<ElementOption>>(entry.Value);
-                                                        if (elmOpts != null)
-                                                        {
-                                                            //cInput = "<div class=\"input-group animated fadeInLeft  helios-input helios-radio \" style=\"margin:5px 0px\"><ul style=\"list-style-type:none;margin-left:-40px;\">";
-                                                            //elmOpts.ForEach(elmOpt =>
-                                                            //{
-                                                            //    cInput += $"<li><input type=\"checkbox\" class=\"formInputClassName\"><label> {elmOpt.tagName}</label></li>";
-                                                            //});
-                                                            //cInput += "</ul></div>";
-                                                            cInput += val;
-                                                        }
+                                                        cInput += val;
                                                     }
                                                     else
                                                     {

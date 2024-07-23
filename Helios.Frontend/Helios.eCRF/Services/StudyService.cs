@@ -444,7 +444,7 @@ border-width: 1px 0 1px 0;
                         result.Data.VisitModel.ForEach(visit =>
                         {
                             bookmarks.Add(visit.Title);
-                            htmlContent += $"<div class=\"col-md-12\"><h2 class=\"header\">{visit.Title}</h2></div><table style=\"width:100%;\"><tbody><tr style=\"border-bottom:1px solid #ccc\"><th style=\"width:15%;\">No</th><th style=\"width:60%;\">Soru</th><th style=\"width:25%;\">Cevap</th></tr>";
+                            htmlContent += $"<table style=\"width:100%;\"><tbody><tr style=\"border-bottom:1px solid #ccc\"><th style=\"width:15%;\">No</th><th style=\"width:60%;\">Soru</th><th style=\"width:25%;\">Cevap</th></tr><tr style=\"color:#fff; background-color:#6D6E70; font-size:18px; text-align:Center;\"><td colspan=\"3\"><div style=\"margin:10px\"><b>{visit.Title}</b></div></td></tr>";
                             visit.Children.ForEach(page =>
                             {
                                 if (page.Title != null)
