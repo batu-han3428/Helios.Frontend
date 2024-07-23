@@ -24,6 +24,8 @@ import ContactUs from './Pages/Common/ContactUs/ContactUs'
 import UnderConstruction from './Pages/Common/UnderConstruction/UnderConstruction'
 import "./Icon.js";
 
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
 const App = () => {
   return (
     <React.Fragment>
