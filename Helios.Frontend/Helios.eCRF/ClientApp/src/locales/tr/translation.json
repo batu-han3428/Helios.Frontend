@@ -478,5 +478,6 @@
   "This subject will be deleted.": "Bu hasta silinecektir.",
   "Password cannot be empty": "Şifre boş olamaz",
   "Your new password cannot be the same as the previous one": "Yeni şifreniz bir önceki ile aynı olamaz",
-  "The new passwords entered are not compatible with each other, please try again": "Girilen yeni şifreler birbiri ile uyumlu değildir, lütfen tekrar deneyin"
+  "The new passwords entered are not compatible with each other, please try again": "Girilen yeni şifreler birbiri ile uyumlu değildir, lütfen tekrar deneyin",
+  "Your account has been blocked. Please contact the system administrator.": "Hesabınız bloke olmuştur. Lütfen sistem yöneticisi ile iletişime geçiniz."
 }
