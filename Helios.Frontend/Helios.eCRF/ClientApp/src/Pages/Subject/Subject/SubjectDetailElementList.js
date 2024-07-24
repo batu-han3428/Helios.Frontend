@@ -26,23 +26,27 @@ import ConcomittantMedicationElement from '../../TenantAdmin/Module/Elements/Con
 import { withTranslation } from "react-i18next";
 import { useAutoSaveSubjectMutation } from '../../../store/services/Subject';
 
-function SubjectDetailElementList(props) { 
+function SubjectDetailElementList(props) {
     const toastRef = useRef();
     const [tenantId] = useState(props.TenantId);
     const [moduleId] = useState(props.ModuleId);
     const [studyId] = useState(props.StudyId);
-    const [isDisable] = useState(props.IsDisable);
+    const [isDisable, setIsDisable] = useState(props.IsDisable);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
 
+    useEffect(() => {
+        setIsDisable(props.IsDisable);
+    }, [props.IsDisable]);
+
     const AutoSave = useCallback(async (id, value, type = 0) => {
         if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
-            dispatch(startloading());       
+            dispatch(startloading());
             const response = await autoSaveSubject({
                 Id: id,
                 Value: value
-            });           
+            });
             if (response.data.isSuccess) {
                 toastRef.current.setToast({
                     message: response.data.message,
@@ -59,24 +63,24 @@ function SubjectDetailElementList(props) {
     }, [autoSaveSubject, dispatch]);
     const ClearData = async (item) => {
         if (item.userValue !== undefined && item.userValue !== null && item.userValue !== "") {
-            dispatch(startloading());        
+            dispatch(startloading());
             const response = await autoSaveSubject({
                 Id: item.subjectVisitPageModuleElementId,
                 Value: "",
-            });          
+            });
             dispatch(endloading());
         }
     }
     const renderElementsSwitch = useCallback((param) => {
-        const dsbl = props.IsDisable ? "disabled" : "";
+        const dsbl = isDisable;
         const commonProps = {
             Id: param.subjectVisitPageModuleElementId,
             Value: param.userValue ?? "",
             IsDisable: dsbl,
             IsRequired: param.isRequired,
             HandleAutoSave: AutoSave,
-        };       
-      
+        };
+
         switch (param.elementType) {
             case 1:
                 return <LabelElement Title={param.title} />;
@@ -150,10 +154,16 @@ function SubjectDetailElementList(props) {
                 style: { color: "#5b626b" },
             },
         ];
+        if (param.elementType === 17 || param.elementType === 7) {
+            var items2 = items.filter(item => item.key !== '1');
+            return { items: items2 };
+        }
+        else {
+            return { items };
+        }
 
-        return { items };
     }, [ClearData, navigate, props.t]);
-  
+
     const renderContent = useMemo(() => {
         return Array.isArray(props.ElementList) ? props.ElementList.map((item) => {
             const w = item.width === 0 ? 12 : item.width;
@@ -164,29 +174,31 @@ function SubjectDetailElementList(props) {
             } else {
                 return (
                     <Row className={cls} key={item.subjectVisitPageModuleElementId}>
-                        <div style={{ marginBottom: '3px', marginTop: '10px' }}>
-                            <label style={{ marginRight: '5px' }}>
-                                {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
-                                {item.elementType !== 1 && item.title}
+                        <React.Fragment>
+                            <div style={{ marginBottom: '3px', marginTop: '10px' }}>
+                                <label style={{ marginRight: '5px' }}>
+                                    {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
+                                    {item.elementType !== 1 && item.title}
+                                </label>
+                            </div>
+                            <Row>
+                                <div className="col-md-11">{renderElementsSwitch(item)}</div>
+                                {item.elementType !== 1 && item.elementType !== 3 &&
+                                    <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
+                                        <Dropdown menu={getItems(item)} trigger={['click']} placement="bottomLeft">
+                                            <div style={{ alignItems: 'center' }}>
+                                                <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                                    <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
+                                                </a>
+                                            </div>
+                                        </Dropdown>
+                                    </div>
+                                }
+                            </Row>
+                            <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
+                                {item.description}
                             </label>
-                        </div>
-                        <Row>
-                            <div className="col-md-11">{renderElementsSwitch(item)}</div>
-                            {item.elementType !== 1 && item.elementType !== 3 &&
-                                <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
-                                    <Dropdown menu={getItems(item)} trigger={['click']} placement="bottomLeft">
-                                        <div style={{ alignItems: 'center' }}>
-                                            <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                                                <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
-                                            </a>
-                                        </div>
-                                    </Dropdown>
-                                </div>
-                            }
-                        </Row>
-                        <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
-                            {item.description}
-                        </label>
+                        </React.Fragment>
                     </Row>
                 );
             }

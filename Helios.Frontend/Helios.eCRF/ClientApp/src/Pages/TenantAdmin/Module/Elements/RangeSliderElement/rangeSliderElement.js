@@ -22,7 +22,7 @@ class RangeSliderElement extends Component {
         this.handleChangeHorizontal = this.handleChangeHorizontal.bind(this);
         this.handleAfterChange = this.handleAfterChange.bind(this);
     }
-
+    
     handleChangeHorizontal = value => {
         this.setState({
             horizontal: value
@@ -30,7 +30,7 @@ class RangeSliderElement extends Component {
     };
     componentDidUpdate(prevProps) {
         if (prevProps.Value !== this.props.Value) {
-            this.setState({ horizontal: this.props.Value });
+            this.setState({ horizontal: (this.props.Value === null || this.props.Value === undefined || this.props.Value === "") ? this.props.DefaultValue === "" || this.props.DefaultValue === null || this.props.DefaultValue === undefined ? 0 : parseInt(this.props.DefaultValue) : parseInt(this.props.Value) });
         }
     }
     handleAfterChange(value) {
@@ -51,8 +51,8 @@ class RangeSliderElement extends Component {
                     onChange={this.handleChangeHorizontal}
                     onAfterChange={this.handleAfterChange}
                     disabled={this.state.isDisable}                  
-                    className={this.state.horizontal !== null && this.state.isRequired ? 'customSlider input-normal' : 'customSlider input-error'}
-                    trackClassName="customSlider-track"
+                    className="customSlider"
+                    trackClassName={this.state.horizontal !== 0  && this.state.isRequired ? 'customSlider-track' : 'customSlider-track input-error'}
                     thumbClassName="customSlider-thumb"
                 />
                 <div className='row'>
