@@ -65,9 +65,9 @@ export const SubjectApi = createApi({
 });
 
 
-export const { useGetSubjectListQuery } = SubjectApi;
+export const { useLazyGetSubjectListQuery } = SubjectApi;
 
-export const { useGetUserPermissionsQuery } = SubjectApi;
+export const { useLazyGetUserPermissionsQuery } = SubjectApi;
 
 export const { useAddSubjectMutation } = SubjectApi;
 
