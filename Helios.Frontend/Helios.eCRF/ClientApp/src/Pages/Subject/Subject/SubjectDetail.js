@@ -7,7 +7,7 @@ import SubjectDetailMenu from './Comp/SubjectDetailMenu';
 import './Subject.css';
 import SubjectDetailDrawer from './Comp/SubjectDetailDrawer';
 import { useParams } from "react-router-dom";
-import { useLazyGetSubjectDetailMenuQuery, useGetSubjectElementListQuery, useGetUserPermissionsQuery } from '../../../store/services/Subject';
+import { useLazyGetSubjectDetailMenuQuery, useGetSubjectElementListQuery, useLazyGetUserPermissionsQuery } from '../../../store/services/Subject';
 import { endloading, startloading } from '../../../store/loader/actions';
 import { useDispatch } from "react-redux";
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
@@ -36,7 +36,13 @@ const SubjectDetail = props => {
     const [currentPage, setCurrentPage] = useState(pageId);
 
     const [permissions, setPermissions] = useState([]);
-    const { data: permissionsData, errorPerm, isLoadingPerm } = useGetUserPermissionsQuery(studyId);
+    const [triggerPermission, { data: permissionsData, errorPerm, isLoadingPerm }] = useLazyGetUserPermissionsQuery();
+
+    useEffect(() => {
+        if (studyId) {
+            triggerPermission(studyId);
+        }
+    }, [studyId])
 
     useEffect(() => {
         if (!errorPerm && !isLoadingPerm && permissionsData) {

@@ -11,7 +11,7 @@ import { SdvIconStatu, QueryIconStatu } from "../../../helpers/icon_helper";
 import { useDispatch, connect } from "react-redux";
 import withRouter from '../../../components/Common/withRouter';
 import { startloading, endloading } from '../../../store/loader/actions';
-import { useAddSubjectMutation, useGetSubjectListQuery, useGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
+import { useAddSubjectMutation, useLazyGetSubjectListQuery, useLazyGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
 import { useLazyStudyUserSitesGetQuery } from '../../../store/services/Users';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
@@ -45,12 +45,19 @@ const SubjectList = props => {
     const columns = [];
     const [addingSubject] = useAddSubjectMutation();
     const [deleteOrArchiveSubject] = useDeleteOrArchiveSubjectMutation();
-    const { data: permissionsData, errorPerm, isLoadingPerm } = useGetUserPermissionsQuery(studyId);
-    const { data: subjectsData, error, isLoading } = useGetSubjectListQuery({ studyId: studyId, showArchivedSubjects: showArchivedSubjects });
+    const [triggerPermission, { data: permissionsData, errorPerm, isLoadingPerm }] = useLazyGetUserPermissionsQuery();
+    const [triggerSubjectList, { data: subjectsData, error, isLoading }] = useLazyGetSubjectListQuery();
     const [trigger, { data: studyUserSitesData, errorSite, isLoadingSite }] = useLazyStudyUserSitesGetQuery();
     const [view, setView] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        dispatch(startloading);
+        if (studyId) {
+            triggerPermission(studyId);
+        }
+    }, [studyId, dispatch]);
 
     useEffect(() => {
         if (!errorPerm && !isLoadingPerm && permissionsData) {
@@ -60,67 +67,59 @@ const SubjectList = props => {
             }
             setView(true);
             setPermissions(permissionsData);
+            optionGroup(studyId);
+            getStudy(studyId);
+            triggerSubjectList({ studyId: studyId, showArchivedSubjects: showArchivedSubjects });
+        } else if (errorPerm && !isLoadingPerm) {
             dispatch(endloading());
         }
+    }, [permissionsData, errorPerm, isLoadingPerm, navigate, props.location, studyId, showArchivedSubjects]);
 
-        optionGroup(studyId);
-        getStudy(studyId);
-        updateSubjectsList(studyId, showArchivedSubjects);
-
-    }, [permissionsData, errorPerm, isLoadingPerm, subjectsData, error, isLoading, showArchivedSubjects, studyId, navigate,
-        dispatch, props.location]);
-
-    const updateSubjectsList = (id, showArchived) => {
+    useEffect(() => {
         if (!error && !isLoading && subjectsData) {
-            const filteredSubjectsData = subjectsData.filter(item => {
-                if (showArchived) {
-                    return true;
-                }
-
-                return !item.isArchived;
-            });
-
-            const updatedSubjectsData = filteredSubjectsData.map(item => {
+            const updatedSubjectsData = subjectsData.map(item => {
                 return {
                     ...item,
                     createdAt: formatDate(item.createdAt),
                     updatedAt: formatDate(item.updatedAt),
-                    actions: getActions(item),
                     sdv: SdvIconStatu(2),
                     query: QueryIconStatu(1),
+                    actions: getActions(item, permissions),
                     key: uuidv4()
                 };
             });
-
             const newData = { ...data };
             newData.subjectList = updatedSubjectsData;
             setData(newData);
             dispatch(endloading());
         }
-    };
+        else if (error && !isLoading) {
+            dispatch(endloading());
+        }
+    }, [subjectsData, error, isLoading, permissions]);
 
     const goToSubjectDetail = (studyId, pageId, subjectId, subjectNumber) => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}/${subjectNumber}`);
     };
 
-    const getActions = ({ id, firstPageId, subjectNumber, isActive }) => {
+    const getActions = (item, permissions) => {
         const actions = (
             <div className="icon-container">
-                <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(studyId, firstPageId, id) }}></div>
-                {permissions.canSubjectDelete && <div title={props.t("Delete")} className="icon icon-delete" onClick={() => { toggleDeleteModal(id, subjectNumber, true) }}></div>}
+                <div title={props.t("Go to demo subject")} className="icon icon-demo" onClick={() => { goToSubjectDetail(studyId, item.firstPageId, item.id) }}></div>
+                {permissions.canSubjectDelete && <div title={props.t("Delete")} className="icon icon-delete" onClick={() => { toggleDeleteModal(item.id, subjectNumber, true) }}></div>}
                 {permissions.canSubjectArchive && (
                     <>
-                        {isActive ? (
+                        {item.isActive ? (
                             <div
                                 title={props.t("Archive")}
                                 className="ti-archive"
-                                onClick={() => toggleDeleteModal(id, subjectNumber, false)}
+                                onClick={() => toggleDeleteModal(item.id, subjectNumber, false)}
                             ></div>
                         ) : (
                             <div
                                 title={props.t("Unarchive")}
                                 className="ti-back-left"
-                                onClick={() => toggleDeleteModal(id, subjectNumber, false, true)}
+                                onClick={() => toggleDeleteModal(item.id, subjectNumber, false, true)}
                             ></div>
                         )}
                     </>
@@ -457,7 +456,6 @@ const SubjectList = props => {
 
     const handleShowArchivedSubjectsChange = (e) => {
         setShowArchivedSubjects(e.target.checked);
-        updateSubjectsList(studyId, showArchivedSubjects);
     }
 
     const [textError, setTextError] = useState("");
