@@ -123,6 +123,13 @@ const TenantsList = props => {
                                         columns={data.columns}
                                         pagination={true}
                                         scroll={{ x: 'max-content' }}
+                                        onRow={(record) => {
+                                            return {
+                                                onDoubleClick: () => {
+                                                    addOrUpdateTenant(record.id)
+                                                }
+                                            }
+                                        }}
                                     />
                                 </CardBody>
                             </Card>
