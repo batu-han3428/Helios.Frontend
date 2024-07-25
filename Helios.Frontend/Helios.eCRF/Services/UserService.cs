@@ -442,7 +442,7 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<ApiResponse<dynamic>> AddOrUpdatePermissionRole(UserPermissionModel userPermission)
+        public async Task<ApiResponse<dynamic>> AddOrUpdatePermissionRole(UserPermissionRoleModel userPermission)
         {
             using (var client = CoreServiceClient)
             {
@@ -454,7 +454,7 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<ApiResponse<dynamic>> DeleteRole(UserPermissionModel userPermission)
+        public async Task<ApiResponse<dynamic>> DeleteRole(UserPermissionRoleModel userPermission)
         {
             using (var client = CoreServiceClient)
             {

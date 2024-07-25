@@ -16,8 +16,8 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> UpdateUser(AspNetUserDTO model);
         Task<bool> AddRole(UserDTO model);
         Task<RestResponse<List<TenantModel>>> GetTenantList();
-        Task<ApiResponse<dynamic>> AddOrUpdatePermissionRole(UserPermissionModel userPermission);
-        Task<ApiResponse<dynamic>> DeleteRole(UserPermissionModel userPermission);
+        Task<ApiResponse<dynamic>> AddOrUpdatePermissionRole(UserPermissionRoleModel userPermission);
+        Task<ApiResponse<dynamic>> DeleteRole(UserPermissionRoleModel userPermission);
         Task<RestResponse<List<RoleVisitPermissionsModel>>> GetPermissionsVisitList(Int64 roleId);
         Task<ApiResponse<dynamic>> SetPermissionsVisitPage(PermissionsRoleVisitPageDTO dto);
         Task<RestResponse<List<UserPermissionDTO>>> GetPermissionRoleList(Int64 studyId);
