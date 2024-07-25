@@ -43,8 +43,7 @@ const SubjectDetail = props => {
             triggerPermission(studyId);
         }
     }, [studyId])
-    const [isLoaded, setIsLoaded] = useState(false);
-    const { data: permissionsData, errorPerm, isLoadingPerm } = useGetUserPermissionsQuery(studyId);
+    const [isLoaded, setIsLoaded] = useState(false);   
 
     useEffect(() => {
         if (!errorPerm && !isLoadingPerm && permissionsData) {
