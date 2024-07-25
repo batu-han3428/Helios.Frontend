@@ -43,10 +43,13 @@ const SubjectDetail = props => {
             triggerPermission(studyId);
         }
     }, [studyId])
+    const [isLoaded, setIsLoaded] = useState(false);
+    const { data: permissionsData, errorPerm, isLoadingPerm } = useGetUserPermissionsQuery(studyId);
 
     useEffect(() => {
         if (!errorPerm && !isLoadingPerm && permissionsData) {
             setPermissions(permissionsData);
+            setIsLoaded(true);
         }
     }, [permissionsData, errorPerm, isLoadingPerm]);
 
@@ -216,15 +219,18 @@ const SubjectDetail = props => {
                             <SubjectDetailDrawer onClose={onClose} openMobileMenu={openMobileMenu} content={<SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={true} studyId={studyId} subjectId={subjectId} />} />
                         </Col>
                         <Col xs={24} sm={24} md={18} lg={18} xl={19} >
-                            <div ref={myDivRef} id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom:"100px" }}>
-                                <SubjectDetailElementList
-                                    IsDisable={!permissions.canSubjectEdit}
+                            <div ref={myDivRef} id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom: "100px" }}>
+                                {isLoaded &&
+                                    <SubjectDetailElementList
+                                        IsDisable={!permissions.canSubjectEdit}
                                     StudyId={studyId}
                                     ModuleId={0 }
                                     IsDisable={false}
                                     ElementList={subjectElementList}
+                                       
                                     DataGridRowId={null}
                                 />
+                                }
                             </div>
                         </Col>
                     </Row>

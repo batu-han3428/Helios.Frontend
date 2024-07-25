@@ -17,11 +17,11 @@ import {
 } from "reactstrap";
 import Select from "react-select";
 import { withTranslation } from "react-i18next";
+import "../Element.css";
 
 class DateElement extends Component {
     constructor(props) {
-        super(props);
-
+        super(props);          
         this.state = {
             id: props.Id,
             Title: props.Title,
@@ -43,6 +43,7 @@ class DateElement extends Component {
             MonthSelectedGroup: null,
             YearOptionGroup: [],
             YearSelectedGroup: null,
+            isRequired: props.IsRequired
         }
 
         this.fillElementDDs = this.fillElementDDs.bind(this);
@@ -188,8 +189,12 @@ class DateElement extends Component {
         }, () => {
             this.handleSave();
         });
-    };
-
+    };  
+    componentDidUpdate(prevProps) {
+        if (prevProps.Value !== this.props.Value && this.props.Value === "") {
+            this.setState({ DaySelectedGroup: null, MonthSelectedGroup: null, YearSelectedGroup:null });
+        }
+    }
     handleSave() {
         if (this.state.DaySelectedGroup !== null && this.state.MonthSelectedGroup !== null && this.state.YearSelectedGroup !== null) {
             var day = this.state.DaySelectedGroup.value < 10 && this.state.DaySelectedGroup.label.toString().toLowerCase() !== "unk" ? '0' + this.state.DaySelectedGroup.value : this.state.DaySelectedGroup.label;
@@ -217,6 +222,9 @@ class DateElement extends Component {
     };
 
     render() {
+        const inputClassDay = (this.state.DaySelectedGroup === null || (this.state.DaySelectedGroup !==null && this.state.DaySelectedGroup.value === "")) && this.state.isRequired ? 'input-error' : 'input-normal';
+        const inputClassMonth = (this.state.MonthSelectedGroup === null || (this.state.MonthSelectedGroup !== null && this.state.MonthSelectedGroup.value === "")) && this.state.isRequired ? 'input-error' : 'input-normal';
+        const inputClassYear = (this.state.YearSelectedGroup === null || (this.state.YearSelectedGroup !== null && this.state.YearSelectedGroup.value === "")) && this.state.isRequired ? 'input-error' : 'input-normal';
         return (
             <>
                 <Row>
@@ -242,6 +250,7 @@ class DateElement extends Component {
                             onChange={this.handleDayChange}
                             options={this.state.DayOptionGroup}
                             classNamePrefix="select2-selection"
+                            className={inputClassDay}
                             placeholder={this.props.t("Day")}
                             isDisabled={this.state.isDisable} />
                     </div>/
@@ -251,6 +260,7 @@ class DateElement extends Component {
                             onChange={this.handleMonthChange}
                             options={this.state.MonthOptionGroup}
                             classNamePrefix="select2-selection"
+                            className={inputClassMonth}
                             placeholder={this.props.t("Month")}
                             isDisabled={this.state.isDisable} />
                     </div>/
@@ -260,6 +270,7 @@ class DateElement extends Component {
                             onChange={this.handleYearChange}
                             options={this.state.YearOptionGroup}
                             classNamePrefix="select2-selection"
+                            className={inputClassYear}
                             placeholder={this.props.t("Year")}
                             isDisabled={this.state.isDisable} />
                     </div>

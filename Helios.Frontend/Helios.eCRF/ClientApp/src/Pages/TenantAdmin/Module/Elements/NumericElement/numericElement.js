@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { withTranslation } from "react-i18next";
+import  "../Element.css";
 
-class NumericElement extends Component {
+class NumericElement extends Component {    
     constructor(props) {
         super(props);
-
         this.state = {
             id: props.Id,
             isDisable: props.IsDisable,
@@ -15,14 +15,15 @@ class NumericElement extends Component {
             UpperLimit: props.UpperLimit,
             Value: props.Value,
             tooltipMessage: '',
-            showTooltip: false
+            showTooltip: false,
+            isRequired: props.IsRequired
         }
 
         this.handleChange = this.handleChange.bind(this);
         this.handleBlur = this.handleBlur.bind(this);
         this.validateValue = this.validateValue.bind(this);
     }
-
+   
     handleChange(e) {
         let newValue = e.target.value;
         const regex = /^[0-9]*\.?[0-9]*$/;
@@ -33,6 +34,11 @@ class NumericElement extends Component {
                 showTooltip: false,
                 tooltipMessage: ''
             });
+        }
+    }
+    componentDidUpdate(prevProps) {
+        if (prevProps.Value !== this.props.Value) {
+            this.setState({ Value: this.props.Value });
         }
     }
 
@@ -47,7 +53,6 @@ class NumericElement extends Component {
         if (isNaN(newValue)) {
             newValue = this.state.LowerLimit;
         }
-
         if (this.state.LowerLimit !== this.state.UpperLimit)
             if (newValue < this.state.LowerLimit) {
                 tooltipMessage = this.props.t("Value should not be less than") + this.state.LowerLimit + this.props.t("and greater than") + this.state.UpperLimit;
@@ -69,17 +74,18 @@ class NumericElement extends Component {
             }
 
         this.setState({
-            Value: value
+            Value: value           
         });
 
         this.props.HandleAutoSave(this.state.id, value);
     }
 
     render() {
+        const inputClass = this.state.Value === "" && this.state.isRequired ? 'form-control input-error' : 'form-control input-normal';
         return (
             <div style={{ marginRight: "20px" }}>
                 <input
-                    className="form-control"
+                    className= {inputClass}
                     type="number"
                     step="0.01"
                     disabled={this.state.isDisable}
@@ -87,12 +93,12 @@ class NumericElement extends Component {
                     onChange={this.handleChange}
                     onBlur={this.handleBlur}
                     //min={this.state.LowerLimit}
-                    //max={this.state.UpperLimit}
-                    data-tooltip-id={`tooltip-${this.state.id}`}
+                    //max={this.state.UpperLimit}                  
+                    data-tooltip-id={`tooltip-${this.state.id}`}              
                     data-tooltip-content={this.state.tooltipMessage}
                 />
                 {this.state.showTooltip && (
-                    <Tooltip id={`tooltip-${this.state.id}`} place="top" effect="solid" type="error" />
+                    <Tooltip id={`tooltip-${this.state.id}`} place="top" effect="solid" type="error"/>
                 )}
             </div>
         )

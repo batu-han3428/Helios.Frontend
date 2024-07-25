@@ -3,7 +3,7 @@ import {
     Input,
     Label
 } from "reactstrap";
-
+import "../Element.css";
 class RadioElement extends Component {
     constructor(props) {
         super(props);
@@ -15,6 +15,7 @@ class RadioElement extends Component {
             ElementOptions: props.ElementOptions !== null && props.ElementOptions !== undefined && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
             selectedOption: props.Value,
+            isRequired: props.IsRequired
         }
 
         this.handleRadioChange = this.handleRadioChange.bind(this);
@@ -24,8 +25,13 @@ class RadioElement extends Component {
         this.setState({ selectedOption: value });
         this.props.HandleAutoSave(this.state.id, value);
     };
-
+    componentDidUpdate(prevProps) {
+        if (prevProps.Value !== this.props.Value) {
+            this.setState({ selectedOption: this.props.Value });
+        }
+    }
     render() {
+        const inputClass = this.state.selectedOption === "" && this.state.isRequired ? 'form-check-input input-error' : 'form-check-input input-normal';
         return (
             <>
                 {(this.state.layout === 2 || this.state.layout === 0) && (
@@ -34,7 +40,7 @@ class RadioElement extends Component {
                             <div className="form-check form-check-inline" key={index}>
                                 <Input
                                     type="radio"
-                                    className="form-check-input"
+                                    className={inputClass}
                                     checked={this.state.selectedOption === item.tagValue}
                                     value={item.tagValue}
                                     onChange={() => this.handleRadioChange(item.tagValue)}
@@ -54,7 +60,7 @@ class RadioElement extends Component {
                             <div className="form-check mb-2" key={index}>
                                 <Input
                                     type="radio"
-                                    className="form-check-input"
+                                    className={inputClass}
                                     checked={this.state.selectedOption === item.tagValue}
                                     value={item.tagValue}
                                     onChange={() => this.handleRadioChange(item.tagValue)}

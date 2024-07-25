@@ -25,7 +25,6 @@ const baseUrl = "http://localhost:3300/";
 class TableElement extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
             id: props.Id,
             moduleId: props.ModuleId,
@@ -97,7 +96,13 @@ class TableElement extends Component {
             elementName: GetElementNameByKey(this.props, e.value) + " " + this.props.t("Properties")
         }));
     };
-
+    componentDidUpdate(prevProps) {
+        if (this.props.ChildElementList !== prevProps.ChildElementList) {
+            this.setState(
+                { childElementList:this.props.ChildElementList }
+            );
+        }
+    }
     togglePropertiesModal = () => {
         this.setState(prevState => ({
             propertiesModalState: !prevState.propertiesModalState

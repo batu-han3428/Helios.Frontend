@@ -1,8 +1,8 @@
-﻿import React, { useState, useRef } from 'react';
+﻿import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Row } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import '../../TenantAdmin/Module/FormBuilder/formBuilder.css';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { Dropdown } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -32,13 +32,16 @@ function SubjectDetailElementList(props) {
     const [subjectVisitPageModuleId] = useState(props.ModuleId);
     const [studyId] = useState(props.StudyId);
     const [dataGridRowId] = useState(props.DataGridRowId);
-    const [isDisable] = useState(props.IsDisable);
+    const [isDisable, setIsDisable] = useState(props.IsDisable);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
 
-    const AutoSave = async (id, value, dataGridRowId = 0, type = 0) => {
+    useEffect(() => {
+        setIsDisable(props.IsDisable);
+    }, [props.IsDisable]);
+
+    const AutoSave = useCallback(async (id, value,dataGridRowId = 0, type = 0) => {
         if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
             dispatch(startloading());
             const response = await autoSaveSubject({
@@ -59,10 +62,19 @@ function SubjectDetailElementList(props) {
             }
             dispatch(endloading());
         }
+    }, [autoSaveSubject, dispatch]);
+    const ClearData = async (item) => {
+        if (item.userValue !== undefined && item.userValue !== null && item.userValue !== "") {
+            dispatch(startloading());
+            const response = await autoSaveSubject({
+                Id: item.subjectVisitPageModuleElementId,
+                Value: "",
+            });
+            dispatch(endloading());
+        }
     }
-
-    const renderElementsSwitch = (param) => {
-        const dsbl = props.IsDisable ? "disabled" : "";
+    const renderElementsSwitch = useCallback((param) => {
+        const dsbl = isDisable;
         const commonProps = {
             Id: param.subjectVisitPageModuleElementId,
             StudyVisitPageModuleElementId: param.studyVisitPageModuleElementId,
@@ -70,6 +82,7 @@ function SubjectDetailElementList(props) {
             Value: param.userValue ?? "",
             IsDisable: dsbl,
             DataGridRowId: dataGridRowId,
+            IsRequired: param.isRequired,
             HandleAutoSave: AutoSave,
         };
 
@@ -111,13 +124,13 @@ function SubjectDetailElementList(props) {
             default:
                 return "";
         }
-    }
+    }, [AutoSave, props.IsDisable, studyId, tenantId, moduleId]);
 
-    const getItems = () => {
+    const getItems = useCallback((param) => {
         const items = [
             {
                 key: '1',
-                label: <a onClick={() => navigate('')}>{props.t("Clear data")}</a>,
+                label: <a onClick={() => ClearData(param)}>{props.t("Clear data")}</a>,
                 icon: <FontAwesomeIcon icon="fas fa-ban" style={{ color: "#5b626b" }} />,
                 style: { color: "#5b626b" },
             },
@@ -146,52 +159,60 @@ function SubjectDetailElementList(props) {
                 style: { color: "#5b626b" },
             },
         ];
+        if (param.elementType === 17 || param.elementType === 7) {
+            var items2 = items.filter(item => item.key !== '1');
+            return { items: items2 };
+        }
+        else {
+            return { items };
+        }
 
-        return { items };
-    }
+    }, [ClearData, navigate, props.t]);
 
-    const content = Array.isArray(props.ElementList)
-        ? props.ElementList.map((item) => {
+    const renderContent = useMemo(() => {
+        return Array.isArray(props.ElementList) ? props.ElementList.map((item) => {
             const w = item.width === 0 ? 12 : item.width;
             const cls = "mb-6 col-md-" + w;
 
-            if (item.isHidden)
-                return ("");
-            else
+            if (item.isHidden) {
+                return null;
+            } else {
                 return (
                     <Row className={cls} key={item.subjectVisitPageModuleElementId}>
-                        <div style={{ marginBottom: '3px', marginTop: '10px' }}>
-                            <label style={{ marginRight: '5px' }}>
-                                {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
-                                {item.elementType !== 1 && item.title}
+                        <React.Fragment>
+                            <div style={{ marginBottom: '3px', marginTop: '10px' }}>
+                                <label style={{ marginRight: '5px' }}>
+                                    {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
+                                    {item.elementType !== 1 && item.title}
+                                </label>
+                            </div>
+                            <Row>
+                                <div className="col-md-11">{renderElementsSwitch(item)}</div>
+                                {item.elementType !== 1 && item.elementType !== 3 &&
+                                    <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
+                                        <Dropdown menu={getItems(item)} trigger={['click']} placement="bottomLeft">
+                                            <div style={{ alignItems: 'center' }}>
+                                                <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                                                    <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
+                                                </a>
+                                            </div>
+                                        </Dropdown>
+                                    </div>
+                                }
+                            </Row>
+                            <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
+                                {item.description}
                             </label>
-                        </div>
-                        <Row>
-                            <div className="col-md-11">{renderElementsSwitch(item)}</div>
-                            {item.elementType !== 1 && item.elementType !== 3 &&
-                                <div className="col-md-1" key={item.subjectVisitPageModuleElementId}>
-                                    <Dropdown menu={getItems()} trigger={['click']} placement="bottomLeft">
-                                        <div style={{ alignItems: 'center' }}>
-                                            <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
-                                                <FontAwesomeIcon icon="fa-solid fa-ellipsis-vertical" />
-                                            </a>
-                                        </div>
-                                    </Dropdown>
-                                </div>
-                            }
-                        </Row>
-                        <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
-                            {item.description}
-                        </label>
+                        </React.Fragment>
                     </Row>
                 );
-        })
-        : null;
-
+            }
+        }) : null;
+    }, [props.ElementList, renderElementsSwitch, getItems]);
     return (
         <div>
             <div className="row">
-                {content}
+                {renderContent}
             </div>
             <ToastComp
                 ref={toastRef}
@@ -200,4 +221,4 @@ function SubjectDetailElementList(props) {
     );
 }
 
-export default withTranslation()(SubjectDetailElementList);
+export default withTranslation()(React.memo(SubjectDetailElementList));

@@ -20,7 +20,11 @@ class AdverseEventElement extends Component {
     handleValueChange(e) {
         this.setState({ Value: e.target.value });
     };
-
+    componentDidUpdate(prevProps) {
+        if (prevProps.Value !== this.props.Value) {
+            this.setState({ Value: this.props.Value });
+        }
+    }
     render() {
         return (
             <div style={{ marginRight: "20px" }} >

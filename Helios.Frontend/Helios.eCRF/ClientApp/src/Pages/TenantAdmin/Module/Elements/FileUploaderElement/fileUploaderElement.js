@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { withTranslation } from "react-i18next";
+import "../Element.css";
 
 class FileUploaderElement extends Component {
     constructor(props) {
         super(props);       
         this.state = {
             isDisable: props.IsDisable,
-            selectedFile: null,           
+            selectedFile: null,         
+            isRequired: props.IsRequired
         };
 
         this.handleFileChange = this.handleFileChange.bind(this);
@@ -22,7 +24,11 @@ class FileUploaderElement extends Component {
 
         this.handleUpload();
     }
-
+    componentDidUpdate(prevProps) {
+        if (prevProps.Value !== this.props.Value) {
+            this.setState({ selectedFile: this.props.file });
+        }
+    }
     handleUpload() {
         const { selectedFile } = this.state;
 
@@ -42,7 +48,7 @@ class FileUploaderElement extends Component {
     render() {      
         return (
             <div>
-                <input type="file" ref={this.fileInputRef} onChange={this.handleFileChange} disabled={this.state.isDisable} style={{ display: 'none' }} />
+                <input type="file" ref={this.fileInputRef} onChange={this.handleFileChange} disabled={this.state.isDisable} style={{ display: 'none' }} className={(this.state.selectedFile === null || this.state.selectedFile === undefined) && this.state.isRequired ? 'input-normal' : 'input-error'} />
                 <button
                     type="button"
                     onClick={this.handleButtonClick}
