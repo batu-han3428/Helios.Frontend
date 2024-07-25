@@ -124,7 +124,7 @@ function SubjectDetailElementList(props) {
             default:
                 return "";
         }
-    }, [AutoSave, props.IsDisable, studyId, tenantId, moduleId]);
+    }, [AutoSave, props.IsDisable, studyId, tenantId, subjectVisitPageModuleId]);
 
     const getItems = useCallback((param) => {
         const items = [
