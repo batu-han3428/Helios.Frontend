@@ -258,7 +258,7 @@ const ListTenantAndSystemAdmin = props => {
     const activePassiveUser = (item) => {
         console.log(item)
         Swal.fire({
-            title: props.t("You will not be able to recover this site!"),
+            title: props.t("The user to be active or passive."),
             text: props.t("Do you confirm?"),
             icon: "warning",
             showCancelButton: true,

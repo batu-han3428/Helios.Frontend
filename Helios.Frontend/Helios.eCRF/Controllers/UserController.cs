@@ -237,7 +237,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="userPermission">rol bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        public async Task<IActionResult> AddOrUpdatePermissionRole(UserPermissionModel userPermission)
+        public async Task<IActionResult> AddOrUpdatePermissionRole(UserPermissionRoleModel userPermission)
         {
             var result = await _userService.AddOrUpdatePermissionRole(userPermission);
             return Ok(result);
@@ -250,7 +250,7 @@ namespace Helios.eCRF.Controllers
         /// <param name="userPermission">rol bilgileri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
-        public async Task<IActionResult> DeleteRole(UserPermissionModel userPermission)
+        public async Task<IActionResult> DeleteRole(UserPermissionRoleModel userPermission)
         {
             var result = await _userService.DeleteRole(userPermission);
             return Ok(result);
