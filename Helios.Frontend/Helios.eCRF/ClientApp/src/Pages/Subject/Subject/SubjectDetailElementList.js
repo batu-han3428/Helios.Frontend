@@ -38,13 +38,13 @@ function SubjectDetailElementList(props) {
 
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
 
-    const AutoSave = async (id, value, dataGridRowId = 0, type = 0) => {
+    const AutoSave = async (id, value, type = 0) => {
         if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
             dispatch(startloading());
             const response = await autoSaveSubject({
                 Id: id,
                 Value: value,
-                DataGridRowId: dataGridRowId
+                Type: type
             });
             if (response.data.isSuccess) {
                 toastRef.current.setToast({

@@ -223,7 +223,6 @@ const SubjectDetail = props => {
                                     ModuleId={0 }
                                     IsDisable={false}
                                     ElementList={subjectElementList}
-                                    DataGridRowId={null}
                                 />
                             </div>
                         </Col>
