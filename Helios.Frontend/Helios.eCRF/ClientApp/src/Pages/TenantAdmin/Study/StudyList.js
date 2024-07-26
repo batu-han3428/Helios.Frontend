@@ -28,7 +28,7 @@ const StudyList = props => {
     const tenantId = userInformation.tenantId;
 
     const studyUpdate = (id) => {
-        navigate(`/addstudy`, { state: { studyId: id } });
+        navigate(`/addstudy/false`, { state: { studyId: id } });
     };
 
     const goToStudy = (id, equivalentStudyId) => {
@@ -209,19 +209,23 @@ const StudyList = props => {
 
     const handleMenuClick = (e) => {
         if (e.key === 'newStudy') {
-            navigate("/addstudy");
+            navigate(`/addstudy/false`);        
+        }
+        else {
+            navigate(`/addstudy/true`);  
         }
     };
 
     const items = [
         {
             label: props.t("Create a new study"),
-            key: 'newStudy',
+            key: 'newStudy',           
             icon: <FontAwesomeIcon style={{ marginRight: "10px" }} icon="fa-solid fa-plus" />
         },
         {
-            label: props.t("Add from an existing study"),
-            key: '2',
+            label: props.t("Use an existing study"),
+            key: '2',       
+            icon: <FontAwesomeIcon style={{ marginRight: "10px" }} icon="fa-solid fa-copy" />
         },
     ];
 
