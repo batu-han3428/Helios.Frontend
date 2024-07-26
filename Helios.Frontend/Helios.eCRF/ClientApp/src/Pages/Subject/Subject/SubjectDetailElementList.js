@@ -31,23 +31,18 @@ function SubjectDetailElementList(props) {
     const [tenantId] = useState(props.TenantId);
     const [subjectVisitPageModuleId] = useState(props.ModuleId);
     const [studyId] = useState(props.StudyId);
-    const [dataGridRowId] = useState(props.DataGridRowId);
-    const [isDisable, setIsDisable] = useState(props.IsDisable);
+    const [isDisable] = useState(props.IsDisable);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
 
-    useEffect(() => {
-        setIsDisable(props.IsDisable);
-    }, [props.IsDisable]);
-
-    const AutoSave = useCallback(async (id, value,dataGridRowId = 0, type = 0) => {
+    const AutoSave = async (id, value, type = 0) => {
         if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
             dispatch(startloading());
             const response = await autoSaveSubject({
                 Id: id,
                 Value: value,
-                DataGridRowId: dataGridRowId
+                Type: type
             });
             if (response.data.isSuccess) {
                 toastRef.current.setToast({
@@ -62,7 +57,7 @@ function SubjectDetailElementList(props) {
             }
             dispatch(endloading());
         }
-    }, [autoSaveSubject, dispatch]);
+    }
     const ClearData = async (item) => {
         if (item.userValue !== undefined && item.userValue !== null && item.userValue !== "") {
             dispatch(startloading());
@@ -74,14 +69,13 @@ function SubjectDetailElementList(props) {
         }
     }
     const renderElementsSwitch = useCallback((param) => {
-        const dsbl = isDisable;
+        const dsbl = props.IsDisable ? "disabled" : "";
         const commonProps = {
             Id: param.subjectVisitPageModuleElementId,
             StudyVisitPageModuleElementId: param.studyVisitPageModuleElementId,
             SubjectVisitPageModuleId: param.subjectVisitPageModuleId,
             Value: param.userValue ?? "",
             IsDisable: dsbl,
-            DataGridRowId: dataGridRowId,
             IsRequired: param.isRequired,
             HandleAutoSave: AutoSave,
         };

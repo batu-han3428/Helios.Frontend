@@ -174,20 +174,29 @@ namespace Helios.eCRF.Services
 
                 if (result.IsSuccessful && result.Data.Count > 0)
                 {
-                    string targetElementIds = string.Join(",", result.Data.Where(x=>x.IsDependent).Select(x=>x.StudyVisitPageModuleElementId));
-                    var req1 = new RestRequest("CoreStudy/GetDependentHideElement", Method.Get);
-                    req1.AddParameter("targetElementString", targetElementIds);
-                    req1.AddParameter("pageId", subjectVisitModulePageId);
-                    req1.AddParameter("subjectId", subjectId);
-                    var result1 = await client.ExecuteAsync<List<Int64>>(req1);
-                    if (result1.IsSuccessful && result1.Data.Count > 0)
-                    {
-                        string elementIds = string.Join(",", result1.Data);
-                        var req2 = new RestRequest("CoreSubject/SetDependentElementValue?elementIdString="+elementIds+ "&pageId="+subjectVisitModulePageId+ "&subjectId="+ subjectId, Method.Post);
-                        AddApiHeaders(req2);
-                        var result2 = await client.ExecuteAsync<bool>(req2);
+                    var targetElementIds = result.Data
+                        .Where(x => x.IsDependent || (x.ChildElements != null && x.ChildElements.Any(ce => ce.IsDependent)))
+                        .SelectMany(x => new[] { x.StudyVisitPageModuleElementId }
+                                         .Concat(x.ChildElements != null ? x.ChildElements.Where(ce => ce.IsDependent).Select(ce => ce.StudyVisitPageModuleElementId) : Enumerable.Empty<Int64>()))
+                        .Distinct();
+                    string targetElementIdsString = string.Join(",", targetElementIds);
 
-                        if (result2.IsSuccessful && result2.Data) RemoveHiddenElements(result.Data, result1.Data);
+                    if (!String.IsNullOrEmpty(targetElementIdsString))
+                    {
+                        var req1 = new RestRequest("CoreStudy/GetDependentHideElement", Method.Get);
+                        req1.AddParameter("targetElementString", targetElementIdsString);
+                        req1.AddParameter("pageId", subjectVisitModulePageId);
+                        req1.AddParameter("subjectId", subjectId);
+                        var result1 = await client.ExecuteAsync<List<Int64>>(req1);
+                        if (result1.IsSuccessful && result1.Data.Count > 0)
+                        {
+                            string elementIds = string.Join(",", result1.Data);
+                            var req2 = new RestRequest("CoreSubject/SetDependentElementValue?elementIdString="+elementIds+ "&pageId="+subjectVisitModulePageId+ "&subjectId="+ subjectId, Method.Post);
+                            AddApiHeaders(req2);
+                            var result2 = await client.ExecuteAsync<bool>(req2);
+
+                            if (result2.IsSuccessful && result2.Data) RemoveHiddenElements(result.Data, result1.Data);
+                        }
                     }
                 }
                 
@@ -195,9 +204,17 @@ namespace Helios.eCRF.Services
             }
         }
 
-        private static void RemoveHiddenElements(List<SubjectElementModel> data, List<Int64> hideElements)
+        private static void RemoveHiddenElements(List<SubjectElementModel> data, List<long> hideElements)
         {
-            data.RemoveAll(element => hideElements.Contains(element.StudyVisitPageModuleElementId));
+            data.ForEach(element =>
+            {
+                if (element.ChildElements != null)
+                {
+                    element.ChildElements.RemoveAll(child => hideElements.Contains(child.SubjectVisitPageModuleElementId));
+                }
+            });
+
+            data.RemoveAll(element => hideElements.Contains(element.SubjectVisitPageModuleElementId));
         }
 
         public async Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model)
