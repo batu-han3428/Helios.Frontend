@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { Table, Row, Col, Typography, Input } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button, Label } from 'reactstrap';
+import { Button,Label, Form, FormFeedback, Label, Container, Card, CardBody } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { formatDate } from "../../../helpers/format_date";
@@ -11,11 +11,12 @@ import { SdvIconStatu, QueryIconStatu } from "../../../helpers/icon_helper";
 import { useDispatch, connect } from "react-redux";
 import withRouter from '../../../components/Common/withRouter';
 import { startloading, endloading } from '../../../store/loader/actions';
-import { useAddSubjectMutation, useLazyGetSubjectListQuery, useLazyGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
-import { useLazyStudyUserSitesGetQuery } from '../../../store/services/Users';
+import { useAddSubjectMutation, useLazyGetSubjectListQuery,useGetSubjectListQuery ,useLazyGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
+import { useLazyStudyUserSitesGetQuery,useUserGetHasRoleQuery } from '../../../store/services/Users';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
 import { SearchOutlined } from '@ant-design/icons';
+import RoleNotFound from '../../../Pages/Common/NotFound/RoleNotFound ';
 import "./Subject.css";
 import { v4 as uuidv4 } from 'uuid';
 import AddSubjectComp from './Comp/AddSubjectComp';
@@ -51,7 +52,35 @@ const SubjectList = props => {
     const [view, setView] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [studyId, setStudyId] = useState(8);
+    const [addingSubject] = useAddSubjectMutation();
+    const { data: subjectsData, error: errorSubject, isLoading: isLoadingSubject } = useGetSubjectListQuery(8, { refetchOnMountOrArgChange: true});
+   
+    useEffect(() => {      
+        optionGroup(8);
+        getStudy(8);     
+       
+    }, []);
 
+    const [modal, setModal] = useState(false);
+    const [data, setData] = useState([]);
+    const [changeSiteId, setchangeSiteId] = useState("");
+    const [changeInitialName, setchangeInitialName] = useState("");
+
+    const changeValidSiteId = (value) => {
+        setchangeSiteId(value);
+    };
+
+    const changeValidInitialname = (value) => {
+        setchangeInitialName(value);
+    };
+
+    const [count, setCount] = useState(0);
+
+    const [formData, setFormData] = useState({
+        changeInitialName: '',
+        changeSiteId: ''
+    });
     useEffect(() => {
         dispatch(startloading);
         if (studyId) {
@@ -77,37 +106,51 @@ const SubjectList = props => {
 
     useEffect(() => {
         if (!error && !isLoading && subjectsData) {
-            const filteredSubjectsData = subjectsData.filter(item => {
-                if (showArchived) {
-                    return true;
-                }
+            
 
-                return !item.isArchived;
-            });
-
-            const updatedSubjectsData = filteredSubjectsData.map(item => { 
-                return {
-                    ...item,
-                    createdAt: formatDate(item.createdAt),
-                    updatedAt: formatDate(item.updatedAt),
+          
+       
+            const newData = { ...data };
+            if (subjectsData.subjectList !== null) {
+                const updatedSubjectsData = subjectsData.subjectList.map(item => {
+                    return {
+                        ...item,
+                        createdAt: formatDate(item.createdAt),
+                        updatedAt: formatDate(item.updatedAt),
                     sdv: SdvIconStatu(2),
                     query: QueryIconStatu(1),
                     actions: getActions(item, permissions),
-                    key: uuidv4()
-                };
-            });
-            const newData = { ...data };
-            newData.subjectList = updatedSubjectsData;
+                    key: uuidv4(),
+                        actions: getActions(item)
+                    };
+                });
+                newData.subjectList = updatedSubjectsData;
+            }         
+            newData.hasQuery = subjectsData.hasQuery;
+            newData.hasSdv = subjectsData.hasSdv;
+            newData.hasRandomizasyon = subjectsData.hasRandomizasyon;
+            newData.hasRole = subjectsData.hasRole;
             setData(newData);
             dispatch(endloading());
+          
         }
         else if (error && !isLoading) {
-            dispatch(endloading());
+            const newData = { ...data };
+            newData.hasQuery = false;
+            newData.hasSdv = false;
+            newData.hasRandomizasyon = false;
+            newData.hasRole = false;
+            newData.subjectList = null;
+            setData(newData);
+            dispatch(endloading());      
         }
     }, [subjectsData, error, isLoading, permissions]);
 
     const goToSubjectDetail = (studyId, pageId, subjectId, subjectNumber) => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}/${subjectNumber}`);
+       
+
+  
     };
 
     const getActions = (item, permissions) => {
@@ -234,6 +277,11 @@ const SubjectList = props => {
     const handleChange = (pagination, filters) => {
         setFilteredInfo(filters);
     };
+
+    const [filteredInfo, setFilteredInfo] = useState({});
+    const [searchsubjectNumberText, setSearchsubjectNumberText] = useState('');
+    const columns = []
+    if (AskSubjectInitial && !errorSubject && !isLoadingSubject && data.hasRole) {
 
     const uniqueCountry = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.country))) : "";
     const uniqueAddedBy = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.addedByName))) : "";
@@ -362,7 +410,7 @@ const SubjectList = props => {
                 title: 'Subject initial',
                 dataIndex: 'initialName',
                 sorter: (a, b) => {
-                    const nameA = a.initialName || '';
+                const nameA = a.initialName || '';
                     const nameB = b.initialName || '';
                     return nameA.localeCompare(nameB);
                 },
@@ -448,6 +496,7 @@ const SubjectList = props => {
                         message: props.t(response.data.message),
                         stateToast: true,
                     });
+
                     modalRefDel.current.tog_backdrop();
                     setComment("");
                     dispatch(endloading());
@@ -455,16 +504,43 @@ const SubjectList = props => {
                     toastRef.current.setToast({
                         message: props.t(response.data.message),
                         stateToast: false,
-                    });
+     });
 
                     dispatch(endloading());
                 }
         }
-    }
 
+ if (!errorSubject && !isLoadingSubject && data.hasRandomizasyon) {
+        columns.push({
+            title: props.t('Randomization'),
+            dataIndex: 'randomData',
+            sorter: (a, b) => a.randomData.localeCompare(b.randomData),
+            sortDirections: ['ascend', 'descend'],
+                    });
+ }
+    if (!errorSubject && !isLoadingSubject && data.hasQuery) {
+        columns.push({
+            title: props.t('Query'),
+            dataIndex: 'query',
+            sorter: (a, b) => a.query.localeCompare(b.query),
+            sortDirections: ['ascend', 'descend'],
+        });
+    }
+ if (!errorSubject && !isLoadingSubject && data.hasSdv) {
+        columns.push({
+            title: props.t('SDV'),
+            dataIndex: 'sdv',
+            sorter: (a, b) => {
+                const nameA = a.sdv || '';
+                const nameB = b.sdv || '';
+                return nameA.localeCompare(nameB);
+            },
+            sortDirections: ['ascend', 'descend'],
+        });
+    }
     const handleShowArchivedSubjectsChange = (e) => {
         setShowArchivedSubjects(e.target.checked);
-    }
+   
 
     const [textError, setTextError] = useState("");
 
@@ -477,19 +553,20 @@ const SubjectList = props => {
     };
     document.title = props.t('Subject list');
     return (
-        <React.Fragment>
-            <div className="page-content">
-                <div className="container-fluid">
+        < React.Fragment >
+            {!isLoadingSubject && !errorSubject && subjectsData.subjectList!==null &&
+                < div className="page-content">
+                    <div className="container-fluid">
                     {view && <>
                     <div className="page-title-box">
-                        <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
-                            <Col md={8}>
+                            <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
+                                <Col md={8}>
                                 <h6 className="page-title">{props.t('Subject List')}</h6>
-                            </Col>
-                        </Row>
-                    </div>
-                    <Row>
-                        <Col className="col-12">
+                                </Col>
+                            </Row>
+                        </div>
+                        <Row>
+                            <Col className="col-12">
                             <div style={{ display: 'inline-block', float: 'left' }} className="col-md-6">
                                 {permissions.canSubjectArchive && 
                                 <>
@@ -515,26 +592,32 @@ const SubjectList = props => {
                             }
                         </Col>
                         <Col className="col-12">                 
-                            <Table
-                                columns={columns}
-                                dataSource={data.subjectList}
-                                pagination={true}
-                                scroll={{ x: 'max-content' }}
-                                onRow={(record, rowIndex) => {
-                                    return {
-                                        onDoubleClick: () => {
+                                <Table
+                                    columns={columns}
+                                    dataSource={data.subjectList}
+                                    pagination={true}
+                                    scroll={{ x: 'max-content' }}
+                                    onRow={(record, rowIndex) => {
+                                        return {
+                                            onDoubleClick: () => {
                                             goToSubjectDetail(studyId, record.firstPageId, record.id, record.subjectNumber)
+                                            }
                                         }
-                                    }
-                                }}
-                                onChange={handleChange}
-                                filteredInfo={filteredInfo}
-                            />
-                        </Col>
+                                    }}
+                                    onChange={handleChange}
+                                    filteredInfo={filteredInfo}
+                                />
+                            </Col>
                         </Row>
                     </>}
+                    </div>
                 </div>
-            </div>
+            }
+            {
+                !isLoadingSubject && !errorSubject && subjectsData.subjectList===null &&
+                <RoleNotFound />
+            }
+
             <ModalComp
                 refs={modalRef}
                 title={modalTitle}
@@ -568,8 +651,9 @@ const SubjectList = props => {
                 ref={toastRef}
             />
         </React.Fragment>
+
     )
-}
+ }
 
 SubjectList.propTypes = {
     t: PropTypes.any

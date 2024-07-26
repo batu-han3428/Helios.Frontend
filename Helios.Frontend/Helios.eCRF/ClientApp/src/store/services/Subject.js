@@ -19,8 +19,10 @@ export const SubjectApi = createApi({
     endpoints: (builder) => ({
         getSubjectList: builder.query({
             query: (data) => `/Subject/GetSubjectList/${data.studyId}/${data.showArchivedSubjects}`,
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0,
             providesTags: ['Subject'],
-        }),
+        }),           
         getUserPermissions: builder.query({
             query: (studyId) => `/User/GetUserPermissions/${studyId}`,
             providesTags: ['Permissions'],
@@ -68,7 +70,6 @@ export const SubjectApi = createApi({
 export const { useLazyGetSubjectListQuery } = SubjectApi;
 
 export const { useLazyGetUserPermissionsQuery } = SubjectApi;
-
 export const { useAddSubjectMutation } = SubjectApi;
 
 export const { useLazyGetSubjectDetailMenuQuery } = SubjectApi;

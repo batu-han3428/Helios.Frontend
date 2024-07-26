@@ -3,6 +3,7 @@ using Helios.Common.Enums;
 using Helios.Common.Model;
 using Helios.eCRF.Attributes;
 using Helios.eCRF.Models;
+using Helios.eCRF.Services;
 using Helios.eCRF.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel;
@@ -178,7 +179,12 @@ namespace Helios.eCRF.Controllers
             var result = await _userService.GetUserPermissions(studyId);
             return new ObjectResult(result);
         }
-
+        [HttpGet("{studyId}")]
+        public async Task<IActionResult> GetHasRole(Int64 studyId)
+        {
+            var result = await _userService.GetHasRole(studyId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
         /// <summary>
         /// çalışmanın rollerini getirir
         /// </summary>
