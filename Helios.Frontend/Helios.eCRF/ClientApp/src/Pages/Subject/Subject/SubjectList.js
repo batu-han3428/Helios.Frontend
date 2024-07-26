@@ -77,7 +77,15 @@ const SubjectList = props => {
 
     useEffect(() => {
         if (!error && !isLoading && subjectsData) {
-            const updatedSubjectsData = subjectsData.map(item => {
+            const filteredSubjectsData = subjectsData.filter(item => {
+                if (showArchived) {
+                    return true;
+                }
+
+                return !item.isArchived;
+            });
+
+            const updatedSubjectsData = filteredSubjectsData.map(item => { 
                 return {
                     ...item,
                     createdAt: formatDate(item.createdAt),

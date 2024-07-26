@@ -29,6 +29,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> ActivePassiveStudyUsers(StudyUserModel studyUserModel);
         Task<ApiResponse<DeleteStudyUserDTO>> DeleteStudyUser(StudyUserModel studyUserModel);
         Task<ApiResponse<dynamic>> UserResetPassword(StudyUserModel model);
+        Task<ApiResponse<dynamic>> UserProfileChangePassword(ResetUserProfileViewModel model);
         Task<ApiResponse<StudyUserDTO>> GetStudyUser(string email, Int64 studyId);
         Task<RestResponse<List<UserPermissionDTO>>> GetRoleList(Int64 studyId);
         Task<RestResponse<List<TenantUserDTO>>> GetTenantUserList(Int64 tenantId);

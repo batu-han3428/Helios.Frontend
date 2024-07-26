@@ -475,7 +475,6 @@
   "archiving": "arşivleme",
   "This subject will be archived.": "Bu hasta arşivlenecektir.",
   "deletion": "silme",
-  "This subject will be deleted.": "Bu hasta silinecektir.",
   "SDV done": "SDV tamamlandı",
   "Ready for SDV": "SDV için hazır",
   "Partial SDV": "Kısmi SDV",
@@ -489,5 +488,10 @@
   "SDV list": "SDV listesi",
   "Data reports": "Veri raporları",
   "My profile": "Profilim",
-  "The user to be active or passive.": "Kullanıcı aktif veya pasif olacaktır."
+  "The user to be active or passive.": "Kullanıcı aktif veya pasif olacaktır.",
+  "This subject will be deleted.": "Bu hasta silinecektir.",
+  "Password cannot be empty": "Şifre boş olamaz",
+  "Your new password cannot be the same as the previous one": "Yeni şifreniz bir önceki ile aynı olamaz",
+  "The new passwords entered are not compatible with each other, please try again": "Girilen yeni şifreler birbiri ile uyumlu değildir, lütfen tekrar deneyin",
+  "Your account has been blocked. Please contact the system administrator.": "Hesabınız bloke olmuştur. Lütfen sistem yöneticisi ile iletişime geçiniz."
 }

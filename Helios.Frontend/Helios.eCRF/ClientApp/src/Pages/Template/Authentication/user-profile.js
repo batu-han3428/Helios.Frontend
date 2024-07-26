@@ -18,13 +18,14 @@ import {
 // Formik validation
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { useUserProfileEditMutation } from '../../../store/services/Users';
+import { useUserProfileEditMutation, useUserProfileChangePasswordMutation } from '../../../store/services/Users';
 import { startloading, endloading } from '../../../store/loader/actions';
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 /*import { userReducer } from '../../../store/auth/user/reducer';*/
 import { onLogin } from '../../../helpers/Auth/useAuth';
 import cloneDeep from 'lodash/cloneDeep';
 
+import { useLocation, useParams } from "react-router-dom";
 import { withTranslation } from "react-i18next";
 
 // Redux
@@ -34,6 +35,8 @@ import withRouter from '../../../components/Common/withRouter';
 //Import Breadcrumb
 import Breadcrumb from "../../../components/Common/Breadcrumb";
 
+import { MDBTabs, MDBTabsItem, MDBTabsLink, MDBTabsContent } from 'mdb-react-ui-kit';
+
 // actions
 import { editProfile, resetProfileFlag } from "../../../store/actions";
 const UserProfile = props => {
@@ -42,6 +45,7 @@ const UserProfile = props => {
     const userInformation = useSelector(state => state.rootReducer.Login);
     const updatedUserInformation = cloneDeep(userInformation);
     const [userEdit] = useUserProfileEditMutation();
+    const [userChangePassword] = useUserProfileChangePasswordMutation();
     const studyInformation = useSelector(state => state.rootReducer.Study);
 
     const [email, setemail] = useState("");
@@ -50,7 +54,7 @@ const UserProfile = props => {
     const [phoneNumber, setphoneNumber] = useState("");
     const [idx, setidx] = useState(1);
 
-    useEffect(() => {     
+    useEffect(() => {
         if (userInformation) {
             setname(updatedUserInformation.name);
             setemail(updatedUserInformation.mail);
@@ -78,6 +82,75 @@ const UserProfile = props => {
     context.textBaseline = 'middle';
     context.fillText(props.avatar, canvas.width / 2, canvas.height / 2);
     const dataURI = canvas.toDataURL();
+    const [basicActive, setBasicActive] = useState('tab1');
+
+    const handleBasicClick = (value) => {
+        if (value === basicActive) {
+            return;
+        }
+
+        setBasicActive(value);
+    };
+
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmNewPassword, setConfirmNewPassword] = useState('');
+    const [message, setMessage] = useState('');   
+    const handleSubmit = async (e) => {
+        e.preventDefault();       
+
+        try {
+            dispatch(startloading());
+            const response = await userChangePassword({
+                AuthUserId: props.authUserId,
+                Password: currentPassword,
+                NewPassword: newPassword,
+                ConfirmPassword: confirmNewPassword,
+            });
+            if (response.data.isSuccess) {
+                toastRef.current.setToast({
+                    message: props.t(response.data.message),
+                    stateToast: true
+                });
+                dispatch(endloading());
+            } else {
+               
+                if (response.data.message === "cod0") {
+                    toastRef.current.setToast({
+                        message: props.t("Invalid password"),
+                        stateToast: false
+                    });             
+                }
+                else if (response.data.message === "cod1") {
+                    toastRef.current.setToast({
+                        message: props.t("Password cannot be empty"),
+                        stateToast: false
+                    });                         
+                }
+                else if (response.data.message === "cod2") {
+                    toastRef.current.setToast({
+                        message: props.t("Your new password cannot be the same as the previous one"),
+                        stateToast: false
+                    });  
+                }
+                else if (response.data.message === "cod3") {
+                    toastRef.current.setToast({
+                        message: props.t("The new passwords entered are not compatible with each other, please try again"),
+                        stateToast: false
+                    });  
+                }
+                else {
+                    toastRef.current.setToast({
+                        message: props.t(response.data.message),
+                        stateToast: false
+                    }); 
+                }               
+                dispatch(endloading());
+            }
+        } catch (error) {
+            setMessage("Þifre güncellenirken bir hata oluþtu.");
+        }
+    };
 
     const validation = useFormik({
         // enableReinitialize : use this flag when initial values needs to be changed
@@ -107,11 +180,11 @@ const UserProfile = props => {
                 phoneNumber: phoneNumber,
                 id: values.userId
             });
-            if (response.data.isSuccess) {               
+            if (response.data.isSuccess) {
                 toastRef.current.setToast({
                     message: props.t(response.data.message),
                     stateToast: true
-                });            
+                });
                 dispatch(endloading());
             } else {
                 toastRef.current.setToast({
@@ -132,12 +205,14 @@ const UserProfile = props => {
                 tenantId: userInformation.tenantId,
                 isAuthenticated: userInformation.isAuthenticated
             }]
-            dispatch(editProfile(payload));           
+            dispatch(editProfile(payload));
         }
     });
 
  
     document.title = props.t('My profile');;
+
+
     return (
         <React.Fragment>
             <div className="page-content">
@@ -172,127 +247,211 @@ const UserProfile = props => {
                             </Card>
                         </Col>
                     </Row>
+                    <Row>
+                        <Col className="col-12">
+                            <Card>
+                                <CardBody>
+                                    <MDBTabs className='mb-3'>
+                                        <MDBTabsItem>
+                                            <MDBTabsLink onClick={() => handleBasicClick('tab1')} active={basicActive === 'tab1'}>
+                                                {props.t("Profile")}
+                                            </MDBTabsLink>
+                                        </MDBTabsItem>
+                                        <MDBTabsItem>
+                                            <MDBTabsLink onClick={() => handleBasicClick('tab2')} active={basicActive === 'tab2'}>
+                                                {props.t("Change password")}
+                                            </MDBTabsLink>
+                                        </MDBTabsItem>
+                                    </MDBTabs>
 
-                    <Card>
-                        <CardBody>
-                            <Form
-                                className="form-horizontal"
-                                onSubmit={(e) => {
-                                    e.preventDefault();
-                                    validation.handleSubmit();                             
-                                    return false;
-                                }}
-                            >
-                                <div className="form-group">
-                                    <div className="mb-3">
-                                        <Label className="form-label"> {props.t("First name")}</Label>
-                                        <Input
-                                            name="name"
-                                            className="form-control"
-                                            placeholder={props.t("Enter first name")}
-                                            type="text"
-                                            onChange={(e) => setname(e.target.value)} 
-                                            onBlur={(e) => {
-                                                validation.handleBlur(e);
-                                                validation.submitForm();
-                                            }}
-                                            value={validation.values.name || ""}
-                                            invalid={
-                                                validation.touched.name && validation.errors.name ? true : false
-                                            }
-                                        />
-                                        {validation.touched.name && validation.errors.name ? (
-                                            <FormFeedback type="invalid">{validation.errors.name}</FormFeedback>
-                                        ) : null}
-                                        <Input name="userId" value={idx} type="hidden" />
-                                    </div>
+                                    <MDBTabsContent>
+                                        {basicActive === 'tab1' &&
+                                            <Card>
+                                                <CardBody>
+                                                    <Form
+                                                        className="form-horizontal"
+                                                        onSubmit={(e) => {
+                                                            e.preventDefault();
+                                                            validation.handleSubmit();
+                                                            return false;
+                                                        }}
+                                                    >
+                                                        <div className="form-group">
+                                                            <div className="mb-3">
+                                                                <Label className="form-label"> {props.t("First name")}</Label>
+                                                                <Input
+                                                                    name="name"
+                                                                    className="form-control"
+                                                                    placeholder={props.t("Enter first name")}
+                                                                    type="text"
+                                                                    onChange={(e) => setname(e.target.value)}
+                                                                    onBlur={(e) => {
+                                                                        validation.handleBlur(e);
+                                                                    }}
+                                                                    value={validation.values.name || ""}
+                                                                    invalid={
+                                                                        validation.touched.name && validation.errors.name ? true : false
+                                                                    }
+                                                                />
+                                                                {validation.touched.name && validation.errors.name ? (
+                                                                    <FormFeedback type="invalid">{validation.errors.name}</FormFeedback>
+                                                                ) : null}
+                                                                <Input name="userId" value={idx} type="hidden" />
+                                                            </div>
 
-                                    <div className="mb-3">
-                                        <Label className="form-label"> {props.t("Last name")}</Label>
-                                        <Input
-                                            name="lastName"
-                                            className="form-control"
-                                            placeholder={props.t("Enter last name")}
-                                            type="text"
-                                            onChange={(e) => setLastName(e.target.value)} 
-                                            onBlur={(e) => {
-                                                validation.handleBlur(e);
-                                                validation.submitForm();
-                                            }}
-                                            value={validation.values.lastName || ""}
-                                            invalid={
-                                                validation.touched.lastName && validation.errors.lastName ? true : false
-                                            }
-                                        />
-                                        {validation.touched.lastName && validation.errors.lastName ? (
-                                            <FormFeedback type="invalid">{validation.errors.lastName}</FormFeedback>
-                                        ) : null}
-                                        <Input name="userId" value={idx} type="hidden" />
-                                    </div>
-                                    <div className="mb-3">
-                                        <Label className="form-label"> {props.t("Email")}</Label>
-                                        <Input
-                                            name="mail"
-                                            className="form-control"
-                                            placeholder={props.t("Enter email")}
-                                            type="email"                                       
-                                            disabled={true}
-                                            style={{
-                                                backgroundColor: '#f0f0f0',
-                                                color: '#a0a0a0',
-                                                border: '1px solid #ccc',
-                                            }}
-                                            value={validation.values.mail || ""}
-                                            invalid={
-                                                validation.touched.mail && validation.errors.mail ? true : false
-                                            }
-                                        />
-                                        {validation.touched.mail && validation.errors.mail ? (
-                                            <FormFeedback type="invalid">{validation.errors.mail}</FormFeedback>
-                                        ) : null}
-                                        <Input name="userId" value={idx} type="hidden" />
-                                    </div>
-                                    <div className="mb-3">
-                                        <Label className="form-label"> {props.t("Phone number")}</Label>
-                                        <PhoneInput
-                                            name="phoneNumber"
-                                            className="form-control"
-                                            placeholder={props.t("Enter phone number")}
-                                            type="text"
-                                            specialLabel=""
-                                            onChange={setphoneNumber} 
-                                            onBlur={(e) => {
-                                                validation.handleBlur(e);
-                                                validation.submitForm();
-                                            }}
-                                            value={validation.values.phoneNumber || ""}
-                                            invalid={
-                                                validation.touched.phoneNumber && validation.errors.phoneNumber ? true : false
-                                            }
-                                            inputStyle={{
-                                                border: '0px solid #ccc',
-                                                paddingLeft: '0px'
-                                            }}
-                                            inputProps={{
-                                                name: "phoneNumber",
-                                                id: "phoneNumber",
-                                            }}
+                                                            <div className="mb-3">
+                                                                <Label className="form-label"> {props.t("Last name")}</Label>
+                                                                <Input
+                                                                    name="lastName"
+                                                                    className="form-control"
+                                                                    placeholder={props.t("Enter last name")}
+                                                                    type="text"
+                                                                    onChange={(e) => setLastName(e.target.value)}
+                                                                    onBlur={(e) => {
+                                                                        validation.handleBlur(e);
+                                                                    }}
+                                                                    value={validation.values.lastName || ""}
+                                                                    invalid={
+                                                                        validation.touched.lastName && validation.errors.lastName ? true : false
+                                                                    }
+                                                                />
+                                                                {validation.touched.lastName && validation.errors.lastName ? (
+                                                                    <FormFeedback type="invalid">{validation.errors.lastName}</FormFeedback>
+                                                                ) : null}
+                                                                <Input name="userId" value={idx} type="hidden" />
+                                                            </div>
+                                                            <div className="mb-3">
+                                                                <Label className="form-label"> {props.t("Email")}</Label>
+                                                                <Input
+                                                                    name="mail"
+                                                                    className="form-control"
+                                                                    placeholder={props.t("Enter email")}
+                                                                    type="email"
+                                                                    disabled={true}
+                                                                    style={{
+                                                                        backgroundColor: '#f0f0f0',
+                                                                        color: '#a0a0a0',
+                                                                        border: '1px solid #ccc',
+                                                                    }}
+                                                                    value={validation.values.mail || ""}
+                                                                    invalid={
+                                                                        validation.touched.mail && validation.errors.mail ? true : false
+                                                                    }
+                                                                />
+                                                                {validation.touched.mail && validation.errors.mail ? (
+                                                                    <FormFeedback type="invalid">{validation.errors.mail}</FormFeedback>
+                                                                ) : null}
+                                                                <Input name="userId" value={idx} type="hidden" />
+                                                            </div>
+                                                            <div className="mb-3">
+                                                                <Label className="form-label"> {props.t("Phone number")}</Label>
+                                                                <PhoneInput
+                                                                    name="phoneNumber"
+                                                                    className="form-control"
+                                                                    placeholder={props.t("Enter phone number")}
+                                                                    type="text"
+                                                                    specialLabel=""
+                                                                    onChange={setphoneNumber}
+                                                                    onBlur={(e) => {
+                                                                        validation.handleBlur(e);
+                                                                    }}
+                                                                    value={validation.values.phoneNumber || ""}
+                                                                    invalid={
+                                                                        validation.touched.phoneNumber && validation.errors.phoneNumber ? true : false
+                                                                    }
+                                                                    inputStyle={{
+                                                                        border: '0px solid #ccc',
+                                                                        paddingLeft: '0px'
+                                                                    }}
+                                                                    inputProps={{
+                                                                        name: "phoneNumber",
+                                                                        id: "phoneNumber",
+                                                                    }}
 
-                                        />
-                                        {validation.touched.phoneNumber && validation.errors.phoneNumber ? (
-                                            <FormFeedback type="invalid">{validation.errors.phoneNumber}</FormFeedback>
-                                        ) : null}
-                                        <Input name="userId" value={idx} type="hidden" />
-                                    </div>
-                                </div>
-                                {/*<div className="text-center mt-4">*/}
-                                {/*    <Button type="submit" color="danger">*/}
-                                {/*        {props.t("Edit")}*/}
-                                {/*    </Button>*/}
-                                {/*</div>*/}
-                            </Form>
-                        </CardBody>
-                    </Card>
+                                                                />
+                                                                {validation.touched.phoneNumber && validation.errors.phoneNumber ? (
+                                                                    <FormFeedback type="invalid">{validation.errors.phoneNumber}</FormFeedback>
+                                                                ) : null}
+                                                                <Input name="userId" value={idx} type="hidden" />
+                                                            </div>
+                                                        </div>
+                                                        <div className="text-center mt-4">
+                                                            <Button type="submit" color="danger">
+                                                                {props.t("Edit")}
+                                                            </Button>
+                                                        </div>
+                                                    </Form>
+                                                </CardBody>
+                                            </Card>}
+                                        {basicActive === 'tab2' &&
+                                            <Card>
+                                                <CardBody>
+                                                    <Form
+                                                        className="form-horizontal"
+                                                        onSubmit={handleSubmit}
+                                                    >
+                                                        <div className="form-group">
+                                                            <div className="mb-3">
+                                                                <Label className="form-label"> {props.t("Old password")}</Label>
+                                                                <Input
+                                                                    name="password"
+                                                                    className="form-control"
+                                                                    placeholder={props.t("Enter old password")}
+                                                                    type="password"
+                                                                    onChange={(e) => setCurrentPassword(e.target.value)}
+                                                                    invalid={
+                                                                        validation.touched.currentPassword && validation.errors.currentPassword ? true : false
+                                                                    }
+                                                                />
+                                                                <Input name="userId" value={idx} type="hidden" />
+                                                            </div>
+                                                            <div className="mb-3">
+                                                                <Label className="form-label"> {props.t("New password")}</Label>
+                                                                <Input
+                                                                    name="newPassword"
+                                                                    className="form-control"
+                                                                    placeholder={props.t("Enter new password")}
+                                                                    type="password"
+                                                                    onChange={(e) => setNewPassword(e.target.value)}
+                                                                    invalid={
+                                                                        validation.touched.newPassword && validation.errors.newPassword ? true : false
+                                                                    }
+                                                                />
+                                                                <Input name="userId" value={idx} type="hidden" />
+                                                            </div>
+                                                            <div className="mb-3">
+                                                                <Label className="form-label"> {props.t("Re-enter the new password")}</Label>
+                                                                <Input
+                                                                    name="confirmPassword"
+                                                                    className="form-control"
+                                                                    placeholder={props.t("Re-enter the new password")}
+                                                                    type="password"
+                                                                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                                                                    onBlur={(e) => {
+                                                                        validation.handleBlur(e);
+                                                                    }}
+                                                                    invalid={
+                                                                        validation.touched.confirmNewPassword && validation.errors.confirmNewPassword ? true : false
+                                                                    }
+                                                                />
+                                                                <Input name="userId" value={idx} type="hidden" />
+                                                            </div>
+                                                            {message && <p style={{ color: 'red' }}>{message}</p>}
+                                                            <div className="text-center mt-4">
+                                                                <Button type="submit" color="danger">
+                                                                    {props.t("Edit")}
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    </Form>
+
+                                                </CardBody>
+                                            </Card>}
+                                    </MDBTabsContent>
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
                 </Container>
             </div>
             <ToastComp
@@ -310,11 +469,12 @@ UserProfile.propTypes = {
 };
 
 const mapStatetoProps = state => {
+    const authUserId = state.rootReducer.Login.userId;
     const avatar = state.rootReducer.Login.name.charAt(0).toUpperCase() + state.rootReducer.Login.lastName.charAt(0).toUpperCase();
     const { error, success } = state.rootReducer.Profile;
-    return { error, success, avatar };
+    return { error, success, avatar, authUserId };
 };
 
-export default withRouter(    
+export default withRouter(
     connect(mapStatetoProps, { editProfile, resetProfileFlag })(withTranslation()(UserProfile))
 );

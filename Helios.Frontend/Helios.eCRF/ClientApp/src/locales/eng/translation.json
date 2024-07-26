@@ -641,5 +641,9 @@
   "SDV list": "SDV list",
   "Data reports": "Data reports",
   "My profile": "My profile",
-  "The user to be active or passive.": "The user to be active or passive."
+  "The user to be active or passive.": "The user to be active or passive.",
+  "Password cannot be empty": "Password cannot be empty",
+  "Your new password cannot be the same as the previous one": "Your new password cannot be the same as the previous one",
+  "The new passwords entered are not compatible with each other, please try again": "The new passwords entered are not compatible with each other, please try again",
+  "Your account has been blocked. Please contact the system administrator.": "Your account has been blocked. Please contact the system administrator."
 }
