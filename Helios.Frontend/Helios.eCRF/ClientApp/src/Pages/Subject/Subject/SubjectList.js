@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { Table, Row, Col, Typography, Input } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Button,Label, Form, FormFeedback, Label, Container, Card, CardBody } from 'reactstrap';
+import { Button, Label } from 'reactstrap';
 import { useNavigate } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { formatDate } from "../../../helpers/format_date";
@@ -11,16 +11,16 @@ import { SdvIconStatu, QueryIconStatu } from "../../../helpers/icon_helper";
 import { useDispatch, connect } from "react-redux";
 import withRouter from '../../../components/Common/withRouter';
 import { startloading, endloading } from '../../../store/loader/actions';
-import { useAddSubjectMutation, useLazyGetSubjectListQuery,useGetSubjectListQuery ,useLazyGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
-import { useLazyStudyUserSitesGetQuery,useUserGetHasRoleQuery } from '../../../store/services/Users';
+import { useAddSubjectMutation, useLazyGetSubjectListQuery, useLazyGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
+import { useLazyStudyUserSitesGetQuery } from '../../../store/services/Users';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
 import { SearchOutlined } from '@ant-design/icons';
-import RoleNotFound from '../../../Pages/Common/NotFound/RoleNotFound ';
 import "./Subject.css";
 import { v4 as uuidv4 } from 'uuid';
 import AddSubjectComp from './Comp/AddSubjectComp';
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
+import RoleNotFound from '../../../Pages/Common/NotFound/RoleNotFound ';
 const { TextArea } = Input;
 const SubjectList = props => {
     const modalRef = useRef();
@@ -52,18 +52,14 @@ const SubjectList = props => {
     const [view, setView] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const [studyId, setStudyId] = useState(8);
-    const [addingSubject] = useAddSubjectMutation();
-    const { data: subjectsData, error: errorSubject, isLoading: isLoadingSubject } = useGetSubjectListQuery(8, { refetchOnMountOrArgChange: true});
-   
-    useEffect(() => {      
+
+    useEffect(() => {
         optionGroup(8);
-        getStudy(8);     
-       
+        getStudy(8);
+
     }, []);
 
     const [modal, setModal] = useState(false);
-    const [data, setData] = useState([]);
     const [changeSiteId, setchangeSiteId] = useState("");
     const [changeInitialName, setchangeInitialName] = useState("");
 
@@ -106,33 +102,28 @@ const SubjectList = props => {
 
     useEffect(() => {
         if (!error && !isLoading && subjectsData) {
-            
-
-          
-       
             const newData = { ...data };
-            if (subjectsData.subjectList !== null) {
-                const updatedSubjectsData = subjectsData.subjectList.map(item => {
+            if (subjectsData !== null) {
+                const updatedSubjectsData = subjectsData.map(item => {
                     return {
                         ...item,
                         createdAt: formatDate(item.createdAt),
                         updatedAt: formatDate(item.updatedAt),
-                    sdv: SdvIconStatu(2),
-                    query: QueryIconStatu(1),
-                    actions: getActions(item, permissions),
-                    key: uuidv4(),
-                        actions: getActions(item)
+                        sdv: SdvIconStatu(2),
+                        query: QueryIconStatu(1),
+                        actions: getActions(item, permissions),
+                        key: uuidv4()
                     };
                 });
                 newData.subjectList = updatedSubjectsData;
-            }         
+            }
             newData.hasQuery = subjectsData.hasQuery;
             newData.hasSdv = subjectsData.hasSdv;
             newData.hasRandomizasyon = subjectsData.hasRandomizasyon;
             newData.hasRole = subjectsData.hasRole;
             setData(newData);
             dispatch(endloading());
-          
+
         }
         else if (error && !isLoading) {
             const newData = { ...data };
@@ -142,15 +133,12 @@ const SubjectList = props => {
             newData.hasRole = false;
             newData.subjectList = null;
             setData(newData);
-            dispatch(endloading());      
+            dispatch(endloading());
         }
     }, [subjectsData, error, isLoading, permissions]);
 
     const goToSubjectDetail = (studyId, pageId, subjectId, subjectNumber) => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}/${subjectNumber}`);
-       
-
-  
     };
 
     const getActions = (item, permissions) => {
@@ -206,33 +194,33 @@ const SubjectList = props => {
         } else {
             setTextError(props.t("This field is required"));
         }
-        
+
     }
 
     const optionGroup = (id) => {
         fetch(API_BASE_URL + 'Subject/GetSites?studyId=' + id, {
             method: 'GET',
         })
-        .then(response => response.json())
-        .then(data => {
-            setselectSites(data);
-        })
-        .catch(error => {
+            .then(response => response.json())
+            .then(data => {
+                setselectSites(data);
+            })
+            .catch(error => {
 
-        });
+            });
     };
 
     const getStudy = (id) => {
         fetch(API_BASE_URL + 'Subject/GetStudyAskSubjectInitial?studyId=' + id, {
             method: 'GET',
         })
-        .then(response => response.json())
-        .then(data => {
-            setAskSubjectInitial(data);
-        })
-        .catch(error => {
+            .then(response => response.json())
+            .then(data => {
+                setAskSubjectInitial(data);
+            })
+            .catch(error => {
 
-        });
+            });
     };
 
     const addSubject = () => {
@@ -246,7 +234,7 @@ const SubjectList = props => {
             cancelButtonText: props.t("Cancel"),
         }).then(async (result) => {
             if (result.isConfirmed) {
-                dispatch(startloading());      
+                dispatch(startloading());
                 const response = await addingSubject({ studyId: studyId, siteId: 3, initialName: "", id: 0, firstPageId: 0, subjectNumber: "", updatedAt: new Date(), createdAt: new Date(), country: "", siteName: "", randomData: "", addedByName: "" });
                 var retVal = response.data.values;
 
@@ -277,11 +265,6 @@ const SubjectList = props => {
     const handleChange = (pagination, filters) => {
         setFilteredInfo(filters);
     };
-
-    const [filteredInfo, setFilteredInfo] = useState({});
-    const [searchsubjectNumberText, setSearchsubjectNumberText] = useState('');
-    const columns = []
-    if (AskSubjectInitial && !errorSubject && !isLoadingSubject && data.hasRole) {
 
     const uniqueCountry = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.country))) : "";
     const uniqueAddedBy = data.length !== 0 ? Array.from(new Set(data.subjectList.map(item => item.addedByName))) : "";
@@ -335,7 +318,7 @@ const SubjectList = props => {
             dataIndex: 'query',
             sorter: (a, b) => a.query.localeCompare(b.query),
             sortDirections: ['ascend', 'descend'],
-            className: 'center-align', 
+            className: 'center-align',
         },
         {
             title: props.t('SDV'),
@@ -346,7 +329,7 @@ const SubjectList = props => {
                 return nameA.localeCompare(nameB);
             },
             sortDirections: ['ascend', 'descend'],
-            className: 'center-align', 
+            className: 'center-align',
         }
     ];
 
@@ -410,7 +393,7 @@ const SubjectList = props => {
                 title: 'Subject initial',
                 dataIndex: 'initialName',
                 sorter: (a, b) => {
-                const nameA = a.initialName || '';
+                    const nameA = a.initialName || '';
                     const nameB = b.initialName || '';
                     return nameA.localeCompare(nameB);
                 },
@@ -490,7 +473,7 @@ const SubjectList = props => {
 
             const response = await deleteOrArchiveSubject(values);
 
-            if (response.data !== undefined)
+            if (response.data !== undefined) {
                 if (response.data.isSuccess) {
                     toastRef.current.setToast({
                         message: props.t(response.data.message),
@@ -504,43 +487,17 @@ const SubjectList = props => {
                     toastRef.current.setToast({
                         message: props.t(response.data.message),
                         stateToast: false,
-     });
+                    });
 
                     dispatch(endloading());
                 }
+            }
         }
+    }
 
- if (!errorSubject && !isLoadingSubject && data.hasRandomizasyon) {
-        columns.push({
-            title: props.t('Randomization'),
-            dataIndex: 'randomData',
-            sorter: (a, b) => a.randomData.localeCompare(b.randomData),
-            sortDirections: ['ascend', 'descend'],
-                    });
- }
-    if (!errorSubject && !isLoadingSubject && data.hasQuery) {
-        columns.push({
-            title: props.t('Query'),
-            dataIndex: 'query',
-            sorter: (a, b) => a.query.localeCompare(b.query),
-            sortDirections: ['ascend', 'descend'],
-        });
-    }
- if (!errorSubject && !isLoadingSubject && data.hasSdv) {
-        columns.push({
-            title: props.t('SDV'),
-            dataIndex: 'sdv',
-            sorter: (a, b) => {
-                const nameA = a.sdv || '';
-                const nameB = b.sdv || '';
-                return nameA.localeCompare(nameB);
-            },
-            sortDirections: ['ascend', 'descend'],
-        });
-    }
     const handleShowArchivedSubjectsChange = (e) => {
         setShowArchivedSubjects(e.target.checked);
-   
+    }
 
     const [textError, setTextError] = useState("");
 
@@ -554,70 +511,65 @@ const SubjectList = props => {
     document.title = props.t('Subject list');
     return (
         < React.Fragment >
-            {!isLoadingSubject && !errorSubject && subjectsData.subjectList!==null &&
+            {!isLoading && !error && subjectsData !== null &&
                 < div className="page-content">
                     <div className="container-fluid">
-                    {view && <>
-                    <div className="page-title-box">
-                            <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
-                                <Col md={8}>
-                                <h6 className="page-title">{props.t('Subject List')}</h6>
+                        {view && <>
+                            <div className="page-title-box">
+                                <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
+                                    <Col md={8}>
+                                        <h6 className="page-title">{props.t('Subject List')}</h6>
+                                    </Col>
+                                </Row>
+                            </div>
+                            <Row>
+                                <Col className="col-12">
+                                    <div style={{ display: 'inline-block', float: 'left' }} className="col-md-6">
+                                        {permissions.canSubjectArchive &&
+                                            <>
+                                                <input
+                                                    type="checkbox"
+                                                    className="form-check-input"
+                                                    onChange={handleShowArchivedSubjectsChange}
+                                                    checked={showArchivedSubjects} /><label className="form-check-label" style={{ marginLeft: '5px' }}>
+                                                    {props.t("Show archived patients")}
+                                                </label>
+                                            </>
+                                        }
+                                    </div>
+                                    {permissions.canSubjectAdd &&
+                                        <div style={{ display: 'inline-block', float: 'right', marginBottom: '5px' }} className="col-md-6" onClick={handleClick}>
+                                            <div style={{ float: 'right' }}>
+                                                <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>{props.t('Add new subject')}</Typography.Text>
+                                                <Button color="success" className="rounded-circle">
+                                                    <FontAwesomeIcon icon="fa-plus" />
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    }
+                                </Col>
+                                <Col className="col-12">
+                                    <Table
+                                        columns={columns}
+                                        dataSource={data.subjectList}
+                                        pagination={true}
+                                        scroll={{ x: 'max-content' }}
+                                        onRow={(record, rowIndex) => {
+                                            return {
+                                                onDoubleClick: () => {
+                                                    goToSubjectDetail(studyId, record.firstPageId, record.id, record.subjectNumber)
+                                                }
+                                            }
+                                        }}
+                                        onChange={handleChange}
+                                        filteredInfo={filteredInfo}
+                                    />
                                 </Col>
                             </Row>
-                        </div>
-                        <Row>
-                            <Col className="col-12">
-                            <div style={{ display: 'inline-block', float: 'left' }} className="col-md-6">
-                                {permissions.canSubjectArchive && 
-                                <>
-                                        <input
-                                        type="checkbox"
-                                        className="form-check-input"
-                                        onChange={handleShowArchivedSubjectsChange}
-                                        checked={showArchivedSubjects} /><label className="form-check-label" style={{ marginLeft: '5px' }}>
-                                            {props.t("Show archived patients")}
-                                    </label>
-                                </>
-                                }
-                            </div>
-                            {permissions.canSubjectAdd && 
-                            <div style={{ display: 'inline-block', float: 'right', marginBottom:'5px' }} className="col-md-6" onClick={handleClick}>
-                                <div style={{ float: 'right' }}>
-                                    <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>{props.t('Add new subject')}</Typography.Text>
-                                    <Button color="success" className="rounded-circle">
-                                        <FontAwesomeIcon icon="fa-plus" />
-                                    </Button>
-                                </div>
-                            </div>
-                            }
-                        </Col>
-                        <Col className="col-12">                 
-                                <Table
-                                    columns={columns}
-                                    dataSource={data.subjectList}
-                                    pagination={true}
-                                    scroll={{ x: 'max-content' }}
-                                    onRow={(record, rowIndex) => {
-                                        return {
-                                            onDoubleClick: () => {
-                                            goToSubjectDetail(studyId, record.firstPageId, record.id, record.subjectNumber)
-                                            }
-                                        }
-                                    }}
-                                    onChange={handleChange}
-                                    filteredInfo={filteredInfo}
-                                />
-                            </Col>
-                        </Row>
-                    </>}
+                        </>}
                     </div>
                 </div>
             }
-            {
-                !isLoadingSubject && !errorSubject && subjectsData.subjectList===null &&
-                <RoleNotFound />
-            }
-
             <ModalComp
                 refs={modalRef}
                 title={modalTitle}
@@ -634,7 +586,7 @@ const SubjectList = props => {
                     <div className="row">
                         <div className="mb-3 col-md-12">
                             <Label className="form-label">{isDelete ? props.t("This subject will be deleted.") : props.t("This subject will be archived.")}</Label>
-                            <div className="form-label">{props.t("Do you confirm?")}</div>                   
+                            <div className="form-label">{props.t("Do you confirm?")}</div>
                             <TextArea rows={4} placeholder={props.t("Comments")} value={comment} onChange={handleChangeComment} onBlur={handleBlur} />
                             {textError && (
                                 <div className="text-danger">
@@ -653,7 +605,7 @@ const SubjectList = props => {
         </React.Fragment>
 
     )
- }
+}
 
 SubjectList.propTypes = {
     t: PropTypes.any
