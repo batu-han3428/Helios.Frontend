@@ -41,6 +41,7 @@ namespace Helios.eCRF.Services
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreSubject/AddSubject", Method.Post);
+                AddApiHeaders(req);
                 req.AddJsonBody(SubjectDTO);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;

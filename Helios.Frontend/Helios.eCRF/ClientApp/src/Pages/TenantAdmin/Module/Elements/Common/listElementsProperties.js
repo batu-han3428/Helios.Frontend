@@ -258,7 +258,8 @@ class ListElementsProperties extends Component {
                         method: 'POST',
                         headers: {
                             'Accept': 'application/json, text/plain, */*',
-                            'Content-Type': 'application/json'
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${getLocalStorage("accessToken")}`
                         },
                         body:
                             JSON.stringify(

@@ -284,6 +284,7 @@ namespace Helios.eCRF.Services
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreModule/AddNewTag", Method.Post);
+                AddApiHeaders(req);
                 req.AddJsonBody(tags);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
