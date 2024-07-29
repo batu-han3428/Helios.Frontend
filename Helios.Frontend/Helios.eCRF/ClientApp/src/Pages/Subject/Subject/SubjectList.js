@@ -12,10 +12,11 @@ import { useDispatch, connect } from "react-redux";
 import withRouter from '../../../components/Common/withRouter';
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useAddSubjectMutation, useLazyGetSubjectListQuery, useLazyGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
+import { useAddSubjectMutation, useGetSubjectListQuery, useGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation, useLazySubjectVisitAnnotatedCrfGetQuery } from '../../../store/services/Subject';
 import { useLazyStudyUserSitesGetQuery } from '../../../store/services/Users';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
-import { SearchOutlined } from '@ant-design/icons';
+import { SearchOutlined, ExportOutlined } from '@ant-design/icons';
 import "./Subject.css";
 import { v4 as uuidv4 } from 'uuid';
 import AddSubjectComp from './Comp/AddSubjectComp';
@@ -140,6 +141,19 @@ const SubjectList = props => {
     const goToSubjectDetail = (studyId, pageId, subjectId, subjectNumber) => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}/${subjectNumber}`);
     };
+    
+    const [triggerCrf, { data: annotatedData, error: errorCrf, isLoading: isLoadingCrf }] = useLazySubjectVisitAnnotatedCrfGetQuery();
+
+    useEffect(() => {
+        if (annotatedData && !errorCrf && !isLoadingCrf) {
+            const openButton = document.getElementById('openPdfButton');
+            openButton.onclick = () => {
+                window.open(`/pdf?url=${annotatedData.data}`, '_blank');
+            };
+            openButton.click();
+            dispatch(endloading());
+        }
+    }, [annotatedData])
 
     const getActions = (item, permissions) => {
         const actions = (
@@ -163,7 +177,10 @@ const SubjectList = props => {
                         )}
                     </>
                 )}
-
+                {permissions.canSubjectExportForm &&
+                    <ExportOutlined onClick={() => triggerCrf(id)} />
+                }
+                
             </div>);
         return actions;
     };
@@ -510,9 +527,9 @@ const SubjectList = props => {
     };
     document.title = props.t('Subject list');
     return (
-        < React.Fragment >
-            {!isLoading && !error && subjectsData !== null &&
-                < div className="page-content">
+        <React.Fragment>
+            {!isLoading && !error && subjectsData !== null &&               
+                <div className="page-content">
                     <div className="container-fluid">
                         {view && <>
                             <div className="page-title-box">
@@ -549,6 +566,7 @@ const SubjectList = props => {
                                     }
                                 </Col>
                                 <Col className="col-12">
+                                    <button id="openPdfButton" style={{ display: "none" }}></button>
                                     <Table
                                         columns={columns}
                                         dataSource={data.subjectList}
@@ -603,7 +621,6 @@ const SubjectList = props => {
                 ref={toastRef}
             />
         </React.Fragment>
-
     )
 }
 

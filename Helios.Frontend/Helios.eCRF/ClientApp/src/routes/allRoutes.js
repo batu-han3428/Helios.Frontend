@@ -153,7 +153,7 @@ const userRoutes = [
     { path: "/studylist/:isLocked", component: <StudyList />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/addstudy", component: <AddOrUpdateStudy />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/visits/:studyId", component: <Study />, menuType: "study", roles: ['TenantAdmin'] },
-    { path: "/pdf", component: <Pdf />, menuType: "sso", roles: ['TenantAdmin']},
+    { path: "/pdf", component: <Pdf />, menuType: "sso", roles: ['TenantAdmin', 'StudyUser']},
 
     //sites
     { path: "/sites/:studyId", component: <Sites />, menuType: "study", roles: ['TenantAdmin'] },
