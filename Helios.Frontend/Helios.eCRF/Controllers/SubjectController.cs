@@ -37,14 +37,14 @@ namespace Helios.eCRF.Controllers
             foreach (var user in result.Data)
             {
                 var addedby = users.Data.FirstOrDefault(x => x.Id == user.AddedById);
-          
-                    user.AddedByName = addedby.Name + ' ' + addedby.LastName;
-                }
+
+                user.AddedByName = addedby.Name + ' ' + addedby.LastName;
+
             }
 
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
-        
+
         /// <summary>
         /// Hasta eklenir
         /// </summary>
