@@ -11,8 +11,7 @@ import { SdvIconStatu, QueryIconStatu } from "../../../helpers/icon_helper";
 import { useDispatch, connect } from "react-redux";
 import withRouter from '../../../components/Common/withRouter';
 import { startloading, endloading } from '../../../store/loader/actions';
-import { useAddSubjectMutation, useLazyGetSubjectListQuery, useLazyGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation } from '../../../store/services/Subject';
-import { useAddSubjectMutation, useGetSubjectListQuery, useGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation, useLazySubjectVisitAnnotatedCrfGetQuery } from '../../../store/services/Subject';
+import { useAddSubjectMutation, useLazyGetSubjectListQuery, useLazyGetUserPermissionsQuery, useDeleteOrArchiveSubjectMutation, useLazySubjectVisitAnnotatedCrfGetQuery } from '../../../store/services/Subject';
 import { useLazyStudyUserSitesGetQuery } from '../../../store/services/Users';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { API_BASE_URL } from '../../../constants/endpoints';
@@ -178,7 +177,7 @@ const SubjectList = props => {
                     </>
                 )}
                 {permissions.canSubjectExportForm &&
-                    <ExportOutlined onClick={() => triggerCrf(id)} />
+                    <ExportOutlined onClick={() => triggerCrf(item.id)} />
                 }
                 
             </div>);
