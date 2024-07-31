@@ -31,7 +31,7 @@ const AddOrUpdateStudy = props => {
     const userInformation = useSelector(state => state.rootReducer.Login);
     const tenantId = userInformation.tenantId;
 
-    const [trigger, { data: studyListData, errorStudy, isLoadingStudy }] = useLazyStudyListGetQuery();
+    const [trigger, { data: studyListData, error: errorStudy, isLoading:isLoadingStudy }] = useLazyStudyListGetQuery();
 
     const [studySave] = useStudySaveMutation();
 
@@ -44,14 +44,14 @@ const AddOrUpdateStudy = props => {
     };
 
     useEffect(() => {
-        if (copyStudy) {
+        if (copyStudy && tenantId) {
             trigger({ isLocked: false, tenantId: tenantId });
         }
         dispatch(startloading());
-        if (!isLoadingStudy && !errorStudy && studyListData) {
+        if (studyListData && !isLoadingStudy && !errorStudy  ) {
             setTableData(studyListData);
             dispatch(endloading());
-        } else if (!isLoadingStudy && errorStudy) {
+        } else if (errorStudy && !isLoadingStudy) {
             dispatch(endloading());
             toastRef.current.setToast({
                 message: props.t("An unexpected error occurred."),
@@ -85,7 +85,7 @@ const AddOrUpdateStudy = props => {
             userid: userInformation.userId,
             tenantid: userInformation.tenantId,
             studyId: studyId,
-            copyStudyId: apiStudyData ? apiStudyData.copyStudyId : '',
+            copyStudyId: apiStudyData ? apiStudyData.copyStudyId : 0,
             copyStudy: copyStudy,
             studyname: apiStudyData ? apiStudyData.studyName : '',
             studylink: apiStudyData ? apiStudyData.studyLink : '',
@@ -105,10 +105,10 @@ const AddOrUpdateStudy = props => {
                 props.t("This field is required")
             ),
             copyStudyId: Yup.string().when('copyStudy', {
-                is: "true", 
-                then: Yup.string().required(props.t("This field is required")),
-                otherwise: Yup.string(),
-            })          
+                is: (value) => value === "true",
+                then: (schema) => schema.required('This field is required'),
+                otherwise: (schema) => schema,
+            }),
         }),
         onSubmit: async (values) => {
             dispatch(startloading());
@@ -138,7 +138,7 @@ const AddOrUpdateStudy = props => {
     useEffect(() => {
         validationType.setValues({
             ...validationType.values,
-            studyId: studyId,
+            studyId: studyId,           
         });
     }, [studyId]);
 
