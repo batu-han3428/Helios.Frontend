@@ -26,7 +26,7 @@ class DateElement extends Component {
             id: props.Id,
             Title: props.Title,
             IsRequired: props.IsRequired,
-            isDisable: props.IsDisable === "" ? false : props.IsDisable,
+            isDisable: props.IsDisable === "" ? false : true,
             AddTodayDate: props.AddTodayDate,
             StartDay: props.StartDay,
             EndDay: props.EndDay,

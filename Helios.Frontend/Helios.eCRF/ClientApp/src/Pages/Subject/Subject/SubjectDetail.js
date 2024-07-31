@@ -221,13 +221,11 @@ const SubjectDetail = props => {
                             <div ref={myDivRef} id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom: "100px" }}>
                                 {isLoaded &&
                                     <SubjectDetailElementList
-                                        IsDisable={!permissions.canSubjectEdit}
-                                    StudyId={studyId}
-                                    ModuleId={0 }
-                                    IsDisable={false}
-                                    ElementList={subjectElementList}
-                                       
-                                />
+                                        IsDisable={permissions.canSubjectEdit}
+                                        StudyId={studyId}
+                                        ModuleId={0}
+                                        ElementList={subjectElementList}
+                                    />
                                 }
                             </div>
                         </Col>

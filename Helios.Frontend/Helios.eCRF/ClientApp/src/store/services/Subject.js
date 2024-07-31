@@ -81,13 +81,29 @@ export const SubjectApi = createApi({
                 }
             },
         }),
+        addDataGridSubjectElements: builder.mutation({
+            query: (values) => ({
+                url: '/Subject/AddDatagridSubjectElements',
+                method: 'POST',
+                body: values,
+            }),
+            invalidatesTags: ['SubjectElement'],
+        }),
+        removeDatagridSubjectElements: builder.mutation({
+            query: (values) => ({
+                url: '/Subject/RemoveDatagridSubjectElements',
+                method: 'POST',
+                body: values,
+            }),
+            invalidatesTags: ['SubjectElement'],
+        }),
     }),
 });
-
 
 export const { useLazyGetSubjectListQuery } = SubjectApi;
 
 export const { useLazyGetUserPermissionsQuery } = SubjectApi;
+
 export const { useAddSubjectMutation } = SubjectApi;
 
 export const { useLazyGetSubjectDetailMenuQuery } = SubjectApi;
@@ -99,3 +115,9 @@ export const { useDeleteOrArchiveSubjectMutation } = SubjectApi;
 export const { useAutoSaveSubjectMutation } = SubjectApi;
 
 export const { useLazySubjectVisitAnnotatedCrfGetQuery } = SubjectApi;
+
+export const { useAddDataGridSubjectElementsMutation } = SubjectApi;
+
+export const { useRemoveDatagridSubjectElementsMutation } = SubjectApi;
+
+export default SubjectApi;

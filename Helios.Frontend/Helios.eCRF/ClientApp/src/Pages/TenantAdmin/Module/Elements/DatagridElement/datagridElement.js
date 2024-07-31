@@ -1,13 +1,5 @@
 import React, { Component } from 'react';
-import {
-    Button,
-    Modal,
-    ModalBody,
-    ModalHeader,
-    ModalFooter,
-    Row,
-    Table
-} from "reactstrap";
+import { Button, Modal, ModalBody, ModalHeader, Row, Table } from "reactstrap";
 import { withTranslation } from "react-i18next";
 import Select from "react-select";
 import ToastComp from '../../../../../components/Common/ToastComp/ToastComp';
@@ -19,6 +11,7 @@ import ElementList from '../../FormBuilder/elementList.js';
 import SubjectDetailElementList from '../../../../Subject/Subject/SubjectDetailElementList.js';
 import { GetElementPropertiesPlace, GetElementPropertiesWidth } from '../Common/ElementPropertiesPlace'
 import { API_BASE_URL } from '../../../../../constants/endpoints';
+import { SubjectApi } from '../../../../../store/services/Subject';
 
 class DatagridElement extends Component {
     constructor(props) {
@@ -60,8 +53,6 @@ class DatagridElement extends Component {
         this.getTdContent = this.getTdContent.bind(this);
         this.handleAddAnother = this.handleAddAnother.bind(this);
         this.initial = this.initial.bind(this);
-
-        this.initial();
     }
 
     initial = () => {
@@ -110,11 +101,9 @@ class DatagridElement extends Component {
 
                 rowContent.push(colContent);
             });
-
-            rowContent.forEach(item => {
-                this.state.allRows.push(item);
-            });
-        } else {
+            this.setState({ allRows: rowContent })
+        }
+        else {
             var rowContent = [];
 
             [...Array(this.state.rowCount === 0 ? 1 : this.state.rowCount)].map((_, rowIndex) => {
@@ -127,11 +116,13 @@ class DatagridElement extends Component {
                 rowContent.push(colContent);
             });
 
-            rowContent.forEach(item => {
-                this.state.allRows.push(item);
-            });
+            this.setState({ allRows: rowContent })
         }
     };
+
+    componentDidMount() {
+        this.initial();
+    }
 
     setShowToast() {
         this.state.showToast = false;
@@ -154,13 +145,41 @@ class DatagridElement extends Component {
             elementName: GetElementNameByKey(this.props, e.value) + " " + this.props.t("Properties")
         }));
     };
+
     componentDidUpdate(prevProps) {
-        if (this.props.ChildElementList !== prevProps.ChildElementList) {
-            this.setState(
-                { childElementList: this.props.ChildElementList }
-            );
+        if (
+            prevProps.Id !== this.props.Id ||
+            prevProps.ModuleId !== this.props.ModuleId ||
+            prevProps.TenantId !== this.props.TenantId ||
+            prevProps.StudyId !== this.props.StudyId ||
+            prevProps.UserId !== this.props.UserId ||
+            prevProps.IsDisable !== this.props.IsDisable ||
+            prevProps.ColumnCount !== this.props.ColumnCount ||
+            prevProps.RowCount !== this.props.RowCount ||
+            prevProps.FormType !== this.props.FormType ||
+            prevProps.IsFromDesign !== this.props.IsFromDesign ||
+            prevProps.DatagridAndTableProperties !== this.props.DatagridAndTableProperties ||
+            prevProps.ChildElementList !== this.props.ChildElementList
+        ) {
+            this.setState({
+                id: this.props.Id,
+                moduleId: this.props.ModuleId,
+                tenantId: this.props.TenantId,
+                studyId: this.props.StudyId,
+                userId: this.props.UserId,
+                isDisable: this.props.IsDisable,
+                columnCount: this.props.ColumnCount,
+                rowCount: this.props.RowCount > 0 && this.props.RowCount !== undefined ? this.props.RowCount : 1,
+                FormType: this.props.FormType,
+                IsFromDesign: this.props.IsFromDesign,
+                datagridAndTableProperties: this.props.DatagridAndTableProperties !== "" && this.props.DatagridAndTableProperties !== null ? JSON.parse(this.props.DatagridAndTableProperties) : [],
+                childElementList: this.props.ChildElementList.length === 0 ? [] : this.props.ChildElementList,
+            }, () => {
+                this.initial();
+            });
         }
     }
+
     togglePropertiesModal = () => {
         this.setState(prevState => ({
             propertiesdgrdModalState: !prevState.propertiesdgrdModalState
@@ -186,17 +205,23 @@ class DatagridElement extends Component {
 
         var elements;
 
-        if (this.state.isDisable) {
-            if (result)
-                return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />;
+        if (this.state.isDisable !== "") {
+            if (result) {
+                if (this.state.IsFromDesign) {
+                    return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} FormType={this.state.FormType} />;
+                } else {
+                    elements = <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={false} />;
+                }
+            }
             else
                 return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleDgrdAddElementModal(colIndex + 1)} />;
         } else {
             if (result) {
-                if (this.state.IsFromDesign)
-                    return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} FormType={this.state.FormType} />;
+                if (this.state.IsFromDesign) {
+                    return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />;
+                }
                 else
-                    elements = <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={false} />;
+                    elements = <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={true} />;
             } else
                 return "";
 
@@ -208,132 +233,87 @@ class DatagridElement extends Component {
         return elements;
     }
 
-    handleAddAnother = () => {
-        this.state.dispatch(startloading());
-        var rowId = this.state.dataGridRowId;
-        var newRowId;
+    handleAddAnother = async () => {
+        try {
+            this.state.dispatch(startloading());
+            var rowId = this.state.dataGridRowId;
+            var newRowId;
 
-        for (let item of this.state.allRows[0]) {
-            if (item.content !== "") {
-                newRowId = item.content.props.DataGridRowId;
-                break;
-            }
-        }
-
-        var objs = [];
-
-        [...Array(this.state.columnCount)].map((_, columnIndex) => {
-            var res = this.getTdContent(columnIndex, newRowId, true);
-            var o = { content: res };
-            objs.push(o);
-        });
-
-        this.setState(prevState => ({
-            allRows: [...prevState.allRows, objs]
-        }));
-
-        var elems = [];
-
-        this.state.newElements.map(item => {
-            var a = {
-                SubjectVisitPageModuleId: this.props.SubjectVisitPageModuleId,
-                StudyVisitPageModuleElementId: item.studyVisitPageModuleElementId,
-                DataGridRowId: rowId + 1
-            };
-
-            elems.push(a);
-        })
-
-        var bdy = JSON.stringify(elems);
-
-        fetch(API_BASE_URL + `Subject/AddDatagridSubjectElements`, {
-            method: 'POST',
-            body: bdy,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json, text/plain, */*',
-            },
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+            for (let item of this.state.allRows[0]) {
+                if (item.content !== "") {
+                    newRowId = item.content.props.DataGridRowId;
+                    break;
                 }
+            }
 
-                this.state.dispatch(endloading());
-                this.state.dataGridRowId = rowId + 1;
+            var objs = [];
 
-                this.toastRef.current.setToast({
-                    message: "successfully",
-                    stateToast: true
-                });
-
-                window.location.reload();
-            })
-            .then(data => {
-                this.toastRef.current.setToast({
-                    message: data.message,
-                    stateToast: data.isSuccess ? true : false
-                });
-            })
-            .catch(error => {
+            [...Array(this.state.columnCount)].map((_, columnIndex) => {
+                var res = this.getTdContent(columnIndex, newRowId, true);
+                var o = { content: res };
+                objs.push(o);
             });
+
+            var elems = [];
+
+            this.state.newElements.map(item => {
+                var a = {
+                    SubjectVisitPageModuleId: this.props.SubjectVisitPageModuleId,
+                    StudyVisitPageModuleElementId: item.studyVisitPageModuleElementId,
+                    DataGridRowId: rowId + 1
+                };
+
+                elems.push(a);
+            })
+
+            const response = await this.state.dispatch(SubjectApi.endpoints.addDataGridSubjectElements.initiate(elems)).unwrap();
+
+            this.state.dispatch(endloading());
+
+            this.toastRef.current.setToast({
+                message: response.message,
+                stateToast: response.isSuccess
+            });
+
+        } catch (error) {
+            this.toastRef.current.setToast({
+                message: "An error occurred",
+                stateToast: false
+            });
+        }
     };
 
-    handleRemoveRow = (index) => {
-        this.state.dispatch(startloading());
-        var rowId = this.state.dataGridRowId;
-        var delElms = [];
+    handleRemoveRow = async (index) => {
+        try {
+            this.state.dispatch(startloading());
 
-        this.state.allRows[index].forEach(item => {
-            delElms.push(item);
-        });
+            var delElms = [];
 
-        var elems = [];
-
-        delElms.map(item => {
-            if (item.content !== "")
-                elems.push(item.content.props.ElementList[0].subjectVisitPageModuleElementId);
-        })
-
-        var bdy = JSON.stringify(elems);
-
-        fetch(API_BASE_URL + `Subject/RemoveDatagridSubjectElements`, {
-            method: 'POST',
-            body: bdy,
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json, text/plain, */*',
-            },
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-
-                this.state.dispatch(endloading());
-                this.state.dataGridRowId = rowId - 1;
-
-                this.toastRef.current.setToast({
-                    message: "successfully",
-                    stateToast: true
-                });
-
-                window.location.reload();
-            })
-            .then(data => {
-                this.toastRef.current.setToast({
-                    message: data.message,
-                    stateToast: data.isSuccess ? true : false
-                });
-            })
-            .catch(error => {
+            this.state.allRows[index].forEach(item => {
+                delElms.push(item);
             });
 
-        this.setState((prevState) => {
-            const newRows = [...prevState.allRows];
-            newRows.splice(index, 1);
-            return { allRows: newRows };
-        });
+            var elems = [];
+
+            delElms.map(item => {
+                if (item.content !== "")
+                    elems.push(item.content.props.ElementList[0].subjectVisitPageModuleElementId);
+            })
+
+            const response = await this.state.dispatch(SubjectApi.endpoints.removeDatagridSubjectElements.initiate(elems)).unwrap();
+
+            this.state.dispatch(endloading());
+
+            this.toastRef.current.setToast({
+                message: response.message,
+                stateToast: response.isSuccess
+            });
+        } catch (e) {
+            this.toastRef.current.setToast({
+                message: "An error occurred",
+                stateToast: false
+            });
+        }
     };
 
     render() {

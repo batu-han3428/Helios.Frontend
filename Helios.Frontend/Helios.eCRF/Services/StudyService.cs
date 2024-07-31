@@ -514,12 +514,12 @@ border-width: 1px 0 1px 0;
                                                 break;
                                             case ElementType.DataGrid:
                                                 input += @"<table border=""1""><tbody>";
-                                                foreach (KeyValuePair<string, string> entry in elm.DatagridAndTableValue)
+                                                foreach (KeyValuePair<string, DatagridAndTableDicVal> entry in elm.DatagridAndTableValue)
                                                 {
                                                     string cInput = "";
-                                                    if (IsJson(entry.Value))
+                                                    if (IsJson(entry.Value.ElementType))
                                                     {
-                                                        List<ElementOption>? elmOpts = System.Text.Json.JsonSerializer.Deserialize<List<ElementOption>>(entry.Value);
+                                                        List<ElementOption>? elmOpts = System.Text.Json.JsonSerializer.Deserialize<List<ElementOption>>(entry.Value.ElementType);
                                                         if (elmOpts != null)
                                                         {
                                                             cInput = "<div class=\"input-group animated fadeInLeft  helios-input helios-radio \" style=\"margin:5px 0px\"><ul style=\"list-style-type:none;margin-left:-40px;\">";
@@ -532,23 +532,23 @@ border-width: 1px 0 1px 0;
                                                     }
                                                     else
                                                     {
-                                                        if (entry.Value == ElementType.Text.ToString() || entry.Value == ElementType.Numeric.ToString() || entry.Value == ElementType.Calculated.ToString())
+                                                        if (entry.Value.ElementType == ElementType.Text.ToString() || entry.Value.ElementType == ElementType.Numeric.ToString() || entry.Value.ElementType == ElementType.Calculated.ToString())
                                                         {
                                                             cInput = "<input type=\"text\" style=\"width:126px; border:1px #cfd1d2 solid;color:#6D6E70;\" />";
                                                         }
-                                                        else if (entry.Value == ElementType.DateOption.ToString())
+                                                        else if (entry.Value.ElementType == ElementType.DateOption.ToString())
                                                         {
                                                             cInput += "<input type=\"date\">";
                                                         }
-                                                        else if (entry.Value == ElementType.Textarea.ToString())
+                                                        else if (entry.Value.ElementType == ElementType.Textarea.ToString())
                                                         {
                                                             cInput += "<textarea rows=\"3\" cols=\"15\"></textarea>";
                                                         }
-                                                        else if (entry.Value == ElementType.File.ToString())
+                                                        else if (entry.Value.ElementType == ElementType.File.ToString())
                                                         {
                                                             cInput += "<label style=\"display: inline-block; padding: 6px 12px; cursor: pointer; background-color: #E5E5E5; color: black; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px; user-select: none;\">Select File</label>";
                                                         }
-                                                        else if (entry.Value == ElementType.RangeSlider.ToString())
+                                                        else if (entry.Value.ElementType == ElementType.RangeSlider.ToString())
                                                         {
                                                             cInput += "<input type=\"range\" min=\"0\" max=\"100\" step=\"1\" value=\"50\">";
                                                         }

@@ -69,7 +69,7 @@ function SubjectDetailElementList(props) {
         }
     }
     const renderElementsSwitch = useCallback((param) => {
-        const dsbl = props.IsDisable ? "disabled" : "";
+        const dsbl = props.IsDisable ? "" : "disabled";
         const commonProps = {
             Id: param.subjectVisitPageModuleElementId,
             StudyVisitPageModuleElementId: param.studyVisitPageModuleElementId,
