@@ -84,10 +84,9 @@ export const UsersApi = createApi({
 
 
 export const { useLazyUserListGetQuery } = UsersApi;
+export const { useLazyStudyUserSitesGetQuery } = UsersApi;
 
 export const { useUserGetQuery } = UsersApi;
-
-export const { useLazyStudyUserSitesGetQuery } = UsersApi;
 
 export const { useUserSetMutation } = UsersApi;
 
