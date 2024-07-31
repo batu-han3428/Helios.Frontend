@@ -298,6 +298,14 @@ namespace Helios.eCRF.Services
                    (input.StartsWith("[") && input.EndsWith("]"));
         }
 
+        class ElementOption
+        {
+            public int id { get; set; }
+            public string tagKey { get; set; }
+            public string tagName { get; set; }
+            public string tagValue { get; set; }
+        }
+
         public async Task<RestResponse<byte[]>> GetSubjectVisitAnnotatedCrf(Int64 subjectId)
         {
             using (var client = CoreServiceClient)
@@ -372,45 +380,49 @@ namespace Helios.eCRF.Services
                                                 input += val;
                                                 break;
                                             case ElementType.DataGrid:
-                                                input += @"<table border=""1""><tbody>";
-                                                foreach (KeyValuePair<string, string> entry in elm.DatagridAndTableValue)
+                                                foreach (KeyValuePair<string, DatagridAndTableDicVal> entry in elm.DatagridAndTableValue)
                                                 {
                                                     string cInput = "";
-                                                    if (IsJson(entry.Value))
+                                                    if (IsJson(entry.Value.ElementType))
                                                     {
-                                                        cInput += val;
+                                                        List<ElementOption>? elmOpts = System.Text.Json.JsonSerializer.Deserialize<List<ElementOption>>(entry.Value.ElementType);
+                                                        if (elmOpts != null)
+                                                        {
+                                                            var cInputVal = elmOpts.Where(x => x.tagValue == entry.Value.Value).Select(x => x.tagName).FirstOrDefault();
+                                                            cInput = $"<label>{cInputVal}</label>";
+                                                        }
                                                     }
                                                     else
                                                     {
-                                                        if (entry.Value == ElementType.Text.ToString() || entry.Value == ElementType.Numeric.ToString() || entry.Value == ElementType.Calculated.ToString())
+                                                        if (entry.Value.ElementType == ElementType.Text.ToString() || entry.Value.ElementType == ElementType.Numeric.ToString() || entry.Value.ElementType == ElementType.Calculated.ToString())
                                                         {
-                                                            cInput = "<input type=\"text\" style=\"width:126px; border:1px #cfd1d2 solid;color:#6D6E70;\" />";
+                                                            cInput = $"<label>{entry.Value.Value}</label>";
                                                         }
-                                                        else if (entry.Value == ElementType.DateOption.ToString())
+                                                        else if (entry.Value.ElementType == ElementType.DateOption.ToString())
                                                         {
-                                                            cInput += "<input type=\"date\">";
+                                                            cInput = $"<input type=\"text\" style=\"width:126px; border:1px #cfd1d2 solid;color:#6D6E70;\" value=\"{entry.Value.Value}\" />";
                                                         }
-                                                        else if (entry.Value == ElementType.Textarea.ToString())
+                                                        else if (entry.Value.ElementType == ElementType.Textarea.ToString())
                                                         {
-                                                            cInput += "<textarea rows=\"3\" cols=\"15\"></textarea>";
+                                                            cInput += $"<label>{entry.Value.Value}</label>";
                                                         }
-                                                        else if (entry.Value == ElementType.File.ToString())
+                                                        else if (entry.Value.ElementType == ElementType.File.ToString())
                                                         {
                                                             cInput += "<label style=\"display: inline-block; padding: 6px 12px; cursor: pointer; background-color: #E5E5E5; color: black; border-radius: 4px; font-family: Arial, sans-serif; font-size: 14px; user-select: none;\">Select File</label>";
                                                         }
-                                                        else if (entry.Value == ElementType.RangeSlider.ToString())
+                                                        else if (entry.Value.ElementType == ElementType.RangeSlider.ToString())
                                                         {
-                                                            cInput += "<input type=\"range\" min=\"0\" max=\"100\" step=\"1\" value=\"50\">";
+                                                            cInput += entry.Value.Value;
                                                         }
                                                     }
-                                                    input += $@"<tr><th>{entry.Key}</th><td>{cInput}</td>";
+                                                    htmlContent += $"<tr style=\"border-bottom:1px dashed #ccc\"><td>{visitNo}-{elmNo}</td><td><span>{entry.Value.ColonName}<br></span></td><td>{cInput}</td></tr>";
+                                                    elmNo++;
                                                 }
-                                                input += @"</tbody></table>";
                                                 break;
                                             default:
                                                 break;
                                         }
-                                        if (elm.Input != ElementType.Table)
+                                        if (elm.Input != ElementType.Table && elm.Input != ElementType.DataGrid)
                                         {
                                             htmlContent += $"<tr style=\"border-bottom:1px dashed #ccc\"><td>{visitNo}-{elmNo}</td>";
                                             if (elm.Input == ElementType.Label)
@@ -433,11 +445,7 @@ namespace Helios.eCRF.Services
                                                 }
                                                 htmlContent += $"<td colspan=\"2\">{labelElm}<br>";
                                             }
-                                            else if (elm.Input == ElementType.DataGrid)
-                                            {
-                                                htmlContent += $"<td colspan=\"2\">{input}";
-                                            }
-                                            else
+                                            else if(elm.Input != ElementType.DataGrid)
                                             {
                                                 htmlContent += $"<td><span>{elm.Title}<br></span>";
                                             }
@@ -453,14 +461,7 @@ namespace Helios.eCRF.Services
                                             {
                                                 htmlContent += $"<span style=\"font-size:10px\">Minimum değer:{elm.LowerLimit} - Maksimum değer:{elm.UpperLimit}</span>";
                                             }
-                                            if (elm.Input == ElementType.DataGrid)
-                                            {
-                                                htmlContent += $"</td><td colspan=\"0\"></td></tr>";
-                                            }
-                                            else
-                                            {
                                                 htmlContent += $"</td><td>{input}</td></tr>";
-                                            }
                                             elmNo++;
                                         }
                                     });
