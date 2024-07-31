@@ -646,5 +646,8 @@
   "Your new password cannot be the same as the previous one": "Your new password cannot be the same as the previous one",
   "The new passwords entered are not compatible with each other, please try again": "The new passwords entered are not compatible with each other, please try again",
   "Your account has been blocked. Please contact the system administrator.": "Your account has been blocked. Please contact the system administrator.",
-  "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator.": "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator."
+  "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator.": "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator.",
+  "Source study": "Source study",
+  "Use an existing study": "Use an existing study"
+
 }

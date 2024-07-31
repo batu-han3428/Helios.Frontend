@@ -494,5 +494,7 @@
   "Your new password cannot be the same as the previous one": "Yeni şifreniz bir önceki ile aynı olamaz",
   "The new passwords entered are not compatible with each other, please try again": "Girilen yeni şifreler birbiri ile uyumlu değildir, lütfen tekrar deneyin",
   "Your account has been blocked. Please contact the system administrator.": "Hesabınız bloke olmuştur. Lütfen sistem yöneticisi ile iletişime geçiniz.",
-  "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator.": "Çalışma rolünüz yönetici tarafından henüz tanımlanmamış. Bir sorun olduğunu düşünüyorsanız lütfen sistem yöneticisi ile iletişime geçiniz."
+  "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator.": "Çalışma rolünüz yönetici tarafından henüz tanımlanmamış. Bir sorun olduğunu düşünüyorsanız lütfen sistem yöneticisi ile iletişime geçiniz.",
+  "Source study": "Kaynak çalışma",
+  "Use an existing study": "Mevcut bir çalışmayı kullanın"
 }
