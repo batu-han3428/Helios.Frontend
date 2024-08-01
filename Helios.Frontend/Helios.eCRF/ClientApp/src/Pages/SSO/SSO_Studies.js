@@ -8,6 +8,8 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useLazyStudiesListGetQuery } from '../../store/services/SSO/SSO_Api';
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../store/loader/actions';
+import { API_BASE_URL } from "../../constants/endpoints";
+import { addStudy} from "../../store/actions";
 
 
 const SSO_Studies = props => {
@@ -23,7 +25,7 @@ const SSO_Studies = props => {
     const [data, setData] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState("2");
+    const [selectedOption, setSelectedOption] = useState("1");
 
     const [triggerStudies, { data: studiesData, isLoading: isLoadingStudies, isError: isErrorStudies } ] = useLazyStudiesListGetQuery();
 
@@ -64,9 +66,31 @@ const SSO_Studies = props => {
 
         return isStatusMatched && (isStudyNameMatched || isUserRoleNameMatched);
     });
-
-    const goToStudy = () => {
-        navigate("/UnderConstruction");
+    const getStudy = async (result) => {
+        const apiUrl = API_BASE_URL + `Study/GetStudy/${result.studyId}`;
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${result.token}`
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                dispatch(addStudy(data));
+            })
+            .catch(error => {
+             
+            });
+    };
+    const goToStudy = (studyId) => {
+        getStudy({ token: userInformation.token, studyId: studyId });
+        navigate(`/subjectlist/${studyId}`);
     }
 
     return (
@@ -132,7 +156,7 @@ const SSO_Studies = props => {
                                                             { item.userRoleName }
                                                         </div>
                                                         <div style={{ width: "10%" }} >
-                                                            <FontAwesomeIcon onClick={()=> goToStudy()} style={{ cursor: "pointer", color:"#868686"}} icon="fa-solid fa-caret-right" />
+                                                            <FontAwesomeIcon onClick={()=> goToStudy(item.studyId)} style={{ cursor: "pointer", color:"#868686"}} icon="fa-solid fa-caret-right" />
                                                         </div>
                                                     </div>
                                                 </div>

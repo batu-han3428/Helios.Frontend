@@ -496,5 +496,6 @@
   "Your account has been blocked. Please contact the system administrator.": "Hesabınız bloke olmuştur. Lütfen sistem yöneticisi ile iletişime geçiniz.",
   "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator.": "Çalışma rolünüz yönetici tarafından henüz tanımlanmamış. Bir sorun olduğunu düşünüyorsanız lütfen sistem yöneticisi ile iletişime geçiniz.",
   "Source study": "Kaynak çalışma",
-  "Use an existing study": "Mevcut bir çalışmayı kullanın"
+  "Use an existing study": "Mevcut bir çalışmayı kullanın",
+  "Please select the account you want to log in": "Lütfen giriş yapmak istediğiniz hesabı seçiniz"
 }

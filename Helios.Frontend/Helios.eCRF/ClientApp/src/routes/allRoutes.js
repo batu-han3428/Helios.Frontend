@@ -259,7 +259,7 @@ const userRoutes = [
     { path: "/iwrs", component: <Iwrs />, menuType: "sso", roles: ['StudyUser'] },
 
     //Subject
-    { path: "/subjectlist", component: <SubjectList />, menuType: "sso", roles: ['StudyUser'] },
+    { path: "/subjectlist/:studyId", component: <SubjectList />, menuType: "sso", roles: ['StudyUser'] },
     { path: "/subject-detail/:studyId/:pageId/:subjectId/:subjectNumber", component: <SubjectDetail />, menuType: "sso", roles: ['StudyUser'] },
 
     // this route should be at the end of all other routes

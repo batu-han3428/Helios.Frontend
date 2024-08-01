@@ -139,7 +139,21 @@ const SSO_Tenants = props => {
                                         <Alert color="warning" style={{ height: "50px" }}>
                                             {props.t("You do not have an active tenant, if you think there is an error, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
                                         </Alert>
-                                    ) : (
+                                        ) : (
+                                                <Table
+                                                    columns={columns}
+                                                    dataSource={filteredData}
+                                                    pagination={true}
+                                                    scroll={{ x: 'max-content' }}
+                                                    onRow={(record, rowIndex) => {
+                                                        return {
+                                                            onDoubleClick: () => {
+                                                                goToSubjectDetail(studyId, record.firstPageId, record.id, record.subjectNumber)
+                                                            }
+                                                        }
+                                                    }}                                                  
+                                                    filteredInfo={filteredInfo}
+                                                />
                                     filteredData.map((item, index) => (
                                         <div key={index} className="col-lg-2" style={{  margin: "10px", padding: "0px" }} >
                                             <div className="float-e-margins" style={{ marginBottom: "0", marginTop:"25px" }}>

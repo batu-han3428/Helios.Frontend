@@ -648,6 +648,7 @@
   "Your account has been blocked. Please contact the system administrator.": "Your account has been blocked. Please contact the system administrator.",
   "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator.": "Your study role has not yet been defined by the administrator. If you think there is a problem, please contact the system administrator.",
   "Source study": "Source study",
-  "Use an existing study": "Use an existing study"
+  "Use an existing study": "Use an existing study",
+  "Please select the account you want to log in": "Please select the account you want to log in"
 
 }

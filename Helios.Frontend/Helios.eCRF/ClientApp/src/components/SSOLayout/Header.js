@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 
 import { connect } from "react-redux";
 import { Form, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Input, Button } from "reactstrap";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 // Import menuDropdown
 import LanguageDropdown from "../CommonForBoth/TopbarDropdown/LanguageDropdown";
@@ -26,12 +26,14 @@ import {
 } from "../../store/actions";
 
 const Header = props => {
+    const location = useLocation();
     const [search, setsearch] = useState(false);
     const [singlebtn, setSinglebtn] = useState(false);
 
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    const studyId = (props.studyId !== null && props.studyId !== "") ? props.studyId :0
 
-    const { data: permissionData, isLoading, isError, refetch } = useUserPermissionsListGetQuery(8,{ refetchOnMountOrArgChange: true });
+    const { data: permissionData, isLoading, isError, refetch } = useUserPermissionsListGetQuery(studyId,{ refetchOnMountOrArgChange: true });
     useEffect(() => {      
         refetch();
     }, [refetch]);
@@ -215,13 +217,14 @@ Header.propTypes = {
 };
 
 const mapStatetoProps = state => {
+    const studyId = state.rootReducer.Study.studyId;
     const {
         layoutType,
         showRightSidebar,
         leftMenu,
         leftSideBarType,
     } = state.rootReducer.Layout;
-    return { layoutType, showRightSidebar, leftMenu, leftSideBarType };
+    return { layoutType, showRightSidebar, leftMenu, leftSideBarType, studyId };
 };
 
 export default connect(mapStatetoProps, {

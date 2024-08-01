@@ -63,7 +63,7 @@ const SSO_TenantsOrStudies = props => {
                         <Card>
                             <CardHeader style={{ background: "#FFFFFF", borderBottom: "1px solid #e7eaec", margin: "0 30px" }}>
                                 <div className="ibox-title" style={{ display: "flex", justifyContent: "space-between" }} >
-                                    <h5 style={{ margin: "10px 7px", color: "#6D6E70", fontFamily: "arial, sans-serif", fontSize: "15px" }}>{props.t("Please select the tenant you want to login")}</h5>
+                                    <h5 style={{ margin: "10px 7px", color: "#6D6E70", fontFamily: "arial, sans-serif", fontSize: "15px" }}>{props.t("Please select the account you want to log in")}</h5>
                                 </div>
                             </CardHeader>
                             <CardBody>
@@ -122,7 +122,7 @@ const SSO_TenantsOrStudies = props => {
                                                                                 },
                                                                             }}
                                                                         >
-                                                                            <Button type="primary" size="large" onClick={() => goToTenants(3)} style={{ width: "100%" }}>
+                                                                            <Button type="primary" size="large" onClick={() => goToTenants(4)} style={{ width: "100%" }}>
                                                                                 Study
                                                                             </Button>
                                                                         </ConfigProvider>
