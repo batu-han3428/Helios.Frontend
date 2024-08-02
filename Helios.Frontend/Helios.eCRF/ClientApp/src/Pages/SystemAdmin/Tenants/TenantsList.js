@@ -42,6 +42,12 @@ const TenantsList = props => {
                 sortDirections: ['ascend', 'descend'],
             },
             {
+                title: props.t('User limit'),
+                dataIndex: 'userLimit',
+                sorter: (a, b) => a.userLimit.localeCompare(b.userLimit),
+                sortDirections: ['ascend', 'descend'],
+            },
+            {
                 title: props.t('Created on'),
                 dataIndex: 'createdAt',
                 sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
