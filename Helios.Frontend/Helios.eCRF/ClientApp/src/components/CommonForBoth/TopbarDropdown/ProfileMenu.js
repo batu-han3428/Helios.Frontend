@@ -79,7 +79,7 @@ const ProfileMenu = props => {
                     </DropdownItem>
                     {
                         roletatu &&
-                        <DropdownItem tag="a" href="/SSO-tenants/3">
+                        <DropdownItem tag="a" href="/SSO-tenants-or-studies">
                             <i className="bx bx-user font-size-16 align-middle me-1" />
                             {props.t("Switch to tenant")}{" "}
                         </DropdownItem>
