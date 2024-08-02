@@ -142,7 +142,8 @@ namespace Helios.eCRF.Services
                                         Name = aTenants.Name,
                                         ActiveStudies = (count != null) ? count.ActiveStudies + " / " + aTenants.StudyLimit : "0 / " + (aTenants.StudyLimit != null ? aTenants.StudyLimit : "0"),
                                         CreatedAt = aTenants.CreatedAt,
-                                        UpdatedAt = aTenants.UpdatedAt
+                                        UpdatedAt = aTenants.UpdatedAt,
+                                        UserLimit=aTenants.UserLimit==null? "-" :aTenants.UserLimit,
                                     }).ToList();
 
                         return new RestResponse<List<TenantModel>>(restRequest)
