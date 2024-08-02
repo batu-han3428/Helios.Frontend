@@ -3,7 +3,7 @@
 "ServerUrl": "https://localhost:44458",
 "RedirectUrl": "",
 "LaunchCommand": "npm start",
-"WorkingDirectory": "C:\\Users\\MED-CASE\\source\\repos\\Helios.Frontend\\Helios.Frontend\\Helios.eCRF\\ClientApp\\",
+"WorkingDirectory": "C:\\Users\\Şeref ÖZBAŞ\\source\\repos\\Helios.Frontend\\Helios.Frontend\\Helios.eCRF\\ClientApp\\",
 "MaxTimeoutInSeconds": "120",
 "KeepRunning": "false"
 }

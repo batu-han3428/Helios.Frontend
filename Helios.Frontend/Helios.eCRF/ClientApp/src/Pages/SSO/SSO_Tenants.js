@@ -12,8 +12,9 @@ import { setLocalStorage } from '../../helpers/local-storage/localStorageProcess
 import { onLogin } from '../../helpers/Auth/useAuth';
 import { loginuser } from '../../store/actions';
 import ToastComp from '../../components/Common/ToastComp/ToastComp';
-import { Button, ConfigProvider } from 'antd';
+import { Button, ConfigProvider, Table } from 'antd';
 import { TinyColor } from '@ctrl/tinycolor';
+import { SearchOutlined } from '@ant-design/icons';
 
 
 const SSO_Tenants = props => {
@@ -47,7 +48,28 @@ const SSO_Tenants = props => {
 
 
     const { role } = useParams();
-
+    const columns = [
+        {
+            title: props.t('Tenant name'),
+            dataIndex: 'tenantName',
+            sorter: (a, b) => a.tenantName.localeCompare(b.tenantName),
+            sortDirections: ['ascend', 'descend'],
+            onFilter: (value, record) => String(record.tenantName).toLowerCase().includes(value.toLowerCase()),
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        },        
+        {
+            title: props.t('Actions'),
+            dataIndex: 'actions',
+            width: "170px",
+            render: (text, record) => {
+                return (
+                    <div className="icon-container">
+                        <div className="icon icon-demo" onClick={() => goToStudies(record.id)}></div>
+                    </div>
+                );
+            }
+        },
+    ]
 
     useEffect(() => {
         if (userInformation.userId && role) {
@@ -92,7 +114,7 @@ const SSO_Tenants = props => {
                     stateToast: false
                 });
             }
-           
+
         } else if (role === "4") {
             navigate(`/SSO-studies/${tenantId}`);
         }
@@ -100,96 +122,70 @@ const SSO_Tenants = props => {
 
     return (
         <>
-        <div className="page-content">
-            <div className="container-fluid">
-                <Row style={{ marginTop: "10px" }}>
-                    <Col className="col-12">
-                        <Card>
-                            <CardHeader style={{ background: "#FFFFFF", borderBottom: "1px solid #e7eaec", margin: "0 30px" }}>
-                                <div className="ibox-title" style={{ display: "flex", justifyContent: "space-between" }} >
-                                    <h5 style={{ margin: "10px 7px", color: "#6D6E70", fontFamily: "arial, sans-serif", fontSize: "15px" }}>{props.t("Please select the tenant you want to login")}</h5>
-                                    <div style={{ marginRight: "70px" }}>
-                                        <form noValidate="novalidate" onSubmit={(event) => event.preventDefault()} className="searchbox">
-                                            <div role="search" className="searchbox__wrapper">
-                                                <input id="search-input" value={searchTerm} onChange={searchFilter} type="search" name="search" placeholder={props.t("Search")} autoComplete="off" required="required" className="searchbox__input" />
-                                                <button type="submit" title="Submit your search query." className="searchbox__submit">
-                                                    <svg role="img" aria-label="Search">
-                                                        <use xlinkHref="#sbx-icon-search-13"></use>
-                                                    </svg>
-                                                </button>
-                                                <button type="reset" onClick={() => setSearchTerm('')} title="Clear the search query." className="searchbox__reset searchbox-hide">
-                                                    <svg role="img" aria-label="Reset">
-                                                        <use xlinkHref="#sbx-icon-clear-3"></use>
-                                                    </svg>
-                                                </button>
+            <div className="page-content">
+                <div className="container-fluid">
+                    <Row style={{ marginTop: "10px" }}>
+                        <Col className="col-12">
+                            <Card>
+                                <CardHeader style={{ background: "#FFFFFF", borderBottom: "1px solid #e7eaec", margin: "0 30px" }}>
+                                    <div className="ibox-title" style={{ display: "flex", justifyContent: "space-between" }} >
+                                        <h5 style={{ margin: "10px 7px", color: "#6D6E70", fontFamily: "arial, sans-serif", fontSize: "15px" }}>{props.t("Please select the tenant you want to login")}</h5>
+                                        <div style={{ marginRight: "70px" }}>
+                                            <form noValidate="novalidate" onSubmit={(event) => event.preventDefault()} className="searchbox">
+                                                <div role="search" className="searchbox__wrapper">
+                                                    <input id="search-input" value={searchTerm} onChange={searchFilter} type="search" name="search" placeholder={props.t("Search")} autoComplete="off" required="required" className="searchbox__input" />
+                                                    <button type="submit" title="Submit your search query." className="searchbox__submit">
+                                                        <svg role="img" aria-label="Search">
+                                                            <use xlinkHref="#sbx-icon-search-13"></use>
+                                                        </svg>
+                                                    </button>
+                                                    <button type="reset" onClick={() => setSearchTerm('')} title="Clear the search query." className="searchbox__reset searchbox-hide">
+                                                        <svg role="img" aria-label="Reset">
+                                                            <use xlinkHref="#sbx-icon-clear-3"></use>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            </form>
+                                            <div className="svg-icons" style={{ height: "0", width: "0", position: "absolute", visibility: "hidden" }} >
+                                                <svg xmlns="http://www.w3.org/2000/svg">
+                                                    <symbol id="sbx-icon-clear-3" viewBox="0 0 40 40"><path d="M16.228 20L1.886 5.657 0 3.772 3.772 0l1.885 1.886L20 16.228 34.343 1.886 36.228 0 40 3.772l-1.886 1.885L23.772 20l14.342 14.343L40 36.228 36.228 40l-1.885-1.886L20 23.772 5.657 38.114 3.772 40 0 36.228l1.886-1.885L16.228 20z" fillRule="evenodd"></path></symbol>
+                                                    <symbol id="sbx-icon-search-13" viewBox="0 0 40 40"><path d="M26.806 29.012a16.312 16.312 0 0 1-10.427 3.746C7.332 32.758 0 25.425 0 16.378 0 7.334 7.333 0 16.38 0c9.045 0 16.378 7.333 16.378 16.38 0 3.96-1.406 7.593-3.746 10.426L39.547 37.34c.607.608.61 1.59-.004 2.203a1.56 1.56 0 0 1-2.202.004L26.807 29.012zm-10.427.627c7.322 0 13.26-5.938 13.26-13.26 0-7.324-5.938-13.26-13.26-13.26-7.324 0-13.26 5.936-13.26 13.26 0 7.322 5.936 13.26 13.26 13.26z" fillRule="evenodd"></path></symbol>
+                                                </svg>
                                             </div>
-                                        </form>
-                                        <div className="svg-icons" style={{ height: "0", width: "0", position: "absolute", visibility: "hidden" }} >
-                                            <svg xmlns="http://www.w3.org/2000/svg">
-                                                <symbol id="sbx-icon-clear-3" viewBox="0 0 40 40"><path d="M16.228 20L1.886 5.657 0 3.772 3.772 0l1.885 1.886L20 16.228 34.343 1.886 36.228 0 40 3.772l-1.886 1.885L23.772 20l14.342 14.343L40 36.228 36.228 40l-1.885-1.886L20 23.772 5.657 38.114 3.772 40 0 36.228l1.886-1.885L16.228 20z" fillRule="evenodd"></path></symbol>
-                                                <symbol id="sbx-icon-search-13" viewBox="0 0 40 40"><path d="M26.806 29.012a16.312 16.312 0 0 1-10.427 3.746C7.332 32.758 0 25.425 0 16.378 0 7.334 7.333 0 16.38 0c9.045 0 16.378 7.333 16.378 16.38 0 3.96-1.406 7.593-3.746 10.426L39.547 37.34c.607.608.61 1.59-.004 2.203a1.56 1.56 0 0 1-2.202.004L26.807 29.012zm-10.427.627c7.322 0 13.26-5.938 13.26-13.26 0-7.324-5.938-13.26-13.26-13.26-7.324 0-13.26 5.936-13.26 13.26 0 7.322 5.936 13.26 13.26 13.26z" fillRule="evenodd"></path></symbol>
-                                            </svg>
                                         </div>
                                     </div>
-                                </div>
-                            </CardHeader>
-                            <CardBody>
-                                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
-                                    {filteredData.length === 0 ? (
-                                        <Alert color="warning" style={{ height: "50px" }}>
-                                            {props.t("You do not have an active tenant, if you think there is an error, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
-                                        </Alert>
+                                </CardHeader>
+                                <CardBody>
+                                    <div style={{ flexWrap: "wrap", justifyContent: "center" }}>
+                                        {filteredData.length === 0 ? (
+                                            <Alert color="warning" style={{ height: "50px" }}>
+                                                {props.t("You do not have an active tenant, if you think there is an error, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
+                                            </Alert>
                                         ) : (
-                                                <Table
-                                                    columns={columns}
-                                                    dataSource={filteredData}
-                                                    pagination={true}
-                                                    scroll={{ x: 'max-content' }}
-                                                    onRow={(record, rowIndex) => {
-                                                        return {
-                                                            onDoubleClick: () => {
-                                                                goToSubjectDetail(studyId, record.firstPageId, record.id, record.subjectNumber)
-                                                            }
+                                            <Table
+                                                columns={columns}
+                                                dataSource={filteredData}
+                                                pagination={true}
+                                                scroll={{ x: 'max-content' }}
+                                                onRow={(record, rowIndex) => {
+                                                    return {
+                                                        onClick: () => {
+                                                            goToStudies(record.id)
                                                         }
-                                                    }}                                                  
-                                                    filteredInfo={filteredInfo}
-                                                />
-                                    filteredData.map((item, index) => (
-                                        <div key={index} className="col-lg-2" style={{  margin: "10px", padding: "0px" }} >
-                                            <div className="float-e-margins" style={{ marginBottom: "0", marginTop:"25px" }}>
-                                                <div className="" style={{ padding: "0" }} >
-                                                    <div>
-                                                        <ConfigProvider
-                                                            theme={{
-                                                                components: {
-                                                                    Button: {
-                                                                        colorPrimary: `linear-gradient(135deg, ${colors1.join(', ')})`,
-                                                                        colorPrimaryHover: `linear-gradient(135deg, ${getHoverColors(colors1).join(', ')})`,
-                                                                        colorPrimaryActive: `linear-gradient(135deg, ${getActiveColors(colors1).join(', ')})`,
-                                                                        lineWidth: 0,
-                                                                    },
-                                                                },
-                                                            }}
-                                                        >
-                                                            <Button type="primary" size="large" onClick={() => goToStudies(item.id)} style={{ width: "100%" }}>
-                                                                {item.tenantName}
-                                                            </Button>
-                                                        </ConfigProvider>                                                       
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )))}
-                                </div>
-                            </CardBody>
-                        </Card>
-                    </Col>
-                </Row>
+                                                    }
+                                                }}
+                                            />
+                                        )}
+                                    </div>
+                                </CardBody>
+                            </Card>
+                        </Col>
+                    </Row>
+                </div>
             </div>
-            </div>
-        <ToastComp
-            required={toastRef}
-        />
+            <ToastComp
+                required={toastRef}
+            />
         </>
     );
 };

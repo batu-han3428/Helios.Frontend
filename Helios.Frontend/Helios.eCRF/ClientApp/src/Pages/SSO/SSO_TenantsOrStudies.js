@@ -8,8 +8,9 @@ import { useLazyTenantOrStudytGetQuery } from '../../store/services/SSO/SSO_Api'
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../store/loader/actions';
 import { useNavigate, Link } from "react-router-dom";
-import { Button, ConfigProvider } from 'antd';
+import { Button, ConfigProvider,Table } from 'antd';
 import { TinyColor } from '@ctrl/tinycolor';
+import { SearchOutlined } from '@ant-design/icons';
 
 
 const SSO_TenantsOrStudies = props => {
@@ -27,7 +28,9 @@ const SSO_TenantsOrStudies = props => {
 
     const [tsCount, setTsCount] = useState({ tenantCount: 0, studyCount: 0 });
 
-    const [trigger, { data, isLoading, isError}] = useLazyTenantOrStudytGetQuery();
+    const [trigger, { data, isLoading, isError }] = useLazyTenantOrStudytGetQuery();
+
+    const filteredData = [];
 
     useEffect(() => {
         if (userInformation.userId) {
@@ -54,7 +57,44 @@ const SSO_TenantsOrStudies = props => {
     const goToTenants = (role) => {
         navigate(`/SSO-tenants/${role}`);
     }
-
+    const Data = [
+        {
+            id: 3,
+            name:"Admin"
+        },
+        {
+            id: 4,
+            name: "Study"
+        }
+    ]
+    const columns = [
+        {
+            title: props.t('Account name'),
+            dataIndex: 'name',  
+            sorter: (a, b) => a.name.localeCompare(b.name),
+            sortDirections: ['ascend', 'descend'],
+            onFilter: (value, record) => String(record.studyName).toLowerCase().includes(value.toLowerCase()),
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        },      
+        {
+            title: props.t('Action'),
+            dataIndex: 'actions',
+            width: "170px",
+            render: (text, record) => {
+                return (
+                    <div className="icon-container">
+                        <div className="icon icon-demo" onClick={() => goToTenants(record.id)}></div>
+                    </div>
+                );
+            }
+        },
+    ]
+    if (((tsCount.tenantCount && tsCount.tenantCount > 1) || (tsCount.studyCount && tsCount.studyCount > 0 && tsCount.tenantCount && tsCount.tenantCount > 0))) {
+        filteredData.push(Data[0]);
+    }
+    if (((tsCount.studyCount && tsCount.studyCount > 1) || (tsCount.tenantCount && tsCount.tenantCount > 0 && tsCount.studyCount && tsCount.studyCount > 0))) {
+        filteredData.push(Data[1]);
+    }
     return (
         <div className="page-content">
             <div className="container-fluid">
@@ -67,74 +107,30 @@ const SSO_TenantsOrStudies = props => {
                                 </div>
                             </CardHeader>
                             <CardBody>
-                                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
+                                <div style={{  flexWrap: "wrap", justifyContent: "center" }}>
                                     {tsCount.studyCount < 1 && tsCount.tenantCount < 1 ? (
                                         <Alert color="warning" style={{ height: "50px" }}>
                                             {props.t("You do not have an active tenant, if you think there is an error, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
                                         </Alert>
-                                    ) : (                                         
-                                            <>
-                                                {((tsCount.tenantCount && tsCount.tenantCount > 1) || (tsCount.studyCount && tsCount.studyCount > 0 && tsCount.tenantCount && tsCount.tenantCount > 0)) ? (
-                                                    <div className="col-lg-2">
-                                                        <div className=" float-e-margins" style={{ marginBottom: "0", marginTop:"25px" }}>
-                                                            <div className="" style={{ padding: "0" }}>
-                                                                <div>
-                                                                    <div style={{ width: "90%" }}>
-                                                                        <ConfigProvider
-                                                                            theme={{
-                                                                                components: {
-                                                                                    Button: {
-                                                                                        colorPrimary: `linear-gradient(135deg, ${colors1.join(', ')})`,
-                                                                                        colorPrimaryHover: `linear-gradient(135deg, ${getHoverColors(colors1).join(', ')})`,
-                                                                                        colorPrimaryActive: `linear-gradient(135deg, ${getActiveColors(colors1).join(', ')})`,
-                                                                                        lineWidth: 0,
-                                                                                    },
-                                                                                },
-                                                                            }}
-                                                                        >
-                                                                            <Button type="primary" size="large" onClick={() => goToTenants(3)} style={{ width: "100%" }}>
-                                                                                Admin
-                                                                            </Button>
-                                                                        </ConfigProvider>
-                                                                       
-                                                                    </div>                                                                  
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ) : null}
+                                    ) : (
 
-                                                {((tsCount.studyCount && tsCount.studyCount > 1) || (tsCount.tenantCount && tsCount.tenantCount > 0 && tsCount.studyCount && tsCount.studyCount > 0)) ? (
-                                                    <div className="col-lg-2">
-                                                        <div className="ibox float-e-margins" style={{ marginBottom: "0", marginTop: "25px" }}>
-                                                            <div className="" style={{ padding: "0" }}>
-                                                                <div>
-                                                                    <div style={{ width: "90%" }}>
-                                                                        <ConfigProvider
-                                                                            theme={{
-                                                                                components: {
-                                                                                    Button: {
-                                                                                        colorPrimary: `linear-gradient(135deg, ${colors1.join(', ')})`,
-                                                                                        colorPrimaryHover: `linear-gradient(135deg, ${getHoverColors(colors1).join(', ')})`,
-                                                                                        colorPrimaryActive: `linear-gradient(135deg, ${getActiveColors(colors1).join(', ')})`,
-                                                                                        lineWidth: 0,
-                                                                                    },
-                                                                                },
-                                                                            }}
-                                                                        >
-                                                                            <Button type="primary" size="large" onClick={() => goToTenants(4)} style={{ width: "100%" }}>
-                                                                                Study
-                                                                            </Button>
-                                                                        </ConfigProvider>
-                                                                    </div>                             
-                                                                   
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ): null}
-                                            </>
-                                    )}
+                                        <Table
+                                            columns={columns}
+                                            dataSource={filteredData}
+                                            pagination={true}
+                                            scroll={{ x: 'max-content' }}
+                                            onRow={(record, rowIndex) => {
+                                                return {
+                                                    onClick: () => {
+                                                        goToTenants(record.id)
+                                                    }
+                                                }
+                                            }}
+                                        />
+                                    )
+                                    }
+
+
                                 </div>
                             </CardBody>
                         </Card>
