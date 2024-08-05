@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 
 import { connect } from "react-redux";
 import { Form, Dropdown, DropdownMenu, DropdownItem, DropdownToggle, Input, Button } from "reactstrap";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 // Import menuDropdown
 import LanguageDropdown from "../CommonForBoth/TopbarDropdown/LanguageDropdown";
@@ -27,14 +27,17 @@ import {
 
 const Header = props => {
     const location = useLocation();
+    const { studyId } = useParams();
+    
     const [search, setsearch] = useState(false);
     const [singlebtn, setSinglebtn] = useState(false);
 
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const studyId = (props.studyId !== null && props.studyId !== "") ? props.studyId :0
 
-    const { data: permissionData, isLoading, isError, refetch } = useUserPermissionsListGetQuery(studyId,{ refetchOnMountOrArgChange: true });
-    useEffect(() => {      
+    const newstudyId = studyId === undefined ? 0 : studyId;
+    
+    const { data: permissionData, isLoading, isError, refetch } = useUserPermissionsListGetQuery(newstudyId, { refetchOnMountOrArgChange: true });
+    useEffect(() => {
         refetch();
     }, [refetch]);
 
@@ -42,12 +45,12 @@ const Header = props => {
 
     const [clickedLinks, setClickedLinks] = useState({
         query: initialLink === 'query',
-        subject: initialLink === 'subject' || initialLink==='',
+        subject: initialLink === 'subject' || initialLink === '',
         sdv: initialLink === 'sdv',
-        studyDocuments: initialLink ==='studyDocuments',
+        studyDocuments: initialLink === 'studyDocuments',
         medicalCoding: initialLink === 'medicalCoding',
-        iwrs: initialLink==='iwrs'
-    });    
+        iwrs: initialLink === 'iwrs'
+    });
     const handleClick = (linkName) => {
         const resetLinks = {
             query: false,
@@ -133,8 +136,8 @@ const Header = props => {
                                     {permissionData.canSubjectView && (
                                         <Link to="/" className="" onClick={() => handleClick('subject')} >
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.subject ? 'underline' : 'none', backgroundColor: clickedLinks.subject ? 'white' : '', marginRight: '30px' }}>{props.t("Subject")}</label>
-                                            </Link>
-                                        )
+                                        </Link>
+                                    )
                                     }
                                     {permissionData.canMonitoringQueryView && (
                                         <Link to="/query" className="" onClick={() => handleClick('query')} >
@@ -166,7 +169,7 @@ const Header = props => {
                         </div>
                     </div>
 
-                    <div className="d-flex">                       
+                    <div className="d-flex">
 
                         <Dropdown
                             className="d-inline-block d-lg-none ms-2"
@@ -217,14 +220,13 @@ Header.propTypes = {
 };
 
 const mapStatetoProps = state => {
-    const studyId = state.rootReducer.Study.studyId;
     const {
         layoutType,
         showRightSidebar,
         leftMenu,
         leftSideBarType,
     } = state.rootReducer.Layout;
-    return { layoutType, showRightSidebar, leftMenu, leftSideBarType, studyId };
+    return { layoutType, showRightSidebar, leftMenu, leftSideBarType };
 };
 
 export default connect(mapStatetoProps, {

@@ -87,13 +87,13 @@ const SubjectList = props => {
     }, [studyId, dispatch]);
 
     useEffect(() => {
-        if (!errorPerm && !isLoadingPerm && permissionsData) {
+        if (!errorPerm && !isLoadingPerm && permissionsData) {      
             if (!permissionsData.canSubjectView) {
                 navigate('/AccessDenied', { state: { from: props.location } });
                 return;
             }
             setView(true);
-            setPermissions(permissionsData);
+            setPermissions(permissionsData);         
             optionGroup(studyId);
             getStudy(studyId);
             triggerSubjectList({ studyId: studyId, showArchivedSubjects: showArchivedSubjects });

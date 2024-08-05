@@ -24,25 +24,25 @@ class Layout extends Component {
     capitalizeFirstLetter = string => {
         return string.charAt(1).toUpperCase() + string.slice(2);
     };
-    useUserPermissionsListGetQuery() {
+    //useUserPermissionsListGetQuery() {
 
-        fetch(API_BASE_URL + 'User/GetUserPermissions?studyId=' + 8, {
-            method: 'GET',
-        })
-            .then(response => response.json())
-            .then(data => {
-                this.state.permissiondata = data;
+    //    fetch(API_BASE_URL + 'User/GetUserPermissions?studyId=' + 8, {
+    //        method: 'GET',
+    //    })
+    //        .then(response => response.json())
+    //        .then(data => {
+    //            this.state.permissiondata = data;
 
 
-            })
-            .catch(error => {
-                //console.error('Error:', error);
-            });
+    //        })
+    //        .catch(error => {
+    //            //console.error('Error:', error);
+    //        });
 
-        //else {
-        //    this.fillDependentFieldList();
-        //}
-    }
+    //    //else {
+    //    //    this.fillDependentFieldList();
+    //    //}
+    //}
 
     componentDidMount() {
         window.scrollTo(0, 0);
