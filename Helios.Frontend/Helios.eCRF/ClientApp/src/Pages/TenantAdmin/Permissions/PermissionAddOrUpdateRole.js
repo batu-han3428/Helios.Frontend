@@ -3,12 +3,11 @@ import React, { useImperativeHandle } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { withTranslation } from "react-i18next";
-import {
-    Label, Input, Form, FormFeedback
-} from "reactstrap";
+import { Label, Input, Form, FormFeedback } from "reactstrap";
 import { useRoleSaveMutation } from '../../../store/services/Permissions';
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useDispatch } from 'react-redux';
+import { showToast } from '../../../store/toast/actions';
 
 
 const PermissionAddOrUpdateRole = props => {
@@ -33,10 +32,10 @@ const PermissionAddOrUpdateRole = props => {
             const response = await roleSave(values);
             if (response.data.isSuccess) {
                 props.onToggleModal();
-                props.toast(props.t(response.data.message), true);
+                dispatch(showToast(props.t(response.data.message), true, true));
                 dispatch(endloading());
             } else {
-                props.toast(props.t(response.data.message), false);
+                dispatch(showToast(props.t(response.data.message), true, false));
                 dispatch(endloading());
             }
         }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, ModalBody, ModalFooter } from "reactstrap";
 import './module.css';
 import { useNavigate } from "react-router-dom";
@@ -12,12 +12,11 @@ import Swal from 'sweetalert2'
 import { API_BASE_URL } from '../../../constants/endpoints';
 import { SearchOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
+import { showToast } from '../../../store/toast/actions';
 
 function ModuleList(props) {
     const token = getLocalStorage("accessToken");
     const userInformation = useSelector(state => state.rootReducer.Login);
-    const toastRef = useRef();
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -52,10 +51,7 @@ function ModuleList(props) {
                     setNameClass("form-control");
                 })
                 .catch(error => {
-                    toastRef.current.setToast({
-                        message: props.t("An unexpected error occurred."),
-                        stateToast: false,
-                    });
+                    dispatch(showToast(props.t("An unexpected error occurred."), true, false));
                 });
         }
         else {
@@ -94,25 +90,16 @@ function ModuleList(props) {
                         tog_large();
                         fetchData();
                         dispatch(endloading());
-                        toastRef.current.setToast({
-                            message: props.t("Successful"),
-                            stateToast: true,
-                        });
+                        dispatch(showToast(props.t("Successful"), true, true));
                     }
                     else {
                         dispatch(endloading());
-                        toastRef.current.setToast({
-                            message: props.t("Unsuccessful"),
-                            stateToast: false,
-                        });
+                        dispatch(showToast(props.t("Unsuccessful"), true, false));
                     }
                 })
                 .catch(error => {
                     dispatch(endloading());
-                    toastRef.current.setToast({
-                        message: props.t("An unexpected error occurred."),
-                        stateToast: false,
-                    });
+                    dispatch(showToast(props.t("An unexpected error occurred."), true, false));
                 });
         }
     };
@@ -189,10 +176,7 @@ function ModuleList(props) {
                 setTableData(updatedModuleData);
             })
             .catch(error => {
-                toastRef.current.setToast({
-                    message: props.t("An unexpected error occurred."),
-                    stateToast: false,
-                });
+                dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             });
     }
 
@@ -347,7 +331,6 @@ function ModuleList(props) {
                     </Row>
                 </div>
             </div>
-            <ToastComp ref={toastRef} />
         </>
     );
 }

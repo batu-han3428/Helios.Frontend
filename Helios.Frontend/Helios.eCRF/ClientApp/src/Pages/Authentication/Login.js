@@ -1,37 +1,25 @@
 import PropTypes from 'prop-types';
 import React, { useState, useRef } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-
 import { Row, Col, CardBody, Card, Container, Label, Form, Input, Alert } from "reactstrap";
-
-// Redux
 import { connect, useDispatch } from "react-redux";
 import withRouter from '../../components/Common/withRouter';
-
-// actions
 import { apiError, loginuser } from "../../store/actions";
 import { startloading, endloading } from '../../store/loader/actions';
-
-// import images
-import logoSm from "../../assets/images/logo-sm.png";
-
 import { useLoginPostMutation } from '../../store/services/Login';
 import { onLogin } from '../../helpers/Auth/useAuth';
 import { setLocalStorage, getLocalStorage } from '../../helpers/local-storage/localStorageProcess';
 import { useEffect } from 'react';
 import ModalComp from '../../components/Common/ModalComp/ModalComp';
 import ForgotPassword from './ForgotPassword';
-import ToastComp from '../../components/Common/ToastComp/ToastComp';
 import LanguageDropdown from '../../components/CommonForBoth/TopbarDropdown/LanguageDropdown';
 import { withTranslation } from "react-i18next";
 import logoheliossmImg from "../../assets/images/helios-sm-logo.png";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import "./Login.css";
-
+import { showToast } from '../../store/toast/actions';
 
 const Login = props => {
-    
-    const toastRef = useRef();
 
     const modalRef = useRef();
 
@@ -96,10 +84,7 @@ const Login = props => {
 
                     dispatch(endloading())
                     if (result === false) {
-                        toastRef.current.setToast({
-                            message: props.t("An unexpected error occurred."),
-                            stateToast: false
-                        });
+                        dispatch(showToast(props.t("An unexpected error occurred."), false, false));
                     } else {
                         dispatch(loginuser(result));
                         navigate("/");
@@ -110,15 +95,9 @@ const Login = props => {
                         if (response.data.values.hasOwnProperty("redirect")) {
                             navigate(response.data.values.redirect);
                         }
-                        toastRef.current.setToast({
-                            message: response.data.values.hasOwnProperty("change") ? props.t(response.data.message).replace(/@Change/g, response.data.values.change) : props.t(response.data.message),
-                            stateToast: false
-                        });
+                        dispatch(showToast(response.data.values.hasOwnProperty("change") ? props.t(response.data.message).replace(/@Change/g, response.data.values.change) : props.t(response.data.message), true, false));
                     } else {
-                        toastRef.current.setToast({
-                            message: props.t(response.data.message),
-                            stateToast: false
-                        });
+                        dispatch(showToast(props.t(response.data.message), true, false));
                     }
                 }
             }
@@ -133,12 +112,6 @@ const Login = props => {
         modalRef.current.tog_backdrop();
     };
 
-    const forgotPasswordToast = (message, state) => {
-        toastRef.current.setToast({
-            message: message,
-            stateToast: state
-        });
-    }
     const handleFocus = (field) => {
         setErrors((prevErrors) => ({ ...prevErrors, [field]: '' }));
     };
@@ -253,12 +226,9 @@ const Login = props => {
             <ModalComp
                 refs={modalRef}
                 title={props.t("Forgot your password?")}
-                body={<ForgotPassword refs={ssoRef} toast={forgotPasswordToast} />}
+                body={<ForgotPassword refs={ssoRef} />}
                 buttonText={props.t("Send new password")}
                 size="md"
-            />
-            <ToastComp
-                ref={toastRef}
             />
         </>       
   );

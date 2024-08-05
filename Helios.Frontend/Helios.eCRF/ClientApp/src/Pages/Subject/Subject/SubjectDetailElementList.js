@@ -1,12 +1,11 @@
-﻿import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+﻿import React, { useState, useRef, useCallback, useMemo } from 'react';
 import { Row } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import '../../TenantAdmin/Module/FormBuilder/formBuilder.css';
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { Dropdown } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import TextElement from '../../TenantAdmin/Module/Elements/TextElement/textElement.js';
 import NumericElement from '../../TenantAdmin/Module/Elements/NumericElement/numericElement.js';
 import RadioElement from '../../TenantAdmin/Module/Elements/RadioElement/radioElement.js';
@@ -25,9 +24,13 @@ import AdverseEventElement from '../../TenantAdmin/Module/Elements/AdverseEventE
 import ConcomittantMedicationElement from '../../TenantAdmin/Module/Elements/ConcomittantMedicationElement/concomittantMedicationElement.js';
 import { withTranslation } from "react-i18next";
 import { useAutoSaveSubjectMutation } from '../../../store/services/Subject';
+import ModalComp from '../../../components/Common/ModalComp/ModalComp';
+import SubjectComment from './Comp/SubjectComment';
+import { showToast } from '../../../store/toast/actions';
 
 function SubjectDetailElementList(props) {
-    const toastRef = useRef();
+    const modalRef = useRef();
+    const [modalInf, setModalInf] = useState({});
     const [tenantId] = useState(props.TenantId);
     const [subjectVisitPageModuleId] = useState(props.ModuleId);
     const [studyId] = useState(props.StudyId);
@@ -44,17 +47,7 @@ function SubjectDetailElementList(props) {
                 Value: value,
                 Type: type
             });
-            if (response.data.isSuccess) {
-                toastRef.current.setToast({
-                    message: response.data.message,
-                    stateToast: true
-                });
-            } else {
-                toastRef.current.setToast({
-                    message: response.data.message,
-                    stateToast: false
-                });
-            }
+            dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
             dispatch(endloading());
         }
     }
@@ -136,7 +129,7 @@ function SubjectDetailElementList(props) {
             },
             {
                 key: '3',
-                label: <a onClick={() => navigate('')}>{props.t("Comments")}</a>,
+                label: <a onClick={() => { setModalInf({ title: param.elementName, content: <SubjectComment subjectElementId={param.subjectVisitPageModuleElementId} /> }); modalRef.current.tog_backdrop(); }}>{props.t("Comments")}</a>,
                 icon: <FontAwesomeIcon icon="fas fa-comment" style={{ color: "#5b626b" }} />,
                 style: { color: "#5b626b" },
             },
@@ -179,6 +172,9 @@ function SubjectDetailElementList(props) {
                                     {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
                                     {item.elementType !== 1 && item.title}
                                 </label>
+                                {(![1, 3].includes(item.elementType) && item.isComment) &&
+                                    <FontAwesomeIcon onClick={() => { setModalInf({ title: item.elementName, content: <SubjectComment subjectElementId={item.subjectVisitPageModuleElementId} /> }); modalRef.current.tog_backdrop(); }} icon="fa-solid fa-comment" style={{ color: "#8bb9ee", marginLeft: '5px', cursor: 'pointer' }} />
+                                }
                             </div>
                             <Row>
                                 <div className="col-md-11">{renderElementsSwitch(item)}</div>
@@ -208,8 +204,11 @@ function SubjectDetailElementList(props) {
             <div className="row">
                 {renderContent}
             </div>
-            <ToastComp
-                ref={toastRef}
+            <ModalComp
+                refs={modalRef}
+                title={modalInf.title}
+                body={modalInf.content}
+                isButton={false}
             />
         </div>
     );

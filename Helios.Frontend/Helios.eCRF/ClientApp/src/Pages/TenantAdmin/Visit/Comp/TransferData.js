@@ -7,6 +7,7 @@ import { Table, Checkbox } from 'antd';
 import { useLazyTransferDataGetQuery, useTransferDataSetMutation } from "../../../../store/services/Visit";
 import { v4 as uuidv4 } from 'uuid';
 import visitType from '../VisitTypeItems';
+import { showToast } from '../../../../store/toast/actions';
 
 const TransferData = props => {
 
@@ -52,25 +53,11 @@ const TransferData = props => {
                     statu: backRowKeys.includes(item.key) ? 4 : item.status === 'Insert' ? 1 : item.status === 'Delete' ? 2 : 3
                 };
             }));
-            if (response.data.isSuccess) {
-                props.toast.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: true
-                });
-                dispatch(endloading());
-                props.modalRef.current.tog_backdrop();
-            } else {
-                props.toast.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: false
-                });
-                dispatch(endloading());
-            }
+            dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
+            dispatch(endloading());
+            if (response.data.isSuccess) props.modalRef.current.tog_backdrop();
         } catch (e) {
-            props.toast.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }
@@ -258,10 +245,7 @@ const TransferData = props => {
             setExpandedRowKeys(allRowKeys);
             dispatch(endloading());
         } else if (!isLoading && error) {
-            props.toast.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }, [visitData, error, isLoading]);

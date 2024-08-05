@@ -7,7 +7,6 @@ import { Button, Table, Row, Col, Switch, Dropdown, Tooltip, Space, FloatButton 
 import { CheckOutlined, DownOutlined } from '@ant-design/icons';
 import EditableRow from '../Visit/Comp/EditableRow';
 import EditableCell from '../Visit/Comp/EditableCell';
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { getAllKeys, useApiHelper, visitSettingsItems } from './VisitHelper/Helper';
 import "./visit.css";
@@ -16,14 +15,14 @@ import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import * as signalR from '@microsoft/signalr';
 import { useParams } from 'react-router-dom';
+import { showToast } from '../../../store/toast/actions';
+import { useDispatch } from 'react-redux';
 
 const Study = props => {
 
     const modalRef = useRef();
 
     const modalContentRef = useRef();
-
-    const toastRef = useRef();
 
     const navigate = useNavigate();
 
@@ -33,7 +32,7 @@ const Study = props => {
 
     const [dataSource, setDataSource] = useState([]);
 
-    const { handleSave, handleList, studyInformation, sensors, onDragEnd, saveRanking, rankingHandle, ranking, editing, editingHandle, setData, setEditing } = useApiHelper(dataSource, setDataSource, toastRef);
+    const { handleSave, handleList, studyInformation, sensors, onDragEnd, saveRanking, rankingHandle, ranking, editing, editingHandle, setData, setEditing } = useApiHelper(dataSource, setDataSource);
 
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
@@ -130,7 +129,7 @@ const Study = props => {
     const components = {
         body: {
             row: (props) => <EditableRow {...props} ranking={ranking} />,
-            cell: (e) => <EditableCell {...e} toggleModal={toggleModal} openModal={openModal} toastRef={toastRef} t={props.t} setDataSource={setDataSource} dataSource={dataSource} editing={editing} ranking={ranking} />,
+            cell: (e) => <EditableCell {...e} toggleModal={toggleModal} openModal={openModal} t={props.t} setDataSource={setDataSource} dataSource={dataSource} editing={editing} ranking={ranking} />,
         },
     };
 
@@ -172,6 +171,7 @@ const Study = props => {
         }
     };
 
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const connection = new signalR.HubConnectionBuilder()
@@ -192,11 +192,7 @@ const Study = props => {
 
         connection.on("LiveData", (response) => {
             setData(response.data.data)
-            toastRef.current.setToast({
-                message: props.t("Has updated the table").replace("{user}", response.message),
-                stateToast: true,
-                autoHide: false
-            });
+            dispatch(showToast(props.t("Has updated the table").replace("{user}", response.message), false, true));
         });
 
         return () => {
@@ -271,7 +267,7 @@ const Study = props => {
                                 <div>
                                     {editing && studyInformation.isDemo &&
                                         <>
-                                            <Dropdown menu={visitSettingsItems(openModal, studyInformation.studyId, studyInformation.equivalentStudyId, modalContentRef, toastRef, modalRef)} trigger={['click']} placement="bottomLeft">
+                                            <Dropdown menu={visitSettingsItems(openModal, studyInformation.studyId, studyInformation.equivalentStudyId, modalContentRef, modalRef)} trigger={['click']} placement="bottomLeft">
                                                 <Button type="default" style={{ margin: "0 10px" }}>
                                                     <Space>
                                                         {props.t("Visit settings")}
@@ -320,7 +316,6 @@ const Study = props => {
                     </Row>
                 </div>
             </div>
-            <ToastComp ref={toastRef} />
             <ModalComp
                 refs={modalRef}
                 title={modalTitle}

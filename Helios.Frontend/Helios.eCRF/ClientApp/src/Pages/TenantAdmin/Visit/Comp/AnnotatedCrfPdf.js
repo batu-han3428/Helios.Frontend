@@ -5,6 +5,7 @@ import { Row, Col, Input, Alert, Space, Radio, message } from 'antd';
 import { useDispatch } from 'react-redux';
 import { endloading, startloading } from '../../../../store/loader/actions';
 import { useLazyStudyVisitAnnotatedCrfGetQuery } from '../../../../store/services/Visit';
+import { showToast } from '../../../../store/toast/actions';
 
 const AnnotatedCrfPdf = props => {
 
@@ -53,11 +54,7 @@ const AnnotatedCrfPdf = props => {
             });
             trigger(params);
         } catch (error) {
-            props.toast.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false,
-                autoHide: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), false, false));
             dispatch(endloading());
         }
     }, [props, selectedOptions, documentVersion]);

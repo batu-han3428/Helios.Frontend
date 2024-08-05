@@ -8,6 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { useElementRankingListSetMutation, useLazyElementRankingListGetQuery } from '../../../../store/services/Module';
 import { useDispatch } from 'react-redux';
 import { endloading, startloading } from '../../../../store/loader/actions';
+import { showToast } from '../../../../store/toast/actions';
 
 const RankingList = props => {
 
@@ -349,36 +350,22 @@ const RankingList = props => {
             dispatch(startloading());
             const hasChanges = isItemsEqual();
             if (!hasChanges) {
-                props.toast.current.setToast({
-                    message: props.t("No changes were made. Please make changes to save."),
-                    stateToast: false,
-                    autoHide: false
-                });
+                dispatch(showToast(props.t("No changes were made. Please make changes to save."), false, false));
                 dispatch(endloading());
                 return;
             }
             const response = await elementRankingListSet({ elements: items, moduleId: parseInt(props.moduleId), isStudy: props.isStudy === 'true' ? true : false });
             if (response.data.isSuccess) {
                 props.fetchData();
-                props.toast.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: true
-                });
+                dispatch(showToast(props.t(response.data.message), true, true));
                 props.toggleModal();
                 dispatch(endloading());
             } else {
-                props.toast.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: false
-                });
+                dispatch(showToast(props.t(response.data.message), true, false));
                 dispatch(endloading());
             }
         } catch (error) {
-            props.toast.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false,
-                autoHide: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }, [items, props]);

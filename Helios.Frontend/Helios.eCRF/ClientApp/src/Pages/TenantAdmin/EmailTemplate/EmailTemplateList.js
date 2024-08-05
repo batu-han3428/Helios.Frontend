@@ -1,39 +1,34 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col, Card, CardBody, Button } from "reactstrap";
 import { withTranslation } from "react-i18next";
 import { formatDate } from "../../../helpers/format_date";
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../../store/loader/actions';
 import { Table } from 'antd';
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate, useLocation } from "react-router-dom";
 import { useLazyEmailTemplateListGetQuery, useEmailTemplateDeleteMutation } from '../../../store/services/EmailTemplate';
 import Swal from 'sweetalert2';
 import templateTypeItems from './TemplateTypeItems';
+import { showToast } from '../../../store/toast/actions';
 
 
 const EmailTemplateList = props => {
 
-    const toastRef = useRef();
-
     const location = useLocation();
+
+    const dispatch = useDispatch();
 
     useEffect(() => {
         if (location.state !== null) {
-            toastRef.current.setToast({
-                message: location.state.message,
-                stateToast: location.state.state
-            });
+            dispatch(showToast(location.state.message, true, location.state.state));
         }
     }, []);
 
     const userInformation = useSelector(state => state.rootReducer.Login);
 
     const studyInformation = useSelector(state => state.rootReducer.Study);
-
-    const dispatch = useDispatch();
 
     const navigate = useNavigate();
 
@@ -142,10 +137,7 @@ const EmailTemplateList = props => {
             return () => clearTimeout(timer);
         } else if (isError && !isLoading) {
             dispatch(endloading());
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
         }
     }, [emailTemplateData, isError, isLoading, props.t]);
 
@@ -248,9 +240,6 @@ const EmailTemplateList = props => {
                     </Row>
                 </div>
             </div>
-            <ToastComp
-                ref={toastRef}
-            />
         </React.Fragment>
     );
 };

@@ -1,33 +1,13 @@
 import React, { Component } from 'react';
-import {
-    Button,
-    Card,
-    CardBody,
-    CardText,
-    CardTitle,
-    Col,
-    Collapse,
-    Container,
-    Modal,
-    ModalBody,
-    ModalHeader,
-    ModalFooter,
-    Nav,
-    NavItem,
-    NavLink,
-    Row,
-    TabContent,
-    Table,
-    TabPane,
-    Label
-} from "reactstrap";
+import { Button, Col, Modal, ModalBody, ModalHeader, ModalFooter, Row, Table } from "reactstrap";
 import AccordionComp from '../../../../../components/Common/AccordionComp/AccordionComp';
 import Select from "react-select";
-import ToastComp from '../../../../../components/Common/ToastComp/ToastComp';
 import { withTranslation } from "react-i18next";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getLocalStorage } from '../../../../../helpers/local-storage/localStorageProcess';
 import { API_BASE_URL } from '../../../../../constants/endpoints';
+import { showToast } from '../../../../../store/toast/actions';
+import { connect } from 'react-redux';
 
 class ListElementsProperties extends Component {
     constructor(props) {
@@ -65,13 +45,12 @@ class ListElementsProperties extends Component {
             operationType: 1,
             isEdit: false,
         }
-        this.toastRef = React.createRef();
+
         var l = this.state.layoutOptionGroup.filter(function (e) {
             if (e.value == props.Layout)
                 return e;
         });
 
-        this.setShowToast.bind(this);
         this.state.layoutSelectedGroup = l;
         this.handleLayoutChange = this.handleLayoutChange.bind(this);
         this.updateSavedList = this.updateSavedList.bind(this);
@@ -87,10 +66,6 @@ class ListElementsProperties extends Component {
         this.fillSavedTagList = this.fillSavedTagList.bind(this);
 
         this.getMultipleTagList();
-    }
-
-    setShowToast() {
-        this.state.showToast = false;
     }
 
     handleRemoveOption = (optionValue) => {
@@ -109,17 +84,11 @@ class ListElementsProperties extends Component {
                 return response.json();
             })
             .then(data => {
-                this.toastRef.current.setToast({
-                    message: t(data.message),
-                    stateToast: data.isSuccess ? true : false
-                });
+                this.props.showToast(t(data.message), true, data.isSuccess ? true : false);
                 this.getMultipleTagList();
             })
             .catch(error => {
-                this.toastRef.current.setToast({
-                    message: t("An unexpected error occurred."),
-                    stateToast: false
-                });
+                this.props.showToast(t("An unexpected error occurred."), true, false);
             });
     };
 
@@ -267,39 +236,23 @@ class ListElementsProperties extends Component {
                             )
                     }).then(res => res.json())
                         .then(data => {
-                            //if (data.isSuccess) {
-                            //    Swal.fire(data.message, '', 'success');
-                            //} else {
-                            //    Swal.fire(data.message, '', 'error');
-                            //    console.log(data.message);
-                            //};
                             if (data.isSuccess) {
                                 this.toggleNewTagModal();
-                                this.toastRef.current.setToast({
-                                    message: data.message,
-                                    stateToast: true
-                                });
+                                this.props.showToast(this.props.t(data.message), true, true);
                                 this.getMultipleTagList();
                             } else {
-                                this.toastRef.current.setToast({
-                                    message: data.message,
-                                    stateToast: false
-                                });
+                                this.props.showToast(this.props.t(data.message), true, false);
                             }
 
                         })
                         .catch(error => {
-                            //console.error('Error:', error);
+                            this.props.showToast(this.props.t("An error occurred while processing your request."), true, false);
                         });
                 }
                 else {
                     this.fillSavedTagList(tags);
                     this.toggleNewTagModal();
-
-                    this.toastRef.current.setToast({
-                        message: "Successful",
-                        stateToast: true
-                    });
+                    this.props.showToast(this.props.t("Successful"), true, true);
                 }
             }
             else {
@@ -334,10 +287,7 @@ class ListElementsProperties extends Component {
 
                 this.props.changeSavedTagList(newtgs);
                 this.toggleNewTagModal();
-                this.toastRef.current.setToast({
-                    message: "Successful",
-                    stateToast: true
-                });
+                this.props.showToast(this.props.t("Successful"), true, true);
             }
         }
     };
@@ -592,19 +542,12 @@ class ListElementsProperties extends Component {
                                     </div>
                                 </ModalBody>
                                 <ModalFooter>
-                                    {/*<Button color="secondary" onClick={this.toggleNewTagModal}>*/}
-                                    {/*    Close*/}
-                                    {/*</Button>*/}
                                     <Button color="success" onClick={this.handleSaveTag}>
                                         {this.props.t("Save")}
                                     </Button>
                                 </ModalFooter>
                             </Modal>
                         </Col>
-                        {/* } />*/}
-                        <ToastComp
-                            ref={this.toastRef}
-                        />
                     </div>
                 } />
             </div>
@@ -612,4 +555,8 @@ class ListElementsProperties extends Component {
     }
 };
 
-export default withTranslation()(ListElementsProperties);
+const mapDispatchToProps = (dispatch) => ({
+    showToast: (message, autoHide, stateToast) => dispatch(showToast(message, autoHide, stateToast))
+});
+
+export default connect(null, mapDispatchToProps)(withTranslation()(ListElementsProperties));

@@ -2,7 +2,6 @@
 using Helios.Common.Enums;
 using Helios.Common.Model;
 using Helios.eCRF.Attributes;
-using Helios.eCRF.Services;
 using Helios.eCRF.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -130,11 +129,55 @@ namespace Helios.eCRF.Controllers
             return result;
         }
 
+        /// <summary>
+        /// hastanın verilerini pdf olarak gösterir
+        /// </summary>
+        /// <param name="subjectId">hasta id</param>
+        /// <returns>pdf</returns>
         [HttpGet("{subjectId}")]
         public async Task<IActionResult> GetSubjectVisitAnnotatedCrf(Int64 subjectId)
         {
             var result = await _subjectService.GetSubjectVisitAnnotatedCrf(subjectId);
             return new ObjectResult(result.Data != null ? File(result.Data, "application/pdf") : null) { StatusCode = (int)result.StatusCode };
+        }
+
+        /// <summary>
+        /// hastanın formundaki elementin yorumlarını listeler
+        /// </summary>
+        /// <param name="subjectElementId">hasta element id</param>
+        /// <returns>yorumlar</returns>
+        [HttpGet("{subjectElementId}")]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> GetSubjectComments(Int64 subjectElementId)
+        {
+            var result = await _subjectService.GetSubjectComments(subjectElementId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
+        /// <summary>
+        /// hastanın elementindeki seçili yorumu siler
+        /// </summary>
+        /// <param name="id">yorum id</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> RemoveSubjectComment(Int64 id)
+        {
+            var result = await _subjectService.RemoveSubjectComment(id);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// hastanın elementine yorum ekler veya günceller
+        /// </summary>
+        /// <param name="dto">yorum bilgileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> SetSubjectComment(SubjectCommentDTO dto)
+        {
+            var result = await _subjectService.SetSubjectComment(dto);
+            return Ok(result);
         }
     }
 }

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { endloading, startloading } from '../../../../store/loader/actions';
 import { Tabs, Table, Checkbox, Typography } from 'antd';
 import { useVisitPageEProSetMutation, useLazyPermissionListGetQuery, useVisitPagePermissionSetMutation, useLazyStudyVisitPermissionsListGetQuery } from "../../../../store/services/Visit";
+import { showToast } from '../../../../store/toast/actions';
 
 const Settings = props => {
 
@@ -35,30 +36,18 @@ const Settings = props => {
                     });
                     if (response.data.isSuccess) {
                         await setRecordEPro(response.data.values.value);
-                        props.toast.current.setToast({
-                            message: props.t(response.data.message),
-                            stateToast: true
-                        });
+                        dispatch(showToast(props.t(response.data.message), true, true));
                         dispatch(endloading());
                     } else {
-                        props.toast.current.setToast({
-                            message: props.t(response.data.message),
-                            stateToast: false
-                        });
+                        dispatch(showToast(props.t(response.data.message), true, false));
                         dispatch(endloading());
                     }
                 } catch (e) {
-                    props.toast.current.setToast({
-                        message: props.t("An unexpected error occurred."),
-                        stateToast: false
-                    });
+                    dispatch(showToast(props.t("An unexpected error occurred."), true, false));
                     dispatch(endloading());
                 }
             } else {
-                props.toast.current.setToast({
-                    message: props.t("It is not possible to update without making changes."),
-                    stateToast: false
-                });
+                dispatch(showToast(props.t("It is not possible to update without making changes."), true, false));
             }
         }
         else if (activeTab === 2) {
@@ -76,32 +65,15 @@ const Settings = props => {
                     return false;
                 }
                 const response = await visitPagePermissionSet(dto);
-                if (response.data.isSuccess) {
-                    props.toast.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: true
-                    });
-                    dispatch(endloading());
-                } else {
-                    props.toast.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: false
-                    });
-                    dispatch(endloading());
-                }
+                dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
+                dispatch(endloading());
             } catch (e) {
-                props.toast.current.setToast({
-                    message: props.t("An unexpected error occurred."),
-                    stateToast: false
-                });
+                dispatch(showToast(props.t("An unexpected error occurred."), true, false));
                 dispatch(endloading());
             }
         }
         else {
-            props.toast.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }
@@ -146,10 +118,7 @@ const Settings = props => {
                 setIsEpro(props.record.epro);
             }
         } else if (!isLoadingPermissionList && errorPermissionList) {
-            props.toast.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }, [permissionsListData, errorPermissionList, isLoadingPermissionList]);
@@ -159,10 +128,7 @@ const Settings = props => {
             setSelectedRowKeys(permissionsData.map(x=>x.permissionName));
             dispatch(endloading());
         } else if (!isLoading && error) {
-            props.toast.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }, [permissionsData, error, isLoading]);

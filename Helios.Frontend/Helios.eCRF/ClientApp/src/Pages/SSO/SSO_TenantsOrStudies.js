@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { withTranslation } from "react-i18next";
 import { Row, Col, CardHeader, Card, CardBody, Alert } from "reactstrap";
 import "./sso.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useLazyTenantOrStudytGetQuery } from '../../store/services/SSO/SSO_Api';
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../store/loader/actions';

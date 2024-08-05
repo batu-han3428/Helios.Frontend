@@ -10,6 +10,7 @@ import { useSystemAdminSetMutation } from '../../../store/services/SystemAdmin/S
 import { isValidPhoneNumber } from 'libphonenumber-js';
 import PhoneInput from 'react-phone-number-input';
 import "../../../assets/css/PhoneInput.css";
+import { showToast } from '../../../store/toast/actions';
 
 const AddOrUpdateSystemAdmin = props => {
 
@@ -49,23 +50,18 @@ const AddOrUpdateSystemAdmin = props => {
                     );
 
                     if (!formHasChanges) {
-                        props.toast(props.t("It is not possible to update without making changes."), false);
+                        dispatch(showToast(props.t("It is not possible to update without making changes."), true, false));
                         dispatch(endloading());
                         return false;
                     }
                 }
 
                 const response = await systemAdminSet(values);
-                if (response.data.isSuccess) {
-                    props.onToggleModal();
-                    props.toast(props.t(response.data.message), true);
-                    dispatch(endloading());
-                } else {
-                    props.toast(props.t(response.data.message), false);
-                    dispatch(endloading());
-                }
+                dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
+                dispatch(endloading());
+                if (response.data.isSuccess) props.onToggleModal();                  
             } catch (e) {
-                props.toast(props.t("An unexpected error occurred."), false);
+                dispatch(showToast(props.t("An unexpected error occurred."), true, false));
                 dispatch(endloading());
             }
         }

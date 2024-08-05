@@ -1,15 +1,8 @@
 ﻿import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef } from "react";
-import {
-    Row, Col, Card, CardBody, FormFeedback, Label, Form, Button
-} from "reactstrap";
+import { Row, Col, Card, CardBody, FormFeedback, Label, Form, Button } from "reactstrap";
 import { withTranslation } from "react-i18next";
-import {
-    MDBTabs,
-    MDBTabsItem,
-    MDBTabsLink,
-    MDBTabsContent
-} from 'mdb-react-ui-kit';
+import { MDBTabs, MDBTabsItem, MDBTabsLink, MDBTabsContent } from 'mdb-react-ui-kit';
 import "./tenantusers.css";
 import { useLazyTenantUserListGetQuery, useTenantUserSetMutation } from '../../../store/services/TenantUsers';
 import { formatDate } from "../../../helpers/format_date";
@@ -18,16 +11,14 @@ import { startloading, endloading } from '../../../store/loader/actions';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { exportToExcel } from '../../../helpers/ExcelDownload';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Table, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
+import { showToast } from '../../../store/toast/actions';
 
 
 const TenantUsers = props => {
-
-    const toastRef = useRef();
 
     const modalRef = useRef();
 
@@ -365,10 +356,7 @@ const TenantUsers = props => {
 
            /* return () => clearTimeout(timer);*/
         } else if (!isLoading && error) {
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }, [tenantUsersData, error, isLoading, props.t]);
@@ -403,17 +391,11 @@ const TenantUsers = props => {
                 dispatch(startloading());
                 const response = await tenantUserSet(values);
                 if (response.data.isSuccess) {
-                    toastRef.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: true
-                    });
+                    dispatch(showToast(props.t(response.data.message), true, true));
                     modalRef.current.tog_backdrop();
                     dispatch(endloading());
                 } else {
-                    toastRef.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: false
-                    });
+                    dispatch(showToast(props.t(response.data.message), true, false));
                     dispatch(endloading());
                 }
             } catch (e) {
@@ -604,9 +586,6 @@ const TenantUsers = props => {
                 resetValue={resetValue}
                 handle={() => validationType.handleSubmit()}
                 buttonText={props.t("Update")}
-            />
-            <ToastComp
-                ref={toastRef}
             />
         </React.Fragment>
     );

@@ -6,7 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Table } from 'antd';
 import ModalComp from "../../../components/Common/ModalComp/ModalComp";
 import AddOrUpdateTenantAndSystemAdmin from "./AddOrUpdateTenantAndSystemAdmin";
-import ToastComp from "../../../components/Common/ToastComp/ToastComp";
 import { useSelector, useDispatch } from 'react-redux';
 import { useSystemAdminResetPasswordMutation } from '../../../store/services/SystemAdmin/SystemAdmin';
 import { useLazyUserListGetQuery, useUserActivePassiveMutation } from '../../../store/services/SystemAdmin/Users/SystemUsers';
@@ -15,10 +14,9 @@ import Swal from 'sweetalert2';
 import { countryNumber } from "../../../helpers/phonenumber_helper";
 import DeleteTenantAndSystemAdmin from "./DeleteTenantAndSystemAdmin";
 import { createPortal } from 'react-dom'
+import { showToast } from "../../../store/toast/actions";
 
 const ListTenantAndSystemAdmin = props => {
-
-    const toastRef = useRef();
 
     const modalRef = useRef();
 
@@ -33,15 +31,9 @@ const ListTenantAndSystemAdmin = props => {
     const [table, setTable] = useState([]);
     const [modalContent, setModalContent] = useState(null);
 
-    const toastHandle = (message, state) => {
-        toastRef.current.setToast({
-            message: message,
-            stateToast: state
-        });
-    }
 
     const addSystemAdmin = () => {
-        setModalContent(<AddOrUpdateTenantAndSystemAdmin isAdd={true} userId={userInformation.userId} refs={modalContentRef} toast={toastHandle} />);
+        setModalContent(<AddOrUpdateTenantAndSystemAdmin isAdd={true} userId={userInformation.userId} refs={modalContentRef} />);
         setModalTitle(props.t("Add an admin"));
         setModalButtonText(props.t("Save"));
         modalRef.current.tog_backdrop();
@@ -49,13 +41,10 @@ const ListTenantAndSystemAdmin = props => {
 
     const updateUser = (item) => {
         if (!item.isActive) {
-            toastRef.current.setToast({
-                message: props.t("Please activate the account first and then try this process again."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("Please activate the account first and then try this process again."), true, false));
             return;
         }
-        setModalContent(<AddOrUpdateTenantAndSystemAdmin isAdd={false} userData={item} userId={userInformation.userId} refs={modalContentRef} toast={toastHandle} />);
+        setModalContent(<AddOrUpdateTenantAndSystemAdmin isAdd={false} userData={item} userId={userInformation.userId} refs={modalContentRef} />);
         setModalTitle(props.t("Update"));
         setModalButtonText(props.t("Update"));
         modalRef.current.tog_backdrop();
@@ -204,10 +193,7 @@ const ListTenantAndSystemAdmin = props => {
 
             dispatch(endloading());
         } else if (!isLoading && error) {
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }, [usersData, error, isLoading, dropdownOpen, dropdownTenantOpen]);
@@ -219,10 +205,7 @@ const ListTenantAndSystemAdmin = props => {
             dispatch(startloading());
             if (!item.isActive) {
                 dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t("Please activate the account first and then try this process again."),
-                    stateToast: false
-                });
+                dispatch(showToast(props.t("Please activate the account first and then try this process again."), true, false));
                 return;
             }
             const response = await systemAdminResetPassword({
@@ -231,32 +214,17 @@ const ListTenantAndSystemAdmin = props => {
                 email: item.email,
                 language: props.i18n.language
             });
-            if (response.data.isSuccess) {
-                dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: true
-                });
-            } else {
-                dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: false
-                });
-            }
+            dispatch(endloading());
+            dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
         } catch (error) {
             dispatch(endloading());
-            toastRef.current.setToast({
-                message: props.t("An error occurred while processing your request."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An error occurred while processing your request."), true, false));
         }
     }
 
     const [userActivePassive] = useUserActivePassiveMutation();
 
     const activePassiveUser = (item) => {
-        console.log(item)
         Swal.fire({
             title: props.t("The user to be active or passive."),
             text: props.t("Do you confirm?"),
@@ -399,9 +367,6 @@ const ListTenantAndSystemAdmin = props => {
                 body={modalContent}
                 buttonText={modalButtonText}
                 isButton={true}
-            />
-            <ToastComp
-                ref={toastRef}
             />
             {swalShown.show &&
                 createPortal(

@@ -1,31 +1,10 @@
-import React, { useState, useEffect, Component } from "react";
-import {
-    Card,
-    CardBody,
-    CardText,
-    CardTitle,
-    Col,
-    Collapse,
-    Container,
-    Nav,
-    NavItem,
-    NavLink,
-    Row,
-    TabContent,
-    Table,
-    TabPane,
-    Input,
-    Button,
-    FormGroup,
-    Label
-} from "reactstrap";
+import React from "react";
+import { Card, CardBody, CardText, Col, Nav, NavItem, NavLink, Row, TabContent, Table, TabPane, Input, Button, Label } from "reactstrap";
 import Select from "react-select";
 import classnames from "classnames";
 import { withTranslation } from "react-i18next";
-import ToastComp from '../../../../components/Common/ToastComp/ToastComp';
 import { GetElementNameByKey, GetConditionList, GetWidth, GetActionList } from '../Elements/Common/utils.js'
 import CodeMirror from "@uiw/react-codemirror";
-import Swal from 'sweetalert2';
 import { startloading, endloading } from '../../../../store/loader/actions';
 import AccordionComp from '../../../../components/Common/AccordionComp/AccordionComp';
 import TextElementProperties from '../Elements/TextElement/textElementProperties.js';
@@ -45,6 +24,8 @@ import HiddenElementProperties from "../Elements/HiddenElement/hiddenElementProp
 import ConcomittantMedicationElementProperties from "../Elements/ConcomittantMedicationElement/concomittantMedicationElementProperties";
 import { API_BASE_URL } from '../../../../constants/endpoints';
 import { GetElementPropertiesPlace, GetElementPropertiesWidth } from '../Elements/Common/ElementPropertiesPlace'
+import { connect } from 'react-redux';
+import { showToast } from "../../../../store/toast/actions.js";
 
 class Properties extends React.Component {
     constructor(props) {
@@ -153,9 +134,6 @@ class Properties extends React.Component {
             ValidationList: [],
 
         };
-
-        this.toastRef = React.createRef();
-        this.setShowToast.bind(this);
         
         this.toggleActiveTab = this.toggleActiveTab.bind(this);
         this.handleSaveModuleContent = this.handleSaveModuleContent.bind(this);
@@ -220,12 +198,6 @@ class Properties extends React.Component {
 
     componentDidMount() {
         this.getElementData();
-    }
-
-    setShowToast() {
-        this.setState({
-            showToast: false,
-        });
     }
 
     toggleActiveTab(tab) {
@@ -886,20 +858,14 @@ class Properties extends React.Component {
         }).then(data => {
             this.state.dispatch(startloading());
             if (data.isSuccess) {
-                this.toastRef.current.setToast({
-                    message: data.message,
-                    stateToast: true
-                });
+                this.props.showToast(this.props.t(data.message), true, true);
                 window.location.reload();
             } else {
-                this.toastRef.current.setToast({
-                    message: data.message,
-                    stateToast: false
-                });
+                this.props.showToast(this.props.t(data.message), true, false);
             }
             this.state.dispatch(endloading());
         }).catch(error => {
-            console.log(error)
+            this.props.showToast(this.props.t("An unexpected error occurred."), true, false);
         });
     }
 
@@ -1397,14 +1363,14 @@ class Properties extends React.Component {
                         <input className="btn btn-primary" type="button" onClick={this.handleSaveModuleContent} value={this.props.t("Save")} />
                     </div>
                 </Col>
-                {/*</form>*/}
-                <ToastComp
-                    ref={this.toastRef}
-                />
             </div>
 
         );
     }
 }
 
-export default withTranslation()(Properties);
+const mapDispatchToProps = (dispatch) => ({
+    showToast: (message, autoHide, stateToast) => dispatch(showToast(message, autoHide, stateToast))
+});
+
+export default connect(null, mapDispatchToProps)(withTranslation()(Properties));

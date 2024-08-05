@@ -2,9 +2,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { Table } from 'antd';
-import {
-    Row, Col, Card, CardBody, Button, Label, Input, Form, FormFeedback, Alert
-} from "reactstrap";
+import { Row, Col, Card, CardBody, Button, Label, Input, Form, FormFeedback, Alert } from "reactstrap";
 import { useLazySiteListGetQuery, useSiteSaveOrUpdateMutation, useSiteGetQuery, useSiteDeleteMutation } from '../../../store/services/SiteLaboratories';
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
@@ -12,15 +10,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { formatDate } from "../../../helpers/format_date";
 import Swal from 'sweetalert2'
 import { exportToExcel } from '../../../helpers/ExcelDownload';
 import './Sites.css';
+import { showToast } from '../../../store/toast/actions';
 
 const Sites = props => {
-    
-    const toastRef = useRef();
 
     const modalRef = useRef();
 
@@ -105,10 +101,7 @@ const Sites = props => {
             dispatch(endloading());
         } else if (!apiIsLoading && apiError) {
             dispatch(endloading());
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
         }
     }, [apiData, apiError, apiIsLoading]);
 
@@ -191,10 +184,7 @@ const Sites = props => {
             dispatch(endloading());
         } else if (!isLoading && error) {
             dispatch(endloading());
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
         }else {
             dispatch(endloading());
         }
@@ -235,18 +225,11 @@ const Sites = props => {
             dispatch(startloading());
             const response = await siteSaveOrUpdate(values);
             if (response.data.isSuccess) {
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: true
-                });
-
+                dispatch(showToast(props.t(response.data.message), true, true));
                 modalRef.current.tog_backdrop();
                 dispatch(endloading());
             } else {
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: false
-                });
+                dispatch(showToast(props.t(response.data.message), true, false));
                 dispatch(endloading());
             }
         }
@@ -429,9 +412,6 @@ const Sites = props => {
                 resetValue={resetValue}
                 handle={() => validationType.handleSubmit()}
                 buttonText={siteId === 0 ? props.t("Save") : props.t("Update") }
-            />
-            <ToastComp
-                ref={toastRef}
             />
         </React.Fragment>
     );

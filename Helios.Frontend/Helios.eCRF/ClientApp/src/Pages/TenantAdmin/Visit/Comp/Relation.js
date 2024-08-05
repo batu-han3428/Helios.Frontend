@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { endloading, startloading } from '../../../../store/loader/actions';
 import { useLazyVisitRelationGetQuery, useVisitRelationSetMutation } from '../../../../store/services/Visit';
 import isEqual from 'lodash/isEqual';
+import { showToast } from '../../../../store/toast/actions';
 
 const { Option, OptGroup } = Select;
 const tagInputStyle = {
@@ -390,30 +391,22 @@ const Relation = props => {
             dispatch(startloading());
             const empty = isEmpty(dataSource);
             if (empty.length > 0) {
-                props.toast.current.setToast({
-                    message:<div>
-                        <h5>{props.t("This field is required")}</h5>
-                        <ul>
-                            {
-                                empty.map((msg, index) => (
-                                    <li key={index}>{msg}</li>
-                                ))
-                            }
-                        </ul>
-                    </div>,
-                    stateToast: false,
-                    autoHide: false
-                });
+                dispatch(showToast(<div>
+                    <h5>{props.t("This field is required")}</h5>
+                    <ul>
+                        {
+                            empty.map((msg, index) => (
+                                <li key={index}>{msg}</li>
+                            ))
+                        }
+                    </ul>
+                </div>, false, false));
                 dispatch(endloading());
                 return;
             }
             const changesExist = hasChanges(originalDataSource, dataSource);
             if (!changesExist) {
-                props.toast.current.setToast({
-                    message: props.t("No changes were made. Please make changes to save."),
-                    stateToast: false,
-                    autoHide: false
-                });
+                dispatch(showToast(props.t("No changes were made. Please make changes to save."), false, false));
                 dispatch(endloading());
                 return;
             }
@@ -429,25 +422,10 @@ const Relation = props => {
                 return { ...item, actionValue: JSON.stringify(item.actionValue), targetPage: JSON.stringify(newTargetPage) };
             });
             const response = await visitRelationSet(updatedDataSource);
-            if (response.data.isSuccess) {
-                props.toast.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: true
-                });
-                dispatch(endloading());
-            } else {
-                props.toast.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: false
-                });
-                dispatch(endloading());
-            }
+            dispatch(showToast(props.t(response.data.message), false, response.data.isSuccess));
+            dispatch(endloading());
         } catch (error) {
-            props.toast.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false,
-                autoHide: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), false, false));
             dispatch(endloading());
         }
     }, [dataSource, props]);

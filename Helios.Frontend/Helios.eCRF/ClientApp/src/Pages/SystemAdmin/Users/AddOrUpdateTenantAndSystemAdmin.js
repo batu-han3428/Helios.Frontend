@@ -15,6 +15,7 @@ import makeAnimated from "react-select/animated";
 import Select from "react-select";
 import "../../../assets/css/PhoneInput.css";
 import { useLazyTenantListAuthGetQuery } from '../../../store/services/Tenants';
+import { showToast } from '../../../store/toast/actions';
 
 const AddOrUpdateTenantAndSystemAdmin = props => {
 
@@ -85,7 +86,7 @@ const AddOrUpdateTenantAndSystemAdmin = props => {
             option[0].options.push(...tenants);
             setOptionGroupTenants(option);
         } else if (!isLoading && isError) {
-            props.toast(props.t("An unexpected error occurred."), false);
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
         }
     }, [tenantsData, isError, isLoading]);
 
@@ -129,7 +130,7 @@ const AddOrUpdateTenantAndSystemAdmin = props => {
                     );
 
                     if (!formHasChanges) {
-                        props.toast(props.t("It is not possible to update without making changes."), false);
+                        dispatch(showToast(props.t("It is not possible to update without making changes."), true, false));
                         dispatch(endloading());
                         return false;
                     }
@@ -143,14 +144,14 @@ const AddOrUpdateTenantAndSystemAdmin = props => {
 
                 if (response.data.isSuccess) {
                     props.onToggleModal();
-                    props.toast(props.t(response.data.message), true);
+                    dispatch(showToast(props.t(response.data.message), true, true));
                     dispatch(endloading());
                 } else {
-                    props.toast(props.t(response.data.message), false);
+                    dispatch(showToast(props.t(response.data.message), true, false));
                     dispatch(endloading());
                 }
             } catch (e) {
-                props.toast(props.t("An unexpected error occurred."), false);
+                dispatch(showToast(props.t("An unexpected error occurred."), true, false));
                 dispatch(endloading());
             }
         }

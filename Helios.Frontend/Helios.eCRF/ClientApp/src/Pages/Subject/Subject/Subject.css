@@ -36,3 +36,29 @@
     border-top: 1px solid #000; 
     margin: 20px 0;
 }
+
+.close-button {
+    color: rgb(110, 169, 215);
+    cursor: pointer;
+    font-size: 17.472px;
+}
+
+.close-button:hover {
+    color: #A8CBE7;
+}
+
+.align-center {
+    align-self: center;
+}
+
+.outgoing-message .cs-message__content {
+    background-color: #f8efd0;
+}
+
+.incoming-message .cs-message__content, .cs-message-input__content-editor-wrapper, .cs-message-input__content-editor {
+    background-color: #eaebec;
+}
+
+.cs-button--send {
+    color: #ffc603;
+}

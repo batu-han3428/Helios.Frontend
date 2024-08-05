@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Button, Modal, ModalBody, ModalHeader, Row, Table } from "reactstrap";
 import { withTranslation } from "react-i18next";
 import Select from "react-select";
-import ToastComp from '../../../../../components/Common/ToastComp/ToastComp';
 import { startloading, endloading } from '../../../../../store/loader/actions';
 import { GetAllElementListForSelect } from '../../FormBuilder/allElementList.js';
 import { GetElementNameByKey } from '../Common/utils.js';
@@ -10,8 +9,9 @@ import Properties from '../../FormBuilder/properties.js';
 import ElementList from '../../FormBuilder/elementList.js';
 import SubjectDetailElementList from '../../../../Subject/Subject/SubjectDetailElementList.js';
 import { GetElementPropertiesPlace, GetElementPropertiesWidth } from '../Common/ElementPropertiesPlace'
-import { API_BASE_URL } from '../../../../../constants/endpoints';
 import { SubjectApi } from '../../../../../store/services/Subject';
+import { showToast } from '../../../../../store/toast/actions';
+import { connect } from 'react-redux';
 
 class DatagridElement extends Component {
     constructor(props) {
@@ -46,8 +46,6 @@ class DatagridElement extends Component {
             allRows: [],
         }
 
-        this.toastRef = React.createRef();
-        this.setShowToast.bind(this);
         this.toggleDgrdAddElementModal = this.toggleDgrdAddElementModal.bind(this);
         this.handleElementListChange = this.handleElementListChange.bind(this);
         this.getTdContent = this.getTdContent.bind(this);
@@ -122,10 +120,6 @@ class DatagridElement extends Component {
 
     componentDidMount() {
         this.initial();
-    }
-
-    setShowToast() {
-        this.state.showToast = false;
     }
 
     toggleDgrdAddElementModal = (columnIndex) => {
@@ -270,16 +264,10 @@ class DatagridElement extends Component {
 
             this.state.dispatch(endloading());
 
-            this.toastRef.current.setToast({
-                message: response.message,
-                stateToast: response.isSuccess
-            });
+            this.props.showToast(this.props.t(response.message), true, response.isSuccess);
 
         } catch (error) {
-            this.toastRef.current.setToast({
-                message: "An error occurred",
-                stateToast: false
-            });
+            this.props.showToast(this.props.t("An unexpected error occurred."), true, false);
         }
     };
 
@@ -304,15 +292,9 @@ class DatagridElement extends Component {
 
             this.state.dispatch(endloading());
 
-            this.toastRef.current.setToast({
-                message: response.message,
-                stateToast: response.isSuccess
-            });
+            this.props.showToast(this.props.t(response.message), true, response.isSuccess);
         } catch (e) {
-            this.toastRef.current.setToast({
-                message: "An error occurred",
-                stateToast: false
-            });
+            this.props.showToast(this.props.t("An unexpected error occurred."), true, false);
         }
     };
 
@@ -360,9 +342,6 @@ class DatagridElement extends Component {
                         </div>
                     </Row>
                 }
-                <ToastComp
-                    ref={this.toastRef}
-                />
                 <Modal isOpen={this.state.dgrdModalState} toggle={this.toggleDgrdAddElementModal} size="md">
                     <ModalHeader className="mt-0" toggle={this.toggleDgrdAddElementModal}>{this.props.t("Add a child input")}</ModalHeader>
                     <ModalBody>
@@ -408,4 +387,8 @@ class DatagridElement extends Component {
     }
 };
 
-export default withTranslation()(DatagridElement);
+const mapDispatchToProps = (dispatch) => ({
+    showToast: (message, autoHide, stateToast) => dispatch(showToast(message, autoHide, stateToast))
+});
+
+export default connect(null, mapDispatchToProps)(withTranslation()(DatagridElement));

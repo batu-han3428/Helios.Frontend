@@ -9,7 +9,6 @@ import { startloading, endloading } from '../../../../store/loader/actions.js';
 import { API_BASE_URL } from '../../../../constants/endpoints.js';
 import ModalComp from '../../../../components/Common/ModalComp/ModalComp.js';
 import RankingList from './RankingList.js';
-import ToastComp from '../../../../components/Common/ToastComp/ToastComp.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { decodeToken } from "../../../../helpers/Util/tokenUtil";
 import { getLocalStorage } from '../../../../helpers/local-storage/localStorageProcess.js';
@@ -23,7 +22,6 @@ const FormBuilder = props => {
     const [moduleName, setModuleName] = useState('');
     const dispatch = useDispatch();
     const modalRef = useRef();
-    const toastRef = useRef();
     const [path, setPath] = useState([]);
     const [formType, setFormType] = useState(0);
     const [StudyId] = useState(isStudy === "true" ? auth.studyId : 0);
@@ -116,7 +114,7 @@ const FormBuilder = props => {
                                     <div>
                                         <Button color="success" onClick={() => {
                                             openModal({
-                                                title: props.t("Ranking"), buttonText: props.t("Save"), content: <RankingList toast={toastRef} fetchData={fetchData} toggleModal={toggleModal} moduleId={moduleId} refs={modalRef} isStudy={isStudy} />
+                                                title: props.t("Ranking"), buttonText: props.t("Save"), content: <RankingList fetchData={fetchData} toggleModal={toggleModal} moduleId={moduleId} refs={modalRef} isStudy={isStudy} />
                                             });
                                         }} style={{ marginRight: '8px' }}>
                                             {props.t("Ranking")}
@@ -129,7 +127,7 @@ const FormBuilder = props => {
                             </Row>
                         </div>
                         <div>
-                            <ElementList toast={toastRef} TenantId={userInformation.TenantId} StudyId={StudyId} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={formType} />
+                            <ElementList TenantId={userInformation.TenantId} StudyId={StudyId} ModuleId={moduleId} ModuleElementList={moduleElementList} ShowElementList={true} IsDisable={true} FormType={formType} />
                         </div>
                     </div>
                 </div>
@@ -141,7 +139,6 @@ const FormBuilder = props => {
                 buttonText={modalButtonText}
                 isButton={true}
             />
-            <ToastComp ref={toastRef} />
         </>
     );
 }

@@ -17,6 +17,8 @@ import Loader from './loader/reducer'
 
 import Study from './study/reducer'
 
+import Toast from './toast/reducer'
+
 export const rootReducer = combineReducers({
     // public
     Layout,
@@ -27,4 +29,5 @@ export const rootReducer = combineReducers({
     calendar,
     Loader,
     Study,
+    Toast
 });

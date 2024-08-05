@@ -13,6 +13,7 @@ import TransferData from '../Comp/TransferData';
 import Relation from '../Comp/Relation';
 import AnnotatedCrfPdf from '../Comp/AnnotatedCrfPdf';
 import AnnotatedCrfPdfHistory from '../Comp/AnnotatedCrfPdfHistory';
+import { showToast } from '../../../../store/toast/actions';
 
 export const findItemRecursive = (items, key) => {
     for (const item of items) {
@@ -28,21 +29,21 @@ export const findItemRecursive = (items, key) => {
     return null;
 };
 
-export const handleSettings = (openModal, record, ref, toastRef) => {
+export const handleSettings = (openModal, record, ref) => {
     const title = i18n.t("Settings");
     const buttonText = i18n.t("Save");
-    const content = <Settings record={record} refs={ref} toast={toastRef} />;
+    const content = <Settings record={record} refs={ref} />;
     openModal({ title: title, buttonText: buttonText, content: content });
 }
 
-export const handleAddModule = (openModal, record, ref, toastRef, toggleModal) => {
+export const handleAddModule = (openModal, record, ref, toggleModal) => {
     const title = i18n.t("Add module");
     const buttonText = i18n.t("Save");
-    const content = <AddModule record={record} refs={ref} toast={toastRef} toggleModal={toggleModal} />;
+    const content = <AddModule record={record} refs={ref} toggleModal={toggleModal} />;
     openModal({ title: title, buttonText: buttonText, content: content });
 }
 
-export const useApiHelper = (dataSource, setDataSource, toastRef) => {
+export const useApiHelper = (dataSource, setDataSource) => {
 
     const [editing, setEditing] = useState(false);
 
@@ -73,24 +74,10 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
                 visitType: row.visittype,
                 order: parseInt(row.order, 10)
             });
-            if (response.data.isSuccess) {
-                toastRef.current.setToast({
-                    message: i18n.t(response.data.message),
-                    stateToast: true
-                });
-                dispatch(endloading());
-            } else {
-                toastRef.current.setToast({
-                    message: i18n.t(response.data.message),
-                    stateToast: false
-                });
-                dispatch(endloading());
-            }
+            dispatch(showToast(i18n.t(response.data.message), true, response.data.isSuccess));
+            dispatch(endloading());
         } catch (e) {
-            toastRef.current.setToast({
-                message: i18n.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(i18n.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }
@@ -110,25 +97,11 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
                     visitType: row.visittype,
                     order: parseInt(row.order, 10)
                 });
-                if (response.data.isSuccess) {
-                    toastRef.current.setToast({
-                        message: i18n.t(response.data.message),
-                        stateToast: true
-                    });
-                    dispatch(endloading());
-                } else {
-                    toastRef.current.setToast({
-                        message: i18n.t(response.data.message),
-                        stateToast: false
-                    });
-                    dispatch(endloading());
-                }
+                dispatch(showToast(i18n.t(response.data.message), true, response.data.isSuccess));
+                dispatch(endloading());
             }
         } catch (e) {
-            toastRef.current.setToast({
-                message: i18n.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(i18n.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     };
@@ -280,10 +253,7 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
             handleDataChange();
             dispatch(endloading());
         } else if (!isLoading && error) {
-            toastRef.current.setToast({
-                message: i18n.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(i18n.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }, [visitsData, error, isLoading]);
@@ -587,26 +557,10 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
             try {
                 dispatch(startloading());
                 const response = await visitRankingSet(changedItems);
-                if (response.data.isSuccess) {
-                    //setChangedDataSource(JSON.parse(JSON.stringify(dataSource)));
-                    //setRankingDataSource(JSON.parse(JSON.stringify(dataSource)));
-                    toastRef.current.setToast({
-                        message: i18n.t(response.data.message),
-                        stateToast: true
-                    });
-                    dispatch(endloading());
-                } else {
-                    toastRef.current.setToast({
-                        message: i18n.t(response.data.message),
-                        stateToast: false
-                    });
-                    dispatch(endloading());
-                }
+                dispatch(showToast(i18n.t(response.data.message), true, response.data.isSuccess));
+                dispatch(endloading());
             } catch (e) {
-                toastRef.current.setToast({
-                    message: i18n.t("An unexpected error occurred."),
-                    stateToast: false
-                });
+                dispatch(showToast(i18n.t("An unexpected error occurred."), true, false));
                 dispatch(endloading());
             }
         } else {
@@ -644,48 +598,48 @@ export const useApiHelper = (dataSource, setDataSource, toastRef) => {
     };
 };
 
-const handleTransferData = (openModal, studyId, activeStudyId, ref, toastRef, modalRef) => {
-    const content = <TransferData studyId={studyId} activeStudyId={activeStudyId} refs={ref} toast={toastRef} modalRef={modalRef} />;
+const handleTransferData = (openModal, studyId, activeStudyId, ref, modalRef) => {
+    const content = <TransferData studyId={studyId} activeStudyId={activeStudyId} refs={ref} modalRef={modalRef} />;
     openModal({ title: "Data Transfer", buttonText: "Save Transfer", content: content });
 };
 
-const handleRelation = (openModal, studyId, activeStudyId, ref, toastRef, modalRef) => {
-    const content = <Relation studyId={studyId} activeStudyId={activeStudyId} toast={toastRef} refs={modalRef} />;
+const handleRelation = (openModal, studyId, activeStudyId, ref, modalRef) => {
+    const content = <Relation studyId={studyId} activeStudyId={activeStudyId} refs={modalRef} />;
     openModal({ title: i18n.t("Relation"), buttonText: i18n.t("Save"), content: content });
 };
 
-const handleAnnotatedCrfPdf = (openModal, studyId, activeStudyId, ref, toastRef, modalRef) => {
-    const content = <AnnotatedCrfPdf studyId={studyId} activeStudyId={activeStudyId} toast={toastRef} refs={modalRef} />;
+const handleAnnotatedCrfPdf = (openModal, studyId, activeStudyId, ref, modalRef) => {
+    const content = <AnnotatedCrfPdf studyId={studyId} activeStudyId={activeStudyId} refs={modalRef} />;
     openModal({ title: i18n.t("Print options"), buttonText: i18n.t("Preview"), content: content });
 };
 
-const handleAnnotatedCrfPdfHistory = (openModal, studyId, activeStudyId, ref, toastRef, modalRef) => {
-    const content = <AnnotatedCrfPdfHistory studyId={studyId} activeStudyId={activeStudyId} toast={toastRef} refs={modalRef} />;
+const handleAnnotatedCrfPdfHistory = (openModal, studyId, activeStudyId, ref, modalRef) => {
+    const content = <AnnotatedCrfPdfHistory studyId={studyId} activeStudyId={activeStudyId} refs={modalRef} />;
     openModal({ title: i18n.t("Print options"), buttonText: i18n.t("Preview"), content: content });
 };
 
-export function visitSettingsItems(openModal, studyId, activeStudyId, ref, toastRef, modalRef) {
+export function visitSettingsItems(openModal, studyId, activeStudyId, ref, modalRef) {
     let items = [];
     items.push({
         label: i18n.t('Transfer data to active study'),
         key: '1',
         icon: <FontAwesomeIcon icon="fa-solid fa-arrow-up-from-bracket" style={{ color: "#6fce7a", }} />,
         style: { color: "#6fce7a" },
-        onClick: () => handleTransferData(openModal, studyId, activeStudyId, ref, toastRef, modalRef)
+        onClick: () => handleTransferData(openModal, studyId, activeStudyId, ref, modalRef)
     });
     items.push({
         label: i18n.t('Relation'),
         key: '2',
         icon: <FontAwesomeIcon icon="fa-solid fa-diagram-project" style={{ color: "#f6f797", }} />,
         style: { color: "#f6f797" },
-        onClick: () => handleRelation(openModal, studyId, activeStudyId, ref, toastRef, modalRef)
+        onClick: () => handleRelation(openModal, studyId, activeStudyId, ref, modalRef)
     });
     items.push({
         label: i18n.t('Annotated CRF PDF'),
         key: '3',
         icon: <FontAwesomeIcon icon="fa-regular fa-file-pdf" style={{ color: "#fdc16d", }} />,
         style: { color: "#fdc16d" },
-        onClick: () => handleAnnotatedCrfPdf(openModal, studyId, activeStudyId, ref, toastRef, modalRef)
+        onClick: () => handleAnnotatedCrfPdf(openModal, studyId, activeStudyId, ref, modalRef)
     });
     items.push({
         label: i18n.t('Annotated CRF Excel'),
@@ -698,7 +652,7 @@ export function visitSettingsItems(openModal, studyId, activeStudyId, ref, toast
         key: '5',
         icon: <FontAwesomeIcon icon="fa-solid fa-clock-rotate-left" style={{ color: "#ff85fb", }} />,
         style: { color: "#ff85fb" },
-        onClick: () => handleAnnotatedCrfPdfHistory(openModal, studyId, activeStudyId, ref, toastRef, modalRef)
+        onClick: () => handleAnnotatedCrfPdfHistory(openModal, studyId, activeStudyId, ref, modalRef)
     });
     items.push({
         label: i18n.t('Study design audit trail'),
