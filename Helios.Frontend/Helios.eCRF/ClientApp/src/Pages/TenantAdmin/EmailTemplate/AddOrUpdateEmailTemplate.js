@@ -1,9 +1,8 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Row, Col } from "reactstrap";
 import { withTranslation } from "react-i18next";
 import { useSelector } from 'react-redux';
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useNavigate, useParams } from "react-router-dom";
 import TemplateTagList from './Comp/TemplateTagList';
@@ -13,16 +12,8 @@ import TemplateForm from './Comp/TemplateForm';
 
 const AddOrUpdateEmailTemplate = props => {
 
-    const toastRef = useRef();
-
     const { studyId, templateId } = useParams();
 
-    const toastHandle = (message, state) => {
-        toastRef.current.setToast({
-            message: message,
-            stateToast: state
-        });
-    }
 
     const userInformation = useSelector(state => state.rootReducer.Login);
 
@@ -45,7 +36,7 @@ const AddOrUpdateEmailTemplate = props => {
                         <Col md={4} className="mb-4">
                             <Row>
                                 <Col md={12}>
-                                    <TemplateTagList toast={toastHandle} userId={userInformation.userId} tenantId={userInformation.tenantId} templateType={templateType} />
+                                    <TemplateTagList userId={userInformation.userId} tenantId={userInformation.tenantId} templateType={templateType} />
                                 </Col>
                             </Row>
                             <Row>
@@ -55,14 +46,11 @@ const AddOrUpdateEmailTemplate = props => {
                             </Row>
                         </Col>
                         <Col md={8}>
-                            <TemplateForm toast={toastHandle} templateId={templateId} studyId={studyId} userId={userInformation.userId} tenantId={userInformation.tenantId} setTemplateType={setTemplateType} />
+                            <TemplateForm templateId={templateId} studyId={studyId} userId={userInformation.userId} tenantId={userInformation.tenantId} setTemplateType={setTemplateType} />
                         </Col>
                     </Row>
                 </div>
             </div>
-            <ToastComp
-                ref={toastRef}
-            />
         </React.Fragment>
     );
 };

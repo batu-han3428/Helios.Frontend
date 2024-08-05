@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import Select from "react-select";
 import { startloading, endloading } from '../../../../store/loader/actions';
 import { useAddSubjectMutation } from '../../../../store/services/Subject';
+import { showToast } from '../../../../store/toast/actions';
 
 const AddSubjectComp = props => {
 
@@ -57,10 +58,7 @@ const AddSubjectComp = props => {
                 if (response.data.isSuccess) {
                     let message = props.t(response.data.message).replace("{SubjectNo}", retVal.subjectNumber);
                     if (retVal.addedById > 0) message = message.replace("{n}", retVal.addedById);
-                    props.toast.current.setToast({
-                        message: message,
-                        stateToast: true,
-                    });
+                    dispatch(showToast(message, true, true));
                     props.refs.current.tog_backdrop();
                     navigate(`/subject-detail/${retVal.studyId}/${retVal.firstPageId}/${retVal.id}/${retVal.subjectNumber}`);
                 } else {

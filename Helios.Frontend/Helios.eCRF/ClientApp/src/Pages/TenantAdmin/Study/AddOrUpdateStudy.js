@@ -1,5 +1,5 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { withTranslation } from "react-i18next";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Row, Col, Card, CardBody, FormGroup, CardSubtitle, Label, Input, Form, FormFeedback } from "reactstrap";
@@ -9,18 +9,17 @@ import Select from "react-select";
 import { useStudySaveMutation } from '../../../store/services/Study';
 import { useSelector } from "react-redux";
 import { useStudyGetQuery } from '../../../store/services/Study';
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { useDispatch } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useParams } from "react-router-dom";
 import AccordionComp from '../../../components/Common/AccordionComp/AccordionComp';
 import { useLazyStudyListGetQuery } from '../../../store/services/Study';
+import { showToast } from '../../../store/toast/actions';
 
 
 const AddOrUpdateStudy = props => {
 
-    const toastRef = useRef();
     const { copyStudy } = useParams();
     const [studyId, setStudyId] = useState(0);
     const [skip, setSkip] = useState(true);
@@ -53,10 +52,7 @@ const AddOrUpdateStudy = props => {
             dispatch(endloading());
         } else if (errorStudy && !isLoadingStudy) {
             dispatch(endloading());
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false,
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
         }
     }, [studyListData, tenantId, copyStudy, errorStudy, isLoadingStudy, props.t]);
 
@@ -115,22 +111,13 @@ const AddOrUpdateStudy = props => {
             const response = await studySave(values);
             if (response.data.isSuccess) {
                 dispatch(endloading());
-
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: true
-                });
-
+                dispatch(showToast(props.t(response.data.message), true, true));
                 if (studyId === 0) {
                     setStudyId(response.data.values.studyId);
                 }
             } else {
                 dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: false,
-                    autoHide: false
-                });
+                dispatch(showToast(props.t(response.data.message), false, false));
             }
         }
     });
@@ -163,10 +150,7 @@ const AddOrUpdateStudy = props => {
             dispatch(endloading());
         } else if (!isLoading && error) {
             dispatch(endloading());
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
         } else {
             dispatch(endloading());
         }
@@ -421,9 +405,6 @@ return (
                 </Row>
             </div>
         </div>
-        <ToastComp
-            ref={toastRef}
-        />
     </React.Fragment>
 );
 };

@@ -19,13 +19,12 @@ import { SearchOutlined, ExportOutlined } from '@ant-design/icons';
 import "./Subject.css";
 import { v4 as uuidv4 } from 'uuid';
 import AddSubjectComp from './Comp/AddSubjectComp';
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
-import RoleNotFound from '../../../Pages/Common/NotFound/RoleNotFound ';
+import { showToast } from '../../../store/toast/actions';
+
 const { TextArea } = Input;
 const SubjectList = props => {
     const modalRef = useRef();
     const modalRefDel = useRef();
-    const toastRef = useRef();
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
     const [modalContent, setModalContent] = useState(null);
@@ -187,7 +186,7 @@ const SubjectList = props => {
     const openModal = () => {
         setModalTitle(props.t('Add new subject'));
         setModalButtonText(props.t('Save'));
-        setModalContent(<AddSubjectComp toast={toastRef} studyId={studyId} AskSubjectInitial={AskSubjectInitial} refs={modalRef} selectSites={selectSites} studyUserSiteData={studyUserSiteData} />);
+        setModalContent(<AddSubjectComp studyId={studyId} AskSubjectInitial={AskSubjectInitial} refs={modalRef} selectSites={selectSites} studyUserSiteData={studyUserSiteData} />);
         toggleModal();
     }
 
@@ -258,10 +257,7 @@ const SubjectList = props => {
                     dispatch(endloading());
                     let message = props.t(response.data.message).replace("{SubjectNo}", retVal.subjectNumber);
                     if (retVal.addedById > 0) message = message.replace("{n}", retVal.addedById);
-                    toastRef.current.setToast({
-                        message: message,
-                        stateToast: true,
-                    });
+                    dispatch(showToast(message, true, true));
                     goToSubjectDetail(retVal.studyId, retVal.firstPageId, retVal.id, retVal.subjectNumber);
                 } else {
                     dispatch(endloading());
@@ -446,11 +442,7 @@ const SubjectList = props => {
 
     const handleClick = () => {
         if (studyUserSiteData.sites.length < 1) {
-            toastRef.current.setToast({
-                message: props.t("You do not have access to this resource. Please contact the system administrator regarding your privileges."),
-                stateToast: false,
-                autoHide: false
-            });
+            dispatch(showToast(props.t("You do not have access to this resource. Please contact the system administrator regarding your privileges."), false, false));
         }
         else if (AskSubjectInitial || (selectSites.length > 1 && studyUserSiteData.sites.length > 1)) {
             openModal();
@@ -491,20 +483,12 @@ const SubjectList = props => {
 
             if (response.data !== undefined) {
                 if (response.data.isSuccess) {
-                    toastRef.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: true,
-                    });
-
+                    dispatch(showToast(props.t(response.data.message), true, true));
                     modalRefDel.current.tog_backdrop();
                     setComment("");
                     dispatch(endloading());
                 } else {
-                    toastRef.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: false,
-                    });
-
+                    dispatch(showToast(props.t(response.data.message), true, false));
                     dispatch(endloading());
                 }
             }
@@ -615,9 +599,6 @@ const SubjectList = props => {
                 }
                 handle={() => handleDeleteOrArchiveSubmit()}
                 buttonText={props.t("Yes")}
-            />
-            <ToastComp
-                ref={toastRef}
             />
         </React.Fragment>
     )

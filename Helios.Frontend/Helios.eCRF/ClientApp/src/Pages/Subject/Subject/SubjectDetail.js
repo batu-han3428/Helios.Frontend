@@ -10,10 +10,9 @@ import { useParams } from "react-router-dom";
 import { useLazyGetSubjectDetailMenuQuery, useGetSubjectElementListQuery, useLazyGetUserPermissionsQuery } from '../../../store/services/Subject';
 import { endloading, startloading } from '../../../store/loader/actions';
 import { useDispatch } from "react-redux";
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import SubjectDetailElementList from './SubjectDetailElementList.js';
-import Footer from '../../../components/HorizontalLayout/Footer';
 import { useNavigate } from "react-router-dom";
+import { showToast } from '../../../store/toast/actions';
 
 const SubjectDetail = props => {
 
@@ -21,7 +20,6 @@ const SubjectDetail = props => {
     const { studyId, pageId, subjectId, subjectNumber } = useParams();
 
     const dispatch = useDispatch();
-    const toastRef = useRef();
 
     const [selectedKeys, setSelectedKeys] = useState(['1-1']);
     const [openKeys, setOpenKeys] = useState([]);
@@ -136,10 +134,7 @@ const SubjectDetail = props => {
             setPrevNextButton(menuData, pageId);
         }
         else if (!isLoading && error) {
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }, [menuData, error, isLoading]);
@@ -242,7 +237,6 @@ const SubjectDetail = props => {
                     </div>
                 </div>
             </footer>
-            <ToastComp ref={toastRef} />
         </React.Fragment>
     )
 }

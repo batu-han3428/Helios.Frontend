@@ -6,6 +6,7 @@ import { startloading, endloading } from '../../../store/loader/actions';
 import { useDispatch } from 'react-redux';
 import { Table, Checkbox } from 'antd';
 import { useLazyStudyVisitPermissionsListGetQuery } from '../../../store/services/Visit';
+import { showToast } from '../../../store/toast/actions';
 
 const PermissionsRole = props => {
 
@@ -121,15 +122,10 @@ const PermissionsRole = props => {
                 studyPageId: type === "page" ? id : null,
                 permissionKey: key
             });
-            if (response.data.isSuccess) {
-                props.toast(props.t(response.data.message), true);
-                dispatch(endloading());
-            } else {
-                props.toast(props.t(response.data.message), false);
-                dispatch(endloading());
-            }
+            dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
+            dispatch(endloading());
         } catch (e) {
-            props.toast(props.t("An unexpected error occurred."), false);
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }; 

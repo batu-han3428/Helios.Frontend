@@ -1,9 +1,8 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { withTranslation } from "react-i18next";
 import { Row, Col, CardHeader, Card, CardBody, Alert } from "reactstrap";
 import "./sso.css";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { useLazyTenantListGetQuery, useSsoLoginPostMutation } from '../../store/services/SSO/SSO_Api';
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../store/loader/actions';
@@ -11,9 +10,9 @@ import { useNavigate, Link, useParams } from "react-router-dom";
 import { setLocalStorage } from '../../helpers/local-storage/localStorageProcess';
 import { onLogin } from '../../helpers/Auth/useAuth';
 import { loginuser } from '../../store/actions';
-import ToastComp from '../../components/Common/ToastComp/ToastComp';
 import { Button, ConfigProvider } from 'antd';
 import { TinyColor } from '@ctrl/tinycolor';
+import { showToast } from '../../store/toast/actions';
 
 
 const SSO_Tenants = props => {
@@ -29,8 +28,6 @@ const SSO_Tenants = props => {
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
-
-    const toastRef = useRef();
 
     const [data, setData] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -78,19 +75,13 @@ const SSO_Tenants = props => {
 
                 dispatch(endloading())
                 if (result === false) {
-                    toastRef.current.setToast({
-                        message: props.t("An unexpected error occurred."),
-                        stateToast: false
-                    });
+                    dispatch(showToast(props.t("An unexpected error occurred."), false, false));
                 } else {
                     dispatch(loginuser(result));
                     navigate("/");
                 }
             } else {
-                toastRef.current.setToast({
-                    message: props.t("An unexpected error occurred."),
-                    stateToast: false
-                });
+                dispatch(showToast(props.t("An unexpected error occurred."), false, false));
             }
            
         } else if (role === "4") {
@@ -99,7 +90,6 @@ const SSO_Tenants = props => {
     }
 
     return (
-        <>
         <div className="page-content">
             <div className="container-fluid">
                 <Row style={{ marginTop: "10px" }}>
@@ -172,11 +162,7 @@ const SSO_Tenants = props => {
                     </Col>
                 </Row>
             </div>
-            </div>
-        <ToastComp
-            required={toastRef}
-        />
-        </>
+        </div>
     );
 };
 

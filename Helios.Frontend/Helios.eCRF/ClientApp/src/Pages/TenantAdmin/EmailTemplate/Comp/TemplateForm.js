@@ -21,6 +21,7 @@ import { arraysHaveSameItems } from '../../../../helpers/General/index';
 import { useEmailTemplateSetMutation, useLazyEmailTemplateGetQuery } from '../../../../store/services/EmailTemplate';
 import htmlToDraft from 'html-to-draftjs';
 import templateTypeItems from '../TemplateTypeItems';
+import { showToast } from '../../../../store/toast/actions';
 
 
 const TemplateForm = props => {
@@ -59,7 +60,7 @@ const TemplateForm = props => {
             dispatch(endloading());
         } else if (isError && !isLoading) {
             dispatch(endloading());
-            props.toast(props.t("An unexpected error occurred."), false);
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
         } else {
             dispatch(endloading());
         }
@@ -184,7 +185,7 @@ const TemplateForm = props => {
                     navigate(`/email-templates/${props.studyId}`, { state: { message: response.data.message, state: true } });
                 } else {
                     dispatch(endloading());
-                    props.toast(response.data.message, false);
+                    dispatch(showToast(props.t(response.data.message), true, false));
                 }
             } catch (e) {
                 dispatch(endloading());

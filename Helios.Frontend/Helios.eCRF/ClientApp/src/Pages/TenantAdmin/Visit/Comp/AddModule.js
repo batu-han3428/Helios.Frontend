@@ -6,6 +6,7 @@ import { endloading, startloading } from '../../../../store/loader/actions';
 import { Table, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useLazyModuleListGetQuery, useAddStudyModuleSetMutation } from "../../../../store/services/Visit";
+import { showToast } from '../../../../store/toast/actions';
 
 const AddModule = props => {
 
@@ -22,40 +23,23 @@ const AddModule = props => {
             }
             const response = await addStudyModuleSet({ moduleIds: selectedRowKeys, pageId: props.record.id });
             if (response.data.isSuccess) {
-                props.toast.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: true
-                });
+                dispatch(showToast(props.t(response.data.message), true, true));
                 if (response.data.values !== null) {
-                    props.toast.current.setToast({
-                        message: props.t("There is no element in the module you want to add. Please add element first.") + "\n" + response.data.values,
-                        stateToast: false,
-                        autoHide: false
-                    });
+                    dispatch(showToast(props.t("There is no element in the module you want to add. Please add element first.") + "\n" + response.data.values, false, false));
                 }
                 dispatch(endloading());
                 props.toggleModal();
             } else {
                 if (response.data.message !== "") {
-                    props.toast.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: false
-                    });
+                    dispatch(showToast(props.t(response.data.message), true, false));
                 }
                 if (response.data.values !== null) {
-                    props.toast.current.setToast({
-                        message: props.t("There is no element in the module you want to add. Please add element first.") + "\n" + response.data.values,
-                        stateToast: false,
-                        autoHide: false
-                    });
+                    dispatch(showToast(props.t("There is no element in the module you want to add. Please add element first.") + "\n" + response.data.values, false, false));
                 }
                 dispatch(endloading());
             }
         } catch (e) {
-            props.toast.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }
@@ -122,14 +106,10 @@ const AddModule = props => {
     useEffect(() => {      
         if (!isLoading && !error && moduleData) {
             setTotalHeight(moduleData.length * 50);
-          /*  setData(moduleData);*/
             handleDataChange();
             dispatch(endloading());
         } else if (!isLoading && error) {
-            props.toast.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }, [moduleData, error, isLoading]);

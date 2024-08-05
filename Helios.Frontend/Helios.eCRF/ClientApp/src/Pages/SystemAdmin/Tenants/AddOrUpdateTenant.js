@@ -1,5 +1,5 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { withTranslation } from "react-i18next";
@@ -14,12 +14,10 @@ import Dropzone from "react-dropzone";
 import timezones from 'timezones-list';
 import { useTenantSetMutation, useLazyTenantGetQuery } from '../../../store/services/Tenants';
 import { base64ToFile } from '../../../helpers/base64_helper';
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
+import { showToast } from '../../../store/toast/actions';
 
 
 const AddOrUpdateTenant = props => {
-
-    const toastRef = useRef();
 
     const userInformation = useSelector(state => state.rootReducer.Login);
 
@@ -114,19 +112,13 @@ const AddOrUpdateTenant = props => {
 
                 if (response.data.isSuccess) {
                     dispatch(endloading());
-                    toastRef.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: true
-                    });
+                    dispatch(showToast(props.t(response.data.message), true, true));
                     if (validationType.values.id === 0) {
                         validationType.setFieldValue("id", response.data.values.id);
                     }
                 } else {
                     dispatch(endloading());
-                    toastRef.current.setToast({
-                        message: response.data.values.hasOwnProperty("change") ? props.t(response.data.message).replace(/@Change/g, response.data.values.change) : props.t(response.data.message),
-                        stateToast: false
-                    });
+                    dispatch(showToast(response.data.values.hasOwnProperty("change") ? props.t(response.data.message).replace(/@Change/g, response.data.values.change) : props.t(response.data.message), true, false));
                 }
             } catch (e) {
                 dispatch(endloading());
@@ -170,16 +162,12 @@ const AddOrUpdateTenant = props => {
             dispatch(endloading());
         } else if (isError && !isLoading) {
             dispatch(endloading());
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
         }
     }, [tenantData, isError, isLoading]);
 
     return (
-        <>
-            <div className="page-content">
+        <div className="page-content">
                 <div className="container-fluid">
                     <div className="page-title-box">
                         <Row className="align-items-center" style={{ borderBottom: "1px solid black" }}>
@@ -337,10 +325,6 @@ const AddOrUpdateTenant = props => {
                     </Row>
                 </div>
             </div>
-            <ToastComp
-                ref={toastRef}
-            />
-        </>
     )
 }
 

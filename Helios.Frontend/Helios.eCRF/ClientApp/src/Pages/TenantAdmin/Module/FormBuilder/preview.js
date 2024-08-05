@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Row, Col } from "reactstrap";
 import { useParams, useNavigate } from "react-router-dom";
 import './formBuilder.css';
 import { useDispatch } from "react-redux";
 import { startloading, endloading } from '../../../../store/loader/actions';
-import ToastComp from '../../../../components/Common/ToastComp/ToastComp';
 import TextElement from '../Elements/TextElement/textElement.js';
 import NumericElement from '../Elements/NumericElement/numericElement.js';
 import RadioElement from '../Elements/RadioElement/radioElement.js';
@@ -26,7 +25,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HiddenElement from '../Elements/HiddenElement/hiddenElement';
 
 function Preview() {
-    const toastRef = useRef();
     const [tenantId, setTenantId] = useState(0);
     const { moduleId, moduleName, isStudy } = useParams();
     const [dependentData, setDependentData] = useState([]);
@@ -293,9 +291,6 @@ function Preview() {
                 </Row>
                 {content}
             </div>
-            <ToastComp
-                ref={toastRef}
-            />
         </div>
     );
 }

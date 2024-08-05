@@ -7,16 +7,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import { useLazyRolePermissionListGetQuery, useSetPermissionMutation, useRoleDeleteMutation, useLazyStudyRolePermissionsListGetQuery } from '../../../store/services/Permissions';
 import { useSelector, useDispatch } from 'react-redux';
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2'
 import PermissionAddOrUpdateRole from './PermissionAddOrUpdateRole';
 import PermissionShowUsersRole from './PermissionShowUsersRole';
 import PermissionsRole from './PermissionsRole';
+import { showToast } from '../../../store/toast/actions';
 
 const Permission = props => {
-
-    const toastRef = useRef();
 
     const modalRef = useRef();
 
@@ -34,13 +32,6 @@ const Permission = props => {
     const [modalButton, setModalButton] = useState(true);
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
-
-    const modalToast = (message, state) => {
-        toastRef.current.setToast({
-            message: message,
-            stateToast: state
-        });
-    }
 
     const toggleAccordion = (key) => {
         setOpenSections(prevOpenSections => ({
@@ -101,24 +92,13 @@ const Permission = props => {
             permissionKey: key,
         };     
         const response = await setPermission(model);
-        if (response.data.isSuccess) {
-            toastRef.current.setToast({
-                message: props.t(response.data.message),
-                stateToast: true
-            });
-            dispatch(endloading());
-        } else {
-            toastRef.current.setToast({
-                message: props.t(response.data.message),
-                stateToast: false
-            });
-            dispatch(endloading());
-        }
+        dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
+        dispatch(endloading());
     }
 
     const updateRole = (id, name) => {
         setModalButton(true);
-        setModalContent(<PermissionAddOrUpdateRole toast={modalToast} refs={modalContentRef} studyId={studyInformation.studyId} tenantId={userInformation.tenantId} userId={userInformation.userId} roleId={id} selectedRole={name} />);
+        setModalContent(<PermissionAddOrUpdateRole refs={modalContentRef} studyId={studyInformation.studyId} tenantId={userInformation.tenantId} userId={userInformation.userId} roleId={id} selectedRole={name} />);
         setModalTitle(props.t("Update role"));
         setModalButtonText(props.t("Update"));
         modalRef.current.tog_backdrop();
@@ -126,7 +106,7 @@ const Permission = props => {
 
     const addRole = () => {
         setModalButton(true);
-        setModalContent(<PermissionAddOrUpdateRole toast={modalToast} refs={modalContentRef} studyId={studyInformation.studyId} tenantId={userInformation.tenantId} userId={userInformation.userId} />);
+        setModalContent(<PermissionAddOrUpdateRole refs={modalContentRef} studyId={studyInformation.studyId} tenantId={userInformation.tenantId} userId={userInformation.userId} />);
         setModalTitle(props.t("Add a role"));
         setModalButtonText(props.t("Save"));
         modalRef.current.tog_backdrop();
@@ -135,14 +115,14 @@ const Permission = props => {
     const showUsersRole = (id) => {
         setModalButton(false);
         setModalTitle(props.t("Users"));
-        setModalContent(<PermissionShowUsersRole toast={modalToast} refs={modalContentRef} id={id} />);
+        setModalContent(<PermissionShowUsersRole refs={modalContentRef} id={id} />);
         modalRef.current.tog_backdrop();
     };
 
     const pagePermissionsRole = (id) => {
         setModalButton(false);
         setModalTitle(props.t("Page permissions"));
-        setModalContent(<PermissionsRole toast={modalToast} refs={modalContentRef} id={id} />);
+        setModalContent(<PermissionsRole refs={modalContentRef} id={id} />);
         modalRef.current.tog_backdrop();
     };
 
@@ -314,9 +294,6 @@ const Permission = props => {
                 body={modalContent}
                 buttonText={modalButtonText}
                 isButton={modalButton}
-            />
-            <ToastComp
-                ref={toastRef}
             />
         </React.Fragment>
     );

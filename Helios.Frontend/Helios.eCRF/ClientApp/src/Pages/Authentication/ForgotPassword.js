@@ -3,13 +3,11 @@ import React, { useImperativeHandle } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { withTranslation } from "react-i18next";
-import {
-    Label, Input, Form
-} from "reactstrap";
+import { Label, Input, Form } from "reactstrap";
 import { useForgotPasswordPostMutation } from '../../store/services/Login';
 import { startloading, endloading } from '../../store/loader/actions';
 import { useDispatch } from 'react-redux';
-
+import { showToast } from '../../store/toast/actions';
 
 const ForgotPassword = props => {
 
@@ -37,10 +35,10 @@ const ForgotPassword = props => {
                 const response = await forgotPasswordPost(values);
                 if (response.data.isSuccess) {
                     props.onToggleModal();
-                    props.toast(props.t(response.data.message), true);
+                    dispatch(showToast(props.t(response.data.message), false, true));
                     dispatch(endloading());
                 } else {
-                    props.toast(props.t(response.data.message), false);
+                    dispatch(showToast(props.t(response.data.message), false, false));
                     dispatch(endloading());
                 }
             } catch (e) {

@@ -97,6 +97,27 @@ export const SubjectApi = createApi({
             }),
             invalidatesTags: ['SubjectElement'],
         }),
+        getSubjectComments: builder.query({
+            query: (subjectElementId) => `/Subject/GetSubjectComments/${subjectElementId}`,
+            providesTags: ['Comment'],
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0
+        }),
+        removeSubjectComment: builder.mutation({
+            query: (id) => ({
+                url: `/Subject/RemoveSubjectComment?id=${id}`,
+                method: 'POST'
+            }),
+            invalidatesTags: ['Comment'],
+        }),
+        setSubjectComment: builder.mutation({
+            query: (values) => ({
+                url: '/Subject/SetSubjectComment',
+                method: 'POST',
+                body: values,
+            }),
+            invalidatesTags: ['Comment'],
+        }),
     }),
 });
 
@@ -119,5 +140,11 @@ export const { useLazySubjectVisitAnnotatedCrfGetQuery } = SubjectApi;
 export const { useAddDataGridSubjectElementsMutation } = SubjectApi;
 
 export const { useRemoveDatagridSubjectElementsMutation } = SubjectApi;
+
+export const { useLazyGetSubjectCommentsQuery } = SubjectApi;
+
+export const { useRemoveSubjectCommentMutation } = SubjectApi;
+
+export const { useSetSubjectCommentMutation } = SubjectApi;
 
 export default SubjectApi;

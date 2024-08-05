@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { showToast } from "../../../../store/toast/actions";
 library.add( fas);
 
 
@@ -21,7 +23,6 @@ const EditableCell = ({
     dataSource,
     setDataSource,
     t,
-    toastRef,
     openModal,
     ranking,
     toggleModal,
@@ -30,9 +31,11 @@ const EditableCell = ({
 
     const form = useContext(EditableContext);
 
+    const dispatch = useDispatch();
+
     const navigate = useNavigate();
 
-    const { handleDelete } = useApiHelper(dataSource, setDataSource, toastRef);
+    const { handleDelete } = useApiHelper(dataSource, setDataSource);
 
     const modalRef = useRef();
 
@@ -47,10 +50,7 @@ const EditableCell = ({
             const values = await form.validateFields();
 
             if (dataIndex === 'name' && values.name === record[dataIndex]) {
-                toastRef.current.setToast({
-                    message: t("No changes were made. Please make changes to save."),
-                    stateToast: false
-                });
+                dispatch(showToast(t("No changes were made. Please make changes to save."), true, false));
                 return false;
             }
             if (values.hasOwnProperty("")) {
@@ -163,7 +163,7 @@ const EditableCell = ({
                 items.push({
                     key: '2',
                     label: (
-                        <a onClick={() => handleAddModule(openModal, record, modalRef, toastRef, toggleModal)}>{t("Add module")}</a>
+                        <a onClick={() => handleAddModule(openModal, record, modalRef, toggleModal)}>{t("Add module")}</a>
                     ),
                     icon: <FontAwesomeIcon icon="fa-solid fa-plus" style={{ color: "#3498db", }} />,
                     style: { color: "#3498db" },
@@ -185,7 +185,7 @@ const EditableCell = ({
                 items.push({
                     key: '3',
                     label: (
-                        <a onClick={() => handleSettings(openModal, record, modalRef, toastRef)}>{t("Settings")}</a>
+                        <a onClick={() => handleSettings(openModal, record, modalRef)}>{t("Settings")}</a>
                     ),
                     icon: <FontAwesomeIcon icon="fa-solid fa-gears" style={{ color: "#f1c40f", }} />,
                     style: { color: "#f1c40f" },

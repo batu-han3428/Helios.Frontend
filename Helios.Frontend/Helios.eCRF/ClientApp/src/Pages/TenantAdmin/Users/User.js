@@ -1,8 +1,6 @@
 ﻿import PropTypes from 'prop-types';
 import React, { useState, useEffect, useRef } from "react";
-import {
-    Row, Col, Button, Card, CardBody, FormFeedback, Label, Form, Dropdown, DropdownToggle, DropdownMenu, DropdownItem
-} from "reactstrap";
+import { Row, Col, Button, Card, CardBody, FormFeedback, Label, Form, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
 import { withTranslation } from "react-i18next";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
@@ -10,7 +8,6 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useLazyUserListGetQuery, useUserGetQuery, useUserSetMutation, useUserActivePassiveMutation, useUsersActivePassiveMutation, useUserDeleteMutation, useUserResetPasswordMutation } from '../../../store/services/Users';
 import { useSelector, useDispatch } from 'react-redux';
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2'
 import { formatDate } from "../../../helpers/format_date";
@@ -23,10 +20,9 @@ import "./user.css";
 import { arraysHaveSameItems } from '../../../helpers/General/index';
 import { exportToExcel } from '../../../helpers/ExcelDownload';
 import { SearchOutlined } from '@ant-design/icons';
+import { showToast } from '../../../store/toast/actions';
 
 const User = props => {
-
-    const toastRef = useRef();
 
     const modalRef = useRef();
 
@@ -312,10 +308,7 @@ const User = props => {
            /* return () => clearTimeout(timer);*/
         }
         else if (!isLoading && error) {
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }, [usersData, error, isLoading, props.t, dropdownOpen]);
@@ -335,10 +328,7 @@ const User = props => {
             option[0].options.push(...roles);
             setOptionGroupRoles(option);
         } else if (!isLoadingRoles && isErrorRoles) {
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
         }
     }, [rolesData, isErrorRoles, isLoadingRoles]);
 
@@ -361,13 +351,9 @@ const User = props => {
             };
             sites.unshift(selectAllOption);
             option[0].options.push(...sites);
-            console.log(option)
             setOptionGroupSites(option);
         } else if (!isLoadingSites && isErrorSites) {
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
         }
     }, [sitesData, isErrorSites, isLoadingSites]);
 
@@ -421,17 +407,11 @@ const User = props => {
                         firstAddition: false
                     });
                     if (response.data.isSuccess) {
-                        toastRef.current.setToast({
-                            message: props.t(response.data.message),
-                            stateToast: true
-                        });
+                        dispatch(showToast(props.t(response.data.message), true, true));
                         modalRef.current.tog_backdrop();
                         dispatch(endloading());
                     } else {
-                        toastRef.current.setToast({
-                            message: props.t(response.data.message),
-                            stateToast: false
-                        });
+                        dispatch(showToast(props.t(response.data.message), true, false));
                         dispatch(endloading());
                     }
                 } else {
@@ -698,10 +678,7 @@ const User = props => {
             dispatch(startloading());
             if (!item.isActive) {
                 dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t("Please activate the account first and then try this process again."),
-                    stateToast: false
-                });
+                dispatch(showToast(props.t("Please activate the account first and then try this process again."), true, false));
                 return;
             }
 
@@ -723,25 +700,11 @@ const User = props => {
                 responsiblePersonIds: []
             };
             const response = await userResetPassword(resetPasswordData);
-            if (response.data.isSuccess) {
-                dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: true
-                });
-            } else {
-                dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: false
-                });
-            }
+            dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
+            dispatch(endloading());
         } catch (error) {
             dispatch(endloading());
-            toastRef.current.setToast({
-                message: props.t("An error occurred while processing your request."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An error occurred while processing your request."), true, false));
         }
     }
 
@@ -775,10 +738,7 @@ const User = props => {
             } else {
                 setSkip(true);
                 dispatch(endloading());
-                toastRef.current.setToast({
-                    message: userData.message,
-                    stateToast: false
-                });
+                dispatch(showToast(props.t(userData.message), true, false));
             }
         }
     }, [userData, isErrorUser, isLoadingUser]);
@@ -1073,9 +1033,6 @@ const User = props => {
                     </Row>
                 </div>
             </div>
-            <ToastComp
-                ref={toastRef}
-            />
         </React.Fragment>
     );
 };

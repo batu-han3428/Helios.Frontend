@@ -590,5 +590,39 @@ namespace Helios.eCRF.Services
             }
             return -1;
         }
+
+        public async Task<RestResponse<List<SubjectCommentModel>>> GetSubjectComments(Int64 subjectElementId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/GetSubjectComments", Method.Get);
+                req.AddParameter("subjectElementId", subjectElementId);
+                var result = await client.ExecuteAsync<List<SubjectCommentModel>>(req);
+                return result;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> RemoveSubjectComment(Int64 id)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest($"CoreSubject/RemoveSubjectComment?id={id}", Method.Post);
+                AddApiHeaders(req);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> SetSubjectComment(SubjectCommentDTO dto)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/SetSubjectComment", Method.Post);
+                AddApiHeaders(req);
+                req.AddJsonBody(dto);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
     }
 }

@@ -6,17 +6,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Table } from 'antd';
 import ModalComp from "../../../components/Common/ModalComp/ModalComp";
 import AddOrUpdateSystemAdmin from "./AddOrUpdateSystemAdmin";
-import ToastComp from "../../../components/Common/ToastComp/ToastComp";
 import { useSelector, useDispatch } from 'react-redux';
 import { useSystemAdminListGetQuery, useSystemAdminActivePassiveMutation, useSystemAdminResetPasswordMutation, useSystemAdminDeleteMutation } from '../../../store/services/SystemAdmin/SystemAdmin';
 import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2';
 import { countryNumber } from "../../../helpers/phonenumber_helper";
+import { showToast } from "../../../store/toast/actions";
 
 
 const ListSystemAdmin = props => {
-
-    const toastRef = useRef();
 
     const modalRef = useRef();
 
@@ -31,15 +29,9 @@ const ListSystemAdmin = props => {
     const [modalContent, setModalContent] = useState(null);
     const [table, setTable] = useState([]);
 
-    const toastHandle = (message, state) => {
-        toastRef.current.setToast({
-            message: message,
-            stateToast: state
-        });
-    }
 
     const addSystemAdmin = () => {
-        setModalContent(<AddOrUpdateSystemAdmin isAdd={true} userId={userInformation.userId} refs={modalContentRef} toast={toastHandle} />);
+        setModalContent(<AddOrUpdateSystemAdmin isAdd={true} userId={userInformation.userId} refs={modalContentRef} />);
         setModalTitle(props.t("Add a system admin"));
         setModalButtonText(props.t("Save"));
         modalRef.current.tog_backdrop();
@@ -47,13 +39,10 @@ const ListSystemAdmin = props => {
 
     const updateSystemAdmin = (item) => {
         if (!item.isActive) {
-            toastRef.current.setToast({
-                message: props.t("Please activate the account first and then try this process again."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("Please activate the account first and then try this process again."), true, false));
             return;
         }       
-        setModalContent(<AddOrUpdateSystemAdmin isAdd={false} userData={item} userId={userInformation.userId} refs={modalContentRef} toast={toastHandle} />);
+        setModalContent(<AddOrUpdateSystemAdmin isAdd={false} userData={item} userId={userInformation.userId} refs={modalContentRef} />);
         setModalTitle(props.t("Update"));
         setModalButtonText(props.t("Update"));
         modalRef.current.tog_backdrop();
@@ -128,10 +117,7 @@ const ListSystemAdmin = props => {
 
             dispatch(endloading());
         } else if (!isLoading && error) {
-            toastRef.current.setToast({
-                message: props.t("An unexpected error occurred."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
     }, [usersData, error, isLoading]);
@@ -194,10 +180,7 @@ const ListSystemAdmin = props => {
             dispatch(startloading());
             if (!item.isActive) {
                 dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t("Please activate the account first and then try this process again."),
-                    stateToast: false
-                });
+                dispatch(showToast(props.t("Please activate the account first and then try this process again."), true, false));
                 return;
             }
             const response = await systemAdminResetPassword({
@@ -206,25 +189,11 @@ const ListSystemAdmin = props => {
                 email: item.email,
                 language: props.i18n.language
             });
-            if (response.data.isSuccess) {
-                dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: true
-                });
-            } else {
-                dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: false
-                });
-            }
+            dispatch(endloading());
+            dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
         } catch (error) {
             dispatch(endloading());
-            toastRef.current.setToast({
-                message: props.t("An error occurred while processing your request."),
-                stateToast: false
-            });
+            dispatch(showToast(props.t("An error occurred while processing your request."), true, false));
         }
     }
 
@@ -325,9 +294,6 @@ const ListSystemAdmin = props => {
                 buttonText={modalButtonText}
                 isButton={true}
                 size="lg"
-            />
-            <ToastComp
-                ref={toastRef}
             />
         </>
     )

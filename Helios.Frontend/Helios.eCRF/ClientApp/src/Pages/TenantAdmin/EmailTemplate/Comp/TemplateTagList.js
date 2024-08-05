@@ -12,6 +12,7 @@ import ModalComp from '../../../../components/Common/ModalComp/ModalComp';
 import Select from "react-select";
 import Swal from 'sweetalert2';
 import "./templateTagList.css";
+import { showToast } from '../../../../store/toast/actions';
 
 
 const TemplateTagList = props => {
@@ -37,7 +38,7 @@ const TemplateTagList = props => {
             dispatch(endloading());
         } else if (isError && !isLoading) {
             dispatch(endloading());
-            props.toast(props.t("An unexpected error occurred."), false);
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
         }
     }, [emailTemplateTagData, isError, isLoading]);
 
@@ -137,10 +138,10 @@ const TemplateTagList = props => {
                 if (response.data.isSuccess) {
                     modalRef.current.tog_backdrop();
                     dispatch(endloading());
-                    props.toast(props.t(response.data.message), true);
+                    dispatch(showToast(props.t(response.data.message), true, true));
                 } else {
                     dispatch(endloading());
-                    props.toast(props.t(response.data.message), false);
+                    dispatch(showToast(props.t(response.data.message), true, false));
                 }
             } catch (e) {
                 dispatch(endloading());
@@ -154,10 +155,10 @@ const TemplateTagList = props => {
 
         navigator.clipboard.writeText(textToCopy)
             .then(() => {
-                props.toast(props.t("Tag copied") + " " + textToCopy, true);
+                dispatch(showToast(props.t("Tag copied") + " " + textToCopy, true, true));
             })
             .catch((err) => {
-                props.toast(props.t("An error occurred while copying the tag."), false);
+                dispatch(showToast(props.t("An error occurred while copying the tag."), true, false));
             });
     }
 

@@ -26,6 +26,7 @@ import { withTranslation } from "react-i18next";
 import { GetElementNameByKey } from '../Elements/Common/utils.js';
 import { GetAllElementList } from './allElementList.js';
 import { API_BASE_URL } from '../../../../constants/endpoints';
+import { showToast } from '../../../../store/toast/actions.js';
 
 function ElementList(props) {
     const baseUrl = props.FormType === 1 ? API_BASE_URL + "Module" : API_BASE_URL + "Study";
@@ -78,16 +79,10 @@ function ElementList(props) {
             .then(response => response.json())
             .then(data => {
                 if (data.isSuccess) {
-                    props.toast.current.setToast({
-                        message: data.message,
-                        stateToast: true
-                    });
+                    dispatch(showToast(props.t(data.message), true, true));
                     window.location.reload();
                 } else {
-                    props.toast.current.setToast({
-                        message: data.message,
-                        stateToast: false
-                    });
+                    dispatch(showToast(props.t(data.message), true, false));
                 }
 
                 dispatch(endloading());
@@ -118,34 +113,24 @@ function ElementList(props) {
                         .then(response => response.json())
                         .then(data => {
                             if (data.isSuccess) {
-                                props.toast.current.setToast({
-                                    message: data.message,
-                                    stateToast: true
-                                });
+                                dispatch(showToast(props.t(data.message), true, true));
                                 window.location.reload();
                             } else {
-                                props.toast.current.setToast({
-                                    message: data.message,
-                                    stateToast: false
-                                });
+                                dispatch(showToast(props.t(data.message), true, false));
                             }
 
                             dispatch(endloading());
                         })
                         .catch(error => {
-                            //console.error('Error:', error);
+                            dispatch(showToast(props.t("An error occurred while processing your request."), true, false));
                         })
                         .finally(() => {
                             dispatch(endloading());
                             window.location.reload();
                         });
                 } catch (error) {
-                    //dispatch(endloading());
-                    //Swal.fire('An error occurred', '', 'error');
-                    props.toast.current.setToast({
-                        message: 'An error occurred',
-                        stateToast: false
-                    });
+                    dispatch(endloading());
+                    dispatch(showToast(props.t("An error occurred while processing your request."), true, false));
                 }
             }
         })
