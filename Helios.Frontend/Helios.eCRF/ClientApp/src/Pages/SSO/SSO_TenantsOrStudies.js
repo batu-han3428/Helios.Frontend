@@ -56,7 +56,7 @@ const SSO_TenantsOrStudies = props => {
 
     const goToTenants = (role) => {
         if (role===2) {
-            navigate(`/add-system-admin`);
+            navigate(`/tenants`);
         }
         else {
             navigate(`/SSO-tenants/${role}`);
