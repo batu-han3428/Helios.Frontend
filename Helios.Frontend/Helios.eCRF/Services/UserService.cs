@@ -1161,7 +1161,16 @@ namespace Helios.eCRF.Services
                 return result;
             }
         }
-
+        private async Task<RestResponse<int>> GetUserSystemCount(Int64 userId)
+        {
+            using (var client = AuthServiceClient)
+            {
+                var req = new RestRequest("AuthAccount/GetUserSystemCount", Method.Get);
+                req.AddParameter("userId", userId);
+                var result = await client.ExecuteAsync<int>(req);
+                return result;
+            }
+        }
         private async Task<RestResponse<int>> GetUserStudyCount(Int64 userId)
         {
             using (var client = CoreServiceClient)
@@ -1187,7 +1196,16 @@ namespace Helios.eCRF.Services
                     StatusCode = HttpStatusCode.InternalServerError
                 };
             }
+            var systemCount = await GetUserSystemCount(userId);
 
+            if (!systemCount.IsSuccessful && systemCount.Data == null)
+            {
+                return new RestResponse<SSOModel>(restRequest)
+                {
+                    Data = null,
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
+            }
             var studyCount = await GetUserStudyCount(userId);
 
             if (!studyCount.IsSuccessful && studyCount.Data == null)
@@ -1201,7 +1219,7 @@ namespace Helios.eCRF.Services
 
             return new RestResponse<SSOModel>(restRequest)
             {
-                Data = new SSOModel { TenantCount = tenantCount.Data, StudyCount = studyCount.Data},
+                Data = new SSOModel {SystemCount=systemCount.Data, TenantCount = tenantCount.Data, StudyCount = studyCount.Data},
                 StatusCode = HttpStatusCode.OK
             };
         }

@@ -55,16 +55,26 @@ const SSO_TenantsOrStudies = props => {
     }, [data, isLoading, isError]);
 
     const goToTenants = (role) => {
-        navigate(`/SSO-tenants/${role}`);
+        if (role===2) {
+            navigate(`/add-system-admin`);
+        }
+        else {
+            navigate(`/SSO-tenants/${role}`);
+        }
+       
     }
     const Data = [
         {
+            id: 2,
+            name: props.t('System admin')
+        },
+        {
             id: 3,
-            name:"Admin"
+            name: props.t('Tenant admin')
         },
         {
             id: 4,
-            name: "Study"
+            name: props.t('Study')
         }
     ]
     const columns = [
@@ -89,11 +99,14 @@ const SSO_TenantsOrStudies = props => {
             }
         },
     ]
-    if (((tsCount.tenantCount && tsCount.tenantCount > 1) || (tsCount.studyCount && tsCount.studyCount > 0 && tsCount.tenantCount && tsCount.tenantCount > 0))) {
+    if (tsCount.systemCount && tsCount.systemCount > 0) {
         filteredData.push(Data[0]);
     }
-    if (((tsCount.studyCount && tsCount.studyCount > 1) || (tsCount.tenantCount && tsCount.tenantCount > 0 && tsCount.studyCount && tsCount.studyCount > 0))) {
+    if (((tsCount.tenantCount && tsCount.tenantCount > 1) || (tsCount.studyCount && tsCount.studyCount > 0 && tsCount.tenantCount && tsCount.tenantCount > 0))) {
         filteredData.push(Data[1]);
+    }
+    if (((tsCount.studyCount && tsCount.studyCount > 1) || (tsCount.tenantCount && tsCount.tenantCount > 0 && tsCount.studyCount && tsCount.studyCount > 0))) {
+        filteredData.push(Data[2]);
     }
     return (
         <div className="page-content">
