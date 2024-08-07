@@ -187,6 +187,7 @@ function ElementList(props) {
             case 9:
                 return <CheckElement
                     IsDisable={dsbl}
+                    IsRequired={param.isRequired}
                     Layout={param.layout}
                     ElementOptions={param.elementOptions}
                     Value={[]}
@@ -194,6 +195,7 @@ function ElementList(props) {
             case 10:
                 return <DropdownElement
                     IsDisable={isDisable}
+                    IsRequired={param.isRequired}
                     ElementOptions={param.elementOptions}
                 />
             case 11:

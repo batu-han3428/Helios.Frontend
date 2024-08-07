@@ -43,7 +43,7 @@ class DatagridElement extends Component {
             totalWidth: "",
             dataGridRowId: 0,
             newElements: [],
-            allRows: [],
+            allRows: [],           
         }
 
         this.toggleDgrdAddElementModal = this.toggleDgrdAddElementModal.bind(this);
@@ -254,7 +254,8 @@ class DatagridElement extends Component {
                 var a = {
                     SubjectVisitPageModuleId: this.props.SubjectVisitPageModuleId,
                     StudyVisitPageModuleElementId: item.studyVisitPageModuleElementId,
-                    DataGridRowId: rowId + 1
+                    DataGridRowId: rowId + 1,
+                    IsRequired: item.IsRequired
                 };
 
                 elems.push(a);
