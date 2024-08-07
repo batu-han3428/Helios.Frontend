@@ -311,7 +311,7 @@ class ListElementsProperties extends Component {
         this.props.changeSavedTagList(tmptgs);
     };
 
-    handleEditSavedTag = (id, index) => {
+    handleEditSavedTag = (id, index) => {        
         this.state.editIndex = index;
 
         if (id != undefined) {
@@ -346,19 +346,23 @@ class ListElementsProperties extends Component {
         else {
             var tt = this.state.savedTagList[index];
 
-            this.setState((prevState) => ({
-                rows: [...prevState.rows, {
-                    tagKey: '', tagName: tt.tagName, tagValue: tt.tagValue,
-                    tagNameInpCls: 'form-control',
-                    tagValueInpCls: 'form-control',
-                }], // Add a new row to the state
-            }));
-
             this.toggleNewTagModal(0, true);
             this.state.tagKeyDisableStatus = true;
             this.state.tagAddDisableStatus = true;
             this.state.tagAddDisplayStatus = "none";
             this.isEdit = true;
+
+            this.setState((prevState) => ({
+                rows: [...prevState.rows, {
+                    tagKey: '',
+                    tagName: tt.tagName,
+                    tagValue: tt.tagValue,
+                    tagNameInpCls: 'form-control',
+                    tagValueInpCls: 'form-control',
+                }], // Add a new row to the state
+            }));
+
+            
         }
     }
 
