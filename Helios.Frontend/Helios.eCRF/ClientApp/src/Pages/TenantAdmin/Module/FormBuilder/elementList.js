@@ -137,7 +137,7 @@ function ElementList(props) {
     }
 
     const renderElementsSwitch = (param) => {
-        const dsbl = isDisable ? "" : "disabled";
+        const dsbl = isDisable ? "disabled" : "";
         switch (param.elementType) {
             case 1:
                 return <LabelElement Title={param.title} />;

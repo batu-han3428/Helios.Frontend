@@ -62,7 +62,7 @@ function SubjectDetailElementList(props) {
         }
     }
     const renderElementsSwitch = useCallback((param) => {
-        const dsbl = props.IsDisable ? "" : "disabled";
+        const dsbl = isDisable ? "disabled" : "";
         const commonProps = {
             Id: param.subjectVisitPageModuleElementId,
             StudyVisitPageModuleElementId: param.studyVisitPageModuleElementId,
@@ -111,7 +111,7 @@ function SubjectDetailElementList(props) {
             default:
                 return "";
         }
-    }, [AutoSave, props.IsDisable, studyId, tenantId, subjectVisitPageModuleId]);
+    }, [AutoSave, isDisable, studyId, tenantId, subjectVisitPageModuleId]);
 
     const getItems = useCallback((param) => {
         const items = [

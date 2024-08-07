@@ -82,10 +82,9 @@ export const SubjectApi = createApi({
             },
         }),
         addDataGridSubjectElements: builder.mutation({
-            query: (values) => ({
-                url: '/Subject/AddDatagridSubjectElements',
+            query: (value) => ({
+                url: `/Subject/AddDatagridSubjectElements?datagridId=${value}`,
                 method: 'POST',
-                body: values,
             }),
             invalidatesTags: ['SubjectElement'],
         }),
@@ -93,7 +92,7 @@ export const SubjectApi = createApi({
             query: (values) => ({
                 url: '/Subject/RemoveDatagridSubjectElements',
                 method: 'POST',
-                body: values,
+                body: values
             }),
             invalidatesTags: ['SubjectElement'],
         }),

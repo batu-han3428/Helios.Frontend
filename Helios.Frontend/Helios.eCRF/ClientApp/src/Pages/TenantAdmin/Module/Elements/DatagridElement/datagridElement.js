@@ -199,26 +199,21 @@ class DatagridElement extends Component {
 
         var elements;
 
-        if (this.state.isDisable !== "") {
+        if (this.state.IsFromDesign) {
             if (result) {
-                if (this.state.IsFromDesign) {
-                    return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} FormType={this.state.FormType} />;
-                } else {
-                    elements = <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={false} />;
-                }
+                return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />;
             }
-            else
+            else {
                 return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleDgrdAddElementModal(colIndex + 1)} />;
-        } else {
+            }
+        }
+        else {
             if (result) {
-                if (this.state.IsFromDesign) {
-                    return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />;
-                }
-                else
-                    elements = <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={true} />;
-            } else
+                elements = <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
+            }
+            else {
                 return "";
-
+            }
         }
 
         if (isNew)
@@ -230,37 +225,8 @@ class DatagridElement extends Component {
     handleAddAnother = async () => {
         try {
             this.state.dispatch(startloading());
-            var rowId = this.state.dataGridRowId;
-            var newRowId;
-
-            for (let item of this.state.allRows[0]) {
-                if (item.content !== "") {
-                    newRowId = item.content.props.DataGridRowId;
-                    break;
-                }
-            }
-
-            var objs = [];
-
-            [...Array(this.state.columnCount)].map((_, columnIndex) => {
-                var res = this.getTdContent(columnIndex, newRowId, true);
-                var o = { content: res };
-                objs.push(o);
-            });
-
-            var elems = [];
-
-            this.state.newElements.map(item => {
-                var a = {
-                    SubjectVisitPageModuleId: this.props.SubjectVisitPageModuleId,
-                    StudyVisitPageModuleElementId: item.studyVisitPageModuleElementId,
-                    DataGridRowId: rowId + 1
-                };
-
-                elems.push(a);
-            })
-
-            const response = await this.state.dispatch(SubjectApi.endpoints.addDataGridSubjectElements.initiate(elems)).unwrap();
+          
+            const response = await this.state.dispatch(SubjectApi.endpoints.addDataGridSubjectElements.initiate(this.state.id)).unwrap();
 
             this.state.dispatch(endloading());
 
@@ -288,13 +254,18 @@ class DatagridElement extends Component {
                     elems.push(item.content.props.ElementList[0].subjectVisitPageModuleElementId);
             })
 
-            const response = await this.state.dispatch(SubjectApi.endpoints.removeDatagridSubjectElements.initiate(elems)).unwrap();
+            let singleLine = false;
+
+            if (this.state.allRows.length === 1) singleLine = true;
+
+            const response = await this.state.dispatch(SubjectApi.endpoints.removeDatagridSubjectElements.initiate({ elementIds: elems, singleLine: singleLine })).unwrap();
 
             this.state.dispatch(endloading());
 
             this.props.showToast(this.props.t(response.message), true, response.isSuccess);
         } catch (e) {
             this.props.showToast(this.props.t("An unexpected error occurred."), true, false);
+            this.state.dispatch(endloading());
         }
     };
 

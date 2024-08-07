@@ -102,16 +102,16 @@ namespace Helios.eCRF.Controllers
         }
 
         [HttpPost]
-        public async Task<ApiResponse<dynamic>> AddDatagridSubjectElements(List<SubjectVisitPageModuleElementModel> model)
+        public async Task<ApiResponse<dynamic>> AddDatagridSubjectElements(Int64 datagridId)
         {
-            var result = await _subjectService.AddDatagridSubjectElements(model);
+            var result = await _subjectService.AddDatagridSubjectElements(datagridId);
             return result;
         }
 
         [HttpPost]
-        public async Task<ApiResponse<dynamic>> RemoveDatagridSubjectElements(List<Int64> elementIds)
+        public async Task<ApiResponse<dynamic>> RemoveDatagridSubjectElements(DatagridRemoveDTO dto)
         {
-            var result = await _subjectService.RemoveDatagridSubjectElements(elementIds);
+            var result = await _subjectService.RemoveDatagridSubjectElements(dto);
             return result;
         }
 
