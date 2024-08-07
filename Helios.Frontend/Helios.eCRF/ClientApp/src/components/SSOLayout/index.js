@@ -13,38 +13,36 @@ import UiSessionTimeoutComp from '../Common/UiSessionTimeoutComp/UiSessionTimeou
 import Header from "./Header";
 import { API_BASE_URL } from '../../constants/endpoints';
 
-
 class Layout extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isMobile: /iPhone|iPad|iPod|Android/i.test(navigator.userAgent),
-            permissiondata: []
-        };
+            permissiondata: [],          
+        };     
     }
-
     capitalizeFirstLetter = string => {
         return string.charAt(1).toUpperCase() + string.slice(2);
     };
-    useUserPermissionsListGetQuery() {
-        
-        fetch(API_BASE_URL + 'User/GetUserPermissions?studyId=' + 8, {
-            method: 'GET',
-        })
-            .then(response => response.json())
-            .then(data => {
-                this.state.permissiondata = data;
+    //useUserPermissionsListGetQuery() {
+
+    //    fetch(API_BASE_URL + 'User/GetUserPermissions?studyId=' + 8, {
+    //        method: 'GET',
+    //    })
+    //        .then(response => response.json())
+    //        .then(data => {
+    //            this.state.permissiondata = data;
 
 
-            })
-            .catch(error => {
-                //console.error('Error:', error);
-            });
+    //        })
+    //        .catch(error => {
+    //            //console.error('Error:', error);
+    //        });
 
-        //else {
-        //    this.fillDependentFieldList();
-        //}
-    }
+    //    //else {
+    //    //    this.fillDependentFieldList();
+    //    //}
+    //}
 
     componentDidMount() {
         window.scrollTo(0, 0);
@@ -90,7 +88,7 @@ Layout.propTypes = {
     location: PropTypes.object,
     showRightSidebar: PropTypes.any,
     showRightSidebarAction: PropTypes.func,
-    topbarTheme: PropTypes.any
+    topbarTheme: PropTypes.any, 
 };
 
 const mapStatetoProps = state => {

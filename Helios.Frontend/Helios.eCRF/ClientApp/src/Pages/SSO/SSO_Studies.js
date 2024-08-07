@@ -8,6 +8,10 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import { useLazyStudiesListGetQuery } from '../../store/services/SSO/SSO_Api';
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../store/loader/actions';
+import { API_BASE_URL } from "../../constants/endpoints";
+import { addStudy } from "../../store/actions";
+import { SearchOutlined } from '@ant-design/icons';
+import { Table } from 'antd';
 
 
 const SSO_Studies = props => {
@@ -23,7 +27,7 @@ const SSO_Studies = props => {
     const [data, setData] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState("2");
+    const [selectedOption, setSelectedOption] = useState("1");
 
     const [triggerStudies, { data: studiesData, isLoading: isLoadingStudies, isError: isErrorStudies } ] = useLazyStudiesListGetQuery();
 
@@ -64,11 +68,62 @@ const SSO_Studies = props => {
 
         return isStatusMatched && (isStudyNameMatched || isUserRoleNameMatched);
     });
-
-    const goToStudy = () => {
-        navigate("/UnderConstruction");
+    const getStudy = async (result) => {
+        const apiUrl = API_BASE_URL + `Study/GetStudy/${result.studyId}`;
+        fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${result.token}`
+            },
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                dispatch(addStudy(data));
+            })
+            .catch(error => {
+             
+            });
+    };
+    const goToStudy = (studyId) => {
+        getStudy({ token: userInformation.token, studyId: studyId });
+        navigate(`/subjectlist/${studyId}`);
     }
-
+    const columns = [
+        {
+            title: props.t('Study name'),
+            dataIndex: 'studyName',
+            sorter: (a, b) => a.studyName.localeCompare(b.studyName),
+            sortDirections: ['ascend', 'descend'],
+            onFilter: (value, record) => String(record.studyName).toLowerCase().includes(value.toLowerCase()),
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        },
+        {
+            title: props.t('User role name'),
+            dataIndex: 'userRoleName',
+            sorter: (a, b) => a.userRoleName.localeCompare(b.userRoleName),
+            sortDirections: ['ascend', 'descend'],
+            onFilter: (value, record) => String(record.userRoleName).toLowerCase().includes(value.toLowerCase()),
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        },
+        {
+            title: props.t('Actions'),
+            dataIndex: 'actions',
+            width: "170px",
+            render: (text, record) => {
+                return (
+                    <div className="icon-container">
+                        <div className="icon icon-demo" onClick={() => goToStudy(record.studyId)}></div>
+                    </div>
+                );
+            }
+        },
+    ]
     return (
         <div className="page-content">
             <div className="container-fluid">
@@ -114,31 +169,26 @@ const SSO_Studies = props => {
                                 </div>
                             </CardHeader>
                             <CardBody>
-                                <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
+                                <div style={{ flexWrap: "wrap", justifyContent: "center" }}>
                                     {filteredData.length === 0 ? (
                                         <Alert color="warning" style={{ height: "50px" }}>
                                             {props.t("You do not have an active study, if you think there is an error, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
                                         </Alert>
                                     ) : (
-                                        filteredData.map((item, index) => (
-                                        <div key={ index } className="col-lg-2" style={{ border: "1px solid rgb(231, 234, 236)", margin: "10px", padding: "0px" }} >
-                                            <div className="ibox float-e-margins" style={{ marginBottom: "0" }} >
-                                                <div className="ibox-title" style={{ backgroundColor: "#d7b21733", borderWidth: "2px 0 0", color: "inherit", marginBottom: "0", padding: "15px 15px 7px", minHeight: "48px" }} >
-                                                    <span>{ item.studyName }</span>
-                                                </div>
-                                                <div className="ibox-content" style={{ padding: "0" }} >
-                                                    <div>
-                                                        <div style={{ width: "90%" }} >
-                                                            { item.userRoleName }
-                                                        </div>
-                                                        <div style={{ width: "10%" }} >
-                                                            <FontAwesomeIcon onClick={()=> goToStudy()} style={{ cursor: "pointer", color:"#868686"}} icon="fa-solid fa-caret-right" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )))}
+                                            <Table
+                                                columns={columns}
+                                                dataSource={filteredData}
+                                                pagination={true}
+                                                scroll={{ x: 'max-content' }}
+                                                onRow={(record, rowIndex) => {
+                                                    return {
+                                                        onClick: () => {
+                                                            goToStudy(record.studyId)
+                                                        }
+                                                    }
+                                                }}
+                                            />
+                                      )}
                                 </div>
                             </CardBody>
                         </Card>

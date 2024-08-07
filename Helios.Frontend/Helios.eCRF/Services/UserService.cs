@@ -591,6 +591,15 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreUser/SetStudyUser", Method.Post);
                 req.AddJsonBody(studyUserModel);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                if (result.Data.IsSuccess)
+                {
+                    using (var client2 = AuthServiceClient)
+                    {
+                        var req2 = new RestRequest("AdminUser/AddStudyUserRole", Method.Post);
+                        req2.AddJsonBody(studyUserModel);
+                        var result2 = await client2.ExecuteAsync<ApiResponse<StudyUserDTO>>(req2);                      
+                    }
+                }
                 return result.Data;
             }
         }

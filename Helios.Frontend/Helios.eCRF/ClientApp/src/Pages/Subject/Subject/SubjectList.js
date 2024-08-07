@@ -21,8 +21,12 @@ import { v4 as uuidv4 } from 'uuid';
 import AddSubjectComp from './Comp/AddSubjectComp';
 import { showToast } from '../../../store/toast/actions';
 
+import ToastComp from '../../../components/Common/ToastComp/ToastComp';
+import RoleNotFound from '../../../Pages/Common/NotFound/RoleNotFound ';
+import { useParams } from "react-router-dom";
 const { TextArea } = Input;
 const SubjectList = props => {
+    const {studyId} = useParams();
     const modalRef = useRef();
     const modalRefDel = useRef();
     const [modalTitle, setModalTitle] = useState("");
@@ -30,7 +34,7 @@ const SubjectList = props => {
     const [modalContent, setModalContent] = useState(null);
     const [selectSites, setselectSites] = useState([]);
     const [AskSubjectInitial, setAskSubjectInitial] = useState(false);
-    const [studyId] = useState(8);
+
     const [comment, setComment] = useState("");
     const [subjectNumber, setSubjectNumber] = useState("");
     const [isDelete, setIsDelete] = useState(false);
@@ -84,13 +88,13 @@ const SubjectList = props => {
     }, [studyId, dispatch]);
 
     useEffect(() => {
-        if (!errorPerm && !isLoadingPerm && permissionsData) {
+        if (!errorPerm && !isLoadingPerm && permissionsData) {      
             if (!permissionsData.canSubjectView) {
                 navigate('/AccessDenied', { state: { from: props.location } });
                 return;
             }
             setView(true);
-            setPermissions(permissionsData);
+            setPermissions(permissionsData);         
             optionGroup(studyId);
             getStudy(studyId);
             triggerSubjectList({ studyId: studyId, showArchivedSubjects: showArchivedSubjects });

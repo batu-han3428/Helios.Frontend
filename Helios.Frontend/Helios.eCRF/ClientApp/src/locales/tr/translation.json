@@ -499,5 +499,8 @@
   "Use an existing study": "Mevcut bir çalışmayı kullanın",
   "Type message here": "Mesajınızı buraya yazınız",
   "No comment for this field !": "Bu alan için yorum yoktur !",
-  "This message will be deleted.": "Bu mesaj silinecektir"
+  "This message will be deleted.": "Bu mesaj silinecektir",
+  "Please select the account you want to log in": "Lütfen giriş yapmak istediğiniz hesabı seçiniz",
+  "Account name": "Hesap adı",
+  "User role name": "Kullanıcı rol adı"
 }

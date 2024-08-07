@@ -39,7 +39,7 @@ const AuthMiddleware = (props) => {
         })
         .then(data => {
             setLocalStorage("accessToken", data.values.accessToken);
-            result = onLogin();
+            result = onLogin();          
             dispatch(loginuser(result));
             if (studyId !== 0) getStudy({ token: data.values.accessToken });
         })
@@ -70,7 +70,7 @@ const AuthMiddleware = (props) => {
             setError(true);
         });
     };
-
+   
     const fetchData = async (result) => {
         if (result.studyId !== studyId) {
             updateJwt(result.token, studyId);
@@ -82,6 +82,7 @@ const AuthMiddleware = (props) => {
     useEffect(() => {
         if (user) {
             dispatch(loginuser(result));
+            console.log(result.roles);
         }
     }, [dispatch, user, result]);
 
@@ -111,9 +112,12 @@ const AuthMiddleware = (props) => {
                     matchedRoute = "/SSO-tenants-or-studies";
                 } else {
                     const matchedRoute1 = userRoutes.find(route => route.roles && route.roles.some(role => result.roles.includes(role)) && route.path === "/");
-                    if (matchedRoute1) {
-                        matchedRoute = matchedRoute1.redirect;
+                    if (matchedRoute1 && matchedRoute1.roles[0] === "StudyUser") {
+                        matchedRoute = matchedRoute1.redirect + "/" + result.studyId[0];
                     }
+                    else if (matchedRoute1) {
+                        matchedRoute = matchedRoute1.redirect;
+                    } 
                 }
                 if (pageType !== "study" && result.studyId !== "") {
                     updateJwt(user, 0);
