@@ -234,23 +234,24 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<ApiResponse<dynamic>> AddDatagridSubjectElements(List<SubjectVisitPageModuleElementModel> model)
+        public async Task<ApiResponse<dynamic>> AddDatagridSubjectElements(Int64 datagridId)
         {
             using (var client = CoreServiceClient)
             {
-                var req = new RestRequest("CoreSubject/AddDatagridSubjectElements", Method.Post);
-                req.AddJsonBody(model);
+                var req = new RestRequest($"CoreSubject/AddDatagridSubjectElements?datagridId={datagridId}", Method.Post);
+                AddApiHeaders(req);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
             }
         }
 
-        public async Task<ApiResponse<dynamic>> RemoveDatagridSubjectElements(List<Int64> elementIds)
+        public async Task<ApiResponse<dynamic>> RemoveDatagridSubjectElements(DatagridRemoveDTO dto)
         {
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreSubject/RemoveDatagridSubjectElements", Method.Post);
-                req.AddJsonBody(elementIds);
+                AddApiHeaders(req);
+                req.AddJsonBody(dto);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
             }

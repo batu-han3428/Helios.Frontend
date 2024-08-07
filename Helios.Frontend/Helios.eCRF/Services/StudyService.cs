@@ -307,6 +307,7 @@ namespace Helios.eCRF.Services
                 {
                     string moduleIdsString = string.Join(",", dto.ModuleIds);
                     var req = new RestRequest("CoreStudy/GetModuleCollective", Method.Get);
+                    AddApiHeaders(req);
                     req.AddParameter("moduleIds", moduleIdsString);
                     req.AddParameter("pageId", dto.PageId);
                     var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);

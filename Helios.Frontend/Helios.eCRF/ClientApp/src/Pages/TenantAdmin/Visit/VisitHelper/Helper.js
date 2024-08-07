@@ -266,7 +266,8 @@ export const useApiHelper = (dataSource, setDataSource) => {
         }),
     );
 
-    const onDragEnd = ({ active, over }) => {
+    const onDragEnd = (event) => {
+        const { active, over } = event;
         if (active === null || active === undefined || over === null || over === undefined || over.id.includes("empty") || active.id.includes("empty")) {
             return false;
         }
@@ -382,7 +383,7 @@ export const useApiHelper = (dataSource, setDataSource) => {
                 }
                 else if (activeItem.type === 'module') {
                     if (overItem.type === 'page') {
-                        if (activeItem.parentId === overItem.id) {
+                        if (activeItem.parentId === overItem.id && !isTop) {
                             const newDataSource = [...prev];
                             const parent = findItemById(newDataSource, overItem.key);
                             parent.children = parent.children.filter(item => item.key !== activeItem.key);
@@ -399,27 +400,63 @@ export const useApiHelper = (dataSource, setDataSource) => {
                         }
                         else {
                             const newDataSource = [...prev];
-                            const allVisitChildren = newDataSource.reduce((accumulator, current) => {
-                                if (current.type === 'visit' && current.children) {
-                                    accumulator.push(...current.children);
+                            if (isTop) {
+                                const parentOver = findItemById(newDataSource, overItem.key);
+                                function findItem(data, targetId) {
+                                    for (const item of data) {
+                                        if (item.children && item.children.length > 0) {
+                                            const found = item.children.find(child => child.id === targetId);
+                                            if (found) {
+                                                return found;
+                                            }
+                                        }
+                                    }
+                                    return null;
                                 }
-                                return accumulator;
-                            }, []);
-                            const parentOfActive = allVisitChildren.find(item => item.id === activeItem.parentId);
-                            parentOfActive.children = parentOfActive.children.filter(item => item.key !== activeItem.key);
-                            activeItem.parentId = overItem.id;
-                            activeItem.order = 1;
-                            if (!overItem.children) {
-                                overItem.children = [];
+                                const item = findItem(newDataSource, activeItem.parentId);
+                                item.children = item.children.filter(item => item.key !== activeItem.key);
+                                item.children.forEach((child, index) => {
+                                    child.order = index + 1;
+                                });
+                                const visitDataOver = newDataSource.find(x => x.id === parentOver.parentId);
+                                function getPreviousItem(data, targetKey) {
+                                    const items = data;
+                                    const index = items.findIndex(item => item.key === targetKey);
+                                    if (index > 0) {
+                                        return items[index - 1];
+                                    }
+                                    return null;
+                                }
+                                const previousItem = getPreviousItem(visitDataOver.children, overItem.key);
+                                activeItem.parentId = previousItem.id;
+                                previousItem.children.push(activeItem);
+                                previousItem.children.forEach((child, index) => {
+                                    child.order = index + 1;
+                                });
+                                return newDataSource;
+                            } else {
+                                const allVisitChildren = newDataSource.reduce((accumulator, current) => {
+                                    if (current.type === 'visit' && current.children) {
+                                        accumulator.push(...current.children);
+                                    }
+                                    return accumulator;
+                                }, []);
+                                const parentOfActive = allVisitChildren.find(item => item.id === activeItem.parentId);
+                                parentOfActive.children = parentOfActive.children.filter(item => item.key !== activeItem.key);
+                                activeItem.parentId = overItem.id;
+                                activeItem.order = 1;
+                                if (!overItem.children) {
+                                    overItem.children = [];
+                                }
+                                overItem.children.unshift(activeItem);
+                                overItem.children.forEach((child, index) => {
+                                    child.order = index + 1;
+                                });
+                                parentOfActive.children.forEach((child, index) => {
+                                    child.order = index + 1;
+                                });
+                                return newDataSource;
                             }
-                            overItem.children.unshift(activeItem);
-                            overItem.children.forEach((child, index) => {
-                                child.order = index + 1;
-                            });
-                            parentOfActive.children.forEach((child, index) => {
-                                child.order = index + 1;
-                            });
-                            return newDataSource;
                         }
                     }
                     else if (overItem.type === 'module') {

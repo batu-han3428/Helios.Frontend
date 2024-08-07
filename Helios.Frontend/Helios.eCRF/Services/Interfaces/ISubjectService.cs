@@ -13,8 +13,8 @@ namespace Helios.eCRF.Services.Interfaces
         Task<List<SubjectDetailMenuModel>> GetSubjectDetailMenu(Int64 studyId, Int64 subjectId);
         Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId);
         Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model);
-        Task<ApiResponse<dynamic>> AddDatagridSubjectElements(List<SubjectVisitPageModuleElementModel> model);
-        Task<ApiResponse<dynamic>> RemoveDatagridSubjectElements(List<Int64> elementIds);
+        Task<ApiResponse<dynamic>> AddDatagridSubjectElements(Int64 datagridId);
+        Task<ApiResponse<dynamic>> RemoveDatagridSubjectElements(DatagridRemoveDTO dto);
         Task<bool> GetStudyAskSubjectInitial(Int64 studyId);
         Task<ApiResponse<dynamic>> DeleteOrArchiveSubject(SubjectArchiveOrDeleteModel model);
         Task<RestResponse<byte[]>> GetSubjectVisitAnnotatedCrf(Int64 subjectId);
