@@ -1,5 +1,5 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { Row, Col, CardHeader, Card, CardBody, Alert } from "reactstrap";
 import "./sso.css";
@@ -14,7 +14,7 @@ import { Button, ConfigProvider, Table } from 'antd';
 import { TinyColor } from '@ctrl/tinycolor';
 import { showToast } from '../../store/toast/actions';
 import { SearchOutlined } from '@ant-design/icons';
-
+import ToastComp from '../../components/Common/ToastComp/ToastComp';
 
 const SSO_Tenants = props => {
 
@@ -27,8 +27,8 @@ const SSO_Tenants = props => {
     const userInformation = useSelector(state => state.rootReducer.Login);
 
     const dispatch = useDispatch();
-
     const navigate = useNavigate();
+    const toastRef = useRef();
 
     const [data, setData] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
