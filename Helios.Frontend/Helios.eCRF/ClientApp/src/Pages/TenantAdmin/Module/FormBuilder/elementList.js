@@ -290,8 +290,8 @@ function ElementList(props) {
                         )}
                     </div>
                     {renderElementsSwitch(item)}
-                    <label style={{ fontSize: "8pt", textDecoration: 'none' }}>
-                        {item.description}
+                    <label style={{ fontSize: "8pt", textDecoration: 'none', fontStyle: 'italic', color: '#4a4a4a' }}>
+                        *{item.description}
                     </label>
                 </Col>
             );
