@@ -120,7 +120,7 @@ const SSO_TenantsOrStudies = props => {
                             </CardHeader>
                             <CardBody>
                                 <div style={{  flexWrap: "wrap", justifyContent: "center" }}>
-                                    {tsCount.studyCount < 1 && tsCount.tenantCount < 1 ? (
+                                    {!isLoading && !isError && tsCount.studyCount < 1 && tsCount.tenantCount < 1 ? (
                                         <Alert color="warning" style={{ height: "50px" }}>
                                             {props.t("You do not have an active tenant, if you think there is an error, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
                                         </Alert>

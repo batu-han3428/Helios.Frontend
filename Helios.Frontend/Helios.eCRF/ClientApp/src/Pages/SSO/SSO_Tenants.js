@@ -31,15 +31,25 @@ const SSO_Tenants = props => {
     const [data, setData] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
 
+    const [triggerTenants, { data: tenantsData, isLoadingTenants, isErrorTenants }] = useLazyTenantListGetQuery();
+
+    useEffect(() => {
+        dispatch(startloading());
+        if (tenantsData && !isLoadingTenants && !isErrorTenants) {
+            setData(tenantsData);
+            dispatch(endloading());
+        } else if (isErrorTenants && !isLoadingTenants) {
+            dispatch(endloading());
+        }
+    }, [tenantsData, isErrorTenants, isLoadingTenants]);
+
     const searchFilter = (event) => {
         setSearchTerm(event.target.value.toLowerCase());
     };
 
     const filteredData = data.filter((item) =>
         item.tenantName.toLowerCase().includes(searchTerm)
-    );
-
-    const [triggerTenants, { data: tenantsData, isLoadingTenants, isErrorTenants }] = useLazyTenantListGetQuery();
+    );  
 
 
     const { role } = useParams();
@@ -72,15 +82,7 @@ const SSO_Tenants = props => {
         }
     }, [userInformation.userId, role])
 
-    useEffect(() => {
-        dispatch(startloading());
-        if (tenantsData && !isLoadingTenants && !isErrorTenants) {
-            setData(tenantsData);
-            dispatch(endloading());
-        } else if (isErrorTenants && !isLoadingTenants) {
-            dispatch(endloading());
-        }
-    }, [tenantsData, isErrorTenants, isLoadingTenants]);
+   
 
     const [ssoLoginPost] = useSsoLoginPostMutation();
 
@@ -145,7 +147,7 @@ const SSO_Tenants = props => {
                             </CardHeader>
                             <CardBody>
                                 <div style={{ flexWrap: "wrap", justifyContent: "center" }}>
-                                    {filteredData.length === 0 ? (
+                                    {isLoadingTenants && !isErrorTenants && filteredData.length === 0 ? (
                                         <Alert color="warning" style={{ height: "50px" }}>
                                             {props.t("You do not have an active tenant, if you think there is an error, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
                                         </Alert>
