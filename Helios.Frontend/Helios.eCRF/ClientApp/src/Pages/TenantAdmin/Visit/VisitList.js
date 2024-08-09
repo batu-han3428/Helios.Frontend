@@ -17,6 +17,8 @@ import * as signalR from '@microsoft/signalr';
 import { useParams } from 'react-router-dom';
 import { showToast } from '../../../store/toast/actions';
 import { useDispatch } from 'react-redux';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const Study = props => {
 
@@ -79,12 +81,12 @@ const Study = props => {
             title: (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Tooltip title={allRowsExpanded ? props.t("Collapse all") : props.t("Expand all")} >
-                        <Button onClick={handleToggleAllRows} icon={<FontAwesomeIcon icon="fa-solid fa-bars" style={{ color: "#3d3d3d",  }} />} />
+                        <Button onClick={handleToggleAllRows} icon={<FontAwesomeIcon icon="fa-solid fa-bars" style={{ color: "#3d3d3d", }} />} />
                     </Tooltip>
                     <label style={{ marginBottom: "0px", display: 'flex', alignItems: 'center', marginLeft: "5px" }}> {props.t('Visit name')}</label>
-                     
+
                 </div>
-                 
+
             ),
             dataIndex: 'name',
             width: '30%',
@@ -297,19 +299,21 @@ const Study = props => {
                                     items={getAllKeys(dataSource)}
                                     strategy={verticalListSortingStrategy}
                                 >
-                                    <Table
-                                        components={components}
-                                        rowClassName={(record, index) => {
-                                            return record.type === "visit" ? 'row-visit-background-color' : record.type === "page" ? 'row-page-background-color' : "row-module-background-color";
-                                        }}
-                                        bordered
-                                        dataSource={dataSource}
-                                        columns={columns}
-                                        expandedRowKeys={expandedRowKeys}
-                                        onExpand={handleExpand}
-                                        pagination={false}
-                                        scroll={{ x: 'max-content' }}
-                                    />
+                                    <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
+                                        <Table
+                                            components={components}
+                                            rowClassName={(record, index) => {
+                                                return record.type === "visit" ? 'row-visit-background-color' : record.type === "page" ? 'row-page-background-color' : "row-module-background-color";
+                                            }}
+                                            bordered
+                                            dataSource={dataSource}
+                                            columns={columns}
+                                            expandedRowKeys={expandedRowKeys}
+                                            onExpand={handleExpand}
+                                            pagination={false}
+                                          
+                                        />
+                                    </PerfectScrollbar>
                                 </SortableContext>
                             </DndContext>
                         </Col>

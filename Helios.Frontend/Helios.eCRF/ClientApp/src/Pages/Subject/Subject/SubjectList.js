@@ -20,13 +20,16 @@ import "./Subject.css";
 import { v4 as uuidv4 } from 'uuid';
 import AddSubjectComp from './Comp/AddSubjectComp';
 import { showToast } from '../../../store/toast/actions';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
+
 
 import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import RoleNotFound from '../../../Pages/Common/NotFound/RoleNotFound ';
 import { useParams } from "react-router-dom";
 const { TextArea } = Input;
 const SubjectList = props => {
-    const {studyId} = useParams();
+    const { studyId } = useParams();
     const modalRef = useRef();
     const modalRefDel = useRef();
     const [modalTitle, setModalTitle] = useState("");
@@ -88,13 +91,13 @@ const SubjectList = props => {
     }, [studyId, dispatch]);
 
     useEffect(() => {
-        if (!errorPerm && !isLoadingPerm && permissionsData) {      
+        if (!errorPerm && !isLoadingPerm && permissionsData) {
             if (!permissionsData.canSubjectView) {
                 navigate('/AccessDenied', { state: { from: props.location } });
                 return;
             }
             setView(true);
-            setPermissions(permissionsData);         
+            setPermissions(permissionsData);
             optionGroup(studyId);
             getStudy(studyId);
             triggerSubjectList({ studyId: studyId, showArchivedSubjects: showArchivedSubjects });
@@ -143,7 +146,7 @@ const SubjectList = props => {
     const goToSubjectDetail = (studyId, pageId, subjectId, subjectNumber) => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}/${subjectNumber}`);
     };
-    
+
     const [triggerCrf, { data: annotatedData, error: errorCrf, isLoading: isLoadingCrf }] = useLazySubjectVisitAnnotatedCrfGetQuery();
 
     useEffect(() => {
@@ -182,7 +185,7 @@ const SubjectList = props => {
                 {permissions.canSubjectExportForm &&
                     <ExportOutlined onClick={() => triggerCrf(item.id)} />
                 }
-                
+
             </div>);
         return actions;
     };
@@ -515,7 +518,7 @@ const SubjectList = props => {
     document.title = props.t('Subject list');
     return (
         <React.Fragment>
-            {!isLoading && !error && subjectsData !== null &&               
+            {!isLoading && !error && subjectsData !== null &&
                 <div className="page-content">
                     <div className="container-fluid">
                         {view && <>
@@ -554,21 +557,22 @@ const SubjectList = props => {
                                 </Col>
                                 <Col className="col-12">
                                     <button id="openPdfButton" style={{ display: "none" }}></button>
-                                    <Table
-                                        columns={columns}
-                                        dataSource={data.subjectList}
-                                        pagination={true}
-                                        scroll={{ x: 'max-content' }}
-                                        onRow={(record, rowIndex) => {
-                                            return {
-                                                onDoubleClick: () => {
-                                                    goToSubjectDetail(studyId, record.firstPageId, record.id, record.subjectNumber)
+                                    <PerfectScrollbar style={{ maxHeight: '670px', maxWidth: '100%' }}>
+                                        <Table
+                                            columns={columns}
+                                            dataSource={data.subjectList}
+                                            pagination={true}                                        
+                                            onRow={(record, rowIndex) => {
+                                                return {
+                                                    onDoubleClick: () => {
+                                                        goToSubjectDetail(studyId, record.firstPageId, record.id, record.subjectNumber)
+                                                    }
                                                 }
-                                            }
-                                        }}
-                                        onChange={handleChange}
-                                        filteredInfo={filteredInfo}
-                                    />
+                                            }}
+                                            onChange={handleChange}
+                                            filteredInfo={filteredInfo}
+                                        />
+                                    </PerfectScrollbar>
                                 </Col>
                             </Row>
                         </>}

@@ -7,6 +7,8 @@ import { useLazyStudyVisitAnnotatedCrfHistoryGetQuery, useLazyStudyVisitAnnotate
 import { endloading, startloading } from '../../../../store/loader/actions';
 import { v4 as uuidv4 } from 'uuid';
 import { EyeOutlined } from '@ant-design/icons';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const AnnotatedCrfPdfHistory = props => {
 
@@ -82,12 +84,14 @@ const AnnotatedCrfPdfHistory = props => {
     return (
         <>
             <button id="openPdfButton" style={{ display: "none" }}></button>
+            <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
             <Table
                 dataSource={data}
                 columns={columns}
                 pagination={true}
-                scroll={{ x: 'max-content' }}
-            />
+                />
+            </PerfectScrollbar>
+
         </>
     )
 }

@@ -5,6 +5,8 @@ import { Row, Col, Card, CardBody, CardTitle, CardSubtitle } from "reactstrap";
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb";
 import "./datatables.scss";
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const DatatableTables = () => {
     const data = {
@@ -524,13 +526,14 @@ const DatatableTables = () => {
                                         the construction function:{" "}
                                         <code>&lt;MDBDataTable /&gt;</code>.
                                     </p>
-
+                                    <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
                                     <Table
                                         dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
                                         columns={data.columns}
                                         pagination={true}
-                                        scroll={{ x: 'max-content' }}
-                                    />
+                                        />
+                                    </PerfectScrollbar>
+
                                 </CardBody>
                             </Card>
                         </Col>
@@ -548,13 +551,14 @@ const DatatableTables = () => {
                                         <code>&lt;MDBDataTable striped /&gt;</code>.
                                     </p>
 
-
+                                    <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
                                     <Table
                                         dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
                                         columns={data.columns}
                                         pagination={true}
-                                        scroll={{ x: 'max-content' }}
-                                    />
+                                        />
+                                    </PerfectScrollbar>
+
                                 </CardBody>
                             </Card>
                         </Col>

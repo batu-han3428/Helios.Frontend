@@ -62,3 +62,17 @@
 .cs-button--send {
     color: #ffc603;
 }
+
+/* Yatay kaydırma çubuğunu gizle */
+.scrollbar-container .ps__rail-x {
+    display: none; /* Yatay kaydırma çubuğunu gizler */
+}
+
+/* Yatay kaydırma çubuğu işaretçisini de gizle */
+.scrollbar-container .ps__thumb-x {
+    display: none; /* Yatay kaydırma çubuğunun işaretçisini gizler */
+}
+
+.table-responsive {
+    overflow-x: hidden; /* Yatay kaydırma çubuğunu gizler */
+}

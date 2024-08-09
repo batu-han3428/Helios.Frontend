@@ -18,7 +18,10 @@ import Properties from '../../FormBuilder/properties.js';
 import ElementList from '../../FormBuilder/elementList.js';
 import SubjectDetailElementList from '../../../../Subject/Subject/SubjectDetailElementList.js';
 import AccordionComp from '../../../../../../src/components/Common/AccordionComp/AccordionComp';
-import { GetElementPropertiesPlace, GetElementPropertiesWidth } from '../Common/ElementPropertiesPlace'
+import { GetElementPropertiesPlace, GetElementPropertiesWidth } from '../Common/ElementPropertiesPlace';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
+import '../TableElement/tableElement.css'
 
 const baseUrl = "http://localhost:3300/";
 
@@ -99,7 +102,7 @@ class TableElement extends Component {
     componentDidUpdate(prevProps) {
         if (this.props.ChildElementList !== prevProps.ChildElementList) {
             this.setState(
-                { childElementList:this.props.ChildElementList }
+                { childElementList: this.props.ChildElementList }
             );
         }
     }
@@ -187,31 +190,32 @@ class TableElement extends Component {
             <AccordionComp title="" isOpened={true} body={
                 <>
                     <div className="table-responsive mb-3">
-                        <Table className="table table-hover table-bordered mb-0" style={{ width: this.state.totalWidth }}>
-                            <thead>
-                                <tr>
-                                    <th key='0' style={{ width: '', backgroundColor: "#6D6E70", color: "#FFF" }}>#</th>
-                                    {this.state.datagridAndTableProperties.map((col, index) => (
-                                        <th key={index} style={{ width: col.width, backgroundColor: "#6D6E70", color: "#FFF" }}>{col.title}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {[...Array(this.state.rowCount === 0 ? 1 : this.state.rowCount)].map((_, rowIndex) => (
-                                    <tr key={rowIndex}>
-                                        <td key='0'>
-                                            {this.getTableRowProp(this.state.id, rowIndex + 1)}
-                                        </td>
-                                        {[...Array(this.state.columnCount)].map((_, columnIndex) => (
-                                            <td key={columnIndex}>
-                                                {this.getTdContent(columnIndex, rowIndex)}
-                                            </td>
+                        <PerfectScrollbar style={{ maxHeight: '2000px', maxWidth: '100%' }}>
+                            <Table className="table table-hover table-bordered mb-0" style={{ width: this.state.totalWidth }}>
+                                <thead>
+                                    <tr>
+                                        <th key='0' style={{ width: '', backgroundColor: "#6D6E70", color: "#FFF" }}>#</th>
+                                        {this.state.datagridAndTableProperties.map((col, index) => (
+                                            <th key={index} style={{ width: col.width, backgroundColor: "#6D6E70", color: "#FFF" }}>{col.title}</th>
                                         ))}
                                     </tr>
-                                ))}
-                            </tbody>
-                        </Table>
-
+                                </thead>
+                                <tbody>
+                                    {[...Array(this.state.rowCount === 0 ? 1 : this.state.rowCount)].map((_, rowIndex) => (
+                                        <tr key={rowIndex}>
+                                            <td key='0'>
+                                                {this.getTableRowProp(this.state.id, rowIndex + 1)}
+                                            </td>
+                                            {[...Array(this.state.columnCount)].map((_, columnIndex) => (
+                                                <td key={columnIndex}>
+                                                    {this.getTdContent(columnIndex, rowIndex)}
+                                                </td>
+                                            ))}
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </Table>
+                        </PerfectScrollbar>
                         <Modal isOpen={this.state.modalState} toggle={this.toggleAddElementModal} size="md">
                             <ModalHeader className="mt-0" toggle={this.toggleAddElementModal}>{this.props.t("Add a child input")}</ModalHeader>
                             <ModalBody>

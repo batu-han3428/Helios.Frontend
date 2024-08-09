@@ -12,6 +12,8 @@ import { API_BASE_URL } from "../../constants/endpoints";
 import { addStudy } from "../../store/actions";
 import { SearchOutlined } from '@ant-design/icons';
 import { Table } from 'antd';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 
 const SSO_Studies = props => {
@@ -175,11 +177,11 @@ const SSO_Studies = props => {
                                             {props.t("You do not have an active study, if you think there is an error, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
                                         </Alert>
                                     ) : (
+                                            <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
                                             <Table
                                                 columns={columns}
                                                 dataSource={filteredData}
                                                 pagination={true}
-                                                scroll={{ x: 'max-content' }}
                                                 onRow={(record, rowIndex) => {
                                                     return {
                                                         onClick: () => {
@@ -187,7 +189,9 @@ const SSO_Studies = props => {
                                                         }
                                                     }
                                                 }}
-                                            />
+                                                />
+                                            </PerfectScrollbar>
+
                                       )}
                                 </div>
                             </CardBody>

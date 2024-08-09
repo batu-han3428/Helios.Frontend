@@ -2,7 +2,9 @@ import PropTypes from "prop-types";
 import React, { useEffect, useCallback, useRef, useState } from "react";
 
 // //Import Scrollbar
-import SimpleBar from "simplebar-react";
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
+/*import SimpleBar from "simplebar-react";*/
 
 // MetisMenu
 import MetisMenu from "metismenujs";
@@ -37,12 +39,12 @@ const MenuItem = ({ item, t, isDemoStudy, pageType }) => {
         <li>
             {item.subMenu ? (
                 <Link to="/#" className="has-arrow waves-effect">
-                    {item.icon && <FontAwesomeIcon style={{marginRight:"10px"}} icon={item.icon} />}
+                    {item.icon && <FontAwesomeIcon style={{ marginRight: "10px" }} icon={item.icon} />}
                     <span>{t(item.label)}</span>
                 </Link>
             ) : (
                 <Link onClick={hasIsDemoProperty && isDemoStudy !== null && item.isDemo !== isDemoStudy ? (e) => handleMenuItemClick(e, item) : null} to={dynamicPath} className="waves-effect">
-                    {item.icon && <FontAwesomeIcon style={{marginRight:"10px"}} icon={item.icon} />}
+                    {item.icon && <FontAwesomeIcon style={{ marginRight: "10px" }} icon={item.icon} />}
                     <span>{t(item.label)}</span>
                 </Link>
             )}
@@ -84,34 +86,34 @@ const SidebarContent = props => {
         const parent2El = parent.childNodes[1];
 
         if (parent2El && parent2El.id !== "side-menu") {
-          parent2El.classList.add("mm-show");
+            parent2El.classList.add("mm-show");
         }
 
         if (parent) {
-      parent.classList.add("mm-active");
-      const parent2 = parent.parentElement;
+            parent.classList.add("mm-active");
+            const parent2 = parent.parentElement;
 
-      if (parent2) {
-        parent2.classList.add("mm-show"); // ul tag
+            if (parent2) {
+                parent2.classList.add("mm-show"); // ul tag
 
-        const parent3 = parent2.parentElement; // li tag
-        if (parent3) {
-          parent3.classList.add("mm-active"); // li
-          parent3.childNodes[0].classList.add("mm-active"); //a
-          const parent4 = parent3.parentElement; // ul
-          if (parent4) {
-            parent4.classList.add("mm-show"); // ul
-            const parent5 = parent4.parentElement;
-            if (parent5) {
-              parent5.classList.add("mm-show"); // li
-              parent5.childNodes[0].classList.add("mm-active"); // a tag
+                const parent3 = parent2.parentElement; // li tag
+                if (parent3) {
+                    parent3.classList.add("mm-active"); // li
+                    parent3.childNodes[0].classList.add("mm-active"); //a
+                    const parent4 = parent3.parentElement; // ul
+                    if (parent4) {
+                        parent4.classList.add("mm-show"); // ul
+                        const parent5 = parent4.parentElement;
+                        if (parent5) {
+                            parent5.classList.add("mm-show"); // li
+                            parent5.childNodes[0].classList.add("mm-active"); // a tag
+                        }
+                    }
+                }
             }
-          }
+            scrollElement(item);
+            return false;
         }
-      }
-      scrollElement(item);
-      return false;
-    }
         scrollElement(item);
         return false;
     }, []);
@@ -127,7 +129,7 @@ const SidebarContent = props => {
             if (parent) {
                 const parent2El = parent.childNodes && parent.childNodes.lenght && parent.childNodes[1] ? parent.childNodes[1] : null;
                 if (parent2El && parent2El.id !== "side-menu") {
-                  parent2El.classList.remove("mm-show");
+                    parent2El.classList.remove("mm-show");
                 }
 
                 parent.classList.remove("mm-active");
@@ -174,13 +176,13 @@ const SidebarContent = props => {
             }
         }
         if (matchingMenuItem) {
-          activateParentDropdown(matchingMenuItem);
+            activateParentDropdown(matchingMenuItem);
         }
     }, [path, activateParentDropdown]);
 
-    useEffect(() => {  
+    useEffect(() => {
         closeActiveDropdowns();
-        ref.current.recalculate();
+        ref.current.updateScroll();
     }, [items]);
 
     useEffect(() => {
@@ -195,56 +197,56 @@ const SidebarContent = props => {
 
     }, [props.pageType]);
 
-    useEffect(() =>{
+    useEffect(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
         activeMenu();
-    },[props.pageType, location.pathname]);
+    }, [props.pageType, location.pathname]);
 
-    function scrollElement(item) { 
+    function scrollElement(item) {
         if (item) {
-          const currentPosition = item.offsetTop;
-          if (currentPosition > window.innerHeight) {
-            ref.current.getScrollElement().scrollTop = currentPosition - 300;
-          }
+            const currentPosition = item.offsetTop;
+            if (currentPosition > window.innerHeight) {
+                ref.current.getScrollElement().scrollTop = currentPosition - 300;
+            }
         }
     }
 
     return (
-    <React.Fragment>
-      <SimpleBar style={{ maxHeight: "100%" }} ref={ref}>
-        <div id="sidebar-menu">
-          <ul className="metismenu list-unstyled" id="side-menu">
-            {props.pageType === 'study' && <li className="menu-title" style={{backgroundColor:"#6d6e70", color: "white !important", fontSize:"13px"}} ><FontAwesomeIcon style={{marginRight:"10px"}} icon="fa-solid fa-microscope" /> {studyInformation.studyName}</li> }
-            {items.map((item, index) => {
-                const hasIsDemoProperty = "isDemo" in item;
+        <React.Fragment>
+            <PerfectScrollbar style={{ maxHeight: "100%", overflow: 'hidden' }} ref={ref}>
+                <div id="sidebar-menu">
+                    <ul className="metismenu list-unstyled" id="side-menu">
+                        {props.pageType === 'study' && <li className="menu-title" style={{ backgroundColor: "#6d6e70", color: "white !important", fontSize: "13px" }} ><FontAwesomeIcon style={{ marginRight: "10px" }} icon="fa-solid fa-microscope" /> {studyInformation.studyName}</li>}
+                        {items.map((item, index) => {
+                            const hasIsDemoProperty = "isDemo" in item;
 
-                if (hasIsDemoProperty && (studyInformation.isDemo === null || studyInformation.isDemo === undefined)) {
-                    return;
-                }
-                if (hasIsDemoProperty && studyInformation.isDemo !== null && item.isDemo === studyInformation.isDemo) {
-                    return;
-                }
+                            if (hasIsDemoProperty && (studyInformation.isDemo === null || studyInformation.isDemo === undefined)) {
+                                return;
+                            }
+                            if (hasIsDemoProperty && studyInformation.isDemo !== null && item.isDemo === studyInformation.isDemo) {
+                                return;
+                            }
 
-                return (
-                    <MenuItem
-                        pageType={props.pageType}
-                        isDemoStudy={props.pageType === "study" ? studyInformation.isDemo : null}
-                        key={index}
-                        item={item}
-                        t={props.t}
-                    />
-                );
-            })}
-          </ul>
-        </div>
-      </SimpleBar>
-    </React.Fragment>
-  );
+                            return (
+                                <MenuItem
+                                    pageType={props.pageType}
+                                    isDemoStudy={props.pageType === "study" ? studyInformation.isDemo : null}
+                                    key={index}
+                                    item={item}
+                                    t={props.t}
+                                />
+                            );
+                        })}
+                    </ul>
+                </div>
+            </PerfectScrollbar>
+        </React.Fragment>
+    );
 };
 
 SidebarContent.propTypes = {
-  location: PropTypes.object,
-  t: PropTypes.any,
+    location: PropTypes.object,
+    t: PropTypes.any,
 };
 
 export default withRouter(withTranslation()(SidebarContent));
