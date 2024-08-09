@@ -55,7 +55,7 @@ class CheckElement extends Component {
                                 <div className="form-check" key={index} style={{ display: 'inline-block', marginRight: '10px' }}>
                                     <input
                                         type="checkbox"
-                                        className={`form-check-input ${this.state.checkedOptions !== null && this.state.isRequired ? 'input-normal' : 'input-error'}`}
+                                        className={`form-check-input  ${this.state.Value.length === 0 && this.state.isRequired ? 'input-error' : 'input-normal'}`}
                                         id={`checkbox-${index}`}
                                         onChange={() => this.handleChange(item.tagValue)}
                                         disabled={this.state.isDisable}
@@ -76,7 +76,7 @@ class CheckElement extends Component {
                                 <div className="form-check" key={index}>
                                     <input
                                         type="checkbox"
-                                        className={`form-check-input ${this.state.checkedOptions === null && this.props.isRequired ? 'input-error' : 'input-normal'}`}
+                                        className={`form-check-input ${this.state.Value.length ===0 && this.state.isRequired ? 'input-error' : 'input-normal'}`}
                                         id={`checkbox-${index}`}
                                         onChange={() => this.handleChange(item.tagValue)}
                                         disabled={this.state.isDisable}
