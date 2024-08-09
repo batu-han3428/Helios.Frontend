@@ -170,7 +170,7 @@ const SSO_Studies = props => {
                             </CardHeader>
                             <CardBody>
                                 <div style={{ flexWrap: "wrap", justifyContent: "center" }}>
-                                    {filteredData.length === 0 ? (
+                                    {!isLoadingStudies && !isErrorStudies && filteredData.length === 0 ? (
                                         <Alert color="warning" style={{ height: "50px" }}>
                                             {props.t("You do not have an active study, if you think there is an error, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
                                         </Alert>
