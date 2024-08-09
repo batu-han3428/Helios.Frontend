@@ -17,6 +17,7 @@ import * as signalR from '@microsoft/signalr';
 import { useParams } from 'react-router-dom';
 import { showToast } from '../../../store/toast/actions';
 import { useDispatch } from 'react-redux';
+import { formatDate } from "../../../helpers/format_date";
 
 const Study = props => {
 
@@ -79,12 +80,12 @@ const Study = props => {
             title: (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Tooltip title={allRowsExpanded ? props.t("Collapse all") : props.t("Expand all")} >
-                        <Button onClick={handleToggleAllRows} icon={<FontAwesomeIcon icon="fa-solid fa-bars" style={{ color: "#3d3d3d",  }} />} />
+                        <Button onClick={handleToggleAllRows} icon={<FontAwesomeIcon icon="fa-solid fa-bars" style={{ color: "#3d3d3d", }} />} />
                     </Tooltip>
                     <label style={{ marginBottom: "0px", display: 'flex', alignItems: 'center', marginLeft: "5px" }}> {props.t('Visit name')}</label>
-                     
+
                 </div>
-                 
+
             ),
             dataIndex: 'name',
             width: '30%',
@@ -212,49 +213,19 @@ const Study = props => {
                 const updatedChildren = item.children.map(chld => {
                     if (chld.children) {
                         const updatedChildren2 = chld.children.map(chld2 => {
-                            if (chld2.updatedon === "0001-01-01T00:00:00+00:00") {
-                                return { ...chld2, updatedon: "-" };
-                            }
-                            else {
-                                return { ...chld2, createdat: chld2.createdat.split('T')[0], updatedon: chld2.updatedon.split('T')[0] };
-                            }
-                            return chld2;
+                            return { ...chld2, createdat: formatDate(chld2.createdat), updatedon: formatDate(chld2.updatedon) };
                         });
-                        if (chld.updatedon === "0001-01-01T00:00:00+00:00") {
-                            return { ...chld, children: updatedChildren2, updatedon: "-" };
-                        }                       
-                        else {
-                            return { ...chld, children: updatedChildren2, createdat: chld.createdat.split('T')[0], updatedon: chld.updatedon.split('T')[0] }
-                        }
+                        return { ...chld, children: updatedChildren2, createdat: formatDate(chld.createdat), updatedon: formatDate(chld.updatedon) };
                     }
                     else {
-                        if (chld.updatedon === "0001-01-01T00:00:00+00:00") {
-                            return { ...chld, updatedon: "-" };
-                        }
-                        else {
-                            return { ...chld, createdat: chld.createdat.split('T')[0], updatedon: chld.updatedon.split('T')[0] }
-                        }
+                        return { ...chld, createdat: formatDate(chld.createdat), updatedon: formatDate(chld.updatedon) }
                     }
-                    return chld;
                 });
-                if (item.updatedon === "0001-01-01T00:00:00+00:00") {
-                    return { ...item, children: updatedChildren, updatedon: "-" };
-                }
-                else {
-                    return { ...item, children: updatedChildren, createdat: item.createdat.split('T')[0], updatedon: item.updatedon.split('T')[0] }
-                }
-
+                return { ...item, children: updatedChildren, createdat: formatDate(item.createdat), updatedon: formatDate(item.updatedon) }
             }
             else {
-                if (item.updatedon === "0001-01-01T00:00:00+00:00") {
-                    return { ...item, updatedon: "-" };
-                }
-                else {
-                    return { ...item, createdat: item.createdat.split('T')[0], updatedon: item.updatedon.split('T')[0] };
-                }
+                return { ...item, createdat: formatDate(item.createdat), updatedon: formatDate(item.updatedon) }
             }
-
-            return item;
         });
         setDataSource(newData);
     };
