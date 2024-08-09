@@ -215,18 +215,24 @@ const Study = props => {
                             if (chld2.updatedon === "0001-01-01T00:00:00+00:00") {
                                 return { ...chld2, updatedon: "-" };
                             }
+                            else {
+                                return { ...chld2, createdat: chld2.createdat.split('T')[0], updatedon: chld2.updatedon.split('T')[0] };
+                            }
                             return chld2;
                         });
                         if (chld.updatedon === "0001-01-01T00:00:00+00:00") {
                             return { ...chld, children: updatedChildren2, updatedon: "-" };
-                        }
+                        }                       
                         else {
-                            return { ...chld, children: updatedChildren2 }
+                            return { ...chld, children: updatedChildren2, createdat: chld.createdat.split('T')[0], updatedon: chld.updatedon.split('T')[0] }
                         }
                     }
                     else {
                         if (chld.updatedon === "0001-01-01T00:00:00+00:00") {
                             return { ...chld, updatedon: "-" };
+                        }
+                        else {
+                            return { ...chld, createdat: chld.createdat.split('T')[0], updatedon: chld.updatedon.split('T')[0] }
                         }
                     }
                     return chld;
@@ -235,13 +241,16 @@ const Study = props => {
                     return { ...item, children: updatedChildren, updatedon: "-" };
                 }
                 else {
-                    return { ...item, children: updatedChildren }
+                    return { ...item, children: updatedChildren, createdat: item.createdat.split('T')[0], updatedon: item.updatedon.split('T')[0] }
                 }
 
             }
             else {
                 if (item.updatedon === "0001-01-01T00:00:00+00:00") {
                     return { ...item, updatedon: "-" };
+                }
+                else {
+                    return { ...item, createdat: item.createdat.split('T')[0], updatedon: item.updatedon.split('T')[0] };
                 }
             }
 
