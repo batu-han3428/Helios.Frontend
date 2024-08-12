@@ -53,7 +53,7 @@ const SubjectDetail = props => {
     const goToNextPage = () => {
         const nextPage = Number(pageId) + 1;
         setCurrentPage(nextPage);
-        navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}`);
+        navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}/${subjectNumber}`);
 
     };
 
@@ -61,7 +61,7 @@ const SubjectDetail = props => {
         if (currentPage > 1) {
             const nextPage = Number(pageId) - 1;
             setCurrentPage(nextPage);
-            navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}`);
+            navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}/${subjectNumber}`);
         }
     };
 
