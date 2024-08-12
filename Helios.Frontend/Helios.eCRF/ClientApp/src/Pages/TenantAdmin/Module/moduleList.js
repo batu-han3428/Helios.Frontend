@@ -13,8 +13,6 @@ import { API_BASE_URL } from '../../../constants/endpoints';
 import { SearchOutlined } from '@ant-design/icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { showToast } from '../../../store/toast/actions';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 
 function ModuleList(props) {
     const token = getLocalStorage("accessToken");
@@ -83,7 +81,7 @@ function ModuleList(props) {
                     Name: Name,
                     UserId: userInformation.userId,
                     AddedNameAndLastName: "",
-                    UpdatedNameAndLastName: "",
+                    UpdatedNameAndLastName:"",
                 })
             })
                 .then(response => response.json())
@@ -106,7 +104,7 @@ function ModuleList(props) {
         }
     };
 
-    const deleteModule = (event) => {
+    const deleteModule = (event) => {      
         Swal.fire({
             title: props.t("You will not be able to recover this element"),
             text: props.t("Do you confirm"),
@@ -128,10 +126,10 @@ function ModuleList(props) {
                         body: JSON.stringify({
                             Id: event,
                             TenantId: userInformation.tenantId,
-                            Name: Name,
+                            Name: Name,                         
                             UserId: userInformation.userId,
                             UpdatedNameAndLastName: "",
-                            AddedNameAndLastName: "",
+                            AddedNameAndLastName:"",
                         })
                     })
                         .then(response => response.json())
@@ -213,7 +211,7 @@ function ModuleList(props) {
             title: props.t('Created on'),
             dataIndex: 'createdAt',
             sorter: (a, b) => a.createdAt.localeCompare(b.createdAt),
-            sortDirections: ['ascend', 'descend'],
+            sortDirections: ['ascend', 'descend'],        
             onFilter: (value, record) => String(record.createdAt).toLowerCase().includes(value.toLowerCase()),
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
@@ -221,7 +219,7 @@ function ModuleList(props) {
             title: props.t('Last updated on'),
             dataIndex: 'updatedAt',
             sorter: (a, b) => a.updatedAt.localeCompare(b.updatedAt),
-            sortDirections: ['ascend', 'descend'],
+            sortDirections: ['ascend', 'descend'],        
             onFilter: (value, record) => String(record.updatedAt).toLowerCase().includes(value.toLowerCase()),
 
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
@@ -230,7 +228,7 @@ function ModuleList(props) {
             title: props.t('Created by'),
             dataIndex: 'addedNameAndLastName',
             sorter: (a, b) => a.addedNameAndLastName.localeCompare(b.addedNameAndLastName),
-            sortDirections: ['ascend', 'descend'],
+            sortDirections: ['ascend', 'descend'],          
             onFilter: (value, record) => String(record.createdBy).toLowerCase().includes(value.toLowerCase()),
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
@@ -238,7 +236,7 @@ function ModuleList(props) {
             title: props.t('Updated by'),
             dataIndex: 'updatedNameAndLastName',
             sorter: (a, b) => a.updatedNameAndLastName.localeCompare(b.updatedNameAndLastName),
-            sortDirections: ['ascend', 'descend'],
+            sortDirections: ['ascend', 'descend'],         
             onFilter: (value, record) => String(record.updatedBy).toLowerCase().includes(value.toLowerCase()),
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
         },
@@ -246,7 +244,7 @@ function ModuleList(props) {
             title: props.t('Actions'),
             dataIndex: 'actions',
             width: "170px",
-            render: (text, record) => {
+            render: (text, record) => {             
                 return (
                     <div className="icon-container">
                         <div className="icon icon-update" onClick={e => tog_large(e, record.id)}></div>
@@ -271,7 +269,7 @@ function ModuleList(props) {
                     <ModalBody>
                         <div style={({ height: "100vh" }, { display: "flex" })}>
                             <div id="page-wrap" style={{ padding: "15px", width: '100%' }}>
-                                <div><h3>{Name === "" ? props.t("Add module") : props.t("Rename module")}</h3></div>
+                                <div><h3>{ Name === "" ? props.t("Add module") : props.t("Rename module")}</h3></div>
                                 <hr />
                                 <div className='row'>
                                     <div className='form-group'>
@@ -315,21 +313,19 @@ function ModuleList(props) {
                     <Row>
                         <Col className="col-12">
                             <Card className="modulelist-card-table">
-                                <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
-                                    <Table
-                                        dataSource={tableData.map(item => ({ ...item, key: item.id }))}
-                                        columns={columns}
-                                        pagination={true}
-                                        onRow={(record, rowIndex) => {
-                                            return {
-                                                onDoubleClick: event => {
-                                                    handleRowDoubleClick(record.id, event);
-                                                }
+                                <Table
+                                    dataSource={tableData.map(item => ({ ...item, key: item.id }))}
+                                    columns={columns}
+                                    pagination={true}
+                                    scroll={{ x: 'max-content' }}
+                                    onRow={(record, rowIndex) => {
+                                        return {
+                                            onDoubleClick: event => {
+                                                handleRowDoubleClick(record.id, event);
                                             }
-                                        }}
-                                    />
-                                </PerfectScrollbar>
-
+                                        }
+                                    }}
+                                />
                             </Card>
                         </Col>
                     </Row>

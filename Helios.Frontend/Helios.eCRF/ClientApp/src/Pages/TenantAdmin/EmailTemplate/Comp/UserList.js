@@ -6,8 +6,6 @@ import { Table } from 'antd';
 import { useLazyStudyRoleUsersListGetQuery } from '../../../../store/services/Permissions';
 import { startloading, endloading } from '../../../../store/loader/actions';
 import { useDispatch } from 'react-redux';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 
 
 const UserList = props => {
@@ -57,14 +55,13 @@ const UserList = props => {
                 <CardTitle>{props.t("List of users to view the email")}</CardTitle>
             </CardHeader>
             <CardBody>
-                <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
+              
                 <Table
                     dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
                     columns={data.columns}
                     pagination={true}
-                    />
-                </PerfectScrollbar>
-
+                    scroll={{ x: 'max-content' }}
+                />
             </CardBody>
         </Card>
     );

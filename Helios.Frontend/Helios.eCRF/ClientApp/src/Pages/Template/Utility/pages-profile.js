@@ -2,11 +2,7 @@ import React, { useState } from "react";
 import { Card, CardBody, Col, Container, DropdownItem, DropdownMenu, DropdownToggle, Nav, NavItem, NavLink, Row, TabContent, TabPane, UncontrolledDropdown } from "reactstrap";
 import { Link } from "react-router-dom";
 import classnames from "classnames";
-
-
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
-/*import SimpleBar from "simplebar-react";*/
+import SimpleBar from "simplebar-react";
 
 //Import Breadcrumb
 import Breadcrumbs from "../../../components/Common/Breadcrumb";
@@ -722,7 +718,7 @@ const PagesProfile = () => {
 
                                         <div>
                                             <h5 className="font-size-16 mb-4">Review</h5>
-                                            <PerfectScrollbar className="px-3" data-simplebar="init" style={{ maxHeight: "430px", overflow: 'hidden' }}>
+                                            <SimpleBar className="px-3" data-simplebar="init" style={{ maxHeight: "430px" }}>
                                                 <div className="d-flex align-items-start border-bottom pb-4">
                                                     <div className="flex-shrink-0 me-2">
                                                         <img className="rounded-circle avatar-sm" src={avatar3} alt="avatar-3 images" />
@@ -778,7 +774,7 @@ const PagesProfile = () => {
                                                         <Link to="#" className="text-muted font-13 d-inline-block"><i className="mdi mdi-reply"></i> Reply</Link>
                                                     </div>
                                                 </div>
-                                            </PerfectScrollbar>
+                                            </SimpleBar>
 
                                             <div className="border rounded mt-4">
                                                 <form action="#">

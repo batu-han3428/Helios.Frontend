@@ -3,18 +3,16 @@ import React, { useEffect, useState, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { Table, Row, Col, Typography, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const SdvList = props => {
-    const columns = []
-
+    const columns = [] 
+   
     columns.push({
         title: props.t('subjectNumber'),
         dataIndex: 'subjectNumber',
         sorter: (a, b) => a.subjectNumber.localeCompare(b.subjectNumber),
         sortDirections: ['ascend', 'descend'],
-        onFilter: (value, record) => String(record.subjectNumber).toLowerCase().includes(value.toLowerCase()),
+        onFilter: (value, record) => String(record.subjectNumber).toLowerCase().includes(value.toLowerCase()),       
         filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
     });
 
@@ -22,7 +20,7 @@ const SdvList = props => {
         title: props.t('Site name'),
         dataIndex: 'siteName',
         sorter: (a, b) => a.siteName.localeCompare(b.siteName),
-        sortDirections: ['ascend', 'descend'],
+        sortDirections: ['ascend', 'descend'],            
         onFilter: (value, record) => record.siteName === value,
     });
     columns.push({
@@ -30,19 +28,19 @@ const SdvList = props => {
         dataIndex: 'visitName',
         sorter: (a, b) => a.visitName.localeCompare(b.visitName),
         sortDirections: ['ascend', 'descend'],
-    });
+    });   
     columns.push({
         title: props.t('Page'),
         dataIndex: 'pageName',
         sorter: (a, b) => a.pageName.localeCompare(b.pageName),
         sortDirections: ['ascend', 'descend'],
-    });
+    });   
     columns.push({
         title: props.t('State'),
         dataIndex: 'state',
         sorter: (a, b) => a.state.localeCompare(b.state),
         sortDirections: ['ascend', 'descend'],
-    });
+    });     
 
     document.title = props.t('SDV list');
     return (
@@ -56,19 +54,18 @@ const SdvList = props => {
                         {/*    </Col>*/}
                         {/*</Row>*/}
                     </div>
-                    <Row>
+                    <Row>                       
                         <Col className="col-12">
-                            <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
-                                <Table
-                                    columns={columns}
-                                    pagination={true}
-                                />
-                            </PerfectScrollbar>
+                            <Table
+                                columns={columns}                             
+                                pagination={true}
+                                scroll={{ x: 'max-content' }}                                                                                     
+                            />
                         </Col>
                     </Row>
                 </div>
-            </div>
-        </React.Fragment >
+            </div>           
+        </React.Fragment>
     )
 }
 

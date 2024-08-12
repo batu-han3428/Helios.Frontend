@@ -12,8 +12,7 @@ import { useLazyEmailTemplateListGetQuery, useEmailTemplateDeleteMutation } from
 import Swal from 'sweetalert2';
 import templateTypeItems from './TemplateTypeItems';
 import { showToast } from '../../../store/toast/actions';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
+
 
 const EmailTemplateList = props => {
 
@@ -228,14 +227,13 @@ const EmailTemplateList = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>                                  
-                                    <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
+                                   
                                     <Table
                                         dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
                                         columns={data.columns}
                                         pagination={true}
-                                        />
-                                    </PerfectScrollbar>
-
+                                        scroll={{ x: 'max-content' }}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>

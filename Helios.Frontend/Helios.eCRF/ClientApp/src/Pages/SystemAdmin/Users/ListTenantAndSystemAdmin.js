@@ -15,8 +15,6 @@ import { countryNumber } from "../../../helpers/phonenumber_helper";
 import DeleteTenantAndSystemAdmin from "./DeleteTenantAndSystemAdmin";
 import { createPortal } from 'react-dom'
 import { showToast } from "../../../store/toast/actions";
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const ListTenantAndSystemAdmin = props => {
 
@@ -350,14 +348,13 @@ const ListTenantAndSystemAdmin = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>
-                                    <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
+                                 
                                     <Table
                                         dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
                                         columns={data.columns}
                                         pagination={true}
-                                        />
-                                    </PerfectScrollbar>
-
+                                        scroll={{ x: 'max-content' }}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>
