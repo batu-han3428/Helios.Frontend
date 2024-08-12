@@ -37,7 +37,7 @@ class CheckElement extends Component {
 
         this.setState({ checkedOptions });
         var val = JSON.stringify(checkedOptions).slice(1, JSON.stringify(checkedOptions).length - 1);
-
+        if (val !== "") val = JSON.parse(val);
         this.props.HandleAutoSave(this.state.id, val, 9);
     };
     componentDidUpdate(prevProps) {
@@ -51,7 +51,7 @@ class CheckElement extends Component {
                 {(this.state.layout === 2 || this.state.layout === 0) && (
                     <div className="mb-3">
                         <div className="form-check form-check-inline">
-                            {this.state.ElementOptions.map((item, index) => (
+                            {this.state.ElementOptions.map((item, index) => (                                
                                 <div className="form-check" key={index} style={{ display: 'inline-block', marginRight: '10px' }}>
                                     <input
                                         type="checkbox"

@@ -82,7 +82,6 @@ const AuthMiddleware = (props) => {
     useEffect(() => {
         if (user) {
             dispatch(loginuser(result));
-            console.log(result.roles);
         }
     }, [dispatch, user, result]);
 

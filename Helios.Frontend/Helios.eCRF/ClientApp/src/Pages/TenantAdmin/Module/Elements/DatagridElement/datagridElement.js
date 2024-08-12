@@ -237,28 +237,15 @@ class DatagridElement extends Component {
         }
     };
 
-    handleRemoveRow = async (index) => {
+    handleRemoveRow = async (dgri) => {
         try {
             this.state.dispatch(startloading());
-
-            var delElms = [];
-
-            this.state.allRows[index].forEach(item => {
-                delElms.push(item);
-            });
-
-            var elems = [];
-
-            delElms.map(item => {
-                if (item.content !== "")
-                    elems.push(item.content.props.ElementList[0].subjectVisitPageModuleElementId);
-            })
 
             let singleLine = false;
 
             if (this.state.allRows.length === 1) singleLine = true;
 
-            const response = await this.state.dispatch(SubjectApi.endpoints.removeDatagridSubjectElements.initiate({ elementIds: elems, singleLine: singleLine })).unwrap();
+            const response = await this.state.dispatch(SubjectApi.endpoints.removeDatagridSubjectElements.initiate({ datagridId: this.state.id, datagridRowId: dgri, singleLine: singleLine })).unwrap();
 
             this.state.dispatch(endloading());
 
@@ -287,7 +274,7 @@ class DatagridElement extends Component {
                     <tbody>
                         {this.state.allRows.map((row, index) => (
                             <tr key={index}>
-                                <td key={index}></td>
+                                <td key={index} style={{ verticalAlign: 'middle'}}>{this.state.IsFromDesign || (index + 1)}</td>
                                 {[...Array(this.state.allRows[0].length)].map((_, columnIndex) => (
                                     <td key={columnIndex}>
                                         {row[columnIndex].content !== undefined ? row[columnIndex].content : ""}
@@ -295,7 +282,17 @@ class DatagridElement extends Component {
                                 ))}
                                 {!this.state.isDisable &&
                                     <td>
-                                        <Button className="actionBtn" onClick={() => this.handleRemoveRow(index)}>
+                                        <Button className="actionBtn" onClick={() => {
+                                            let dgri;
+                                            for (let i = 0; i < row.length; i++) {
+                                                const item = row[i];
+                                                if (item.content && item.content.props && item.content.props.ElementList && item.content.props.ElementList.length > 0) {
+                                                    dgri = item.content.props.ElementList[0].dataGridRowId;
+                                                    break;
+                                                }
+                                            }
+                                            this.handleRemoveRow(dgri);
+                                        }}>
                                             <i className="far fa-trash-alt"></i>
                                         </Button>
                                     </td>
