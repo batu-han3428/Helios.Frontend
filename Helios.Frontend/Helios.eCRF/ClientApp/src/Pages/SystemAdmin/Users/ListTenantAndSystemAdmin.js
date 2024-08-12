@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { withTranslation } from "react-i18next";
 import { Row, Col, Button, Card, CardBody, Dropdown, DropdownToggle, DropdownMenu, DropdownItem } from "reactstrap";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Table } from 'antd';
+import { Table,Input } from 'antd';
 import ModalComp from "../../../components/Common/ModalComp/ModalComp";
 import AddOrUpdateTenantAndSystemAdmin from "./AddOrUpdateTenantAndSystemAdmin";
 import { useSelector, useDispatch } from 'react-redux';
@@ -15,6 +15,7 @@ import { countryNumber } from "../../../helpers/phonenumber_helper";
 import DeleteTenantAndSystemAdmin from "./DeleteTenantAndSystemAdmin";
 import { createPortal } from 'react-dom'
 import { showToast } from "../../../store/toast/actions";
+import { SearchOutlined } from '@ant-design/icons';
 
 const ListTenantAndSystemAdmin = props => {
 
@@ -30,6 +31,15 @@ const ListTenantAndSystemAdmin = props => {
     const [modalButtonText, setModalButtonText] = useState("");
     const [table, setTable] = useState([]);
     const [modalContent, setModalContent] = useState(null);
+
+    const [filteredInfo, setFilteredInfo] = useState({});
+    const [sortedInfo, setSortedInfo] = useState({});
+
+    const handleChange = (pagination, filters, sorter) => {
+        setFilteredInfo(filters);
+        setSortedInfo(sorter);
+
+    };
 
 
     const addSystemAdmin = () => {
@@ -60,7 +70,13 @@ const ListTenantAndSystemAdmin = props => {
             </div>);
         return actions;
     };
-
+    const [searchname, setSearchname] = useState('');
+    const [searchLastname, setSearchLastname] = useState('');
+    const [searchemail, setSearchemail] = useState('');
+    const [rolesNames, setRolesNames] = React.useState([]);
+    const [tenantsNames, setTenantsNames] = React.useState([]);
+    const uniqueRolesNames = Array.from(new Set(rolesNames));
+    const uniqueTenantsNames = Array.from(new Set(tenantsNames));
     const data = {
         columns: [
             {
@@ -68,18 +84,60 @@ const ListTenantAndSystemAdmin = props => {
                 dataIndex: 'name',
                 sorter: (a, b) => a.name.localeCompare(b.name),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [searchname],
+                onFilter: (value, record) => String(record.name).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search name"
+                                value={selectedKeys[0]}
+                                onChange={(e) => setSearchname(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },
             {
                 title: props.t('Last name'),
                 dataIndex: 'lastName',
                 sorter: (a, b) => a.lastName.localeCompare(b.lastName),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [searchLastname],
+                onFilter: (value, record) => String(record.lastName).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search lastname"
+                                value={selectedKeys[0]}
+                                onChange={(e) => setSearchLastname(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },
             {
                 title: props.t('e-Mail'),
                 dataIndex: 'email',
                 sorter: (a, b) => a.email.localeCompare(b.email),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: [searchemail],
+                onFilter: (value, record) => String(record.email).toLowerCase().includes(value.toLowerCase()),
+                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                    return (
+                        <div style={{ padding: 8 }}>
+                            <Input.Search
+                                placeholder="Search email"
+                                value={selectedKeys[0]}
+                                onChange={(e) => setSearchemail(e.target.value)}
+                            />
+                        </div>
+                    );
+                },
+                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
             },
             {
                 title: props.t('State'),
@@ -96,14 +154,26 @@ const ListTenantAndSystemAdmin = props => {
             {
                 title: props.t('Roles'),
                 dataIndex: 'roles',
-                sorter: (a, b) => a.roles.localeCompare(b.roles),
+                sorter: (a, b) => a.userRoles.map(role => role).join(', ').localeCompare(b.userRoles.map(role => role).join(', ')),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: filteredInfo.roles || null,
+                filters: uniqueRolesNames.map(item => ({ ...item, text: item, value: item })),                            
+                onFilter: (value, record) => {                   
+                    const roles = Array.isArray(record.userRoles) ? record.userRoles : [];
+                    return roles.some(role => role === value);
+                },
             },
             {
                 title: props.t('Tenants'),
                 dataIndex: 'tenants',
-                sorter: (a, b) => a.tenants.localeCompare(b.tenants),
+                sorter: (a, b) => a.userTenants.map(tenant => tenant).join(', ').localeCompare(b.userTenants.map(tenant => tenant).join(', ')),
                 sortDirections: ['ascend', 'descend'],
+                filteredValue: filteredInfo.tenants || null,
+                filters: uniqueTenantsNames.map(item => ({ ...item, text: item, value: item })),             
+                onFilter: (value, record) => {
+                    const tenants = Array.isArray(record.userTenants) ? record.userTenants : [];
+                    return tenants.some(tenant => tenant === value);
+                },
             },
             {
                 title: props.t('Actions'),
@@ -175,20 +245,34 @@ const ListTenantAndSystemAdmin = props => {
             trigger(userInformation.userId);
         }
     }, [userInformation.userId]) 
-
+  
     useEffect(() => {
         dispatch(startloading());
-        if (!isLoading && !error && usersData) {
+        if (!isLoading && !error && usersData) {          
             const updatedUsersData = usersData.map(item => {
+                const userRoles = item.roles !== null && item.roles.length > 0
+                    ? item.roles.map(role => role.roleName)
+                    : [];
+                const userTenants = item.tenants !== null && item.tenants.length > 0
+                    ? item.tenants.map(tenant => tenant.name)
+                    : [];
                 return {
                     ...item,
                     isActive: item.isActive ? props.t("Active") : props.t("Passive"),
                     phoneNumber: item.phoneNumber ? countryNumber(item.phoneNumber) : "",
                     roles: item.roles !== null && item.roles.length > 0 ? getRolesDropdown(item.roles, item.id) : "",
                     tenants: item.tenants !== null && item.tenants.length > 0 ? getTenantsDropdown(item.tenants, item.id) : "",
-                    actions: getActions(item)
+                    actions: getActions(item),
+                    userRoles, 
+                    userTenants 
                 };
             });
+
+            const allRolesNames = updatedUsersData.flatMap(user => user.userRoles);
+            const allTenantsNames = updatedUsersData.flatMap(user => user.userTenants);
+            setRolesNames(allRolesNames);
+            setTenantsNames(allTenantsNames);
+
             setTable(updatedUsersData);
 
             dispatch(endloading());
@@ -354,6 +438,9 @@ const ListTenantAndSystemAdmin = props => {
                                         columns={data.columns}
                                         pagination={true}
                                         scroll={{ x: 'max-content' }}
+                                        onChange={handleChange}
+                                        filteredInfo={filteredInfo}
+                                        sortedInfo={sortedInfo}
                                     />
                                 </CardBody>
                             </Card>
