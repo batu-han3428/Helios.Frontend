@@ -18,6 +18,8 @@ import { useParams } from 'react-router-dom';
 import { showToast } from '../../../store/toast/actions';
 import { useDispatch } from 'react-redux';
 import { formatDate } from "../../../helpers/format_date";
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const Study = props => {
 
@@ -277,19 +279,21 @@ const Study = props => {
                                     items={getAllKeys(dataSource)}
                                     strategy={verticalListSortingStrategy}
                                 >
-                                    <Table
-                                        components={components}
-                                        rowClassName={(record, index) => {
-                                            return record.type === "visit" ? 'row-visit-background-color' : record.type === "page" ? 'row-page-background-color' : "row-module-background-color";
-                                        }}
-                                        bordered
-                                        dataSource={dataSource}
-                                        columns={columns}
-                                        expandedRowKeys={expandedRowKeys}
-                                        onExpand={handleExpand}
-                                        pagination={false}
-                                        scroll={{ x: 'max-content' }}
-                                    />
+                                    <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
+                                        <Table
+                                            components={components}
+                                            rowClassName={(record, index) => {
+                                                return record.type === "visit" ? 'row-visit-background-color' : record.type === "page" ? 'row-page-background-color' : "row-module-background-color";
+                                            }}
+                                            bordered
+                                            dataSource={dataSource}
+                                            columns={columns}
+                                            expandedRowKeys={expandedRowKeys}
+                                            onExpand={handleExpand}
+                                            pagination={false}
+                                          
+                                        />
+                                    </PerfectScrollbar>
                                 </SortableContext>
                             </DndContext>
                         </Col>

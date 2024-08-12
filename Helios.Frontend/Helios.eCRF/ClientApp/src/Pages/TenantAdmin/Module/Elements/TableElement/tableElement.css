@@ -1,0 +1,8 @@
+﻿/* Yatay kaydırma çubuğu işaretçisini de gizle */
+.table-responsive .scrollbar-container .ps__thumb-x {
+    display: block !important; /* Yatay kaydırma çubuğunun işaretçisini gizler */
+}
+
+.scrollbar-container .ps__rail-x {
+    display: block !important; /* Yatay kaydırma çubuğunu gizler */
+}

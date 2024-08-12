@@ -16,6 +16,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Table, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { showToast } from '../../../store/toast/actions';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 
 const TenantUsers = props => {
@@ -489,18 +491,18 @@ const TenantUsers = props => {
                                     </MDBTabs>
 
                                     <MDBTabsContent>
-
+                                        <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
                                         <Table
                                             dataSource={basicActive === 'tab1' ? liveData.rows.map(item => ({ ...item, key: item.studyUserId })) : demoData.rows.map(item => ({ ...item, key: item.studyUserId }))}
                                             columns={basicActive === 'tab1' ? liveData.columns : demoData.columns}
                                             expandedRowKeys={expandedRowKeys}
                                             onExpand={handleExpand}
                                             pagination={true}
-                                            scroll={{ x: 'max-content' }}
                                             onChange={handleChange}
                                             filteredInfo={filteredInfo}
                                             sortedInfo={sortedInfo}
                                         />
+                                        </PerfectScrollbar>
 
 
                                     </MDBTabsContent>

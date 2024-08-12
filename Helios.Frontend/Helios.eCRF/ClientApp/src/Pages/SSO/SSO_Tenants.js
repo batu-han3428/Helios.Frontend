@@ -14,6 +14,8 @@ import { Button, ConfigProvider, Table } from 'antd';
 import { TinyColor } from '@ctrl/tinycolor';
 import { showToast } from '../../store/toast/actions';
 import { SearchOutlined } from '@ant-design/icons';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const SSO_Tenants = props => {
 
@@ -152,19 +154,21 @@ const SSO_Tenants = props => {
                                             {props.t("You do not have an active tenant, if you think there is an error, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
                                         </Alert>
                                     ) : (
-                                        <Table
-                                            columns={columns}
-                                            dataSource={filteredData}
-                                            pagination={true}
-                                            scroll={{ x: 'max-content' }}
-                                            onRow={(record, rowIndex) => {
-                                                return {
-                                                    onClick: () => {
-                                                        goToStudies(record.id)
+                                        <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
+                                            <Table
+                                                columns={columns}
+                                                dataSource={filteredData}
+                                                pagination={true}
+                                                onRow={(record, rowIndex) => {
+                                                    return {
+                                                        onClick: () => {
+                                                            goToStudies(record.id)
+                                                        }
                                                     }
-                                                }
-                                            }}
-                                        />
+                                                }}
+                                            />
+                                        </PerfectScrollbar>
+
                                     )}
                                 </div>
                             </CardBody>

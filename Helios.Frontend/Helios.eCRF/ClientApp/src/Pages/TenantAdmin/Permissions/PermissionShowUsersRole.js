@@ -5,6 +5,8 @@ import { useLazyRoleUsersListGetQuery } from '../../../store/services/Permission
 import { startloading, endloading } from '../../../store/loader/actions';
 import { useDispatch } from 'react-redux';
 import { Table } from 'antd';
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 
 const PermissionShowUsersRole = props => {
@@ -83,13 +85,14 @@ const PermissionShowUsersRole = props => {
     }, [resultData, isError, isLoading, props.t]);
 
     return (
-        
+        <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
         <Table
             dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
             columns={data.columns}
             pagination={true}
-            scroll={{ x: 'max-content' }}
-        />
+            />
+        </PerfectScrollbar>
+
     )
 }
 

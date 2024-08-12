@@ -12,6 +12,8 @@ import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2';
 import { countryNumber } from "../../../helpers/phonenumber_helper";
 import { showToast } from "../../../store/toast/actions";
+import PerfectScrollbar from 'react-perfect-scrollbar';
+import 'react-perfect-scrollbar/dist/css/styles.css';
 
 
 const ListSystemAdmin = props => {
@@ -274,13 +276,15 @@ const ListSystemAdmin = props => {
                     <Row>
                         <Col className="col-12">
                             <Card>
-                                <CardBody>                                   
+                                <CardBody>   
+                                    <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
                                     <Table
                                         dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
                                         columns={data.columns}
                                         pagination={true}
-                                        scroll={{ x: 'max-content' }}
-                                    />
+                                        />
+                                    </PerfectScrollbar>
+
                                 </CardBody>
                             </Card>
                         </Col>
