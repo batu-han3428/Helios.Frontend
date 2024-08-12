@@ -118,15 +118,12 @@ function ElementList(props) {
                             } else {
                                 dispatch(showToast(props.t(data.message), true, false));
                             }
-
-                            dispatch(endloading());
                         })
                         .catch(error => {
                             dispatch(showToast(props.t("An error occurred while processing your request."), true, false));
                         })
                         .finally(() => {
                             dispatch(endloading());
-                            window.location.reload();
                         });
                 } catch (error) {
                     dispatch(endloading());
