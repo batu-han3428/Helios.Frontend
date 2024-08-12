@@ -93,7 +93,7 @@ const FormBuilder = props => {
         modalRef.current.tog_backdrop();
     }
     const backPage = () => {
-        navigate(-1);
+        navigate(`/visits/${StudyId}`);
     };
 
     return (
