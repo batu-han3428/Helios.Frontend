@@ -191,7 +191,7 @@ function SubjectDetailElementList(props) {
                                 }
                             </Row>
                             <label style={{ fontSize: "8pt", textDecoration: 'none', fontStyle: 'italic', color: '#4a4a4a' }}>
-                                *{item.description}
+                                {item.description !== null && item.description !== "" && `* ${item.description}`}
                             </label>
                         </React.Fragment>
                     </Row>
