@@ -25,7 +25,8 @@ import {
     changeSidebarType,
 } from "../../store/actions";
 
-const Header = props => {
+const Header = props => { 
+
     const location = useLocation();
     const { studyId } = useParams();
     
@@ -66,7 +67,7 @@ const Header = props => {
         });
         localStorage.setItem('clickedLink', linkName);
     };
-    const { data: studyData, isLoadingStudy, isErrorStudy } = useStudyGetQuery(8);
+    const { data: studyData, isLoadingStudy, isErrorStudy } = useStudyGetQuery(newstudyId);
 
     function toggleFullscreen() {
         if (
@@ -112,7 +113,7 @@ const Header = props => {
                     <div className="d-flex">
                         <div className="navbar-brand-box">
 
-                            <Link to="/" className="logo logo-dark">
+                            <Link to="#" className="logo logo-dark">
                                 <span className="logo-sm">
                                     <img src={logoheliossmImg} alt="" height="22" />
                                 </span>
@@ -121,7 +122,7 @@ const Header = props => {
                                 </span>
                             </Link>
 
-                            <Link to="/" className="logo logo-light">
+                            <Link to="#" className="logo logo-light">
                                 <span className="logo-sm">
                                     <img src={logoheliossmImg} alt="" height="22" />
                                 </span>
@@ -134,7 +135,7 @@ const Header = props => {
                             {!isLoading && !isError && permissionData && (
                                 <>
                                     {permissionData.canSubjectView && (
-                                        <Link to="/" className="" onClick={() => handleClick('subject')} >
+                                        <Link to={`/subjectlist/${studyId}`} className="" onClick={() => handleClick('subject')} >
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.subject ? 'underline' : 'none', backgroundColor: clickedLinks.subject ? 'white' : '', marginRight: '30px' }}>{props.t("Subject")}</label>
                                         </Link>
                                     )
