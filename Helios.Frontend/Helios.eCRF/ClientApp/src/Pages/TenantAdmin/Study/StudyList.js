@@ -12,8 +12,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Swal from 'sweetalert2';
 import './study.css';
 import { showToast } from '../../../store/toast/actions';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const StudyList = props => {
     
@@ -264,11 +262,11 @@ const StudyList = props => {
                     <Row>
                         <Col className="col-12">
                             <Card className="studylist-card-table">
-                                <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
                                 <Table
                                     dataSource={tableData.map(item => ({ ...item, key: item.id }))}
                                     columns={columns}
                                     pagination={true}
+                                    scroll={{ x: 'max-content' }}
                                     onRow={(record, rowIndex) => {
                                         return {
                                             onDoubleClick: event => {
@@ -276,9 +274,7 @@ const StudyList = props => {
                                             }
                                         }
                                     }}
-                                    />
-                                </PerfectScrollbar>
-
+                                />
                             </Card>
                         </Col>
                     </Row>

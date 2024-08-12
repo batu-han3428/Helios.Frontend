@@ -3,8 +3,6 @@ import React, { useEffect, useState, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { Table, Row, Col, Typography, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const QueryList = props => {
     const columns = []
@@ -75,12 +73,11 @@ const QueryList = props => {
                     </div>
                     <Row>
                         <Col className="col-12">
-                            <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
                             <Table
                                 columns={columns}
                                 pagination={true}
-                                />
-                            </PerfectScrollbar>
+                                scroll={{ x: 'max-content' }}
+                            />
                         </Col>
                     </Row>
                 </div>

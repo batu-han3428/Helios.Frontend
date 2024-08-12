@@ -1,9 +1,0 @@
-﻿/* Varsayılan tarayıcı kaydırma çubuklarını gizlemek için */
-.my-scrollbar-container {
-    overflow: hidden !important;
-}
-
-    /* WebKit tarayıcılar için özel kaydırma çubuğu stilleri */
-    .my-scrollbar-container::-webkit-scrollbar {
-        display: none !important;
-    }

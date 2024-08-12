@@ -15,8 +15,6 @@ import Swal from 'sweetalert2'
 import { exportToExcel } from '../../../helpers/ExcelDownload';
 import './Sites.css';
 import { showToast } from '../../../store/toast/actions';
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 
 const Sites = props => {
 
@@ -295,14 +293,13 @@ const Sites = props => {
                             <Card>
                                 <CardBody>                                  
                                
-                                    <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
+                                   
                                     <Table
                                         dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
                                         columns={data.columns}
                                         pagination={true}
-                                        />
-                                    </PerfectScrollbar>
-
+                                        scroll={{ x: 'max-content' }}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>

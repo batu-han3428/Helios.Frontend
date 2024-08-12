@@ -9,8 +9,7 @@ import { startloading, endloading } from '../../../store/loader/actions';
 import { useTenantListGetQuery } from '../../../store/services/Tenants';
 import { formatDate } from "../../../helpers/format_date";
 import { useNavigate } from "react-router-dom";
-import PerfectScrollbar from 'react-perfect-scrollbar';
-import 'react-perfect-scrollbar/dist/css/styles.css';
+
 
 const TenantsList = props => {
 
@@ -68,7 +67,7 @@ const TenantsList = props => {
         ],
         rows: table
     }
-
+   
     const { data: tenantsData, error, isLoading } = useTenantListGetQuery();
 
     useEffect(() => {
@@ -124,22 +123,20 @@ const TenantsList = props => {
                     <Row>
                         <Col className="col-12">
                             <Card>
-                                <CardBody>
-                                    <PerfectScrollbar style={{ maxHeight: '650px', maxWidth: '100%' }}>
-                                        <Table
-                                            dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
-                                            columns={data.columns}
-                                            pagination={true}
-                                            onRow={(record) => {
-                                                return {
-                                                    onDoubleClick: () => {
-                                                        addOrUpdateTenant(record.id)
-                                                    }
+                                <CardBody>                                  
+                                    <Table
+                                        dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
+                                        columns={data.columns}
+                                        pagination={true}
+                                        scroll={{ x: 'max-content' }}
+                                        onRow={(record) => {
+                                            return {
+                                                onDoubleClick: () => {
+                                                    addOrUpdateTenant(record.id)
                                                 }
-                                            }}
-                                        />
-                                    </PerfectScrollbar>
-
+                                            }
+                                        }}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>
