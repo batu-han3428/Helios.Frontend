@@ -48,7 +48,7 @@ namespace Helios.eCRF.Services
             }
         }
 
-        private async Task<string?> GetTenantStudyLimit(Int64 tenantId)
+        public async Task<string?> GetTenantStudyLimit(Int64 tenantId)
         {
             using (var client = AuthServiceClient)
             {

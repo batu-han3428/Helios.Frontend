@@ -23,9 +23,12 @@ export const StudyApi = createApi({
             query: (data) => `/Study/GetStudyList/${data.isLocked}/${data.tenantId}`,
             providesTags: ['Study'],
         }),
+        tenantStudyLimitGet: builder.query({
+            query: (data) => `/Study/GetTenantStudyLimit/${data.tenantId}`
+        }),
         studyGet: builder.query({
             query: (studyId) => `/Study/GetStudy/${studyId}`,
-            refetchOnMountOrArgChange: true, 
+            refetchOnMountOrArgChange: true,
             keepUnusedDataFor: 0,
             async onQueryStarted(_, { dispatch, queryFulfilled }) {
                 await queryFulfilled;
@@ -54,6 +57,7 @@ export const StudyApi = createApi({
 
 
 export const { useLazyStudyListGetQuery } = StudyApi;
+export const { useLazyTenantStudyLimitGetQuery } = StudyApi;
 
 export const { useStudyGetQuery, usePrefetch } = StudyApi;
 

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { withTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { useLazyStudyListGetQuery, useStudyLockOrUnlockMutation } from '../../../store/services/Study';
+import { useLazyStudyListGetQuery, useLazyTenantStudyLimitGetQuery, useStudyLockOrUnlockMutation  } from '../../../store/services/Study';
 import { useDispatch, useSelector } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
 import { formatDate } from "../../../helpers/format_date";
@@ -175,12 +175,14 @@ const StudyList = props => {
     ];
 
     const [trigger, { data: studyData, error, isLoading }] = useLazyStudyListGetQuery();
+    const [triggerTenantStudyLimit, { data: tenantStudyLimitData, isLoading: isLoadingTenantStudyLimit, error: isErrorTenantStudyLimit }] = useLazyTenantStudyLimitGetQuery();
 
     const { isLocked } = useParams();
 
     useEffect(() => {
         if (isLocked && tenantId) {
             trigger({ isLocked: isLocked === 'true' ? true : false, tenantId: tenantId });
+            triggerTenantStudyLimit({ tenantId: tenantId });
         }
     }, [isLocked, tenantId]);
 
@@ -203,8 +205,14 @@ const StudyList = props => {
     }, [studyData, error, isLoading, props.t]);
 
     const handleMenuClick = (e) => {
-        if (e.key === 'newStudy') {
-            navigate(`/addstudy/false`);        
+        if (e.key === "newStudy") {
+            if (tableData.length === tenantStudyLimitData) {
+                dispatch(showToast(props.t("There is no limit for adding study, please contact the system administrator."), true, false));
+            }
+            else {
+                navigate(`/addstudy/false`);  
+            }
+                 
         }
         else {
             navigate(`/addstudy/true`);  
