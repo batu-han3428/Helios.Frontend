@@ -46,12 +46,6 @@ class ListElementsProperties extends Component {
             isEdit: false,
         }
 
-        var l = this.state.layoutOptionGroup.filter(function (e) {
-            if (e.value == props.Layout)
-                return e;
-        });
-
-        this.state.layoutSelectedGroup = l;
         this.handleLayoutChange = this.handleLayoutChange.bind(this);
         this.updateSavedList = this.updateSavedList.bind(this);
         this.handleTagListChange = this.handleTagListChange.bind(this);
@@ -66,6 +60,13 @@ class ListElementsProperties extends Component {
         this.fillSavedTagList = this.fillSavedTagList.bind(this);
 
         this.getMultipleTagList();
+    }
+
+    componentDidMount() {
+        const l = this.state.layoutOptionGroup.filter(e => e.value === this.props.Layout);
+        this.setState({
+            layoutSelectedGroup: l.length > 0 ? l[0] : null
+        });
     }
 
     handleRemoveOption = (optionValue) => {
@@ -122,9 +123,15 @@ class ListElementsProperties extends Component {
     }
 
     handleLayoutChange = selectedOption => {
-        this.setState({ Layout: selectedOption.value });
-        this.state.layoutSelectedGroup = selectedOption;
-        this.props.changeLayout(selectedOption.value);
+        this.setState(
+            {
+                Layout: selectedOption.value,
+                layoutSelectedGroup: selectedOption,
+            },
+            () => {
+                this.props.changeLayout(this.state.Layout);
+            }
+        );
     };
 
     updateSavedList = () => {
@@ -391,7 +398,7 @@ class ListElementsProperties extends Component {
                                 </label>
                                 <div className="col-md-10">
                                     <Select
-                                        value={this.state.layoutSelectedGroup}
+                                        value={this.state.layoutSelectedGroup || this.state.layoutOptionGroup[0]}
                                         onChange={this.handleLayoutChange}
                                         options={this.state.layoutOptionGroup}
                                         placeholder={this.props.t("Select")}

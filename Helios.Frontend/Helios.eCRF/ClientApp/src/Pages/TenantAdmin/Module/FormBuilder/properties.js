@@ -60,7 +60,7 @@ class Properties extends React.Component {
             CanMissing: false,
 
             widthOptionGroup: GetWidth(),
-            widthSelectedGroup: 12,
+            widthSelectedGroup: null,
 
             // Dependency properties
             DependentSourceFieldId: 0,
@@ -742,7 +742,7 @@ class Properties extends React.Component {
                 return e;
         });
 
-        this.setState({ widthSelectedGroup: w });
+        this.setState({ widthSelectedGroup: w.length > 0 ? w[0] : null });
 
         var t = this.state.DependentSourceFieldId;
 
@@ -1077,7 +1077,7 @@ class Properties extends React.Component {
                                                                 </label>
                                                                 <div className={this.state.fieldWidthsW}>
                                                                     <Select
-                                                                        value={this.state.widthSelectedGroup}
+                                                                        value={this.state.widthSelectedGroup || this.state.widthOptionGroup[11]}
                                                                         onChange={this.handleWidthChange}
                                                                         options={this.state.widthOptionGroup}
                                                                         placeholder={this.props.t("Select")}
