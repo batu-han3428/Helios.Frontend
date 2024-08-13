@@ -250,7 +250,7 @@ namespace Helios.eCRF.Services
 
             using (var client = SharedServiceClient)
             {
-                var req = new RestRequest("Cache/GetUserPermissions", Method.Get);
+                var req = new RestRequest("CoreSubject/GetUserPermissions", Method.Get);
                 req.AddParameter("studyId", studyId);
                 req.AddParameter("userId", UserId);
                 var result = await client.ExecuteAsync<UserPermissionModel>(req);
