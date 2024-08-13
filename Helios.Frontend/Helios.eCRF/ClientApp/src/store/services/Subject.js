@@ -107,7 +107,7 @@ export const SubjectApi = createApi({
                 url: `/Subject/RemoveSubjectComment?id=${id}`,
                 method: 'POST'
             }),
-            invalidatesTags: ['Comment'],
+            invalidatesTags: ['Comment', 'SubjectElement'],
         }),
         setSubjectComment: builder.mutation({
             query: (values) => ({
@@ -115,7 +115,7 @@ export const SubjectApi = createApi({
                 method: 'POST',
                 body: values,
             }),
-            invalidatesTags: ['Comment'],
+            invalidatesTags: ['Comment', 'SubjectElement'],
         }),
     }),
 });

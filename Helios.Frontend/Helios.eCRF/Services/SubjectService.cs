@@ -99,10 +99,14 @@ namespace Helios.eCRF.Services
                 req.AddParameter("subjectId", subjectId);
                 req.AddParameter("studyId", studyId);
                 var result = await client.ExecuteAsync<List<Int64>>(req);
-
-                if (result.IsSuccessful)
+                if (result.IsSuccessful && result.Data.Count > 0)
                 {
-                    RemoveHiddenPages(retResult, result.Data);
+                    //TO DO : Bu kısımda visit relation tetiklenerek diğer sayfa ve vizitlerde bulunan verileri silmektedir. Veriler silindiğine dair sistem audit buradan atılmalıdır.
+                    string pageIdsString = string.Join(",", result.Data);
+                    var req2 = new RestRequest("CoreSubject/SetDependentPageElementValue?pageIdString=" + pageIdsString + "&subjectId=" + subjectId, Method.Post);
+                    AddApiHeaders(req2);
+                    var result2 = await client.ExecuteAsync<bool>(req2);
+                    if (result2.IsSuccessful && result2.Data) RemoveHiddenPages(retResult, result.Data);
                 }
             }
 

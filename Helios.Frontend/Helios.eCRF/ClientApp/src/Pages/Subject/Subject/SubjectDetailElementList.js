@@ -120,6 +120,7 @@ function SubjectDetailElementList(props) {
                 label: <a onClick={() => ClearData(param)}>{props.t("Clear data")}</a>,
                 icon: <FontAwesomeIcon icon="fas fa-ban" style={{ color: "#5b626b" }} />,
                 style: { color: "#5b626b" },
+                disabled: isDisable,
             },
             {
                 key: '2',
