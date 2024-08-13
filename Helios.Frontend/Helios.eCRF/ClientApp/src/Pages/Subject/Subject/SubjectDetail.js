@@ -216,7 +216,20 @@ const SubjectDetail = props => {
                         </Col>
                         <Col xs={24} sm={24} md={18} lg={18} xl={19} >
                             <div ref={myDivRef} id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom: "100px" }}>
-                                {isLoaded && subjectElementList.length > 0 ?
+                                {!isLoading1 && !error1 && isLoaded && elementList && subjectElementList.length < 1 ?
+                                    (
+                                         <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            height: '100vh' // Tam ekran yüksekliği
+                                        }}>
+                                            <Alert color="warning" style={{ height: "50px" }}>
+                                                {props.t("There is no module on the page. Please contact the system administrator.")}
+                                            </Alert>
+                                        </div>
+                                    )
+                                    :
                                     (
                                         <SubjectDetailElementList
                                             IsDisable={!permissions.canSubjectEdit}
@@ -224,19 +237,6 @@ const SubjectDetail = props => {
                                             ModuleId={0}
                                             ElementList={subjectElementList}
                                         />
-                                    )
-                                    :
-                                    (
-                                        <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            height: '100vh' // Tam ekran yüksekliği
-                                        }}>
-                                        <Alert color="warning" style={{height: "50px" }}>
-                                            {props.t("There is no module on the page. Please contact the system administrator.")}
-                                            </Alert>
-                                        </div>
                                     )
                                 }
 
