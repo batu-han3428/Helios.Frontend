@@ -157,9 +157,12 @@ const ListTenantAndSystemAdmin = props => {
                 sorter: (a, b) => a.userRoles.map(role => role).join(', ').localeCompare(b.userRoles.map(role => role).join(', ')),
                 sortDirections: ['ascend', 'descend'],
                 filteredValue: filteredInfo.roles || null,
-                filters: uniqueRolesNames.map(item => ({ ...item, text: item, value: item })),                            
+                filters: [{ text: 'Empty', value: [] }, ...uniqueRolesNames.map(item => ({ text: item, value: item }))],                          
                 onFilter: (value, record) => {                   
                     const roles = Array.isArray(record.userRoles) ? record.userRoles : [];
+                    if (Array.isArray(value) && value.length === 0) {
+                        return roles.length === 0;
+                    }
                     return roles.some(role => role === value);
                 },
             },
@@ -169,9 +172,12 @@ const ListTenantAndSystemAdmin = props => {
                 sorter: (a, b) => a.userTenants.map(tenant => tenant).join(', ').localeCompare(b.userTenants.map(tenant => tenant).join(', ')),
                 sortDirections: ['ascend', 'descend'],
                 filteredValue: filteredInfo.tenants || null,
-                filters: uniqueTenantsNames.map(item => ({ ...item, text: item, value: item })),             
+                filters: [{ text: 'Empty', value: [] }, ...uniqueTenantsNames.map(item => ({ ...item, text: item, value: item }))],             
                 onFilter: (value, record) => {
                     const tenants = Array.isArray(record.userTenants) ? record.userTenants : [];
+                    if (Array.isArray(value) && value.length === 0) {
+                        return tenants.length === 0;
+                    }
                     return tenants.some(tenant => tenant === value);
                 },
             },
