@@ -1,19 +1,5 @@
-import React, { Component, useState, useContext, Form, FormField, TextBox, ComboBox, CheckBox, LinkButton } from 'react';
-import {
-    Card,
-    CardBody,
-    CardText,
-    CardTitle,
-    Col,
-    Collapse,
-    Container,
-    Nav,
-    NavItem,
-    NavLink,
-    Row,
-    TabContent,
-    TabPane,
-} from "reactstrap";
+import React, { Component } from 'react';
+import { Row } from "reactstrap";
 import { withTranslation } from "react-i18next";
 
 class DateElementProperties extends Component {
@@ -149,7 +135,7 @@ class DateElementProperties extends Component {
                     </label>
                     <div className="col-md-3" style={{ marginRight: '6px' }}>
                         <input
-                            value={this.props.EndYear}
+                            value={this.props.EndYear || new Date().getFullYear()}
                             onChange={this.handleEndYearChange}
                             className="form-control"
                             type="number"

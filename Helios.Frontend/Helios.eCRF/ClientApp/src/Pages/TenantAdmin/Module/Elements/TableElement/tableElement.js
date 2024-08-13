@@ -1,13 +1,5 @@
 import React, { Component } from 'react';
-import {
-    Button,
-    Modal,
-    ModalBody,
-    ModalHeader,
-    ModalFooter,
-    Row,
-    Table
-} from "reactstrap";
+import { Button, Modal, ModalBody, ModalHeader, Row, Table } from "reactstrap";
 import { withTranslation } from "react-i18next";
 import Select from "react-select";
 import { connect } from 'react-redux';
@@ -119,21 +111,21 @@ class TableElement extends Component {
             }
         })
 
-        if (this.state.isDisable) {
-            if (result)
-                return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />
-            else
+        if (this.state.IsFromDesign) {
+            if (result) {
+                return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={true} FormType={this.state.FormType} />;
+            }
+            else {
                 return <input className="btn btn-success" type="button" value="+" onClick={() => this.toggleAddElementModal(colIndex + 1, rowIndex + 1)} />;
+            }
         }
         else {
             if (result) {
-                if (this.state.IsFromDesign)
-                    return <ElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ModuleElementList={cld} ShowElementList={false} IsDisable={false} FormType={this.state.FormType} />
-                else
-                    return <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ElementList={cld} IsDisable={false} />
+                return <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
             }
-            else
+            else {
                 return "";
+            }
         }
     };
     copyTableRowElement(e, id, rowindex) {
@@ -190,7 +182,7 @@ class TableElement extends Component {
                         <Table className="table table-hover table-bordered mb-0" style={{ width: this.state.totalWidth }}>
                             <thead>
                                 <tr>
-                                    <th key='0' style={{ width: '', backgroundColor: "#6D6E70", color: "#FFF" }}>#</th>
+                                    {this.state.IsFromDesign && <th key='0' style={{ width: '', backgroundColor: "#6D6E70", color: "#FFF" }}>#</th>}
                                     {this.state.datagridAndTableProperties.map((col, index) => (
                                         <th key={index} style={{ width: col.width, backgroundColor: "#6D6E70", color: "#FFF" }}>{col.title}</th>
                                     ))}
@@ -199,9 +191,11 @@ class TableElement extends Component {
                             <tbody>
                                 {[...Array(this.state.rowCount === 0 ? 1 : this.state.rowCount)].map((_, rowIndex) => (
                                     <tr key={rowIndex}>
-                                        <td key='0'>
-                                            {this.getTableRowProp(this.state.id, rowIndex + 1)}
-                                        </td>
+                                        {this.state.IsFromDesign &&
+                                            <td key='0'>
+                                                {this.getTableRowProp(this.state.id, rowIndex + 1)}
+                                            </td>
+                                        }
                                         {[...Array(this.state.columnCount)].map((_, columnIndex) => (
                                             <td key={columnIndex}>
                                                 {this.getTdContent(columnIndex, rowIndex)}
