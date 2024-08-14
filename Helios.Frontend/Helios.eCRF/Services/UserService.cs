@@ -248,7 +248,7 @@ namespace Helios.eCRF.Services
         {
             var retResult = new UserPermissionModel();
 
-            using (var client = SharedServiceClient)
+            using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreSubject/GetUserPermissions", Method.Get);
                 req.AddParameter("studyId", studyId);
@@ -258,17 +258,17 @@ namespace Helios.eCRF.Services
             }
 
 
-            if (retResult == null)
-            {
-                using (var client = CoreServiceClient)
-                {
-                    var req = new RestRequest("CoreSubject/SetUserPermissions", Method.Get);
-                    req.AddParameter("studyId", studyId);
-                    req.AddParameter("userId", UserId);
-                    var result = await client.ExecuteAsync<UserPermissionModel>(req);
-                    retResult = result.Data;
-                }
-            }
+            //if (retResult == null)
+            //{
+            //    using (var client = CoreServiceClient)
+            //    {
+            //        var req = new RestRequest("CoreSubject/SetUserPermissions", Method.Get);
+            //        req.AddParameter("studyId", studyId);
+            //        req.AddParameter("userId", UserId);
+            //        var result = await client.ExecuteAsync<UserPermissionModel>(req);
+            //        retResult = result.Data;
+            //    }
+            //}
 
             return retResult;
         }
