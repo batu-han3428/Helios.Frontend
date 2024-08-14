@@ -37,8 +37,10 @@ import Breadcrumb from "../../../components/Common/Breadcrumb";
 
 import { MDBTabs, MDBTabsItem, MDBTabsLink, MDBTabsContent } from 'mdb-react-ui-kit';
 
+import { showToast } from '../../../store/toast/actions';
+
 // actions
-import { editProfile, resetProfileFlag } from "../../../store/actions";
+import { editProfile, resetProfileFlag, showSidebar } from "../../../store/actions";
 const UserProfile = props => {
     const dispatch = useDispatch();
     const toastRef = useRef();
@@ -108,42 +110,27 @@ const UserProfile = props => {
                 ConfirmPassword: confirmNewPassword,
             });
             if (response.data.isSuccess) {
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: true
-                });
+                dispatch(showToast(props.t(response.data.message), true, false));      
                 dispatch(endloading());
             } else {
-               
+               debugger
                 if (response.data.message === "cod0") {
-                    toastRef.current.setToast({
-                        message: props.t("Invalid password"),
-                        stateToast: false
-                    });             
+                    dispatch(showToast(props.t("Invalid password"), true, false));      
                 }
                 else if (response.data.message === "cod1") {
-                    toastRef.current.setToast({
-                        message: props.t("Password cannot be empty"),
-                        stateToast: false
-                    });                         
+                    dispatch(showToast(props.t("Password cannot be empty"), true, false));      
                 }
                 else if (response.data.message === "cod2") {
-                    toastRef.current.setToast({
-                        message: props.t("Your new password cannot be the same as the previous one"),
-                        stateToast: false
-                    });  
+                    dispatch(showToast(props.t("Your new password cannot be the same as the previous one"), true, false));      
                 }
                 else if (response.data.message === "cod3") {
-                    toastRef.current.setToast({
-                        message: props.t("The new passwords entered are not compatible with each other, please try again"),
-                        stateToast: false
-                    });  
+                    dispatch(showToast(props.t("The new passwords entered are not compatible with each other, please try again"), true, false));                          
+                }
+                else if (response.data.message === "cod4") {
+                    dispatch(showToast(props.t("Password must be minimum 6 and maximum 16 characters."), true, false));                 
                 }
                 else {
-                    toastRef.current.setToast({
-                        message: props.t(response.data.message),
-                        stateToast: false
-                    }); 
+                    dispatch(showToast(props.t(response.data.message), true, false));      
                 }               
                 dispatch(endloading());
             }
