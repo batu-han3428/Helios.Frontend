@@ -27,9 +27,9 @@ namespace Helios.eCRF.Controllers
         /// <returns>çalışmalar</returns>
         [HttpGet("{isLock}/{tenantId}")]
         [RoleAttribute(Roles.TenantAdmin)]
-        public async Task<IActionResult> GetStudyList(bool isLock,Int64 tenantId)
+        public async Task<IActionResult> GetStudyList(bool isLock, Int64 tenantId)
         {
-            var result = await _studyService.GetStudyList(isLock,tenantId);
+            var result = await _studyService.GetStudyList(isLock, tenantId);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
@@ -40,14 +40,29 @@ namespace Helios.eCRF.Controllers
         /// <param name="studyId">çalışma id</param>
         /// <returns>çalışma bilgileri</returns>
         [HttpGet("{studyId}")]
-        [RoleAttribute(Roles.TenantAdmin,Roles.StudyUser)]
+        [RoleAttribute(Roles.TenantAdmin, Roles.StudyUser)]
         public async Task<IActionResult> GetStudy(Int64 studyId)
         {
             var result = await _studyService.GetStudy(studyId);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
-
+        /// <summary>
+        /// tenant çalışma limiti döner
+        /// </summary>
+        /// <returns>tenant bilgisi</returns>
+        [HttpGet("{tenantId}")]
+        [RoleAttribute(Roles.TenantAdmin)]
+        public async Task<IActionResult> GetTenantStudyLimit(Int64 tenantId)
+        {
+            var result = await _studyService.GetTenantStudyLimit(tenantId);
+            if (result == null)
+            {
+                return Ok("0");
+               
+            }
+            return Ok(result);
+        }
         /// <summary>
         /// çalışma kaydeder
         /// </summary>

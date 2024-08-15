@@ -14,6 +14,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<RestResponse<SiteDTO>> GetSite(Int64 siteId);
         Task<RestResponse<StudyDTO>> GetStudy(Int64 studyId);
         Task<ApiResponse<dynamic>> StudySave(StudyModel studyModel);
+        Task<string?> GetTenantStudyLimit(Int64 tenantId);
         Task<ApiResponse<dynamic>> StudyLockOrUnlock(StudyLockDTO studyLockDTO);
         Task<RestResponse<List<EmailTemplateModel>>> GetEmailTemplateList(Int64 studyId);
         Task<ApiResponse<dynamic>> DeleteEmailTemplate(BaseDTO emailTemplateDTO);
