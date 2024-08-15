@@ -1,4 +1,5 @@
 ﻿import PropTypes from 'prop-types';
+import { Alert } from "reactstrap";
 import React, { useEffect, useRef, useState } from "react";
 import { withTranslation } from "react-i18next";
 import { Row, Col, Button } from 'antd';
@@ -41,7 +42,7 @@ const SubjectDetail = props => {
             triggerPermission(studyId);
         }
     }, [studyId])
-    const [isLoaded, setIsLoaded] = useState(false);   
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         if (!errorPerm && !isLoadingPerm && permissionsData) {
@@ -53,7 +54,7 @@ const SubjectDetail = props => {
     const goToNextPage = () => {
         const nextPage = Number(pageId) + 1;
         setCurrentPage(nextPage);
-        navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}`);
+        navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}/${subjectNumber}`);
 
     };
 
@@ -61,7 +62,7 @@ const SubjectDetail = props => {
         if (currentPage > 1) {
             const nextPage = Number(pageId) - 1;
             setCurrentPage(nextPage);
-            navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}`);
+            navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}/${subjectNumber}`);
         }
     };
 
@@ -112,7 +113,8 @@ const SubjectDetail = props => {
 
     const setPrevNextButton = (data, id) => {
         const result = findPageIdInChildren(data, parseInt(id, 10));
-        if (result.childrenCount <= 2) {
+        if (result === null) return;
+        else if (result.childrenCount <= 2) {
             setIsPrevButton(false);
             setIsNextButton(false);
         } else if (result.isFirstChild) {
@@ -191,7 +193,7 @@ const SubjectDetail = props => {
                 window.removeEventListener('resize', updateSidebarWidth);
             };
         }
-        
+
     }, [subjectElementList]);
 
     useEffect(() => {
@@ -202,7 +204,7 @@ const SubjectDetail = props => {
 
     return (
         <React.Fragment>
-            <div className="page-content" style={{ paddingBottom:0,  paddingLeft: 0 }}>
+            <div className="page-content" style={{ paddingBottom: 0, paddingLeft: 0 }}>
                 <div className="container-fluid" style={{ paddingLeft: 0 }}>
                     <Row gutter={16} >
                         <Col xs={0} sm={0} md={6} lg={6} xl={5} ref={sidebarRef}>
@@ -214,14 +216,30 @@ const SubjectDetail = props => {
                         </Col>
                         <Col xs={24} sm={24} md={18} lg={18} xl={19} >
                             <div ref={myDivRef} id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom: "100px" }}>
-                                {isLoaded &&
-                                    <SubjectDetailElementList
-                                        IsDisable={!permissions.canSubjectEdit}
-                                        StudyId={studyId}
-                                        ModuleId={0}
-                                        ElementList={subjectElementList}
-                                    />
+                                {!isLoading1 && !error1 && isLoaded && elementList && subjectElementList.length < 1 ?
+                                    (
+                                         <div style={{
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            height: '100vh' // Tam ekran yüksekliği
+                                        }}>
+                                            <Alert color="warning" style={{ height: "50px" }}>
+                                                {props.t("There is no module on the page. Please contact the system administrator.")}
+                                            </Alert>
+                                        </div>
+                                    )
+                                    :
+                                    (
+                                        <SubjectDetailElementList
+                                            IsDisable={!permissions.canSubjectEdit}
+                                            StudyId={studyId}
+                                            ModuleId={0}
+                                            ElementList={subjectElementList}
+                                        />
+                                    )
                                 }
+
                             </div>
                         </Col>
                     </Row>

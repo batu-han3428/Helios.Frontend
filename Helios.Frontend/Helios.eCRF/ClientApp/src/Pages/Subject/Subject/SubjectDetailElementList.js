@@ -120,6 +120,7 @@ function SubjectDetailElementList(props) {
                 label: <a onClick={() => ClearData(param)}>{props.t("Clear data")}</a>,
                 icon: <FontAwesomeIcon icon="fas fa-ban" style={{ color: "#5b626b" }} />,
                 style: { color: "#5b626b" },
+                disabled: isDisable,
             },
             {
                 key: '2',
@@ -191,7 +192,7 @@ function SubjectDetailElementList(props) {
                                 }
                             </Row>
                             <label style={{ fontSize: "8pt", textDecoration: 'none', fontStyle: 'italic', color: '#4a4a4a' }}>
-                                *{item.description}
+                                {item.description !== null && item.description !== "" && `* ${item.description}`}
                             </label>
                         </React.Fragment>
                     </Row>

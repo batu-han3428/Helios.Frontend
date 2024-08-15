@@ -8,6 +8,7 @@ import { useLazyTransferDataGetQuery, useTransferDataSetMutation } from "../../.
 import { v4 as uuidv4 } from 'uuid';
 import visitType from '../VisitTypeItems';
 import { showToast } from '../../../../store/toast/actions';
+import { formatDate } from "../../../../helpers/format_date";
 
 const TransferData = props => {
 
@@ -255,41 +256,21 @@ const TransferData = props => {
             if (item.children) {
                 const updatedChildren = item.children.map(chld => {
                     if (chld.children) {
-                        const updatedChildren2 = chld.children.map(chld2 => {
-                            if (chld2.updatedAt === "0001-01-01T00:00:00+00:00") {
-                                return { ...chld2, updatedAt: "-" };
-                            }
-                            return chld2;
+                        const updatedChildren2 = chld.children.map(chld2 => {                          
+                            return { ...chld2, updatedAt: formatDate(chld2.updatedAt) };
                         });
-                        if (chld.updatedAt === "0001-01-01T00:00:00+00:00") {
-                            return { ...chld, children: updatedChildren2, updatedAt: "-" };
-                        }
-                        else {
-                            return { ...chld, children: updatedChildren2 }
-                        }
+                        return { ...chld, children: updatedChildren2, updatedAt: formatDate(chld.updatedAt) };
                     }
                     else {
-                        if (chld.updatedAt === "0001-01-01T00:00:00+00:00") {
-                            return { ...chld, updatedAt: "-" };
-                        }
-                    }
-                    return chld;
+                        return { ...chld, updatedAt: formatDate(chld.updatedAt) }
+                    }                 
                 });
-                if (item.updatedAt === "0001-01-01T00:00:00+00:00") {
-                    return { ...item, children: updatedChildren, updatedAt: "-" };
-                }
-                else {
-                    return { ...item, children: updatedChildren }
-                }
-
+                return { ...item, children: updatedChildren, updatedAt: formatDate(item.updatedAt) }              
             }
             else {
-                if (item.updatedAt === "0001-01-01T00:00:00+00:00") {
-                    return { ...item, updatedAt: "-" };
-                }
+                return { ...item, updatedAt: formatDate(item.updatedAt) }
             }
-
-            return item;
+        
         });
         setData(newData);
     };
