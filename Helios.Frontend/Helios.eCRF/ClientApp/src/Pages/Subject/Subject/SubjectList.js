@@ -20,11 +20,10 @@ import "./Subject.css";
 import { v4 as uuidv4 } from 'uuid';
 import AddSubjectComp from './Comp/AddSubjectComp';
 import { showToast } from '../../../store/toast/actions';
-
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
-import RoleNotFound from '../../../Pages/Common/NotFound/RoleNotFound ';
 import { useParams } from "react-router-dom";
+
 const { TextArea } = Input;
+
 const SubjectList = props => {
     const {studyId} = useParams();
     const modalRef = useRef();
