@@ -708,7 +708,8 @@ namespace Helios.eCRF.Services
                             AuthUserId = user.Id,
                             Name = user.Name,
                             LastName = user.LastName,
-                            Email = user.Email
+                            Email = user.Email,
+                            PhoneNumber= user.PhoneNumber,
                         }
                     };
                 }
