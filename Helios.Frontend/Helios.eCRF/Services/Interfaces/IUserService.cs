@@ -52,6 +52,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> SetSystemAdminAndTenantAdminUser(SystemAdminDTO systemAdminDTO);
         Task<ApiResponse<dynamic>> SetAspNetUser(AspNetUserDTO model);
         Task<RestResponse<List<SystemUserModel>>> GetTenantAndSystemAdminUserList(Int64 id);
+        Task<RestResponse<List<SystemUserModel>>> GetTenantAdminUserList(Int64 id);
         Task<RestResponse<List<TenantModel>>> GetAuthTenantList();
         Task<ApiResponse<dynamic>> TenantAndSystemAdminDelete(TenantAndSystemAdminDTO tenantAndSystemAdminDTO);
         Task<ApiResponse<dynamic>> TenantAndSystemAdminActivePassive(TenantAndSystemAdminDTO tenantAndSystemAdminDTO);

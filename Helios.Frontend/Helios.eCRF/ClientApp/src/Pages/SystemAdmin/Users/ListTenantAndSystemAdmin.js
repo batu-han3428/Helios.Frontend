@@ -5,10 +5,10 @@ import { Row, Col, Button, Card, CardBody, Dropdown, DropdownToggle, DropdownMen
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Table,Input } from 'antd';
 import ModalComp from "../../../components/Common/ModalComp/ModalComp";
-import AddOrUpdateTenantAndSystemAdmin from "./AddOrUpdateTenantAndSystemAdmin";
+import AddOrUpdateTenantAdmin from "./AddOrUpdateTenantAdmin";
 import { useSelector, useDispatch } from 'react-redux';
 import { useSystemAdminResetPasswordMutation } from '../../../store/services/SystemAdmin/SystemAdmin';
-import { useLazyUserListGetQuery, useUserActivePassiveMutation } from '../../../store/services/SystemAdmin/Users/SystemUsers';
+import { useUserActivePassiveMutation, useLazyUserTenantAdminListGetQuery } from '../../../store/services/SystemAdmin/Users/SystemUsers';
 import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2';
 import { countryNumber } from "../../../helpers/phonenumber_helper";
@@ -43,7 +43,7 @@ const ListTenantAndSystemAdmin = props => {
 
 
     const addSystemAdmin = () => {
-        setModalContent(<AddOrUpdateTenantAndSystemAdmin isAdd={true} userId={userInformation.userId} refs={modalContentRef} />);
+        setModalContent(<AddOrUpdateTenantAdmin isAdd={true} userControl={true} userId={userInformation.userId} refs={modalContentRef} />);
         setModalTitle(props.t("Add an admin"));
         setModalButtonText(props.t("Save"));
         modalRef.current.tog_backdrop();
@@ -54,7 +54,7 @@ const ListTenantAndSystemAdmin = props => {
             dispatch(showToast(props.t("Please activate the account first and then try this process again."), true, false));
             return;
         }
-        setModalContent(<AddOrUpdateTenantAndSystemAdmin isAdd={false} userData={item} userId={userInformation.userId} refs={modalContentRef} />);
+        setModalContent(<AddOrUpdateTenantAdmin isAdd={false} userControl={false} userData={item} userId={userInformation.userId} refs={modalContentRef} />);
         setModalTitle(props.t("Update"));
         setModalButtonText(props.t("Update"));
         modalRef.current.tog_backdrop();
@@ -244,7 +244,7 @@ const ListTenantAndSystemAdmin = props => {
         return tenantsDropdown;
     }
 
-    const [trigger, { data: usersData, error, isLoading }] = useLazyUserListGetQuery();
+    const [trigger, { data: usersData, error, isLoading }] = useLazyUserTenantAdminListGetQuery();
 
     useEffect(() => {
         if (userInformation.userId) {

@@ -535,7 +535,17 @@ namespace Helios.eCRF.Controllers
             var result = await _userService.GetTenantAndSystemAdminUserList(id);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
-
+        /// <summary>
+        /// tenant admin kullanıcılarını listeler
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>kullanıcılar</returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetTenantAdminUserList(Int64 id)
+        {
+            var result = await _userService.GetTenantAdminUserList(id);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
 
         /// <summary>
         /// seçili tenant admin ve system adminleri siler

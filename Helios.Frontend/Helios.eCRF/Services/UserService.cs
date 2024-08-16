@@ -1159,6 +1159,17 @@ namespace Helios.eCRF.Services
                 return result;
             }
         }
+
+        public async Task<RestResponse<List<SystemUserModel>>> GetTenantAdminUserList(Int64 id)
+        {
+            using (var client = AuthServiceClient)
+            {
+                var req = new RestRequest("AdminUser/GetTenantAdminUserList", Method.Get);
+                req.AddParameter("id", id);
+                var result = await client.ExecuteAsync<List<SystemUserModel>>(req);
+                return result;
+            }
+        }
         #endregion
 
         #region SSO

@@ -21,6 +21,10 @@ export const SystemUsersApi = createApi({
             query: (id) => `/User/GetTenantAndSystemAdminUserList/${id}`,
             providesTags: ['User'],
         }),
+        userTenantAdminListGet: builder.query({
+            query: (id) => `/User/GetTenantAdminUserList/${id}`,
+            providesTags: ['User'],
+        }),
         userSet: builder.mutation({
             query: (data) => ({
                 url: '/User/SetSystemAdminAndTenantAdminUser',
@@ -51,7 +55,7 @@ export const SystemUsersApi = createApi({
 
 export const { useLazyUserListGetQuery } = SystemUsersApi;
 
-
+export const { useLazyUserTenantAdminListGetQuery } = SystemUsersApi;
 export const { useUserSetMutation } = SystemUsersApi;
 
 export const { useUserActivePassiveMutation } = SystemUsersApi;
