@@ -503,5 +503,6 @@
   "Please select the account you want to log in": "Lütfen giriş yapmak istediğiniz hesabı seçiniz",
   "Account name": "Hesap adı",
   "User role name": "Kullanıcı rol adı",
-  "There is no module on the page. Please contact the system administrator.": "Sayfada herhangi bir modül bulunmamaktadır. Lütfen sistem yöneticisi ile iletişime geçiniz."
+  "There is no module on the page. Please contact the system administrator.": "Sayfada herhangi bir modül bulunmamaktadır. Lütfen sistem yöneticisi ile iletişime geçiniz.",
+  "Add a tenant admin": "Abonelik için yönetici ekle"
 }

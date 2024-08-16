@@ -655,5 +655,6 @@
   "Please select the account you want to log in": "Please select the account you want to log in",
   "Account name": "Account name",
   "User role name": "User role name",
-  "There is no module on the page. Please contact the system administrator.": "There is no module on the page. Please contact the system administrator."
+  "There is no module on the page. Please contact the system administrator.": "There is no module on the page. Please contact the system administrator.",
+  "Add a tenant admin": "Add a tenant admin"
 }

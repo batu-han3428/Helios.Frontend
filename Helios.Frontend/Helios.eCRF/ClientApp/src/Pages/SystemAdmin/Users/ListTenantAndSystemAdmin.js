@@ -144,6 +144,11 @@ const ListTenantAndSystemAdmin = props => {
                 dataIndex: 'isActive',
                 sorter: (a, b) => a.isActive.localeCompare(b.isActive),
                 sortDirections: ['ascend', 'descend'],
+                render: (text, record) => (
+                    <span style={{ color: record.isActive === props.t("Active") ? 'green' : 'red' }}>
+                        {record.isActive}
+                    </span>
+                ),
             },
             {
                 title: props.t('Phone number'),
@@ -418,7 +423,7 @@ const ListTenantAndSystemAdmin = props => {
                     <div className="page-title-box">
                         <Row className="align-items-center" style={{ borderBottom: "1px solid black", paddingBottom: "5px" }}>
                             <Col md={8}>
-                                <h6 className="page-title">{props.t("Add an admin")}</h6>
+                                <h6 className="page-title">{props.t("Add a tenant admin")}</h6>
                             </Col>
                             <Col md="4">
                                 <div className="float-end d-none d-md-block" style={{ marginLeft: "10px" }}>
