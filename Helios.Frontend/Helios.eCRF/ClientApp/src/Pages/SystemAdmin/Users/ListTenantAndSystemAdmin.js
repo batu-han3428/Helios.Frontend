@@ -8,7 +8,7 @@ import ModalComp from "../../../components/Common/ModalComp/ModalComp";
 import AddOrUpdateTenantAdmin from "./AddOrUpdateTenantAdmin";
 import { useSelector, useDispatch } from 'react-redux';
 import { useSystemAdminResetPasswordMutation } from '../../../store/services/SystemAdmin/SystemAdmin';
-import { useUserActivePassiveMutation, useLazyUserTenantAdminListGetQuery } from '../../../store/services/SystemAdmin/Users/SystemUsers';
+import { useLazyUserTenantAdminListGetQuery, useTenantAdminActivePassiveMutation } from '../../../store/services/SystemAdmin/Users/SystemUsers';
 import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2';
 import { countryNumber } from "../../../helpers/phonenumber_helper";
@@ -317,7 +317,7 @@ const ListTenantAndSystemAdmin = props => {
         }
     }
 
-    const [userActivePassive] = useUserActivePassiveMutation();
+    const [userActivePassive] = useTenantAdminActivePassiveMutation();
 
     const activePassiveUser = (item) => {
         Swal.fire({

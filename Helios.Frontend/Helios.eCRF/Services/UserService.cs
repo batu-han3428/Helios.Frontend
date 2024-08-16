@@ -1110,7 +1110,7 @@ namespace Helios.eCRF.Services
             return result;
         }
 
-        private async Task<ApiResponse<dynamic>> TenantAdminActivePassive(TenantAndSystemAdminDTO tenantAndSystemAdminDTO)
+        public async Task<ApiResponse<dynamic>> TenantAdminActivePassive(TenantAndSystemAdminDTO tenantAndSystemAdminDTO)
         {
             using (var client = AuthServiceClient)
             {

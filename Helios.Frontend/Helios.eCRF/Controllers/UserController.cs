@@ -570,6 +570,18 @@ namespace Helios.eCRF.Controllers
             var result = await _userService.TenantAndSystemAdminActivePassive(tenantAndSystemAdminDTO);
             return Ok(result);
         }
+
+        /// <summary>
+        /// seçili tenant admin aktif/pasif durumunu ayarlar
+        /// </summary>
+        /// <param name="tenantAndSystemAdminDTO">kullanıcı bilgileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        public async Task<IActionResult> TenantAdminActivePassive(TenantAndSystemAdminDTO tenantAndSystemAdminDTO)
+        {
+            var result = await _userService.TenantAdminActivePassive(tenantAndSystemAdminDTO);
+            return Ok(result);
+        }
         #endregion
 
         #region SSO

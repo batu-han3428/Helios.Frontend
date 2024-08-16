@@ -41,6 +41,14 @@ export const SystemUsersApi = createApi({
             }),
             invalidatesTags: ['User'],
         }),
+        tenantAdminActivePassive: builder.mutation({
+            query: (data) => ({
+                url: '/User/TenantAdminActivePassive',
+                method: 'POST',
+                body: data,
+            }),
+            invalidatesTags: ['User'],
+        }),
         userDelete: builder.mutation({
             query: (data) => ({
                 url: '/User/TenantAndSystemAdminDelete',
@@ -59,6 +67,6 @@ export const { useLazyUserTenantAdminListGetQuery } = SystemUsersApi;
 export const { useUserSetMutation } = SystemUsersApi;
 
 export const { useUserActivePassiveMutation } = SystemUsersApi;
-
+export const { useTenantAdminActivePassiveMutation } = SystemUsersApi;
 
 export const { useUserDeleteMutation } = SystemUsersApi;
