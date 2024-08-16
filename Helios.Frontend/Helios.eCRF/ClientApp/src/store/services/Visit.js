@@ -34,7 +34,7 @@ export const VisitApi = createApi({
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: ['Visit'],
+/*            invalidatesTags: ['Visit'],*/
         }),
         visitPageEProSet: builder.mutation({
             query: (data) => ({
@@ -74,7 +74,7 @@ export const VisitApi = createApi({
                 method: 'POST',
                 body: data,
             }),
-            invalidatesTags: ['Visit'],
+   /*         invalidatesTags: ['Visit'],*/
         }),
         transferDataGet: builder.query({
             query: (data) => `/Study/GetTransferData/${data.demoStudyId}/${data.activeStudyId}`,

@@ -108,55 +108,12 @@ export const useApiHelper = (dataSource, setDataSource) => {
 
     const [trigger, { data: visitsData, error, isLoading }] = useLazyVisitListGetQuery();
 
-    const handleList = () => {
+    const handleList = (studyId) => {
         dispatch(startloading());
-        trigger(studyInformation.studyId);       
+        trigger(studyId);
     }
-    const handleDataChange = () => {
-        const newData = visitsData.map(item => {
-            if (item.children) {
-                const updatedChildren = item.children.map(chld => {
-                    if (chld.children) {
-                        const updatedChildren2 = chld.children.map(chld2 => {
-                            if (chld2.updatedAt === "0001-01-01T00:00:00+00:00") {
-                                return { ...chld2, updatedAt: "-" };
-                            }
-                            return chld2;
-                        });
-                        if (chld.updatedAt === "0001-01-01T00:00:00+00:00") {
-                            return { ...chld, children: updatedChildren2, updatedAt: "-" };
-                        }
-                        else {
-                            return { ...chld, children: updatedChildren2 }
-                        }
-                    }
-                    else {
-                        if (chld.updatedAt === "0001-01-01T00:00:00+00:00") {
-                            return { ...chld, updatedAt: "-" };
-                        }
-                    }
-                    return chld;
-                });
-                if (item.updatedAt === "0001-01-01T00:00:00+00:00") {
-                    return { ...item, children: updatedChildren, updatedAt: "-" };
-                }
-                else {
-                    return { ...item, children: updatedChildren }
-                }
-
-            }
-            else {
-                if (item.updatedAt === "0001-01-01T00:00:00+00:00") {
-                    return { ...item, updatedAt: "-" };
-                }
-            }
-
-            return item;
-        });
-        setData(newData);
-    };
-
-    const setData = (data) => {
+   
+    const setData = (data, isDemo) => {
         const formattedData = [...data].sort((a, b) => a.order - b.order).map((data) => {
             const visitRow = {
                 key: data.id.toString(),
@@ -180,8 +137,8 @@ export const useApiHelper = (dataSource, setDataSource) => {
                     epro: page.ePro,
                     createdat: page.createdAt,
                     updatedon: page.updatedAt === "0001-01-01T00:00:00+00:00" ? "-" : page.updatedAt,
-                    ...(page.children && page.children.length > 0 && {
-                        children: [...page.children].sort((a, b) => a.order - b.order).map((module, j) => ({
+                    children: (page.children && page.children.length > 0)
+                        ? [...page.children].sort((a, b) => a.order - b.order).map((module, j) => ({
                             key: `${data.id}_${page.id}_${j}`,
                             id: module.id,
                             parentId: page.id,
@@ -190,8 +147,8 @@ export const useApiHelper = (dataSource, setDataSource) => {
                             order: module.order,
                             createdat: module.createdAt,
                             updatedon: module.updatedAt === "0001-01-01T00:00:00+00:00" ? "-" : module.updatedAt,
-                        })),
-                    }),
+                        }))
+                        : [],
                 };
 
                 return pageRow;
@@ -229,18 +186,18 @@ export const useApiHelper = (dataSource, setDataSource) => {
         const lastRowIndex = formattedData.length;
         const lastRow = formattedData[lastRowIndex - 1];
 
-        const emptyVisit = {
-            key: `new_row_${lastRowIndex + 1}`,
-            id: null,
-            type: 'visit',
-            name: "",
-            placeholder: true,
-            visittype: "",
-            order: (parseInt(lastRow ? lastRow.order : 0, 10) || 0) + 1,
-            createdat: "",
-            updatedon: "",
-        };
-        if (studyInformation.isDemo) {
+        if (isDemo) {
+            const emptyVisit = {
+                key: `new_row_${lastRowIndex + 1}`,
+                id: null,
+                type: 'visit',
+                name: "",
+                placeholder: true,
+                visittype: "",
+                order: (parseInt(lastRow ? lastRow.order : 0, 10) || 0) + 1,
+                createdat: "",
+                updatedon: "",
+            };
             formattedData.push(emptyVisit);
         }
         syncRankingData(formattedData);
@@ -249,14 +206,13 @@ export const useApiHelper = (dataSource, setDataSource) => {
 
     useEffect(() => {
         if (!isLoading && !error && visitsData) {
-            setData(visitsData);
-            handleDataChange();
+            setData(visitsData, studyInformation.isDemo);
             dispatch(endloading());
         } else if (!isLoading && error) {
             dispatch(showToast(i18n.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
         }
-    }, [visitsData, error, isLoading]);
+    }, [visitsData, error, isLoading, studyInformation.isDemo]);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -268,7 +224,7 @@ export const useApiHelper = (dataSource, setDataSource) => {
 
     const onDragEnd = (event) => {
         const { active, over } = event;
-        if (active === null || active === undefined || over === null || over === undefined || over.id.includes("empty") || active.id.includes("empty")) {
+        if (active === null || active === undefined || over === null || over === undefined /*|| over.id.includes("empty")*/ || active.id.includes("empty")) {
             return false;
         }
         let isTop = false;

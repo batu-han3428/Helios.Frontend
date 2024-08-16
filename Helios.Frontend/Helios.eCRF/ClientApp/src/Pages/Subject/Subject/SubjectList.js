@@ -20,10 +20,8 @@ import "./Subject.css";
 import { v4 as uuidv4 } from 'uuid';
 import AddSubjectComp from './Comp/AddSubjectComp';
 import { showToast } from '../../../store/toast/actions';
-
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
-import RoleNotFound from '../../../Pages/Common/NotFound/RoleNotFound ';
 import { useParams } from "react-router-dom";
+
 const { TextArea } = Input;
 const SubjectList = props => {
     const {studyId} = useParams();
@@ -34,7 +32,6 @@ const SubjectList = props => {
     const [modalContent, setModalContent] = useState(null);
     const [selectSites, setselectSites] = useState([]);
     const [AskSubjectInitial, setAskSubjectInitial] = useState(false);
-
     const [comment, setComment] = useState("");
     const [subjectNumber, setSubjectNumber] = useState("");
     const [isDelete, setIsDelete] = useState(false);
@@ -62,24 +59,6 @@ const SubjectList = props => {
 
     }, []);
 
-    const [modal, setModal] = useState(false);
-    const [changeSiteId, setchangeSiteId] = useState("");
-    const [changeInitialName, setchangeInitialName] = useState("");
-
-    const changeValidSiteId = (value) => {
-        setchangeSiteId(value);
-    };
-
-    const changeValidInitialname = (value) => {
-        setchangeInitialName(value);
-    };
-
-    const [count, setCount] = useState(0);
-
-    const [formData, setFormData] = useState({
-        changeInitialName: '',
-        changeSiteId: ''
-    });
     useEffect(() => {
         dispatch(startloading);
         if (studyId) {
@@ -126,7 +105,6 @@ const SubjectList = props => {
             newData.hasRole = subjectsData.hasRole;
             setData(newData);
             dispatch(endloading());
-
         }
         else if (error && !isLoading) {
             const newData = { ...data };
@@ -182,7 +160,6 @@ const SubjectList = props => {
                 {permissions.canSubjectExportForm &&
                     <ExportOutlined onClick={() => triggerCrf(item.id)} />
                 }
-                
             </div>);
         return actions;
     };
@@ -213,36 +190,35 @@ const SubjectList = props => {
         } else {
             setTextError(props.t("This field is required"));
         }
-
     }
 
     const optionGroup = (id) => {
         fetch(API_BASE_URL + 'Subject/GetSites?studyId=' + id, {
             method: 'GET',
         })
-            .then(response => response.json())
-            .then(data => {
-                setselectSites(data);
-            })
-            .catch(error => {
+        .then(response => response.json())
+        .then(data => {
+            setselectSites(data);
+        })
+        .catch(error => {
 
-            });
+        });
     };
 
     const getStudy = (id) => {
         fetch(API_BASE_URL + 'Subject/GetStudyAskSubjectInitial?studyId=' + id, {
             method: 'GET',
         })
-            .then(response => response.json())
-            .then(data => {
-                setAskSubjectInitial(data);
-            })
-            .catch(error => {
+        .then(response => response.json())
+        .then(data => {
+            setAskSubjectInitial(data);
+        })
+        .catch(error => {
 
-            });
+        });
     };
 
-    const addSubject = () => {
+    const addSubject = (site) => {
         Swal.fire({
             title: props.t("You will add a new subject"),
             text: props.t("Do you confirm?"),
@@ -254,7 +230,7 @@ const SubjectList = props => {
         }).then(async (result) => {
             if (result.isConfirmed) {
                 dispatch(startloading());
-                const response = await addingSubject({ studyId: studyId, siteId: 3, initialName: "", id: 0, firstPageId: 0, subjectNumber: "", updatedAt: new Date(), createdAt: new Date(), country: "", siteName: "", randomData: "", addedByName: "" });
+                const response = await addingSubject({ studyId: studyId, siteId: site.id, initialName: "", id: 0, firstPageId: 0, subjectNumber: "", updatedAt: new Date(), createdAt: new Date(), country: "", siteName: "", randomData: "", addedByName: "" });
                 var retVal = response.data.values;
 
                 if (response.data.isSuccess) {
@@ -452,7 +428,7 @@ const SubjectList = props => {
             openModal();
         }
         else {
-            addSubject();
+            addSubject(studyUserSiteData.sites[0]);
         }
     };
 
