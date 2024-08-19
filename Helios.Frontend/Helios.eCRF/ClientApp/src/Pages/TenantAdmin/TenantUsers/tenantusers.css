@@ -23,7 +23,9 @@
     background-color: #6d6e70 !important;
     color: white !important;
 }
-
+.inner-table .ant-table-cell {
+    border: 1px solid #ddd;
+}
 .ant-table-column-sorter-inner {
     color: white !important;
 }

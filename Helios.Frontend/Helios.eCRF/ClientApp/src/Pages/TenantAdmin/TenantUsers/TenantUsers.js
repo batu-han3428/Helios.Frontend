@@ -16,12 +16,6 @@ import { Table, Input, Badge, Space, TableColumnsType } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { showToast } from '../../../store/toast/actions';
 
-interface ExpandedDataType {
-    key: React.Key;
-    date: string;
-    name: string;
-    upgradeNum: string;
-}
 interface DataType {
     key: React.Key;
     name: string;
@@ -31,6 +25,7 @@ interface DataType {
     creator: string;
     createdAt: string;
 }
+
 const TenantUsers = props => {
 
     const modalRef = useRef();
@@ -40,6 +35,7 @@ const TenantUsers = props => {
     const dispatch = useDispatch();
 
     const [tableData, setTableData] = useState([]);
+    const [groupTableData, setGroupTableData] = useState([]);
     const [basicActive, setBasicActive] = useState('tab1');
     const [excelData, setExcelData] = useState([]);
     const [filteredInfo, setFilteredInfo] = useState({});
@@ -94,74 +90,10 @@ const TenantUsers = props => {
         return actions;
     };
 
-    const [firstNamesearchText, firstNameSetSearchText] = useState('');
-    const [lastNamesearchText, lastNameSetSearchText] = useState('');
     const [emailSearchText, emailSetSearchText] = useState('');
     const uniqueRoleNames = Array.from(new Set(tableData.map(item => item.userRoleName)));
     const uniqueStudyNames = Array.from(new Set(tableData.map(item => item.studyName)));
 
-
-    const expandedRowRender = () => {
-        const columns: TableColumnsType<ExpandedDataType> = [
-            {
-                title: props.t('Email'),
-                dataIndex: 'email',
-                key: 'email',
-            },
-            {
-                title: props.t('Number of accounts in the system'),
-                dataIndex: 'count',
-                key: 'count'
-            },  
-            {
-                title: props.t('Study name'),
-                dataIndex: 'studyName',
-                key: 'studyName'
-            }, 
-            {
-                title: props.t('First name'),
-                dataIndex: 'name',
-                key: 'name'
-            },
-            {
-                title: props.t('Last name'),
-                dataIndex: 'lastName',
-                key: 'lastName'
-            },
-            {
-                title: props.t('Study role name'),
-                dataIndex: 'userRoleName',
-                key: 'userRoleName',
-                sorter: (a, b) => a.userRoleName.localeCompare(b.userRoleName),
-                sortDirections: ['ascend', 'descend'],
-                filteredValue: filteredInfo.userRoleName || null,
-                filters: uniqueRoleNames.map(item => ({ ...item, text: item, value: item })),
-                onFilter: (value, record) => record.userRoleName === value,
-            },
-            {
-                title: props.t('Created on'),
-                dataIndex: 'createdOn',
-                key: 'createdOn'
-            },
-            {
-                title: props.t('Last updated on'),
-                dataIndex: 'lastUpdatedOn',
-                key: 'lastUpdatedOn'
-            },
-            {
-                title: props.t('State'),
-                dataIndex: 'isActive',
-                key: 'isActive'
-            },
-            {
-                title: props.t('Actions'),
-                dataIndex: 'actions',
-                width: "170px",             
-                key: 'operation',               
-            },
-        ];      
-        return <Table columns={columns} dataSource={tableData} pagination={false} />;
-    };
 
     const columns: TableColumnsType<DataType> = [
         {
@@ -170,6 +102,7 @@ const TenantUsers = props => {
             key: 'email',
             sorter: (a, b) => a.email.localeCompare(b.email),
             sortDirections: ['ascend', 'descend'],
+            filteredValue: [emailSearchText],
             onFilter: (value, record) => String(record.email).toLowerCase().includes(value.toLowerCase()),
             filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
                 return (
@@ -187,116 +120,69 @@ const TenantUsers = props => {
         {
             title: props.t('Number of accounts in the system'),
             dataIndex: 'count',
-            key: 'count'
-        },         
-    ];   
-
-    const Data = {
-        columns: [
-            {
-                title: props.t('Study name'),
-                dataIndex: 'studyName',
-                sorter: (a, b) => a.studyName.localeCompare(b.studyName),
-                sortDirections: ['ascend', 'descend'],
-                filteredValue: filteredInfo.studyName || null,
-                filters: uniqueStudyNames.map(item => ({ ...item, text: item, value: item })),
-                onFilter: (value, record) => record.studyName === value,
+            key: 'count',
+        },
+        {
+            title: props.t('Study name'),
+            dataIndex: 'studyName',
+            key: 'studyName',
+            sorter: (a, b) => a.studyName.localeCompare(b.studyName),
+            sortDirections: ['ascend', 'descend'],
+            filteredValue: filteredInfo.studyName || null,
+            filters: [
+                { text: 'Demo', value: 'demo' },
+                { text: 'Live', value: 'live' },
+            ],
+            onFilter: (value, record) => {
+                const studyName = String(record.studyName).toLowerCase();
+                if (value === 'live') {
+                    return studyName.slice(0, 4) !== 'demo';
+                }
+                return (studyName !== '-' ? studyName.slice(0, 4) === value : true);
             },
-            {
-                title: props.t('First name'),
-                dataIndex: 'name',
-                sorter: (a, b) => a.name.localeCompare(b.name),
-                sortDirections: ['ascend', 'descend'],
-                filteredValue: [firstNamesearchText],
-                onFilter: (value, record) => String(record.name).toLowerCase().includes(value.toLowerCase()),
-                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
-                    return (
-                        <div style={{ padding: 8 }}>
-                            <Input.Search
-                                placeholder="Search name"
-                                value={selectedKeys[0]}
-                                onChange={(e) => firstNameSetSearchText(e.target.value)}
-                            />
-                        </div>
-                    );
-                },
-                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-            },
-            {
-                title: props.t('Last name'),
-                dataIndex: 'lastName',
-                sorter: (a, b) => a.lastName.localeCompare(b.lastName),
-                sortDirections: ['ascend', 'descend'],
-                filteredValue: [lastNamesearchText],
-                onFilter: (value, record) => String(record.lastName).toLowerCase().includes(value.toLowerCase()),
-                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
-                    return (
-                        <div style={{ padding: 8 }}>
-                            <Input.Search
-                                placeholder="Search name"
-                                value={selectedKeys[0]}
-                                onChange={(e) => lastNameSetSearchText(e.target.value)}
-                            />
-                        </div>
-                    );
-                },
-                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-            },
-            {
-                title: props.t('Email'),
-                dataIndex: 'email',
-                sorter: (a, b) => a.email.localeCompare(b.email),
-                sortDirections: ['ascend', 'descend'],
-                filteredValue: [emailSearchText],
-                onFilter: (value, record) => String(record.email).toLowerCase().includes(value.toLowerCase()),
-                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
-                    return (
-                        <div style={{ padding: 8 }}>
-                            <Input.Search
-                                placeholder="Search name"
-                                value={selectedKeys[0]}
-                                onChange={(e) => emailSetSearchText(e.target.value)}
-                            />
-                        </div>
-                    );
-                },
-                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-            },
-            {
-                title: props.t('Study role name'),
-                dataIndex: 'userRoleName',
-                sorter: (a, b) => a.userRoleName.localeCompare(b.userRoleName),
-                sortDirections: ['ascend', 'descend'],
-                filteredValue: filteredInfo.userRoleName || null,
-                filters: uniqueRoleNames.map(item => ({ ...item, text: item, value: item })),
-                onFilter: (value, record) => record.userRoleName === value,
-            },
-            {
-                title: props.t('Created on'),
-                dataIndex: 'createdOn',
-                sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
-                sortDirections: ['ascend', 'descend'],
-            },
-            {
-                title: props.t('Last updated on'),
-                dataIndex: 'lastUpdatedOn',
-                sorter: (a, b) => a.lastUpdatedOn.localeCompare(b.lastUpdatedOn),
-                sortDirections: ['ascend', 'descend'],
-            },
-            {
-                title: props.t('State'),
-                dataIndex: 'isActive',
-                sorter: (a, b) => a.isActive.localeCompare(b.isActive),
-                sortDirections: ['ascend', 'descend'],
-            },
-            {
-                title: props.t('Actions'),
-                dataIndex: 'actions',
-                width: "170px",
-            },
-        ],
-        rows: tableData
-    }
+        },
+        {
+            title: props.t('First name'),
+            dataIndex: 'name',
+            key: 'name',
+        },
+        {
+            title: props.t('Last name'),
+            dataIndex: 'lastName',
+            key: 'lastName',
+        },
+        {
+            title: props.t('Study role name'),
+            dataIndex: 'userRoleName',
+            key: 'userRoleName',
+            sorter: (a, b) => a.userRoleName.localeCompare(b.userRoleName),
+            sortDirections: ['ascend', 'descend'],
+            filteredValue: filteredInfo.userRoleName || null,
+            filters: uniqueRoleNames.map(item => ({ ...item, text: item, value: item })),
+            onFilter: (value, record) => (record.userRoleName !== '-' ? record.userRoleName === value:true),
+        },
+        {
+            title: props.t('Created on'),
+            dataIndex: 'createdOn',
+            key: 'createdOn'
+        },
+        {
+            title: props.t('Last updated on'),
+            dataIndex: 'lastUpdatedOn',
+            key: 'lastUpdatedOn'
+        },
+        {
+            title: props.t('State'),
+            dataIndex: 'isActive',
+            key: 'isActive'
+        },
+        {
+            title: props.t('Actions'),
+            dataIndex: 'actions',
+            width: "170px",
+            key: 'operation',
+        }
+    ];
 
     const [triggerTenantUsers, resultTenantUsers] = useLazyTenantUserListGetQuery();
     const { data: tenantUsersData, error, isLoading } = resultTenantUsers;
@@ -316,6 +202,7 @@ const TenantUsers = props => {
                     createdOn: formatDate(item.createdOn),
                     lastUpdatedOn: formatDate(item.lastUpdatedOn),
                     isActive: item.isActive ? props.t("Active") : props.t("Passive"),
+                    count: 1,
                     actions: getActions(item)
                 };
             });
@@ -335,9 +222,27 @@ const TenantUsers = props => {
 
             setExcelData(data);
 
-            //const timer = setTimeout(() => {
-            //    generateInfoLabel();
-            //}, 10)
+            const groupedData = updatedTenantUsersData.reduce((acc, updatedUser) => {
+                if (!acc[updatedUser.email]) {
+                    acc[updatedUser.email] = [];
+                }
+                acc[updatedUser.email].push(updatedUser);
+                return acc;
+            }, {});
+            const GroupDataSource = Object.keys(groupedData).map((email, index) => {
+                const users = groupedData[email];
+                return {
+                    key: index,
+                    email: email,
+                    count: users.length,
+                    studyName: "-",
+                    userRoleName: "-",
+                    children: users
+                };
+            });
+
+            setGroupTableData(GroupDataSource);
+
 
             dispatch(endloading());
 
@@ -463,20 +368,13 @@ const TenantUsers = props => {
                             <Card>
                                 <CardBody>
                                     <Table
-                                        dataSource={Data.rows.map(item => ({ ...item, key: item.studyUserId }))}
-                                        columns={Data.columns}
-                                        expandedRowKeys={expandedRowKeys}
-                                        onExpand={handleExpand}
-                                        pagination={true}
-                                        scroll={{ x: 'max-content' }}
+                                        size="small"
+                                        columns={columns}
+                                        indentSize={0}
+                                        dataSource={groupTableData}
                                         onChange={handleChange}
                                         filteredInfo={filteredInfo}
                                         sortedInfo={sortedInfo}
-                                    />
-                                    <Table
-                                        columns={columns}
-                                        expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
-                                        dataSource={tableData}
                                     />
                                 </CardBody>
                             </Card>
