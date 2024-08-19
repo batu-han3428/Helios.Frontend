@@ -202,7 +202,7 @@ function SubjectDetailElementList(props) {
     }, [props.ElementList, renderElementsSwitch, getItems]);
     return (
         <div>
-            <div className="row">
+            <div className="row" style={{ marginLeft: 'unset' }}>
                 {renderContent}
             </div>
             <ModalComp

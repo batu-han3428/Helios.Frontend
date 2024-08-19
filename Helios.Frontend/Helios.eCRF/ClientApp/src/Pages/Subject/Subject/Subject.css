@@ -9,9 +9,30 @@
     color: rgba(0, 0, 0, 0.88) !important;
 }
 
-.menu-container {  
-    overflow-y: auto;
+.menu-container {
     border: 1px solid #ddd;
+    height: calc(100vh - 70px);
+    z-index: 1000 !important;
+    overflow-y: auto !important;
+    position: fixed !important;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .menu-container {
+        max-width: 200px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1439px) {
+    .menu-container {
+        max-width: 250px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .menu-container {
+        max-width: 300px;
+    }
 }
 
 .subject-mobil-drawer .ant-drawer-body{

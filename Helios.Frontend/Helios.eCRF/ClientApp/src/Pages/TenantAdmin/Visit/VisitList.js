@@ -136,7 +136,7 @@ const Study = props => {
 
     useEffect(() => {
         if (studyInformation.studyId) {
-            handleList();
+            handleList(studyInformation.studyId);
         }
     }, [studyInformation.studyId])
 
@@ -144,7 +144,6 @@ const Study = props => {
 
     useEffect(() => {
         if (dataSource && dataSource.length > 0 && firstExpanded) {
-            handleDataChange();
             const allRowKeys = getAllRowKeys(dataSource);
             setExpandedRowKeys(allRowKeys);
             setFirstExpanded(false);
@@ -192,14 +191,14 @@ const Study = props => {
             .catch();
 
         connection.on("LiveData", (response) => {
-            setData(response.data.data)
+            setData(response.data.data, studyInformation.isDemo)
             dispatch(showToast(props.t("Has updated the table").replace("{user}", response.message), false, true));
         });
 
         return () => {
             connection.stop();
         };
-    }, []);
+    }, [studyInformation.isDemo]);
 
     const { studyId } = useParams();
 
