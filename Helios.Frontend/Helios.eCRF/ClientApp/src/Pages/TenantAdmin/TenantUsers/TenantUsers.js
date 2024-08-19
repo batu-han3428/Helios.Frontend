@@ -2,7 +2,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Row, Col, Card, CardBody, FormFeedback, Label, Form, Button } from "reactstrap";
 import { withTranslation } from "react-i18next";
-import { MDBTabs, MDBTabsItem, MDBTabsLink, MDBTabsContent } from 'mdb-react-ui-kit';
 import "./tenantusers.css";
 import { useLazyTenantUserListGetQuery, useTenantUserSetMutation } from '../../../store/services/TenantUsers';
 import { formatDate } from "../../../helpers/format_date";
@@ -13,11 +12,25 @@ import * as Yup from "yup";
 import { useFormik } from "formik";
 import { exportToExcel } from '../../../helpers/ExcelDownload';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Table, Input } from 'antd';
+import { Table, Input, Badge, Space, TableColumnsType } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { showToast } from '../../../store/toast/actions';
 
-
+interface ExpandedDataType {
+    key: React.Key;
+    date: string;
+    name: string;
+    upgradeNum: string;
+}
+interface DataType {
+    key: React.Key;
+    name: string;
+    platform: string;
+    version: string;
+    upgradeNum: number;
+    creator: string;
+    createdAt: string;
+}
 const TenantUsers = props => {
 
     const modalRef = useRef();
@@ -26,8 +39,7 @@ const TenantUsers = props => {
 
     const dispatch = useDispatch();
 
-    const [liveTableData, setLiveTableData] = useState([]);
-    const [demoTableData, setDemoTableData] = useState([]);
+    const [tableData, setTableData] = useState([]);
     const [basicActive, setBasicActive] = useState('tab1');
     const [excelData, setExcelData] = useState([]);
     const [filteredInfo, setFilteredInfo] = useState({});
@@ -85,10 +97,101 @@ const TenantUsers = props => {
     const [firstNamesearchText, firstNameSetSearchText] = useState('');
     const [lastNamesearchText, lastNameSetSearchText] = useState('');
     const [emailSearchText, emailSetSearchText] = useState('');
-    const uniqueRoleNamesLive = Array.from(new Set(liveTableData.map(item => item.userRoleName)));
-    const uniqueStudyNamesLive = Array.from(new Set(liveTableData.map(item => item.studyName)));
+    const uniqueRoleNames = Array.from(new Set(tableData.map(item => item.userRoleName)));
+    const uniqueStudyNames = Array.from(new Set(tableData.map(item => item.studyName)));
 
-    const liveData = {      
+
+    const expandedRowRender = () => {
+        const columns: TableColumnsType<ExpandedDataType> = [
+            {
+                title: props.t('Email'),
+                dataIndex: 'email',
+                key: 'email',
+            },
+            {
+                title: props.t('Number of accounts in the system'),
+                dataIndex: 'count',
+                key: 'count'
+            },  
+            {
+                title: props.t('Study name'),
+                dataIndex: 'studyName',
+                key: 'studyName'
+            }, 
+            {
+                title: props.t('First name'),
+                dataIndex: 'name',
+                key: 'name'
+            },
+            {
+                title: props.t('Last name'),
+                dataIndex: 'lastName',
+                key: 'lastName'
+            },
+            {
+                title: props.t('Study role name'),
+                dataIndex: 'userRoleName',
+                key: 'userRoleName',
+                sorter: (a, b) => a.userRoleName.localeCompare(b.userRoleName),
+                sortDirections: ['ascend', 'descend'],
+                filteredValue: filteredInfo.userRoleName || null,
+                filters: uniqueRoleNames.map(item => ({ ...item, text: item, value: item })),
+                onFilter: (value, record) => record.userRoleName === value,
+            },
+            {
+                title: props.t('Created on'),
+                dataIndex: 'createdOn',
+                key: 'createdOn'
+            },
+            {
+                title: props.t('Last updated on'),
+                dataIndex: 'lastUpdatedOn',
+                key: 'lastUpdatedOn'
+            },
+            {
+                title: props.t('State'),
+                dataIndex: 'isActive',
+                key: 'isActive'
+            },
+            {
+                title: props.t('Actions'),
+                dataIndex: 'actions',
+                width: "170px",             
+                key: 'operation',               
+            },
+        ];      
+        return <Table columns={columns} dataSource={tableData} pagination={false} />;
+    };
+
+    const columns: TableColumnsType<DataType> = [
+        {
+            title: props.t('Email'),
+            dataIndex: 'email',
+            key: 'email',
+            sorter: (a, b) => a.email.localeCompare(b.email),
+            sortDirections: ['ascend', 'descend'],
+            onFilter: (value, record) => String(record.email).toLowerCase().includes(value.toLowerCase()),
+            filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
+                return (
+                    <div style={{ padding: 8 }}>
+                        <Input.Search
+                            placeholder="Search name"
+                            value={selectedKeys[0]}
+                            onChange={(e) => emailSetSearchText(e.target.value)}
+                        />
+                    </div>
+                );
+            },
+            filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
+        },
+        {
+            title: props.t('Number of accounts in the system'),
+            dataIndex: 'count',
+            key: 'count'
+        },         
+    ];   
+
+    const Data = {
         columns: [
             {
                 title: props.t('Study name'),
@@ -96,7 +199,7 @@ const TenantUsers = props => {
                 sorter: (a, b) => a.studyName.localeCompare(b.studyName),
                 sortDirections: ['ascend', 'descend'],
                 filteredValue: filteredInfo.studyName || null,
-                filters: uniqueStudyNamesLive.map(item => ({ ...item, text: item, value: item })),
+                filters: uniqueStudyNames.map(item => ({ ...item, text: item, value: item })),
                 onFilter: (value, record) => record.studyName === value,
             },
             {
@@ -158,16 +261,16 @@ const TenantUsers = props => {
                     );
                 },
                 filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-            },     
+            },
             {
                 title: props.t('Study role name'),
                 dataIndex: 'userRoleName',
                 sorter: (a, b) => a.userRoleName.localeCompare(b.userRoleName),
                 sortDirections: ['ascend', 'descend'],
                 filteredValue: filteredInfo.userRoleName || null,
-                filters: uniqueRoleNamesLive.map(item => ({ ...item, text: item, value: item })),
+                filters: uniqueRoleNames.map(item => ({ ...item, text: item, value: item })),
                 onFilter: (value, record) => record.userRoleName === value,
-            },     
+            },
             {
                 title: props.t('Created on'),
                 dataIndex: 'createdOn',
@@ -192,120 +295,7 @@ const TenantUsers = props => {
                 width: "170px",
             },
         ],
-        rows: liveTableData
-    }
-
-    const [firstNamesearchTextDemo, firstNameSetSearchTextDemo] = useState('');
-    const [lastNamesearchTextDemo, lastNameSetSearchTextDemo] = useState('');
-    const [emailSearchTextDemo, emailSetSearchTextDemo] = useState('');
-    const uniqueRoleNamesDemo = Array.from(new Set(demoTableData.map(item => item.userRoleName)));
-    const uniqueStudyNamesDemo = Array.from(new Set(demoTableData.map(item => item.studyName)));
-    
-    const demoData = {
-        columns: [
-            {
-                title: props.t('Study name'),
-                dataIndex: 'studyName',
-                sorter: (a, b) => a.studyName.localeCompare(b.studyName),
-                sortDirections: ['ascend', 'descend'],
-                filteredValue: filteredInfo.studyName || null,
-                filters: uniqueStudyNamesDemo.map(item => ({ ...item, text: item, value: item })),
-                onFilter: (value, record) => record.studyName === value,
-            },
-            {
-                title: props.t('First name'),
-                dataIndex: 'name',
-                sorter: (a, b) => a.name.localeCompare(b.name),
-                sortDirections: ['ascend', 'descend'],
-                filteredValue: [firstNamesearchTextDemo],
-                onFilter: (value, record) => String(record.name).toLowerCase().includes(value.toLowerCase()),
-                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
-                    return (
-                        <div style={{ padding: 8 }}>
-                            <Input.Search
-                                placeholder="Search name"
-                                value={selectedKeys[0]}
-                                onChange={(e) => firstNameSetSearchTextDemo(e.target.value)}
-                            />
-                        </div>
-                    );
-                },
-                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-            },
-            {
-                title: props.t('Last name'),
-                dataIndex: 'lastName',
-                sorter: (a, b) => a.lastName.localeCompare(b.lastName),
-                sortDirections: ['ascend', 'descend'],
-                filteredValue: [lastNamesearchTextDemo],
-                onFilter: (value, record) => String(record.lastName).toLowerCase().includes(value.toLowerCase()),
-                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
-                    return (
-                        <div style={{ padding: 8 }}>
-                            <Input.Search
-                                placeholder="Search name"
-                                value={selectedKeys[0]}
-                                onChange={(e) => lastNameSetSearchTextDemo(e.target.value)}
-                            />
-                        </div>
-                    );
-                },
-                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-            },
-            {
-                title: props.t('Email'),
-                dataIndex: 'email',
-                sorter: (a, b) => a.email.localeCompare(b.email),
-                sortDirections: ['ascend', 'descend'],
-                filteredValue: [emailSearchTextDemo],
-                onFilter: (value, record) => String(record.email).toLowerCase().includes(value.toLowerCase()),
-                filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => {
-                    return (
-                        <div style={{ padding: 8 }}>
-                            <Input.Search
-                                placeholder="Search name"
-                                value={selectedKeys[0]}
-                                onChange={(e) => emailSetSearchTextDemo(e.target.value)}
-                            />
-                        </div>
-                    );
-                },
-                filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-            },
-            {
-                title: props.t('Study role name'),
-                dataIndex: 'userRoleName',
-                sorter: (a, b) => a.userRoleName.localeCompare(b.userRoleName),
-                sortDirections: ['ascend', 'descend'],
-                filteredValue: filteredInfo.userRoleName || null,
-                filters: uniqueRoleNamesDemo.map(item => ({ ...item, text: item, value: item })),
-                onFilter: (value, record) => record.userRoleName === value,
-            },                
-            {
-                title: props.t('Created on'),
-                dataIndex: 'createdOn',
-                sorter: (a, b) => a.createdOn.localeCompare(b.createdOn),
-                sortDirections: ['ascend', 'descend'],
-            },
-            {
-                title: props.t('Last updated on'),
-                dataIndex: 'lastUpdatedOn',
-                sorter: (a, b) => a.lastUpdatedOn.localeCompare(b.lastUpdatedOn),
-                sortDirections: ['ascend', 'descend'],
-            },
-            {
-                title: props.t('State'),
-                dataIndex: 'isActive',
-                sorter: (a, b) => a.isActive.localeCompare(b.isActive),
-                sortDirections: ['ascend', 'descend'],
-            },
-            {
-                title: props.t('Actions'),
-                dataIndex: 'actions',
-                width: "170px",
-            },
-        ],
-        rows: demoTableData
+        rows: tableData
     }
 
     const [triggerTenantUsers, resultTenantUsers] = useLazyTenantUserListGetQuery();
@@ -329,10 +319,7 @@ const TenantUsers = props => {
                     actions: getActions(item)
                 };
             });
-            const demoTable = updatedTenantUsersData.filter(item => item.studyDemoLive === true);
-            const liveTable = updatedTenantUsersData.filter(item => item.studyDemoLive === false);
-            setDemoTableData(demoTable);
-            setLiveTableData(liveTable);
+            setTableData(updatedTenantUsersData);
 
             const data = updatedTenantUsersData.map(updatedUser => {
                 return [
@@ -354,7 +341,7 @@ const TenantUsers = props => {
 
             dispatch(endloading());
 
-           /* return () => clearTimeout(timer);*/
+            /* return () => clearTimeout(timer);*/
         } else if (!isLoading && error) {
             dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             dispatch(endloading());
@@ -422,7 +409,7 @@ const TenantUsers = props => {
             validationType.setErrors({});
             validationType.resetForm();
         });
-    };  
+    };
     const [expandedRowKeys, setExpandedRowKeys] = useState([]);
     const handleExpand = (expanded, record) => {
         const currentRowKey = record.key;
@@ -475,35 +462,22 @@ const TenantUsers = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>
-                                    <MDBTabs className='mb-3'>
-                                        <MDBTabsItem>
-                                            <MDBTabsLink onClick={() => handleBasicClick('tab1')} active={basicActive === 'tab1'}>
-                                                {props.t("Live studies")}
-                                            </MDBTabsLink>
-                                        </MDBTabsItem>
-                                        <MDBTabsItem>
-                                            <MDBTabsLink onClick={() => handleBasicClick('tab2')} active={basicActive === 'tab2'}>
-                                                {props.t("Demo studies")}
-                                            </MDBTabsLink>
-                                        </MDBTabsItem>
-                                    </MDBTabs>
-
-                                    <MDBTabsContent>
-
-                                        <Table
-                                            dataSource={basicActive === 'tab1' ? liveData.rows.map(item => ({ ...item, key: item.studyUserId })) : demoData.rows.map(item => ({ ...item, key: item.studyUserId }))}
-                                            columns={basicActive === 'tab1' ? liveData.columns : demoData.columns}
-                                            expandedRowKeys={expandedRowKeys}
-                                            onExpand={handleExpand}
-                                            pagination={true}
-                                            scroll={{ x: 'max-content' }}
-                                            onChange={handleChange}
-                                            filteredInfo={filteredInfo}
-                                            sortedInfo={sortedInfo}
-                                        />
-
-
-                                    </MDBTabsContent>
+                                    <Table
+                                        dataSource={Data.rows.map(item => ({ ...item, key: item.studyUserId }))}
+                                        columns={Data.columns}
+                                        expandedRowKeys={expandedRowKeys}
+                                        onExpand={handleExpand}
+                                        pagination={true}
+                                        scroll={{ x: 'max-content' }}
+                                        onChange={handleChange}
+                                        filteredInfo={filteredInfo}
+                                        sortedInfo={sortedInfo}
+                                    />
+                                    <Table
+                                        columns={columns}
+                                        expandable={{ expandedRowRender, defaultExpandedRowKeys: ['0'] }}
+                                        dataSource={tableData}
+                                    />
                                 </CardBody>
                             </Card>
                         </Col>
