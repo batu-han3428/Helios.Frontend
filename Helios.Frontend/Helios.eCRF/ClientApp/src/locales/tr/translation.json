@@ -504,5 +504,6 @@
   "Account name": "Hesap adı",
   "User role name": "Kullanıcı rol adı",
   "There is no module on the page. Please contact the system administrator.": "Sayfada herhangi bir modül bulunmamaktadır. Lütfen sistem yöneticisi ile iletişime geçiniz.",
-  "Add a tenant admin": "Abonelik için yönetici ekle"
+  "Add a tenant admin": "Abonelik için yönetici ekle",
+  "Active user": "Aktif kullanıcı"
 }

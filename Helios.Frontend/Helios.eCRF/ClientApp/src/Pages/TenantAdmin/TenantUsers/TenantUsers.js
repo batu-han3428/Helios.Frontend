@@ -40,7 +40,7 @@ const TenantUsers = props => {
     const [excelData, setExcelData] = useState([]);
     const [filteredInfo, setFilteredInfo] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
-
+    const [activeUserCount, setActiceUserCount] = useState(0);
     const handleBasicClick = (value) => {
         if (value === basicActive) {
             return;
@@ -174,7 +174,12 @@ const TenantUsers = props => {
         {
             title: props.t('State'),
             dataIndex: 'isActive',
-            key: 'isActive'
+            key: 'isActive',
+            render: (text, record) => (
+                <span style={{ color: record.isActive === props.t("Active") ? 'green' : 'red' }}>
+                    {record.isActive}
+                </span>
+            ),
         },
         {
             title: props.t('Actions'),
@@ -231,6 +236,7 @@ const TenantUsers = props => {
             }, {});
             const GroupDataSource = Object.keys(groupedData).map((email, index) => {
                 const users = groupedData[email];
+               
                 return {
                     key: index,
                     email: email,
@@ -240,10 +246,15 @@ const TenantUsers = props => {
                     children: users
                 };
             });
-
+            const activeusercount = GroupDataSource.reduce((total, user) => {
+                if (user.children.some(x => x.isActive)) {
+                    total += 1;
+                }
+                return total;
+            }, 0);           
+            setActiceUserCount(activeusercount);
             setGroupTableData(GroupDataSource);
-
-
+         
             dispatch(endloading());
 
             /* return () => clearTimeout(timer);*/
@@ -367,6 +378,7 @@ const TenantUsers = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>
+                                    <p className="card-title-desc" style={{ color: "red", marginRight: "0", textAlign:"right" }}>{props.t("Active user")}:{activeUserCount}</p>
                                     <Table
                                         size="small"
                                         columns={columns}
