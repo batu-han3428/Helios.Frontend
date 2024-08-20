@@ -504,5 +504,10 @@
   "Account name": "Hesap adı",
   "User role name": "Kullanıcı rol adı",
   "There is no module on the page. Please contact the system administrator.": "Sayfada herhangi bir modül bulunmamaktadır. Lütfen sistem yöneticisi ile iletişime geçiniz.",
-  "There is no limit for adding study, please contact the system administrator.": "Çalışma ekleme limitiniz bulunmamaktadır, lütfen sistem yöneticisi ile iletişime geçiniz."
+  "There is no limit for adding study, please contact the system administrator.": "Çalışma ekleme limitiniz bulunmamaktadır, lütfen sistem yöneticisi ile iletişime geçiniz.",
+  "Select one of the reasons for the missing value": "Eksik değer için aşağıdaki nedenlerden birini seçiniz",
+  "NA: Not applicable": "NA: Uygulanamaz",
+  "ND: Not done": "ND: Yapılmadı",
+  "UNK: Unknown": "UNK: Bilinmiyor",
+  "Other reason": "Diğer seçenek"
 }

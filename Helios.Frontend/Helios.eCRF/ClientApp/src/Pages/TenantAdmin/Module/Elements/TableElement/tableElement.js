@@ -24,6 +24,7 @@ class TableElement extends Component {
             studyId: props.StudyId,
             userId: props.UserId,
             isDisable: props.IsDisable,
+            isMissingData: props.IsMissingData,
             columnCount: props.ColumnCount,
             rowCount: props.RowCount,
             FormType: props.FormType,
@@ -121,7 +122,7 @@ class TableElement extends Component {
         }
         else {
             if (result) {
-                return <SubjectDetailElementList TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
+                return <SubjectDetailElementList IsMissingData={this.state.isMissingData} TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
             }
             else {
                 return "";

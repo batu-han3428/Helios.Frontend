@@ -604,5 +604,17 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
+
+        public async Task<ApiResponse<dynamic>> SetSubjectMissingData(SubjectMissingDataDTO dto)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/SetSubjectMissingData", Method.Post);
+                AddApiHeaders(req);
+                req.AddJsonBody(dto);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
     }
 }

@@ -117,6 +117,16 @@ export const SubjectApi = createApi({
             }),
             invalidatesTags: ['Comment', 'SubjectElement'],
         }),
+        setSubjectMissingData: builder.mutation({
+            query: (values) => {
+                return {
+                    url: `/Subject/SetSubjectMissingData`,
+                    method: 'POST',
+                    body: values
+                };
+            },
+            invalidatesTags: ['SubjectElement'],
+        }),
     }),
 });
 
@@ -145,5 +155,7 @@ export const { useLazyGetSubjectCommentsQuery } = SubjectApi;
 export const { useRemoveSubjectCommentMutation } = SubjectApi;
 
 export const { useSetSubjectCommentMutation } = SubjectApi;
+
+export const { useSetSubjectMissingDataMutation } = SubjectApi;
 
 export default SubjectApi;

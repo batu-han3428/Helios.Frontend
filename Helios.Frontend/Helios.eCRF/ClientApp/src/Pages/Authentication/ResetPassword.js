@@ -24,7 +24,7 @@ const ResetPassword = props => {
     const usernameParams = new URLSearchParams(username);
     const codeParams = new URLSearchParams(code);
 
-    const [loginPost, { isLoading }] = useLoginPostMutation();
+    const [loginPost] = useLoginPostMutation();
 
     const dispatch = useDispatch();
 
@@ -107,15 +107,19 @@ const ResetPassword = props => {
                             navigate("/");
                         }
                         dispatch(endloading());
-                       
+
                     } else {
-                        dispatch(showToast(props.t(response.data.message), true, false));
+                        dispatch(showToast(props.t(responselogin.data.message), true, false));
                         dispatch(endloading());
                     }
-
+                }
+                else {
+                    dispatch(showToast(props.t(response.data.message), true, false));
+                    dispatch(endloading());
                 }
             } catch (e) {
                 dispatch(endloading());
+                dispatch(showToast(props.t("An unexpected error occurred."), true, false));
             }
         }
     });

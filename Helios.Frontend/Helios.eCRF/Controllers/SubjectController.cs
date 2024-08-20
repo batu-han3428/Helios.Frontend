@@ -179,5 +179,18 @@ namespace Helios.eCRF.Controllers
             var result = await _subjectService.SetSubjectComment(dto);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Hasta sayfasında seçilen elementi unk olarak işaretler
+        /// </summary>
+        /// <param name="dto">parametreler</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> SetSubjectMissingData(SubjectMissingDataDTO dto)
+        {
+            var result = await _subjectService.SetSubjectMissingData(dto);
+            return Ok(result);
+        }
     }
 }
