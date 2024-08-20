@@ -193,8 +193,8 @@ const SubjectDetail = props => {
                                         <SubjectDetailElementList
                                             IsDisable={!permissions.canSubjectEdit}
                                             StudyId={studyId}
-                                            ModuleId={0}
                                             ElementList={subjectElementList}
+                                            IsMissingData={permissions.canMonitoringMarkAsNull}
                                         />
                                     )
                                 }

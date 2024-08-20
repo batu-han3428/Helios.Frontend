@@ -656,5 +656,10 @@
   "Account name": "Account name",
   "User role name": "User role name",
   "There is no module on the page. Please contact the system administrator.": "There is no module on the page. Please contact the system administrator.",
-  "There is no limit for adding study, please contact the system administrator.": "There is no limit for adding study, please contact the system administrator."
+  "There is no limit for adding study, please contact the system administrator.": "There is no limit for adding study, please contact the system administrator.",
+  "Select one of the reasons for the missing value": "Select one of the reasons for the missing value",
+  "NA: Not applicable": "NA: Not applicable",
+  "ND: Not done": "ND: Not done",
+  "UNK: Unknown": "UNK: Unknown",
+  "Other reason": "Other reason"
 }

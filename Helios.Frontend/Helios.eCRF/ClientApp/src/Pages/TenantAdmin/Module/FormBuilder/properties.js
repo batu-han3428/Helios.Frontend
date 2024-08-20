@@ -57,7 +57,7 @@ class Properties extends React.Component {
             IsDependent: false,
             IsRelation: false,
             IsReadonly: false,
-            CanMissing: false,
+            CanMissing: true,
 
             widthOptionGroup: GetWidth(),
             widthSelectedGroup: null,

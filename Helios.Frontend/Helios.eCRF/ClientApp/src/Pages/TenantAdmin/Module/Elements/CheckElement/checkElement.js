@@ -29,22 +29,23 @@ class CheckElement extends Component {
     }
 
     handleChange = (value) => {
-        this.setState({ selectedOption: value });
-
         const checkedOptions = this.state.checkedOptions.includes(value)
             ? this.state.checkedOptions.filter(option => option !== value)
             : [...this.state.checkedOptions, value];
-
         this.setState({ checkedOptions });
-        var val = JSON.stringify(checkedOptions).slice(1, JSON.stringify(checkedOptions).length - 1);
-        if (val !== "") val = JSON.parse(val);
+        const val = checkedOptions.length > 0 ? JSON.stringify(checkedOptions) : "";
         this.props.HandleAutoSave(this.state.id, val, 9);
     };
+
     componentDidUpdate(prevProps) {
         if (prevProps.Value !== this.props.Value) {
-            this.setState({ selectedOption: this.props.Value });
+            const checkedOptions = this.state.ElementOptions
+                .filter(option => this.props.Value.includes(option.tagValue))
+                .map(option => option.tagValue);
+            this.setState({ checkedOptions });
         }
     }
+
     render() {
         return (
             <>

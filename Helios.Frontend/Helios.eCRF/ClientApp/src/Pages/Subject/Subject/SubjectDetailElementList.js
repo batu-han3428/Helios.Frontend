@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import '../../TenantAdmin/Module/FormBuilder/formBuilder.css';
 import { useDispatch } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
-import { Dropdown } from 'antd';
+import { Dropdown, Badge, Tooltip } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import TextElement from '../../TenantAdmin/Module/Elements/TextElement/textElement.js';
 import NumericElement from '../../TenantAdmin/Module/Elements/NumericElement/numericElement.js';
@@ -26,17 +26,21 @@ import { withTranslation } from "react-i18next";
 import { useAutoSaveSubjectMutation } from '../../../store/services/Subject';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import SubjectComment from './Comp/SubjectComment';
+import SubjectMissingData from './Comp/SubjectMissingData';
 import { showToast } from '../../../store/toast/actions';
+import { SubjectMissingDataType } from './Comp/SubjectMissingDataType';
 
 function SubjectDetailElementList(props) {
     const modalRef = useRef();
     const [modalInf, setModalInf] = useState({});
     const [tenantId] = useState(props.TenantId);
-    const [subjectVisitPageModuleId] = useState(props.ModuleId);
+    const [subjectVisitPageModuleId] = useState(0);
     const [studyId] = useState(props.StudyId);
     const [isDisable] = useState(props.IsDisable);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [isMissingData] = useState(props.IsMissingData);
+
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
 
     const AutoSave = async (id, value, type = 0) => {
@@ -67,10 +71,11 @@ function SubjectDetailElementList(props) {
             Id: param.subjectVisitPageModuleElementId,
             StudyVisitPageModuleElementId: param.studyVisitPageModuleElementId,
             SubjectVisitPageModuleId: param.subjectVisitPageModuleId,
-            Value: param.userValue ?? "",
+            Value: param.missingData ? "" : (param.userValue ?? ""),
             IsDisable: dsbl,
             IsRequired: param.isRequired,
             HandleAutoSave: AutoSave,
+            IsMissingData: isMissingData
         };
 
         switch (param.elementType) {
@@ -111,7 +116,7 @@ function SubjectDetailElementList(props) {
             default:
                 return "";
         }
-    }, [AutoSave, isDisable, studyId, tenantId, subjectVisitPageModuleId]);
+    }, [AutoSave, isDisable, studyId, tenantId, subjectVisitPageModuleId, isMissingData]);
 
     const getItems = useCallback((param) => {
         const items = [
@@ -123,14 +128,8 @@ function SubjectDetailElementList(props) {
                 disabled: isDisable,
             },
             {
-                key: '2',
-                label: <a onClick={() => navigate('')}>{props.t("Missing data")}</a>,
-                icon: <FontAwesomeIcon icon="fas fa-check-square" style={{ color: "#5b626b" }} />,
-                style: { color: "#5b626b" },
-            },
-            {
                 key: '3',
-                label: <a onClick={() => { setModalInf({ title: param.elementName, content: <SubjectComment subjectElementId={param.subjectVisitPageModuleElementId} /> }); modalRef.current.tog_backdrop(); }}>{props.t("Comments")}</a>,
+                label: <a onClick={() => { setModalInf({ title: param.elementName, content: <SubjectComment subjectElementId={param.subjectVisitPageModuleElementId} />, isButton: false }); modalRef.current.tog_backdrop(); }}>{props.t("Comments")}</a>,
                 icon: <FontAwesomeIcon icon="fas fa-comment" style={{ color: "#5b626b" }} />,
                 style: { color: "#5b626b" },
             },
@@ -147,6 +146,16 @@ function SubjectDetailElementList(props) {
                 style: { color: "#5b626b" },
             },
         ];
+
+        if (isMissingData && param.canMissing) {
+            items.splice(1, 0, {
+                key: '2',
+                label: <a onClick={() => { setModalInf({ title: props.t('Select one of the reasons for the missing value'), content: <SubjectMissingData data={param.missingData && param.userValue} elementId={param.subjectVisitPageModuleElementId} refs={modalRef} />, isButton: true, buttonText: props.t('Save') }); modalRef.current.tog_backdrop(); }}>{props.t("Missing data")}</a>,
+                icon: <FontAwesomeIcon icon="fas fa-check-square" style={{ color: "#5b626b" }} />,
+                style: { color: "#5b626b" }
+            });
+        }
+
         if (param.elementType === 17 || param.elementType === 7) {
             var items2 = items.filter(item => item.key !== '1');
             return { items: items2 };
@@ -155,8 +164,8 @@ function SubjectDetailElementList(props) {
             return { items };
         }
 
-    }, [ClearData, navigate, props.t]);
-
+    }, [ClearData, navigate, props.t, isDisable, isMissingData]);
+    
     const renderContent = useMemo(() => {
         return Array.isArray(props.ElementList) ? props.ElementList.map((item) => {
             const w = item.width === 0 ? 12 : item.width;
@@ -174,7 +183,41 @@ function SubjectDetailElementList(props) {
                                     {item.elementType !== 1 && item.title}
                                 </label>
                                 {(![1, 3].includes(item.elementType) && item.isComment) &&
-                                    <FontAwesomeIcon onClick={() => { setModalInf({ title: item.elementName, content: <SubjectComment subjectElementId={item.subjectVisitPageModuleElementId} /> }); modalRef.current.tog_backdrop(); }} icon="fa-solid fa-comment" style={{ color: "#8bb9ee", marginLeft: '5px', cursor: 'pointer' }} />
+                                    <FontAwesomeIcon onClick={() => { setModalInf({ title: item.elementName, content: <SubjectComment subjectElementId={item.subjectVisitPageModuleElementId} />, isButton: false }); modalRef.current.tog_backdrop(); }} icon="fa-solid fa-comment" style={{ color: "#8bb9ee", marginRight: '5px', cursor: 'pointer' }} />
+                                }
+                                {item.missingData &&
+                                    (() => {
+                                        const splitValue = item.userValue.split('_');
+                                        const searchValue = splitValue.length > 1 ? splitValue[0] : item.userValue;
+                                        const foundItem = SubjectMissingDataType.find(x => x.value.includes(searchValue));
+                                        return (
+                                            <Tooltip title={foundItem && props.t(foundItem.label)}>
+                                                <Badge
+                                                    count="UNK"
+                                                    title=""
+                                                    style={{
+                                                        width: '22px',
+                                                        height: '22px',
+                                                        borderRadius: '50%',
+                                                        backgroundColor: '#ffa16c',
+                                                        color: '#FFFFFF',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        fontSize: '8px',
+                                                        fontWeight: 'bold',
+                                                        textAlign: 'center',
+                                                        cursor: (isMissingData && item.canMissing) ? 'pointer': 'default'
+                                                    }}
+                                                    onClick={() => {
+                                                        if (isMissingData && item.canMissing) { 
+                                                            setModalInf({ title: props.t('Select one of the reasons for the missing value'), content: <SubjectMissingData data={item.missingData && item.userValue} elementId={item.subjectVisitPageModuleElementId} refs={modalRef} />, isButton: true, buttonText: props.t('Save') }); modalRef.current.tog_backdrop();
+                                                        }
+                                                    }}
+                                                />
+                                            </Tooltip>
+                                        );
+                                    })()
                                 }
                             </div>
                             <Row>
@@ -200,6 +243,7 @@ function SubjectDetailElementList(props) {
             }
         }) : null;
     }, [props.ElementList, renderElementsSwitch, getItems]);
+
     return (
         <div>
             <div className="row" style={{ marginLeft: 'unset' }}>
@@ -209,7 +253,8 @@ function SubjectDetailElementList(props) {
                 refs={modalRef}
                 title={modalInf.title}
                 body={modalInf.content}
-                isButton={false}
+                isButton={modalInf.isButton}
+                buttonText={modalInf.isButton && modalInf.buttonText}
             />
         </div>
     );
