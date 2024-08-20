@@ -31,7 +31,6 @@ const TenantUsers = props => {
     const modalRef = useRef();
 
     const userInformation = useSelector(state => state.rootReducer.Login);
-
     const dispatch = useDispatch();
 
     const [tableData, setTableData] = useState([]);
@@ -41,6 +40,8 @@ const TenantUsers = props => {
     const [filteredInfo, setFilteredInfo] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
     const [activeUserCount, setActiceUserCount] = useState(0);
+    const [tenantUserLimit, setTenantUserLimit] = useState();
+
     const handleBasicClick = (value) => {
         if (value === basicActive) {
             return;
@@ -159,7 +160,7 @@ const TenantUsers = props => {
             sortDirections: ['ascend', 'descend'],
             filteredValue: filteredInfo.userRoleName || null,
             filters: uniqueRoleNames.map(item => ({ ...item, text: item, value: item })),
-            onFilter: (value, record) => (record.userRoleName !== '-' ? record.userRoleName === value:true),
+            onFilter: (value, record) => (record.userRoleName !== '-' ? record.userRoleName === value : true),
         },
         {
             title: props.t('Created on'),
@@ -201,7 +202,7 @@ const TenantUsers = props => {
     useEffect(() => {
         dispatch(startloading());
         if (tenantUsersData && !isLoading && !error) {
-            const updatedTenantUsersData = tenantUsersData.map(item => {
+            const updatedTenantUsersData = tenantUsersData.tenantUserList.map(item => {
                 return {
                     ...item,
                     createdOn: formatDate(item.createdOn),
@@ -236,7 +237,7 @@ const TenantUsers = props => {
             }, {});
             const GroupDataSource = Object.keys(groupedData).map((email, index) => {
                 const users = groupedData[email];
-               
+
                 return {
                     key: index,
                     email: email,
@@ -246,20 +247,27 @@ const TenantUsers = props => {
                     children: users
                 };
             });
-            const activeusercount = GroupDataSource.reduce((total, user) => {
-                if (user.children.some(x => x.isActive)) {
+            const activeusercount = updatedTenantUsersData.reduce((total, user) => {
+                if (user.isActive === props.t("Active")) {
                     total += 1;
                 }
                 return total;
-            }, 0);           
+            }, 0);
             setActiceUserCount(activeusercount);
             setGroupTableData(GroupDataSource);
-         
+            setTenantUserLimit(tenantUsersData.tenantUserLimit)
+
             dispatch(endloading());
 
             /* return () => clearTimeout(timer);*/
         } else if (!isLoading && error) {
-            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
+            if (error.data != null) {
+                setTenantUserLimit(error.data.tenantUserLimit)
+                setActiceUserCount(error.data.tenantUserList.length);
+            }
+            else {
+                dispatch(showToast(props.t("An unexpected error occurred."), true, false));
+            }
             dispatch(endloading());
         }
     }, [tenantUsersData, error, isLoading, props.t]);
@@ -378,7 +386,7 @@ const TenantUsers = props => {
                         <Col className="col-12">
                             <Card>
                                 <CardBody>
-                                    <p className="card-title-desc" style={{ color: "red", marginRight: "0", textAlign:"right" }}>{props.t("Active user")}:{activeUserCount}</p>
+                                    {tenantUserLimit !== undefined && <p className="card-title-desc" style={{ color: "red", marginRight: "0", textAlign: "right" }}>{props.t("Active user")}:{activeUserCount}/{tenantUserLimit}</p>}
                                     <Table
                                         size="small"
                                         columns={columns}

@@ -657,5 +657,6 @@
   "User role name": "User role name",
   "There is no module on the page. Please contact the system administrator.": "There is no module on the page. Please contact the system administrator.",
   "Add a tenant admin": "Add a tenant admin",
-  "Active user": "Active user"
+  "Active user": "Active user",
+  "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.": "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator."
 }

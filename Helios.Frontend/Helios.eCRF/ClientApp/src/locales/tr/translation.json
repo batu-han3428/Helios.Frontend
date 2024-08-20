@@ -505,5 +505,6 @@
   "User role name": "Kullanıcı rol adı",
   "There is no module on the page. Please contact the system administrator.": "Sayfada herhangi bir modül bulunmamaktadır. Lütfen sistem yöneticisi ile iletişime geçiniz.",
   "Add a tenant admin": "Abonelik için yönetici ekle",
-  "Active user": "Aktif kullanıcı"
+  "Active user": "Aktif kullanıcı",
+  "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.": "İlgili abonelik için kullanıcı ekleme limitiniz dolmuştur. Lütfen sistem yöneticisi ile iletişime geçiniz. "
 }

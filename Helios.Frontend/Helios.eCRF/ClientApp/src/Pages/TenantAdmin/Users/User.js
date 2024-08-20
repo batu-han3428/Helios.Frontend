@@ -7,6 +7,7 @@ import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import { useLazyUserListGetQuery, useUserGetQuery, useUserSetMutation, useUserActivePassiveMutation, useUsersActivePassiveMutation, useUserDeleteMutation, useUserResetPasswordMutation } from '../../../store/services/Users';
+import { useLazyTenantUserListGetQuery } from '../../../store/services/TenantUsers';
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2'
@@ -44,6 +45,7 @@ const User = props => {
     const [excelData, setExcelData] = useState([]);
     const [filteredInfo, setFilteredInfo] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
+    const [tenatUserLimit, setTenatUserLimit] = useState();
 
     const animatedComponents = makeAnimated();
 
@@ -52,7 +54,7 @@ const User = props => {
     };
 
     const handleChange = (pagination, filters, sorter) => {
-        setFilteredInfo(filters);      
+        setFilteredInfo(filters);
         setSortedInfo(sorter);
 
     };
@@ -97,7 +99,7 @@ const User = props => {
     const [lastNamesearchText, lastNameSetSearchText] = useState('');
     const [emailSearchText, emailSetSearchText] = useState('');
     const uniqueNames = Array.from(new Set(tableData.map(item => item.roleName)));
-    
+
     const data = {
 
         columns: [
@@ -168,8 +170,8 @@ const User = props => {
                 sortDirections: ['ascend', 'descend'],
                 filteredValue: filteredInfo.roleName || null,
                 filters: uniqueNames.map(item => ({ ...item, text: item, value: item })),
-                onFilter: (value, record) => record.roleName===value,
-               
+                onFilter: (value, record) => record.roleName === value,
+
             },
             {
                 title: props.t('Site name'),
@@ -231,6 +233,9 @@ const User = props => {
         return siteDropdown;
     }
 
+    const [triggerTenantUsers, resultTenantUsers] = useLazyTenantUserListGetQuery();
+    const { data: tenantUsersData, error: tenantUserError, isLoading: tenantUserIsloading } = resultTenantUsers;
+
     const [trigger, result] = useLazyUserListGetQuery();
     const { data: usersData, error, isLoading } = result;
 
@@ -246,8 +251,40 @@ const User = props => {
             triggerRoles(studyInformation.studyId);
             triggerSites(studyInformation.studyId);
         }
-    }, [studyInformation.studyId])
+        if (userInformation.tenantId) {
+            triggerTenantUsers(userInformation.tenantId);
+        }
+    }, [studyInformation.studyId, userInformation.tenantId, usersData]);
 
+    useEffect(() => {    
+        if (userInformation.tenantId) {
+            triggerTenantUsers(userInformation.tenantId);
+        }
+    }, [userInformation.tenantId, usersData]);
+    useEffect(() => {
+        if (tenantUsersData && !isLoading && !error) {
+            const activeusercount = tenantUsersData.tenantUserList.reduce((total, user) => {
+                if (user.isActive) {
+                    total += 1;
+                }
+                return total;
+            }, 0);
+            if (activeusercount === tenantUsersData.tenantUserLimit) {
+                setTenatUserLimit(false);
+            }
+            else {
+                setTenatUserLimit(true);
+            }
+        }
+    }, [tenantUsersData, error, isLoading]);
+    const tenantLimitControl = () => {
+        if (!tenatUserLimit) {
+            dispatch(showToast(props.t("Your user adding limit for the relevant tenant has been reached. Please contact the system administrator."), true, false));
+        }
+        else {
+            modalRef.current.tog_backdrop();
+        }
+    };
     useEffect(() => {
         dispatch(startloading());
         if (usersData && !isLoading && !error) {
@@ -305,7 +342,7 @@ const User = props => {
 
             dispatch(endloading());
 
-           /* return () => clearTimeout(timer);*/
+            /* return () => clearTimeout(timer);*/
         }
         else if (!isLoading && error) {
             dispatch(showToast(props.t("An unexpected error occurred."), true, false));
@@ -482,65 +519,69 @@ const User = props => {
     const [userActivePassive] = useUserActivePassiveMutation();
 
     const activePassiveUser = (item) => {
-        Swal.fire({
-            title: props.t("User active/passive status will be changed."),
-            text: props.t("Do you confirm?"),
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3bbfad",
-            confirmButtonText: props.t("Yes"),
-            cancelButtonText: props.t("Cancel"),
-            closeOnConfirm: false
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    dispatch(startloading());
-                    var activePassiveData = {
-                        studyUserId: item.studyUserId,
-                        authUserId: item.authUserId,
-                        studyId: studyInformation.studyId,
-                        userId: userInformation.userId,
-                        name: item.name,
-                        lastName: item.lastName,
-                        isActive: item.isActive,
-                        email: item.email,
-                        roleId: item.roleId,
-                        siteIds: [],
-                        password: "",
-                        researchName: studyInformation.studyName,
-                        researchLanguage: studyInformation.studyLanguage,
-                        firstAddition: false,
-                        responsiblePersonIds: []
-                    };
-                    const response = await userActivePassive(activePassiveData);
-                    if (response.data.isSuccess) {
+        if (tenatUserLimit) {
+            Swal.fire({
+                title: props.t("User active/passive status will be changed."),
+                text: props.t("Do you confirm?"),
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3bbfad",
+                confirmButtonText: props.t("Yes"),
+                cancelButtonText: props.t("Cancel"),
+                closeOnConfirm: false
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        dispatch(startloading());
+                        var activePassiveData = {
+                            studyUserId: item.studyUserId,
+                            authUserId: item.authUserId,
+                            studyId: studyInformation.studyId,
+                            userId: userInformation.userId,
+                            name: item.name,
+                            lastName: item.lastName,
+                            isActive: item.isActive,
+                            email: item.email,
+                            roleId: item.roleId,
+                            siteIds: [],
+                            password: "",
+                            researchName: studyInformation.studyName,
+                            researchLanguage: studyInformation.studyLanguage,
+                            firstAddition: false,
+                            responsiblePersonIds: []
+                        };
+                        const response = await userActivePassive(activePassiveData);
+                        if (response.data.isSuccess) {
+                            dispatch(endloading());
+                            Swal.fire({
+                                title: "",
+                                text: props.t(response.data.message),
+                                icon: "success",
+                                confirmButtonText: props.t("Ok"),
+                            });
+                        } else {
+                            dispatch(endloading());
+                            Swal.fire({
+                                title: "",
+                                text: response.data.message,
+                                icon: "error",
+                                confirmButtonText: props.t("OK"),
+                            });
+                        }
+                    } catch (error) {
                         dispatch(endloading());
                         Swal.fire({
                             title: "",
-                            text: props.t(response.data.message),
-                            icon: "success",
-                            confirmButtonText: props.t("Ok"),
-                        });
-                    } else {
-                        dispatch(endloading());
-                        Swal.fire({
-                            title: "",
-                            text: response.data.message,
+                            text: props.t("An error occurred while processing your request."),
                             icon: "error",
                             confirmButtonText: props.t("OK"),
                         });
                     }
-                } catch (error) {
-                    dispatch(endloading());
-                    Swal.fire({
-                        title: "",
-                        text: props.t("An error occurred while processing your request."),
-                        icon: "error",
-                        confirmButtonText: props.t("OK"),
-                    });
                 }
-            }
-        });
+            });
+        } else {
+            dispatch(showToast(props.t("Your user adding limit for the relevant tenant has been reached. Please contact the system administrator."), true, false));
+        }
     }
 
     const [usersActivePassive] = useUsersActivePassiveMutation();
@@ -972,7 +1013,7 @@ const User = props => {
                                         color="success"
                                         className="btn btn-success waves-effect waves-light"
                                         type="button"
-                                        onClick={() => modalRef.current.tog_backdrop()}
+                                        onClick={tenantLimitControl}
                                     >
                                         <FontAwesomeIcon icon="fa-solid fa-plus" /> {props.t("Add a user")}
                                     </Button>
