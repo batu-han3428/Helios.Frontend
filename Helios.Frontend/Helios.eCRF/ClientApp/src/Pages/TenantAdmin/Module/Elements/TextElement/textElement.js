@@ -8,7 +8,8 @@ class TextElement extends Component {
             id: props.Id,
             isDisable: props.IsDisable,
             Value: props.Value === undefined ? "" : props.Value,
-            isRequired: props.IsRequired
+            isRequired: props.IsRequired,
+            isMissingItem: props.IsMissingItem
         }
 
         this.handleValueChange = this.handleValueChange.bind(this);
@@ -28,7 +29,7 @@ class TextElement extends Component {
     };
 
     render() {
-        const inputClass = this.state.Value === "" && this.state.isRequired ? 'form-control input-error' : 'form-control input-normal';
+        const inputClass = this.state.Value === "" && this.state.isRequired && !this.state.isMissingItem ? 'form-control input-error' : 'form-control input-normal';
         return (
             <div style={{ marginRight: "20px" }} >
                 <input

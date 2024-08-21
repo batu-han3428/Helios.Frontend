@@ -12,7 +12,8 @@ class TextareaElement extends Component {
             isDisable: props.IsDisable,
             Value: props.Value,
             defaultValue: props.DefaultValue,
-            isRequired: props.IsRequired
+            isRequired: props.IsRequired,
+            isMissingItem: props.IsMissingItem
         }
 
         this.handleValueChange = this.handleValueChange.bind(this);
@@ -32,7 +33,7 @@ class TextareaElement extends Component {
     };
 
     render() {
-        const inputClass = this.state.Value === "" && this.state.isRequired ? 'input-error' : 'input-normal';
+        const inputClass = this.state.Value === "" && this.state.isRequired && !this.state.isMissingItem ? 'input-error' : 'input-normal';
         return (
             <div style={{ marginRight: "20px" }} >
                 <Input

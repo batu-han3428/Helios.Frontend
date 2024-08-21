@@ -15,7 +15,8 @@ class DropdownCheckListElement extends Component {
             Value: props.Value,
             ElementOptions: [],
             selectedOption: null,
-            isRequired: props.IsRequired
+            isRequired: props.IsRequired,
+            isMissingItem: props.IsMissingItem
         }
 
         this.fillElementOptions = this.fillElementOptions.bind(this);
@@ -71,7 +72,7 @@ class DropdownCheckListElement extends Component {
                 <Select
                     options={this.state.ElementOptions}
                     classNamePrefix="select2-selection"
-                    className={this.state.selectedOption !== null && this.state.isRequired ? 'input-normal' : 'input-error'}
+                    className={this.state.selectedOption !== null && this.state.isRequired && !this.state.isMissingItem ? 'input-normal' : 'input-error'}
                     placeholder={this.props.t("Select")}
                     isMulti={true}
                     closeMenuOnSelect={false}
