@@ -1,8 +1,8 @@
 ﻿import PropTypes from 'prop-types';
 import { Alert } from "reactstrap";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { withTranslation } from "react-i18next";
-import { Row, Col, Button } from 'antd';
+import { Row, Col, Button, Progress, Tag, Tooltip } from 'antd';
 import { MenuOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
 import SubjectDetailMenu from './Comp/SubjectDetailMenu';
 import './Subject.css';
@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import SubjectDetailElementList from './SubjectDetailElementList.js';
 import { useNavigate } from "react-router-dom";
 import { showToast } from '../../../store/toast/actions';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const SubjectDetail = props => {
 
@@ -28,6 +29,7 @@ const SubjectDetail = props => {
     const [openMobileMenu, setOpenMobileMenu] = useState(false);
     const [leftMenuData, setLeftMenuData] = useState([]);
     const [subjectElementList, setSubjectElementList] = useState([]);
+    const [sdvInformation, setSdvInformation] = useState({});
 
     const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery();
     const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId });
@@ -65,7 +67,47 @@ const SubjectDetail = props => {
             navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}/${subjectNumber}`);
         }
     };
+    
+    function filterElements(elements) {
+        return elements.reduce((acc, item) => {
+            if (![1, 17, 14, 15, 16, 3, 7].includes(item.elementType) && item.userValue !== "" && item.userValue !== null) {
+                acc.push(item);
+            }
+            if (item.childElements && item.childElements.length > 0) {
+                let sortedChildren;
+                if (item.elementType === 15) {
+                    sortedChildren = [...item.childElements].sort((a, b) => {
+                        if (a.rowIndex !== b.rowIndex) {
+                            return a.rowIndex - b.rowIndex;
+                        }
+                        return a.columnIndex - b.columnIndex;
+                    });
+                } else if (item.elementType === 16) {
+                    sortedChildren = [...item.childElements].sort((a, b) => {
+                        if (a.dataGridRowId !== b.dataGridRowId) {
+                            return a.dataGridRowId - b.dataGridRowId;
+                        }
+                        return a.columnIndex - b.columnIndex;
+                    });
+                } else {
+                    sortedChildren = item.childElements;
+                }
+                const filteredChildren = filterElements(sortedChildren);
+                acc = acc.concat(filteredChildren);
+            }
+            return acc;
+        }, []);
+    }
 
+    const sdvCalculate = (data) => {
+        const filteredList = filterElements(data);
+        const sdvTrueCount = filteredList.filter(item => item.sdv === true).length;
+        const sdvFalseFirstItem = filteredList.find(item => item.sdv === false);
+        const totalCount = filteredList.length;
+        const percentage = totalCount > 0 ? (sdvTrueCount / totalCount) * 100 : 0;
+        const upPercentage = percentage % 1 === 0 ? percentage : percentage.toFixed(2);
+        setSdvInformation({ percent: upPercentage, inf: `${sdvTrueCount}/${totalCount}`, item: sdvFalseFirstItem ? sdvFalseFirstItem.subjectVisitPageModuleElementId : null, style: false })
+    };
 
     useEffect(() => {
         if (studyId && subjectId) {
@@ -77,6 +119,7 @@ const SubjectDetail = props => {
     useEffect(() => {
         if (!error1 && !isLoading1 && elementList) {
             setSubjectElementList(elementList);
+            if (elementList.length > 0) sdvCalculate(elementList);
             dispatch(endloading());
         }
     }, [elementList, error1, isLoading1]);
@@ -174,7 +217,7 @@ const SubjectDetail = props => {
                             <SubjectDetailDrawer onClose={onClose} openMobileMenu={openMobileMenu} content={<SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={true} studyId={studyId} subjectId={subjectId} />} />
                         </Col>
                         <Col xs={24} sm={24} md={18} lg={18} xl={19} >
-                            <div id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom: "100px" }}>
+                            <div id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom: "100px", paddingLeft: '50px' }}>
                                 {!isLoading1 && !error1 && isLoaded && elementList && subjectElementList.length < 1 ?
                                     (
                                          <div style={{
@@ -190,12 +233,45 @@ const SubjectDetail = props => {
                                     )
                                     :
                                     (
-                                        <SubjectDetailElementList
-                                            IsDisable={!permissions.canSubjectEdit}
-                                            StudyId={studyId}
-                                            ElementList={subjectElementList}
-                                            IsMissingData={permissions.canMonitoringMarkAsNull}
-                                        />
+                                        <>
+                                            {(permissions.canMonitoringSdv && sdvInformation.percent !== 100) &&
+                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 10px', position: 'sticky', top: 70, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', zIndex: 999 }}>
+                                                    <Tag color="#87d068">{sdvInformation.inf}</Tag>
+                                                    <Progress
+                                                        percent={sdvInformation.percent}
+                                                        status="active"
+                                                        strokeColor={{
+                                                            from: '#87D068',
+                                                            to: '#87d068',
+                                                        }}
+                                                        size="small"
+                                                        style={{width:'80%'}}
+                                                    />                                              
+                                                    <Tooltip title={props.t('Go to missing SDV')}>
+                                                        <Button
+                                                            type="primary"
+                                                            shape="circle"
+                                                            size="small"
+                                                            icon={<FontAwesomeIcon icon="fa-solid fa-arrow-right" />}
+                                                            style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+                                                            onClick={() => {
+                                                                setSdvInformation(prevState => ({
+                                                                    ...prevState,
+                                                                    style: true
+                                                                })); }}
+                                                            />
+                                                    </Tooltip>
+                                                </div>
+                                            }
+                                            <SubjectDetailElementList
+                                                IsDisable={!permissions.canSubjectEdit}
+                                                StudyId={studyId}
+                                                ElementList={subjectElementList}
+                                                IsMissingData={permissions.canMonitoringMarkAsNull}
+                                                IsSdv={permissions.canMonitoringSdv}
+                                                SdvInformation={sdvInformation}
+                                            />
+                                        </>
                                     )
                                 }
 
