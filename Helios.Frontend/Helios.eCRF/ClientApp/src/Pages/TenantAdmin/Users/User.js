@@ -196,6 +196,11 @@ const User = props => {
                 dataIndex: 'isActive',
                 sorter: (a, b) => a.isActive.localeCompare(b.isActive),
                 sortDirections: ['ascend', 'descend'],
+                render: (text, record) => (
+                    <span style={{ color: record.isActive === props.t("Active") ? 'green' : 'red' }}>
+                        {record.isActive}
+                    </span>
+                ),
             },
             {
                 title: props.t('Actions'),
@@ -210,7 +215,7 @@ const User = props => {
         const actions = (
             <div className="icon-container">
                 <div title={props.t("Update")} className="icon icon-update" onClick={() => { updateUser(item) }}></div>
-                <div title={props.t("Active or passive")} className="icon icon-lock" onClick={() => { activePassiveUser(item) }}></div>
+                <div title={props.t("Active or passive")} className="icon icon-lock" onClick={() => { activePassiveUser(item, tenantLimitControl) }}></div>
                 <div title={props.t("Delete")} className="icon icon-delete" onClick={() => { deleteUser(item) }}></div>
                 <div title={props.t("Send a new password")} className="icon icon-resetpassword" onClick={() => { resetPasswordUser(item) }}></div>
             </div>);
@@ -276,7 +281,7 @@ const User = props => {
                 setTenatUserLimit(true);
             }
         }
-    }, [tenantUsersData, error, isLoading]);
+    }, [tenantUsersData, error, isLoading, usersData]);
     const tenantLimitControl = () => {
         if (!tenatUserLimit) {
             dispatch(showToast(props.t("Your user adding limit for the relevant tenant has been reached. Please contact the system administrator."), true, false));
@@ -518,8 +523,11 @@ const User = props => {
 
     const [userActivePassive] = useUserActivePassiveMutation();
 
-    const activePassiveUser = (item) => {
-        if (tenatUserLimit) {
+    const activePassiveUser = (item, tenatUserLimit) => {      
+        if (!tenatUserLimit && !item.isActive) {
+            dispatch(showToast(props.t("Your user adding limit for the relevant tenant has been reached. Please contact the system administrator."), true, false));
+
+        } else {
             Swal.fire({
                 title: props.t("User active/passive status will be changed."),
                 text: props.t("Do you confirm?"),
@@ -579,8 +587,6 @@ const User = props => {
                     }
                 }
             });
-        } else {
-            dispatch(showToast(props.t("Your user adding limit for the relevant tenant has been reached. Please contact the system administrator."), true, false));
         }
     }
 
