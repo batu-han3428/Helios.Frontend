@@ -16,7 +16,7 @@ const baseUrl = "http://localhost:3300/";
 
 class TableElement extends Component {
     constructor(props) {
-        super(props);
+        super(props); 
         this.state = {
             id: props.Id,
             moduleId: props.ModuleId,
@@ -25,6 +25,8 @@ class TableElement extends Component {
             userId: props.UserId,
             isDisable: props.IsDisable,
             isMissingData: props.IsMissingData,
+            isSdv: props.IsSdv,
+            sdvInformation: props.SdvInformation,
             columnCount: props.ColumnCount,
             rowCount: props.RowCount,
             FormType: props.FormType,
@@ -95,6 +97,11 @@ class TableElement extends Component {
                 { childElementList:this.props.ChildElementList }
             );
         }
+        if (this.props.SdvInformation !== prevProps.SdvInformation) {
+            this.setState(
+                { sdvInformation: this.props.SdvInformation }
+            );
+        }
     }
     togglePropertiesModal = () => {
         this.setState(prevState => ({
@@ -122,7 +129,7 @@ class TableElement extends Component {
         }
         else {
             if (result) {
-                return <SubjectDetailElementList IsMissingData={this.state.isMissingData} TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
+                return <SubjectDetailElementList SdvInformation={this.state.sdvInformation} IsSdv={this.state.isSdv} IsMissingData={this.state.isMissingData} TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
             }
             else {
                 return "";

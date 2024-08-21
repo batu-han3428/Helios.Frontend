@@ -23,7 +23,7 @@ import CalculationElement from '../../TenantAdmin/Module/Elements/CalculationEle
 import AdverseEventElement from '../../TenantAdmin/Module/Elements/AdverseEventElement/adverseEventElement.js';
 import ConcomittantMedicationElement from '../../TenantAdmin/Module/Elements/ConcomittantMedicationElement/concomittantMedicationElement.js';
 import { withTranslation } from "react-i18next";
-import { useAutoSaveSubjectMutation } from '../../../store/services/Subject';
+import { useAutoSaveSubjectMutation, useSetSubjectSdvMutation } from '../../../store/services/Subject';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import SubjectComment from './Comp/SubjectComment';
 import SubjectMissingData from './Comp/SubjectMissingData';
@@ -40,9 +40,10 @@ function SubjectDetailElementList(props) {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [isMissingData] = useState(props.IsMissingData);
-
+    const [isSdv] = useState(props.IsSdv);
+  
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
-
+    
     const AutoSave = async (id, value, type = 0) => {
         if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
             dispatch(startloading());
@@ -62,6 +63,7 @@ function SubjectDetailElementList(props) {
                 Id: item.subjectVisitPageModuleElementId,
                 Value: "",
             });
+            dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
             dispatch(endloading());
         }
     }
@@ -75,7 +77,9 @@ function SubjectDetailElementList(props) {
             IsDisable: dsbl,
             IsRequired: param.isRequired,
             HandleAutoSave: AutoSave,
-            IsMissingData: isMissingData
+            IsMissingData: isMissingData,
+            IsSdv: isSdv,
+            SdvInformation: props.SdvInformation
         };
 
         switch (param.elementType) {
@@ -116,22 +120,31 @@ function SubjectDetailElementList(props) {
             default:
                 return "";
         }
-    }, [AutoSave, isDisable, studyId, tenantId, subjectVisitPageModuleId, isMissingData]);
+    }, [AutoSave, isDisable, studyId, tenantId, subjectVisitPageModuleId, isMissingData, isSdv, props.SdvInformation]);
+
+    const [setSubjectSdv] = useSetSubjectSdvMutation();
+
+    const setSdv = async (id) => {
+        dispatch(startloading());
+        const response = await setSubjectSdv(id);
+        dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
+        dispatch(endloading());
+    };
 
     const getItems = useCallback((param) => {
         const items = [
             {
                 key: '1',
                 label: <a onClick={() => ClearData(param)}>{props.t("Clear data")}</a>,
-                icon: <FontAwesomeIcon icon="fas fa-ban" style={{ color: "#5b626b" }} />,
-                style: { color: "#5b626b" },
+                icon: <FontAwesomeIcon icon="fas fa-ban" style={{ color: "#d85b40" }} />,
+                style: { color: "#d85b40" },
                 disabled: isDisable,
             },
             {
                 key: '3',
                 label: <a onClick={() => { setModalInf({ title: param.elementName, content: <SubjectComment subjectElementId={param.subjectVisitPageModuleElementId} />, isButton: false }); modalRef.current.tog_backdrop(); }}>{props.t("Comments")}</a>,
-                icon: <FontAwesomeIcon icon="fas fa-comment" style={{ color: "#5b626b" }} />,
-                style: { color: "#5b626b" },
+                icon: <FontAwesomeIcon icon="fas fa-comment" style={{ color: "#8BB9EE" }} />,
+                style: { color: "#8BB9EE" },
             },
             {
                 key: '4',
@@ -142,8 +155,8 @@ function SubjectDetailElementList(props) {
             {
                 key: '5',
                 label: <a onClick={() => navigate('')}>{props.t("Query")}</a>,
-                icon: <FontAwesomeIcon icon="fas fa-exclamation" style={{ color: "#5b626b" }} />,
-                style: { color: "#5b626b" },
+                icon: <FontAwesomeIcon icon="fas fa-exclamation" style={{ color: "#ffa16c" }} />,
+                style: { color: "#ffa16c" },
             },
         ];
 
@@ -151,8 +164,17 @@ function SubjectDetailElementList(props) {
             items.splice(1, 0, {
                 key: '2',
                 label: <a onClick={() => { setModalInf({ title: props.t('Select one of the reasons for the missing value'), content: <SubjectMissingData data={param.missingData && param.userValue} elementId={param.subjectVisitPageModuleElementId} refs={modalRef} />, isButton: true, buttonText: props.t('Save') }); modalRef.current.tog_backdrop(); }}>{props.t("Missing data")}</a>,
-                icon: <FontAwesomeIcon icon="fas fa-check-square" style={{ color: "#5b626b" }} />,
-                style: { color: "#5b626b" }
+                icon: <FontAwesomeIcon icon="fas fa-check-square" style={{ color: "#bf9ec9" }} />,
+                style: { color: "#bf9ec9" }
+            });
+        }
+
+        if (isSdv && ![1, 17, 14, 15, 16, 3, 7].includes(param.elementType) && param.userValue !== "") {
+            items.splice(1, 0, {
+                key: '6',
+                label: <a onClick={() => { setSdv(param.subjectVisitPageModuleElementId); }}>{!param.sdv ? props.t('On-site SDV') : props.t('Remove SDV')}</a>,
+                icon: <FontAwesomeIcon icon="fa-solid fa-circle-check" style={{ color: "#3BBFAD" }} />,
+                style: { color: "#3BBFAD" }
             });
         }
 
@@ -164,26 +186,26 @@ function SubjectDetailElementList(props) {
             return { items };
         }
 
-    }, [ClearData, navigate, props.t, isDisable, isMissingData]);
+    }, [ClearData, navigate, props.t, isDisable, isMissingData, isSdv]);
     
     const renderContent = useMemo(() => {
         return Array.isArray(props.ElementList) ? props.ElementList.map((item) => {
             const w = item.width === 0 ? 12 : item.width;
             const cls = "mb-6 col-md-" + w;
-
+      
             if (item.isHidden) {
                 return null;
             } else {
                 return (
-                    <Row className={cls} key={item.subjectVisitPageModuleElementId}>
+                    <Row className={cls} key={item.subjectVisitPageModuleElementId} style={{ marginLeft: 'unset', boxShadow: props.SdvInformation && props.SdvInformation.style && props.SdvInformation.item === item.subjectVisitPageModuleElementId ? '0 0 15px rgba(0, 255, 0, 0.5)' : 'unset' }}>
                         <React.Fragment>
-                            <div style={{ marginBottom: '3px', marginTop: '10px' }}>
-                                <label style={{ marginRight: '5px' }}>
+                            <div style={{ marginBottom: '3px', marginTop: '10px', display: 'flex', alignItems: 'center' }}>
+                                <label style={{ marginRight: '5px', marginBottom: '0' }}>
                                     {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
                                     {item.elementType !== 1 && item.title}
                                 </label>
                                 {(![1, 3].includes(item.elementType) && item.isComment) &&
-                                    <FontAwesomeIcon onClick={() => { setModalInf({ title: item.elementName, content: <SubjectComment subjectElementId={item.subjectVisitPageModuleElementId} />, isButton: false }); modalRef.current.tog_backdrop(); }} icon="fa-solid fa-comment" style={{ color: "#8bb9ee", marginRight: '5px', cursor: 'pointer' }} />
+                                    <FontAwesomeIcon onClick={() => { setModalInf({ title: item.elementName, content: <SubjectComment subjectElementId={item.subjectVisitPageModuleElementId} />, isButton: false }); modalRef.current.tog_backdrop(); }} icon="fa-solid fa-comment" style={{ color: "#8bb9ee", marginRight: '5px', cursor: 'pointer', fontSize: '20px' }} />
                                 }
                                 {item.missingData &&
                                     (() => {
@@ -207,7 +229,8 @@ function SubjectDetailElementList(props) {
                                                         fontSize: '8px',
                                                         fontWeight: 'bold',
                                                         textAlign: 'center',
-                                                        cursor: (isMissingData && item.canMissing) ? 'pointer': 'default'
+                                                        cursor: (isMissingData && item.canMissing) ? 'pointer' : 'default',
+                                                        marginRight: '5px'
                                                     }}
                                                     onClick={() => {
                                                         if (isMissingData && item.canMissing) { 
@@ -218,6 +241,11 @@ function SubjectDetailElementList(props) {
                                             </Tooltip>
                                         );
                                     })()
+                                }
+                                {(item.sdv && ![1, 17, 14, 15, 16, 3].includes(item.elementType)) &&
+                                    <Tooltip title={props.t('Remove SDV')}>
+                                        <FontAwesomeIcon onClick={() => { if (item.elementType !== 7 && isSdv) setSdv(item.subjectVisitPageModuleElementId); }} icon="fa-solid fa-circle-check" style={{ color: "#3BBFAD", cursor: item.elementType !== 7 && isSdv ? "pointer" : "default", fontSize: '20px' }} />
+                                    </Tooltip>
                                 }
                             </div>
                             <Row>
@@ -242,11 +270,11 @@ function SubjectDetailElementList(props) {
                 );
             }
         }) : null;
-    }, [props.ElementList, renderElementsSwitch, getItems]);
+    }, [props.ElementList, renderElementsSwitch, getItems, props.SdvInformation]);
 
     return (
         <div>
-            <div className="row" style={{ marginLeft: 'unset' }}>
+            <div className="row" style={{ marginLeft: 'unset' }}>              
                 {renderContent}
             </div>
             <ModalComp

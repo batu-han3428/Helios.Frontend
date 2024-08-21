@@ -192,5 +192,18 @@ namespace Helios.eCRF.Controllers
             var result = await _subjectService.SetSubjectMissingData(dto);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Hasta sayfasında seçilen elementi sdv olarak işaretler
+        /// </summary>
+        /// <param name="id">element id</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> SetSubjectSdv(Int64 id)
+        {
+            var result = await _subjectService.SetSubjectSdv(id);
+            return Ok(result);
+        }
     }
 }

@@ -127,6 +127,13 @@ export const SubjectApi = createApi({
             },
             invalidatesTags: ['SubjectElement'],
         }),
+        setSubjectSdv: builder.mutation({
+            query: (id) => ({
+                url: `/Subject/SetSubjectSdv?id=${id}`,
+                method: 'POST'
+            }),
+            invalidatesTags: ['SubjectElement'],
+        }),
     }),
 });
 
@@ -157,5 +164,7 @@ export const { useRemoveSubjectCommentMutation } = SubjectApi;
 export const { useSetSubjectCommentMutation } = SubjectApi;
 
 export const { useSetSubjectMissingDataMutation } = SubjectApi;
+
+export const { useSetSubjectSdvMutation } = SubjectApi;
 
 export default SubjectApi;

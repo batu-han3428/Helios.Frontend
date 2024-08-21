@@ -661,5 +661,7 @@
   "NA: Not applicable": "NA: Not applicable",
   "ND: Not done": "ND: Not done",
   "UNK: Unknown": "UNK: Unknown",
-  "Other reason": "Other reason"
+  "Other reason": "Other reason",
+  "Remove SDV": "Remove SDV",
+  "Go to missing SDV": "Go to missing SDV"
 }

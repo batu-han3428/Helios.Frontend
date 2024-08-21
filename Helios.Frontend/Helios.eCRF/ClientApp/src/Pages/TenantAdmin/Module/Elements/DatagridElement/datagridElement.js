@@ -25,6 +25,8 @@ class DatagridElement extends Component {
             userId: props.UserId,
             isDisable: props.IsDisable,
             isMissingData: props.IsMissingData,
+            isSdv: props.IsSdv,
+            sdvInformation: props.SdvInformation,
             columnCount: props.ColumnCount,
             rowCount: props.RowCount > 0 && props.RowCount !== undefined ? props.RowCount : 1,
             FormType: props.FormType,
@@ -150,6 +152,8 @@ class DatagridElement extends Component {
             prevProps.UserId !== this.props.UserId ||
             prevProps.IsDisable !== this.props.IsDisable ||
             prevProps.IsMissingData !== this.props.IsMissingData ||
+            prevProps.IsSdv !== this.props.IsSdv ||
+            prevProps.SdvInformation !== this.props.SdvInformation ||
             prevProps.ColumnCount !== this.props.ColumnCount ||
             prevProps.RowCount !== this.props.RowCount ||
             prevProps.FormType !== this.props.FormType ||
@@ -165,6 +169,8 @@ class DatagridElement extends Component {
                 userId: this.props.UserId,
                 isDisable: this.props.IsDisable,
                 isMissingData: this.props.IsMissingData,
+                isSdv: this.props.IsSdv,
+                sdvInformation: this.props.SdvInformation,
                 columnCount: this.props.ColumnCount,
                 rowCount: this.props.RowCount > 0 && this.props.RowCount !== undefined ? this.props.RowCount : 1,
                 FormType: this.props.FormType,
@@ -212,7 +218,7 @@ class DatagridElement extends Component {
         }
         else {
             if (result) {
-                elements = <SubjectDetailElementList IsMissingData={this.state.isMissingData} TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
+                elements = <SubjectDetailElementList SdvInformation={this.state.sdvInformation} IsSdv={this.state.isSdv} IsMissingData={this.state.isMissingData} TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
             }
             else {
                 return "";

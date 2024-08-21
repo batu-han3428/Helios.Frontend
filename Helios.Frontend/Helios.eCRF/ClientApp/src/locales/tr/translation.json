@@ -509,5 +509,7 @@
   "NA: Not applicable": "NA: Uygulanamaz",
   "ND: Not done": "ND: Yapılmadı",
   "UNK: Unknown": "UNK: Bilinmiyor",
-  "Other reason": "Diğer seçenek"
+  "Other reason": "Diğer seçenek",
+  "Remove SDV": "SDV kaldır",
+  "Go to missing SDV": "Eksik SDV bul"
 }
