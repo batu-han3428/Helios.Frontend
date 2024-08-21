@@ -25,7 +25,6 @@ class DateElement extends Component {
         this.state = {
             id: props.Id,
             Title: props.Title,
-            IsRequired: props.IsRequired,
             isDisable: props.IsDisable === "" ? false : true,
             AddTodayDate: props.AddTodayDate,
             StartDay: props.StartDay,
@@ -43,7 +42,8 @@ class DateElement extends Component {
             MonthSelectedGroup: null,
             YearOptionGroup: [],
             YearSelectedGroup: null,
-            isRequired: props.IsRequired
+            isRequired: props.IsRequired,
+            isMissingItem: props.IsMissingItem
         }
 
         this.fillElementDDs = this.fillElementDDs.bind(this);
@@ -222,9 +222,9 @@ class DateElement extends Component {
     };
 
     render() {
-        const inputClassDay = (this.state.DaySelectedGroup === null || (this.state.DaySelectedGroup !==null && this.state.DaySelectedGroup.value === "")) && this.state.isRequired ? 'input-error' : 'input-normal';
-        const inputClassMonth = (this.state.MonthSelectedGroup === null || (this.state.MonthSelectedGroup !== null && this.state.MonthSelectedGroup.value === "")) && this.state.isRequired ? 'input-error' : 'input-normal';
-        const inputClassYear = (this.state.YearSelectedGroup === null || (this.state.YearSelectedGroup !== null && this.state.YearSelectedGroup.value === "")) && this.state.isRequired ? 'input-error' : 'input-normal';
+        const inputClassDay = (this.state.DaySelectedGroup === null || (this.state.DaySelectedGroup !==null && this.state.DaySelectedGroup.value === "")) && this.state.isRequired && !this.state.isMissingItem ? 'input-error' : 'input-normal';
+        const inputClassMonth = (this.state.MonthSelectedGroup === null || (this.state.MonthSelectedGroup !== null && this.state.MonthSelectedGroup.value === "")) && this.state.isRequired && !this.state.isMissingItem ? 'input-error' : 'input-normal';
+        const inputClassYear = (this.state.YearSelectedGroup === null || (this.state.YearSelectedGroup !== null && this.state.YearSelectedGroup.value === "")) && this.state.isRequired && !this.state.isMissingItem ? 'input-error' : 'input-normal';
         return (
             <>
                 <Row>
@@ -232,7 +232,7 @@ class DateElement extends Component {
                     <div>
                         {this.state.IsPreview && (
                             <label>
-                                {this.state.IsRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
+                                {this.state.isRequired && !this.state.isMissingItem && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
                                 {this.state.Title}
                             </label>
                         )}

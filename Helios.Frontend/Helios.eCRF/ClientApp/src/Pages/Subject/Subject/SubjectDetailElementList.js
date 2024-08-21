@@ -79,7 +79,8 @@ function SubjectDetailElementList(props) {
             HandleAutoSave: AutoSave,
             IsMissingData: isMissingData,
             IsSdv: isSdv,
-            SdvInformation: props.SdvInformation
+            SdvInformation: props.SdvInformation,
+            IsMissingItem: param.missingData
         };
 
         switch (param.elementType) {

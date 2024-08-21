@@ -15,7 +15,8 @@ class RadioElement extends Component {
             ElementOptions: props.ElementOptions !== null && props.ElementOptions !== undefined && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
             selectedOption: props.Value,
-            isRequired: props.IsRequired
+            isRequired: props.IsRequired,
+            isMissingItem: props.IsMissingItem
         }
 
         this.handleRadioChange = this.handleRadioChange.bind(this);
@@ -31,7 +32,7 @@ class RadioElement extends Component {
         }
     }
     render() {
-        const inputClass = this.state.selectedOption === "" && this.state.isRequired ? 'form-check-input input-error' : 'form-check-input input-normal';
+        const inputClass = this.state.selectedOption === "" && this.state.isRequired && !this.state.isMissingItem ? 'form-check-input input-error' : 'form-check-input input-normal';
         return (
             <>
                 {(this.state.layout === 2 || this.state.layout === 0) && (

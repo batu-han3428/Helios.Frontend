@@ -14,7 +14,8 @@ class RangeSliderElement extends Component {
                 0: props.LeftText,
                 100: props.RightText
             },
-            isRequired: props.IsRequired
+            isRequired: props.IsRequired,
+            isMissingItem: props.IsMissingItem
         }
 
         this.myRef = React.createRef();
@@ -52,7 +53,7 @@ class RangeSliderElement extends Component {
                     onAfterChange={this.handleAfterChange}
                     disabled={this.state.isDisable}                  
                     className="customSlider"
-                    trackClassName={this.state.horizontal !== 0  && this.state.isRequired ? 'customSlider-track' : 'customSlider-track input-error'}
+                    trackClassName={this.state.horizontal !== 0 && this.state.isRequired && !this.state.isMissingItem ? 'customSlider-track' : 'customSlider-track input-error'}
                     thumbClassName="customSlider-thumb"
                 />
                 <div className='row'>

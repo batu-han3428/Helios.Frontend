@@ -14,7 +14,8 @@ class DropdownElement extends Component {
             Value: props.Value,
             ElementOptions: [],
             selectedOption: null,
-            isRequired: props.IsRequired
+            isRequired: props.IsRequired,
+            isMissingItem: props.IsMissingItem
         }
 
         this.fillElementOptions = this.fillElementOptions.bind(this);
@@ -59,7 +60,7 @@ class DropdownElement extends Component {
             <div className="mb-3">
                 <Select
                     classNamePrefix="select2-selection"
-                    className={this.state.selectedOption === null && this.state.isRequired ? 'input-error' : 'input-normal'}
+                    className={this.state.selectedOption === null && this.state.isRequired && !this.state.isMissingItem ? 'input-error' : 'input-normal'}
                     options={this.state.ElementOptions}
                     isDisabled={this.state.isDisable}
                     placeholder={this.props.t("Select")}
