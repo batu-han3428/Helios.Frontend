@@ -91,13 +91,20 @@ const Login = props => {
                     }
                 } else {
                     dispatch(endloading());
-                    if (response.data.values !== null) {
+                    if (response.data.values !== null && response.data.values.change !== "5") {
                         if (response.data.values.hasOwnProperty("redirect")) {
                             navigate(response.data.values.redirect);
                         }
                         dispatch(showToast(response.data.values.hasOwnProperty("change") ? props.t(response.data.message).replace(/@Change/g, response.data.values.change) : props.t(response.data.message), true, false));
                     } else {
-                        dispatch(showToast(props.t(response.data.message), true, false));
+                        dispatch(showToast(props.t(response.data.message), false, false));
+                        if (response.data.values.change==="5") {
+                            setTimeout(() => {
+                                dispatch(showToast(props.t("To create a new password, please click on the 'Forgot your password ?' text on the screen and create a new password with the help of the e-mail you receive."), false, false));
+                            }, 100);
+                        }
+                      
+                        dispatch(endloading());
                     }
                 }
             }

@@ -506,5 +506,6 @@
   "There is no module on the page. Please contact the system administrator.": "Sayfada herhangi bir modül bulunmamaktadır. Lütfen sistem yöneticisi ile iletişime geçiniz.",
   "Add a tenant admin": "Abonelik için yönetici ekle",
   "Active user": "Aktif kullanıcı",
-  "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.": "İlgili abonelik için kullanıcı ekleme limitiniz dolmuştur. Lütfen sistem yöneticisi ile iletişime geçiniz. "
+  "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.": "İlgili abonelik için kullanıcı ekleme limitiniz dolmuştur. Lütfen sistem yöneticisi ile iletişime geçiniz. ",
+  "To create a new password, please click on the 'Forgot your password ?' text on the screen and create a new password with the help of the e-mail you receive.": "Lütfen yeni şifre oluşturmak için ekranda bulunan 'Parolanızı mı unuttunuz ?' yazısına tıklayıp gelen e-posta yardımı ile yeni şifre oluşturunuz."
 }

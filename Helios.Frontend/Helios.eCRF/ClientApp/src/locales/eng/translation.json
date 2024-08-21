@@ -658,5 +658,6 @@
   "There is no module on the page. Please contact the system administrator.": "There is no module on the page. Please contact the system administrator.",
   "Add a tenant admin": "Add a tenant admin",
   "Active user": "Active user",
-  "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.": "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator."
+  "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.": "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.",
+  "To create a new password, please click on the 'Forgot your password ?' text on the screen and create a new password with the help of the e-mail you receive.": "To create a new password, please click on the 'Forgot your password ?' text on the screen and create a new password with the help of the e-mail you receive."
 }
