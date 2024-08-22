@@ -357,7 +357,17 @@ namespace Helios.eCRF.Controllers
             var result = await _userService.ActivePassiveStudyUser(studyUserModel);
             return Ok(result);
         }
-
+        /// <summary>
+        /// seçili mailin bütün hesaplarını aktif veya pasif hale getirir
+        /// </summary>
+        /// <param name="authUserId">kullanıcı bilgileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        public async Task<IActionResult> ActivePassiveByAuthUserId(Int64 authUserId, Int64 tenantId)
+        {
+            var result = await _userService.ActivePassiveByAuthUserId(authUserId,tenantId);
+            return Ok(result);
+        }
 
         /// <summary>
         /// seçili kullanıcıları aktif veya pasif hale getirir

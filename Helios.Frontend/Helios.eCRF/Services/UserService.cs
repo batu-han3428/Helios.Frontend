@@ -770,7 +770,16 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
-
+        public async Task<ApiResponse<dynamic>> ActivePassiveByAuthUserId(Int64 authUserId, Int64 tenantId)
+        {
+            using (var client = CoreServiceClient)
+            {
+          
+                var req = new RestRequest($"CoreUser/ActivePassiveByAuthUserId?authUserId={authUserId}&tenantId={tenantId}", Method.Post);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
         public async Task<ApiResponse<dynamic>> ActivePassiveStudyUsers(StudyUserModel studyUserModel)
         {            
             using (var client = CoreServiceClient)

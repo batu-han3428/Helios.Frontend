@@ -15,6 +15,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Table, Input, Badge, Space, TableColumnsType } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { showToast } from '../../../store/toast/actions';
+import Swal from 'sweetalert2';
+import { useUserActivePassiveMutation, useUserActivePassiveByAuthUserIdMutation } from '../../../store/services/Users';
 
 interface DataType {
     key: React.Key;
@@ -31,6 +33,8 @@ const TenantUsers = props => {
     const modalRef = useRef();
 
     const userInformation = useSelector(state => state.rootReducer.Login);
+    const studyInformation = useSelector(state => state.rootReducer.Study);
+
     const dispatch = useDispatch();
 
     const [tableData, setTableData] = useState([]);
@@ -39,8 +43,13 @@ const TenantUsers = props => {
     const [excelData, setExcelData] = useState([]);
     const [filteredInfo, setFilteredInfo] = useState({});
     const [sortedInfo, setSortedInfo] = useState({});
-    const [activeUserCount, setActiceUserCount] = useState(0);
+    const [activeUserCount, setActiveUserCount] = useState(0);
     const [tenantUserLimit, setTenantUserLimit] = useState();
+    const [tenatUserLimitStatu, setTenatUserLimitStatu] = useState();
+    const [dropdownOpen, setDropdownOpen] = useState({});
+
+    const [isTenantLimitChecked, setIsTenantLimitChecked] = useState(false);
+    const [userActivePassive] = useUserActivePassiveMutation();
 
     const handleBasicClick = (value) => {
         if (value === basicActive) {
@@ -55,6 +64,133 @@ const TenantUsers = props => {
         setSortedInfo(sorter);
 
     };
+
+    const activePassiveUser = (item, tenantuserlimitstatu) => {     
+        if (!tenantuserlimitstatu && !item.isActive) {
+            dispatch(showToast(props.t("Your user adding limit for the relevant tenant has been reached. Please contact the system administrator."), true, false));
+
+        } else {
+            Swal.fire({
+                title: props.t("User active/passive status will be changed."),
+                text: props.t("Do you confirm?"),
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3bbfad",
+                confirmButtonText: props.t("Yes"),
+                cancelButtonText: props.t("Cancel"),
+                closeOnConfirm: false
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        dispatch(startloading());
+                        var activePassiveData = {
+                            studyUserId: item.studyUserId,
+                            authUserId: item.authUserId,
+                            studyId: item.studyId,
+                            userId: item.studyUserId,
+                            name: item.name,
+                            lastName: item.lastName,
+                            isActive: item.isActive,
+                            email: item.email,
+                            roleId: item.roleId,
+                            siteIds: [],
+                            password: "",
+                            researchName: item.studyName,
+                            researchLanguage: studyInformation.studyLanguage,
+                            firstAddition: false,
+                            responsiblePersonIds: []
+                        };
+                        const response = await userActivePassive(activePassiveData);
+                        if (response.data.isSuccess) {
+                            dispatch(endloading());
+                            setIsTenantLimitChecked(false);
+                            Swal.fire({
+                                title: "",
+                                text: props.t(response.data.message),
+                                icon: "success",
+                                confirmButtonText: props.t("Ok"),
+                            });
+                        } else {
+                            dispatch(endloading());
+                            Swal.fire({
+                                title: "",
+                                text: response.data.message,
+                                icon: "error",
+                                confirmButtonText: props.t("OK"),
+                            });
+                        }
+                    } catch (error) {
+                        dispatch(endloading());
+                        Swal.fire({
+                            title: "",
+                            text: props.t("An error occurred while processing your request."),
+                            icon: "error",
+                            confirmButtonText: props.t("OK"),
+                        });
+                    }
+                }
+            });
+        }
+    }
+
+    const [userActivePassiveByAuthUserId] = useUserActivePassiveByAuthUserIdMutation();
+    const activePassiveUsers = (users, tenantuserlimitstatu) => {
+        const limit = tenantUserLimit - activeUserCount;
+        const userscount = users.filter(user => user.isActive === props.t("Passive")).length;
+        const userStatu = users.some(user => user.isActive === props.t("Active"));
+        if ((!tenantuserlimitstatu && !userStatu) || (tenantuserlimitstatu && (userscount==0 || userscount > limit))) {
+            dispatch(showToast(props.t("Your user adding limit for the relevant tenant has been reached. Please contact the system administrator."), true, false));
+
+        } else {
+            Swal.fire({
+                title: props.t("User active/passive status will be changed."),
+                text: props.t("Do you confirm?"),
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3bbfad",
+                confirmButtonText: props.t("Yes"),
+                cancelButtonText: props.t("Cancel"),
+                closeOnConfirm: false
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        dispatch(startloading());
+                        var activePassiveData = {
+                            authUserId: users[0].authUserId,
+                            tenantId: userInformation.tenantId,
+                        };
+                        const response = await userActivePassiveByAuthUserId(activePassiveData);
+                        if (response.data.isSuccess) {
+                            dispatch(endloading());
+                            setIsTenantLimitChecked(false);
+                            Swal.fire({
+                                title: "",
+                                text: props.t(response.data.message),
+                                icon: "success",
+                                confirmButtonText: props.t("Ok"),
+                            });
+                        } else {
+                            dispatch(endloading());
+                            Swal.fire({
+                                title: "",
+                                text: response.data.message,
+                                icon: "error",
+                                confirmButtonText: props.t("OK"),
+                            });
+                        }
+                    } catch (error) {
+                        dispatch(endloading());
+                        Swal.fire({
+                            title: "",
+                            text: props.t("An error occurred while processing your request."),
+                            icon: "error",
+                            confirmButtonText: props.t("OK"),
+                        });
+                    }
+                }
+            });
+        }
+    }
 
     const generateInfoLabel = () => {
         var infoDiv = document.querySelector('.dataTables_info');
@@ -87,6 +223,14 @@ const TenantUsers = props => {
         const actions = (
             <div className="icon-container">
                 <div title={props.t("Update")} className="icon icon-update" onClick={() => { updateTenantUser(item) }}></div>
+                <div title={props.t("Active or passive")} className="icon icon-lock" onClick={() => { activePassiveUser(item, tenatUserLimitStatu) }}></div>
+            </div>);
+        return actions;
+    };
+    const getAllUserActions = (users) => {
+        const actions = (
+            <div className="icon-container">             
+                <div title={props.t("Active or passive")} className="icon icon-lock" onClick={() => { activePassiveUsers(users, tenatUserLimitStatu) }}></div>
             </div>);
         return actions;
     };
@@ -197,80 +341,106 @@ const TenantUsers = props => {
         if (userInformation.tenantId) {
             triggerTenantUsers(userInformation.tenantId);
         }
-    }, [userInformation.tenantId])
+    }, [userInformation.tenantId, isTenantLimitChecked])
 
     useEffect(() => {
-        dispatch(startloading());
         if (tenantUsersData && !isLoading && !error) {
-            const updatedTenantUsersData = tenantUsersData.tenantUserList.map(item => {
-                return {
-                    ...item,
-                    createdOn: formatDate(item.createdOn),
-                    lastUpdatedOn: formatDate(item.lastUpdatedOn),
-                    isActive: item.isActive ? props.t("Active") : props.t("Passive"),
-                    count: 1,
-                    actions: getActions(item)
-                };
-            });
-            setTableData(updatedTenantUsersData);
-
-            const data = updatedTenantUsersData.map(updatedUser => {
-                return [
-                    updatedUser.name,
-                    updatedUser.lastName,
-                    updatedUser.email,
-                    updatedUser.studyName,
-                    updatedUser.createdOn,
-                    updatedUser.lastUpdatedOn,
-                    updatedUser.isActive,
-                ];
-            });
-
-            setExcelData(data);
-
-            const groupedData = updatedTenantUsersData.reduce((acc, updatedUser) => {
-                if (!acc[updatedUser.email]) {
-                    acc[updatedUser.email] = [];
-                }
-                acc[updatedUser.email].push(updatedUser);
-                return acc;
-            }, {});
-            const GroupDataSource = Object.keys(groupedData).map((email, index) => {
-                const users = groupedData[email];
-
-                return {
-                    key: index,
-                    email: email,
-                    count: users.length,
-                    studyName: "-",
-                    userRoleName: "-",
-                    children: users
-                };
-            });
-            const activeusercount = updatedTenantUsersData.reduce((total, user) => {
-                if (user.isActive === props.t("Active")) {
+            const activeusercount = tenantUsersData.tenantUserList.reduce((total, user) => {
+                if (user.isActive) {
                     total += 1;
                 }
                 return total;
             }, 0);
-            setActiceUserCount(activeusercount);
-            setGroupTableData(GroupDataSource);
-            setTenantUserLimit(tenantUsersData.tenantUserLimit)
+            setActiveUserCount(activeusercount);
+            setTenantUserLimit(tenantUsersData.tenantUserLimit);
 
-            dispatch(endloading());
-
-            /* return () => clearTimeout(timer);*/
-        } else if (!isLoading && error) {
-            if (error.data != null) {
-                setTenantUserLimit(error.data.tenantUserLimit)
-                setActiceUserCount(error.data.tenantUserList.length);
+            if (activeusercount === tenantUsersData.tenantUserLimit) {
+                setTenatUserLimitStatu(false);
             }
             else {
-                dispatch(showToast(props.t("An unexpected error occurred."), true, false));
+                setTenatUserLimitStatu(true);
             }
-            dispatch(endloading());
+
+            setIsTenantLimitChecked(true);
+
         }
-    }, [tenantUsersData, error, isLoading, props.t]);
+    }, [tenantUsersData, error, isLoading])
+
+    const toggle = (userId) => {
+        setDropdownOpen(prevState => {
+            return {
+                ...prevState,
+                [userId]: !prevState[userId]
+            };
+        });
+    };
+
+    useEffect(() => {
+        if (isTenantLimitChecked) {
+            dispatch(startloading());
+            if (tenantUsersData && !isLoading && !error) {              
+                const updatedTenantUsersData = tenantUsersData.tenantUserList.map(item => {
+                    return {
+                        ...item,
+                        createdOn: formatDate(item.createdOn),
+                        lastUpdatedOn: formatDate(item.lastUpdatedOn),
+                        isActive: item.isActive ? props.t("Active") : props.t("Passive"),
+                        count: 1,
+                        actions: getActions(item)
+                    };
+                });
+                setTableData(updatedTenantUsersData);
+
+                const data = updatedTenantUsersData.map(updatedUser => {
+                    return [
+                        updatedUser.name,
+                        updatedUser.lastName,
+                        updatedUser.email,
+                        updatedUser.studyName,
+                        updatedUser.createdOn,
+                        updatedUser.lastUpdatedOn,
+                        updatedUser.isActive,
+                    ];
+                });
+
+                setExcelData(data);
+
+                const groupedData = updatedTenantUsersData.reduce((acc, updatedUser) => {
+                    if (!acc[updatedUser.email]) {
+                        acc[updatedUser.email] = [];
+                    }
+                    acc[updatedUser.email].push(updatedUser);
+                    return acc;
+                }, {});
+                const GroupDataSource = Object.keys(groupedData).map((email, index) => {
+                    const users = groupedData[email];
+
+                    return {
+                        key: index,
+                        email: email,
+                        count: users.length,
+                        studyName: "-",
+                        userRoleName: "-",
+                        children: users,
+                        actions: getAllUserActions(users)
+                    };
+                });
+                setGroupTableData(GroupDataSource);
+                dispatch(endloading());
+
+                /* return () => clearTimeout(timer);*/
+            } else if (!isLoading && error) {
+                if (error.data != null) {
+                    setTenantUserLimit(error.data.tenantUserLimit)
+                    setActiveUserCount(error.data.tenantUserList.length);
+                }
+                else {
+                    dispatch(showToast(props.t("An unexpected error occurred."), true, false));
+                }
+                dispatch(endloading());
+            }
+        }
+    }, [tenantUsersData, error, isLoading, props.t, dropdownOpen, isTenantLimitChecked]);
 
     const [tenantUserSet] = useTenantUserSetMutation();
 

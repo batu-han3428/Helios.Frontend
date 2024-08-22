@@ -47,6 +47,8 @@ const User = props => {
     const [sortedInfo, setSortedInfo] = useState({});
     const [tenatUserLimit, setTenatUserLimit] = useState();
 
+    const [isTenantLimitChecked, setIsTenantLimitChecked] = useState(false);
+
     const animatedComponents = makeAnimated();
 
     const toggleActions = () => {
@@ -215,7 +217,7 @@ const User = props => {
         const actions = (
             <div className="icon-container">
                 <div title={props.t("Update")} className="icon icon-update" onClick={() => { updateUser(item) }}></div>
-                <div title={props.t("Active or passive")} className="icon icon-lock" onClick={() => { activePassiveUser(item, tenantLimitControl) }}></div>
+                <div title={props.t("Active or passive")} className="icon icon-lock" onClick={() => { activePassiveUser(item) }}></div>
                 <div title={props.t("Delete")} className="icon icon-delete" onClick={() => { deleteUser(item) }}></div>
                 <div title={props.t("Send a new password")} className="icon icon-resetpassword" onClick={() => { resetPasswordUser(item) }}></div>
             </div>);
@@ -255,13 +257,10 @@ const User = props => {
             trigger(studyInformation.studyId);
             triggerRoles(studyInformation.studyId);
             triggerSites(studyInformation.studyId);
-        }
-        if (userInformation.tenantId) {
-            triggerTenantUsers(userInformation.tenantId);
-        }
-    }, [studyInformation.studyId, userInformation.tenantId, usersData]);
+        }    
+    }, [studyInformation.studyId]);
 
-    useEffect(() => {    
+    useEffect(() => {
         if (userInformation.tenantId) {
             triggerTenantUsers(userInformation.tenantId);
         }
@@ -280,8 +279,9 @@ const User = props => {
             else {
                 setTenatUserLimit(true);
             }
+            setIsTenantLimitChecked(true);
         }
-    }, [tenantUsersData, error, isLoading, usersData]);
+    }, [tenantUsersData, error, isLoading]);
     const tenantLimitControl = () => {
         if (!tenatUserLimit) {
             dispatch(showToast(props.t("Your user adding limit for the relevant tenant has been reached. Please contact the system administrator."), true, false));
@@ -291,69 +291,71 @@ const User = props => {
         }
     };
     useEffect(() => {
-        dispatch(startloading());
-        if (usersData && !isLoading && !error) {
-            const updatedUsersData = usersData.map(item => {
-                return {
-                    ...item,
-                    siteName: item.sites.length > 0 ? getSiteDropdown(item.sites, item.studyUserId) : "",
-                    createdOn: formatDate(item.createdOn),
-                    lastUpdatedOn: formatDate(item.lastUpdatedOn),
-                    isActive: item.isActive ? props.t("Active") : props.t("Passive"),
-                    actions: getActions(item)
+        if (isTenantLimitChecked) {
+            dispatch(startloading());
+            if (usersData && !isLoading && !error) {
+                const updatedUsersData = usersData.map(item => {
+                    return {
+                        ...item,
+                        siteName: item.sites.length > 0 ? getSiteDropdown(item.sites, item.studyUserId) : "",
+                        createdOn: formatDate(item.createdOn),
+                        lastUpdatedOn: formatDate(item.lastUpdatedOn),
+                        isActive: item.isActive ? props.t("Active") : props.t("Passive"),
+                        actions: getActions(item)
+                    };
+                });
+                setTableData(updatedUsersData);
+
+                const data = updatedUsersData.map(updatedUser => {
+                    const matchingUser = usersData.find(user => user.studyUserId === updatedUser.studyUserId);
+
+                    return [
+                        updatedUser.name,
+                        updatedUser.lastName,
+                        updatedUser.email,
+                        updatedUser.roleName,
+                        (matchingUser && matchingUser.sites.map(site => site.siteFullName)).join(', ') || "",
+                        updatedUser.createdOn,
+                        updatedUser.lastUpdatedOn,
+                        updatedUser.isActive,
+                    ];
+                });
+
+                setExcelData(data);
+
+                let option = [{
+                    label: props.t("Responsible person for this user"),
+                    options: []
+                }]
+                const responsiblePersons = usersData.map(item => {
+                    return {
+                        label: item.name + " " + item.lastName,
+                        value: item.authUserId
+                    };
+                });
+                const allResponsiblePersonIds = usersData.map(item => item.authUserId);
+                const selectAllOption = {
+                    label: "Select All",
+                    value: ["All", allResponsiblePersonIds]
                 };
-            });
-            setTableData(updatedUsersData);
+                responsiblePersons.unshift(selectAllOption);
+                option[0].options.push(...responsiblePersons);
+                setOptionGroupResponsiblePerson(option);
 
-            const data = updatedUsersData.map(updatedUser => {
-                const matchingUser = usersData.find(user => user.studyUserId === updatedUser.studyUserId);
+                //const timer = setTimeout(() => {
+                //    generateInfoLabel();
+                //}, 10)
 
-                return [
-                    updatedUser.name,
-                    updatedUser.lastName,
-                    updatedUser.email,
-                    updatedUser.roleName,
-                    (matchingUser && matchingUser.sites.map(site => site.siteFullName)).join(', ') || "",
-                    updatedUser.createdOn,
-                    updatedUser.lastUpdatedOn,
-                    updatedUser.isActive,
-                ];
-            });
+                dispatch(endloading());
 
-            setExcelData(data);
-
-            let option = [{
-                label: props.t("Responsible person for this user"),
-                options: []
-            }]
-            const responsiblePersons = usersData.map(item => {
-                return {
-                    label: item.name + " " + item.lastName,
-                    value: item.authUserId
-                };
-            });
-            const allResponsiblePersonIds = usersData.map(item => item.authUserId);
-            const selectAllOption = {
-                label: "Select All",
-                value: ["All", allResponsiblePersonIds]
-            };
-            responsiblePersons.unshift(selectAllOption);
-            option[0].options.push(...responsiblePersons);
-            setOptionGroupResponsiblePerson(option);
-
-            //const timer = setTimeout(() => {
-            //    generateInfoLabel();
-            //}, 10)
-
-            dispatch(endloading());
-
-            /* return () => clearTimeout(timer);*/
+                /* return () => clearTimeout(timer);*/
+            }
+            else if (!isLoading && error) {
+                dispatch(showToast(props.t("An unexpected error occurred."), true, false));
+                dispatch(endloading());
+            }
         }
-        else if (!isLoading && error) {
-            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
-            dispatch(endloading());
-        }
-    }, [usersData, error, isLoading, props.t, dropdownOpen]);
+    }, [usersData, error, isLoading, props.t, dropdownOpen, isTenantLimitChecked]);
 
     useEffect(() => {
         if (rolesData && !isLoadingRoles && !isErrorRoles) {
@@ -523,7 +525,7 @@ const User = props => {
 
     const [userActivePassive] = useUserActivePassiveMutation();
 
-    const activePassiveUser = (item, tenatUserLimit) => {      
+    const activePassiveUser = (item) => {             
         if (!tenatUserLimit && !item.isActive) {
             dispatch(showToast(props.t("Your user adding limit for the relevant tenant has been reached. Please contact the system administrator."), true, false));
 
@@ -561,6 +563,7 @@ const User = props => {
                         const response = await userActivePassive(activePassiveData);
                         if (response.data.isSuccess) {
                             dispatch(endloading());
+                            setIsTenantLimitChecked(false);
                             Swal.fire({
                                 title: "",
                                 text: props.t(response.data.message),
@@ -591,6 +594,7 @@ const User = props => {
     }
 
     const [usersActivePassive] = useUsersActivePassiveMutation();
+
 
     const activePassiveUsers = () => {
         Swal.fire({
