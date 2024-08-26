@@ -55,13 +55,7 @@ const SubjectList = props => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        optionGroup(8);
-        getStudy(8);
-
-    }, []);
-
-    useEffect(() => {
-        dispatch(startloading);
+        dispatch(startloading());
         if (studyId) {
             triggerPermission(studyId);
         }
