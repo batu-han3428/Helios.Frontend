@@ -275,7 +275,7 @@ return (
                                     <div className="mb-3">
                                         <Label>{props.t("Study language")}</Label>
                                         <Select
-                                            value={optionGroup[0].options.find(option => option.value === validationType.values.studylanguage)}
+                                            value={optionGroup[0].options.find(option => option.value === validationType.values.studylanguage) || optionGroup[0].options[0]}
                                             name="studylanguage"
                                             onChange={(selectedOption) => {
                                                 const formattedValue = {
