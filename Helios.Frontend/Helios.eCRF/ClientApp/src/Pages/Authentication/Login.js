@@ -233,7 +233,7 @@ const Login = props => {
             <ModalComp
                 refs={modalRef}
                 title={props.t("Forgot your password?")}
-                body={<ForgotPassword refs={ssoRef} />}
+                body={<ForgotPassword refs={ssoRef} email={formData.Email} />}
                 buttonText={props.t("Send new password")}
                 size="md"
             />

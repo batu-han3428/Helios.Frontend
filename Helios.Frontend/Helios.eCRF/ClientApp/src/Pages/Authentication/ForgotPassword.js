@@ -18,7 +18,7 @@ const ForgotPassword = props => {
     const validationType = useFormik({
         enableReinitialize: true,
         initialValues: {
-            email: "",
+            email: props.email != null ? props.email:"",
             language: props.i18n.language
         },
         validationSchema: Yup.object().shape({
