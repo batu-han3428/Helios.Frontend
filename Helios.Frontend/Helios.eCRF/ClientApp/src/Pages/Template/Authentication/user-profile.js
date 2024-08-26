@@ -110,10 +110,9 @@ const UserProfile = props => {
                 ConfirmPassword: confirmNewPassword,
             });
             if (response.data.isSuccess) {
-                dispatch(showToast(props.t(response.data.message), true, false));      
+                dispatch(showToast(props.t(response.data.message), true, true));      
                 dispatch(endloading());
             } else {
-               debugger
                 if (response.data.message === "cod0") {
                     dispatch(showToast(props.t("Invalid password"), true, false));      
                 }
