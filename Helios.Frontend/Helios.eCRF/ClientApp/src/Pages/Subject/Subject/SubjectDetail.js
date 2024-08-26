@@ -234,7 +234,7 @@ const SubjectDetail = props => {
                                     :
                                     (
                                         <>
-                                            {(permissions.canMonitoringSdv && sdvInformation.percent !== 100) &&
+                                            {permissions.canMonitoringSdv &&
                                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 10px', position: 'sticky', top: 70, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', zIndex: 999 }}>
                                                     <Tag color="#87d068">{sdvInformation.inf}</Tag>
                                                     <Progress
@@ -246,21 +246,23 @@ const SubjectDetail = props => {
                                                         }}
                                                         size="small"
                                                         style={{width:'80%'}}
-                                                    />                                              
-                                                    <Tooltip title={props.t('Go to missing SDV')}>
-                                                        <Button
-                                                            type="primary"
-                                                            shape="circle"
-                                                            size="small"
-                                                            icon={<FontAwesomeIcon icon="fa-solid fa-arrow-right" />}
-                                                            style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
-                                                            onClick={() => {
-                                                                setSdvInformation(prevState => ({
-                                                                    ...prevState,
-                                                                    style: true
-                                                                })); }}
+                                                    />  
+                                                    {sdvInformation.percent !== 100 && 
+                                                        <Tooltip title={props.t('Go to missing SDV')}>
+                                                            <Button
+                                                                type="primary"
+                                                                shape="circle"
+                                                                size="small"
+                                                                icon={<FontAwesomeIcon icon="fa-solid fa-arrow-right" />}
+                                                                style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+                                                                onClick={() => {
+                                                                    setSdvInformation(prevState => ({
+                                                                        ...prevState,
+                                                                        style: true
+                                                                    })); }}
                                                             />
-                                                    </Tooltip>
+                                                        </Tooltip>
+                                                    }
                                                 </div>
                                             }
                                             <SubjectDetailElementList
