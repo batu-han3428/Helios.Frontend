@@ -422,7 +422,7 @@ const TenantUsers = props => {
                         studyName: "-",
                         userRoleName: "-",
                         children: users,
-                        actions: getAllUserActions(users)
+                       /* actions: getAllUserActions(users)*/
                     };
                 });
                 setGroupTableData(GroupDataSource);
