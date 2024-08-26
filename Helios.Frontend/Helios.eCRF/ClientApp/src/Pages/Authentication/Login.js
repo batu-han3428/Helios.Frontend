@@ -95,7 +95,9 @@ const Login = props => {
                         if (response.data.values.hasOwnProperty("redirect")) {
                             navigate(response.data.values.redirect);
                         }
-                        dispatch(showToast(response.data.values.hasOwnProperty("change") ? props.t(response.data.message).replace(/@Change/g, response.data.values.change) : props.t(response.data.message), true, false));
+                        else {
+                            dispatch(showToast(response.data.values.hasOwnProperty("change") ? props.t(response.data.message).replace(/@Change/g, response.data.values.change) : props.t(response.data.message), true, false));
+                        }
                     } else {
                         dispatch(showToast(props.t(response.data.message), true, false));
                     }
