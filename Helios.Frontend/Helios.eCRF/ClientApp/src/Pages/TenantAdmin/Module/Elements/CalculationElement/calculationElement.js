@@ -27,7 +27,9 @@ class CalculationElement extends Component {
                     className="form-control"
                     type="text"
                     value={this.state.Value}
-                    disabled="disabled" />
+                    disabled="disabled"
+                    style={{ backgroundColor: "#e9ecef", color: "#6c757d" }}
+                />
                 {/*<label style={{ fontSize: "8pt", textDecoration: 'none' }}>*/}
                 {/*    {this.props.t("It will be calculated automatically")}*/}
                 {/*</label>*/}
