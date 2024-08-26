@@ -23,7 +23,7 @@ const ProfileMenu = props => {
     const [username, setusername] = useState("Admin");
 
     const roletatu = props.roles.length > 0 ? props.roles.includes('TenantAdmin') : false;
-    
+
     //profile resim ayarlarý
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
@@ -38,19 +38,19 @@ const ProfileMenu = props => {
     context.textBaseline = 'middle';
     context.fillText(props.avatar, canvas.width / 2, canvas.height / 2);
     const dataURI = canvas.toDataURL();
-    
-    
-    useEffect(() => {       
-        
+
+
+    useEffect(() => {
+
         if (localStorage.getItem("authUser")) {
             if (process.env.REACT_APP_DEFAULTAUTH === "firebase") {
-                const obj = JSON.parse(localStorage.getItem("authUser"));               
+                const obj = JSON.parse(localStorage.getItem("authUser"));
                 setusername(obj.displayName);
             } else if (
                 process.env.REACT_APP_DEFAULTAUTH === "fake" ||
                 process.env.REACT_APP_DEFAULTAUTH === "jwt"
             ) {
-                const obj = JSON.parse(localStorage.getItem("authUser"));               
+                const obj = JSON.parse(localStorage.getItem("authUser"));
                 setusername(obj.username);
             }
         }
@@ -68,7 +68,7 @@ const ProfileMenu = props => {
                     id="page-header-user-dropdown"
                     tag="button"
                 >
-                   
+
                     <img src={dataURI} alt="Profile Avatar" style={{ borderRadius: '50%' }} />
                 </DropdownToggle>
                 <DropdownMenu className="dropdown-menu-end">
@@ -78,14 +78,19 @@ const ProfileMenu = props => {
                         {props.t("Profile")}{" "}
                     </DropdownItem>
                     {
-                        roletatu &&
-                        <DropdownItem tag="a" href="/SSO-tenants-or-studies">
-                            <i className="bx bx-user font-size-16 align-middle me-1" />
-                            {props.t("Switch to tenant")}{" "}
-                        </DropdownItem>
+                        roletatu ?
+                            <DropdownItem tag="a" href="/SSO-tenants-or-studies">
+                                <i className="bx bx-user font-size-16 align-middle me-1" />
+                                {props.t("Switch to tenant")}{" "}
+                            </DropdownItem>
+                            :
+                            <DropdownItem tag="a" href="/SSO-tenants-or-studies">
+                                <i className="bx bx-user font-size-16 align-middle me-1" />
+                                {props.t("Switch to study")}{" "}
+                            </DropdownItem>
                     }
-                   
-                                     
+
+
                     <DropdownItem tag="a" href="ContactUs">
                         <i className="bx bx-lock-open font-size-16 align-middle me-1" />
                         {props.t("Contact us")}
@@ -111,7 +116,7 @@ const mapStatetoProps = state => {
     const avatar = state.rootReducer.Login.name.charAt(0).toUpperCase() + state.rootReducer.Login.lastName.charAt(0).toUpperCase();
     const { error, success } = state.rootReducer.Profile;
     const roles = state.rootReducer.Login.roles;
-    return { error, success,avatar,roles };
+    return { error, success, avatar, roles };
 };
 
 export default withRouter(
