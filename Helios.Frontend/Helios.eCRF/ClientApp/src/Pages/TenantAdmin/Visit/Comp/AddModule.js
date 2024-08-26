@@ -7,6 +7,7 @@ import { Table, Input } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useLazyModuleListGetQuery, useAddStudyModuleSetMutation } from "../../../../store/services/Visit";
 import { showToast } from '../../../../store/toast/actions';
+import { formatDate } from "../../../../helpers/format_date";
 
 const AddModule = props => {
 
@@ -88,11 +89,14 @@ const AddModule = props => {
 
     const handleDataChange = () => {    
         const newData = moduleData.map(item => {          
-            if (item.updatedAt === "0001-01-01T00:00:00+00:00") {
-                return { ...item, updatedAt: "-" };
-            }
-            return item;
+          
+                return {
+                    ...item,
+                    updatedAt: formatDate(item.updatedAt),
+                    createdAt: formatDate(item.createdAt), 
+                };                     
         });
+        
         setData(newData);
     };
 
