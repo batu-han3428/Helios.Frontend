@@ -157,7 +157,7 @@ const SubjectDetail = props => {
     const setPrevNextButton = (data, id) => {
         const result = findPageIdInChildren(data, parseInt(id, 10));
         if (result === null) return;
-        else if (result.childrenCount <= 2) {
+        else if (result.childrenCount < 2) {
             setIsPrevButton(false);
             setIsNextButton(false);
         } else if (result.isFirstChild) {
