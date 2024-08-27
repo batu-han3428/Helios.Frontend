@@ -84,6 +84,11 @@ const ListSystemAdmin = props => {
                 dataIndex: 'isActive',
                 sorter: (a, b) => a.isActive.localeCompare(b.isActive),
                 sortDirections: ['ascend', 'descend'],
+                render: (text, record) => (
+                    <span style={{ color: record.isActive === props.t("Active") ? 'green' : 'red' }}>
+                        {record.isActive}
+                    </span>
+                ),
             },
             {
                 title: props.t('Phone number'),

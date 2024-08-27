@@ -110,11 +110,11 @@ const AddOrUpdateTenantAdmin = props => {
             name: isRequired ? Yup.string().required(props.t("This field is required")) : Yup.string(),
             lastName: isRequired ? Yup.string().required(props.t("This field is required")) : Yup.string(),
             email: Yup.string().required(props.t("This field is required")).email(props.t("Invalid email format")),
-            phonenumber: isRequired ? Yup.string()
-                .required(props.t("This field is required"))
-                .test('is-valid-phone-number', props.t('Invalid phone number format'), (value) => {
-                    return isValidPhoneNumber(value);
-                }) : Yup.string(),
+            //phonenumber: isRequired ? Yup.string()
+            //    .required(props.t("This field is required"))
+            //    .test('is-valid-phone-number', props.t('Invalid phone number format'), (value) => {
+            //        return isValidPhoneNumber(value);
+            //    }) : Yup.string(),
             tenantIds: Yup.array()
                 .test('isTenantIdsValid', props.t('At least one tenant must be selected'), function (value) {
                     const roleIds = this.parent.roleIds;
@@ -167,7 +167,7 @@ const AddOrUpdateTenantAdmin = props => {
     useEffect(() => {
         if (userData && !isLoadingUser && !isErrorUser) {
             if (userData.isSuccess) {
-                if (userData.values.authUserId !== 0) {
+                if (userData.values.authUserId !== 0) {                      
                     validationType.setValues({
                         id: 0,
                         userid: userData.values.authUserId,
@@ -294,14 +294,15 @@ const AddOrUpdateTenantAdmin = props => {
                         <div className="mb-3 col-md-6">
                             <Label className="form-label">{props.t("Phone number")}</Label>
                             <PhoneInput
-                                id="phonenumber"
+                                id="phoneNumber"
                                 name="phoneNumber"
                                 placeholder="Enter phone number"
                                 value={validationType.values.phoneNumber}
-                                onChange={(value) => validationType.setFieldValue('phonenumber', value)}
+                                onChange={(value) => validationType.setFieldValue('phoneNumber', value)}
                                 onBlur={validationType.handleBlur}
                                 limitMaxLength
                                 defaultCountry="TR"
+                                international={false} 
                             />
                             {validationType.touched.phonenumber && validationType.errors.phonenumber ? (
                                 <div type="invalid" className="invalid-feedback" style={{ display: "block" }}>{validationType.errors.phonenumber}</div>

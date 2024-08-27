@@ -89,7 +89,12 @@ const Login = props => {
                         dispatch(loginuser(result));
                         navigate("/");
                     }
-                } else {
+                }  
+                else if (response.data.values.hasOwnProperty("hasUser")) {
+                    navigate("/SSO-notfoundpage");
+                    dispatch(endloading());
+                }
+                else {
                     dispatch(endloading());
                     if (response.data.values !== null && response.data.values.change !== "5") {
                         if (response.data.values.hasOwnProperty("redirect")) {

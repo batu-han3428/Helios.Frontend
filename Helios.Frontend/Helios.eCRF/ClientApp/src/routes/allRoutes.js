@@ -1,3 +1,4 @@
+/// <reference path="../pages/sso/sso_notfoundpage.js" />
 import React from "react";
 
 // Profile
@@ -111,6 +112,7 @@ import TenantUsers from "../Pages/TenantAdmin/TenantUsers/TenantUsers";
 import SSO_TenantsOrStudies from "../Pages/SSO/SSO_TenantsOrStudies";
 import SSO_Studies from "../Pages/SSO/SSO_Studies";
 import SSO_Tenants from "../Pages/SSO/SSO_Tenants";
+import SSO_NotFoundPage from "../Pages/SSO/SSO_NotFoundPage";
 
 //E-mail template
 import EmailTemplateList from "../Pages/TenantAdmin/EmailTemplate/EmailTemplateList";
@@ -275,6 +277,8 @@ const authRoutes = [
     { path: "/login", component: <Login /> },
     { path: "/forgot-password", component: <ForgetPwd /> },
     { path: "/register", component: <Register /> },
+
+    { path: "/SSO-notfoundpage", component: <SSO_NotFoundPage/> },
 
     { path: "/reset-password/:code/:username", component: <ResetPassword />},
 

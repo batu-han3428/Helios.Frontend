@@ -38,11 +38,11 @@ const AddOrUpdateSystemAdmin = props => {
             name: isRequired ? Yup.string().required(props.t("This field is required")) : Yup.string(),
             lastName: isRequired ? Yup.string().required(props.t("This field is required")) : Yup.string(),
             email: Yup.string().required(props.t("This field is required")).email(props.t("Invalid email format")),
-            phoneNumber:isRequired ? Yup.string()
-                .required(props.t("This field is required"))
-                .test('is-valid-phone-number', props.t('Invalid phone number format'), (value) => {
-                    return isValidPhoneNumber(value);
-                }) : Yup.string(),
+            //phoneNumber:isRequired ? Yup.string()
+            //    .required(props.t("This field is required"))
+            //    .test('is-valid-phone-number', props.t('Invalid phone number format'), (value) => {
+            //        return isValidPhoneNumber(value);
+            //    }) : Yup.string(),
         }),
         onSubmit: async (values) => {
             try {
@@ -214,6 +214,7 @@ const AddOrUpdateSystemAdmin = props => {
                                 onBlur={validationType.handleBlur}                              
                                 limitMaxLength
                                 defaultCountry="TR"
+                                international={false} 
                                
                             />
                             {validationType.touched.phoneNumber && validationType.errors.phoneNumber ? (
