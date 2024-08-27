@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useCallback, useMemo } from 'react';
+﻿import React, { useState, useContext, useCallback, useMemo } from 'react';
 import { Row } from "reactstrap";
 import { useNavigate } from "react-router-dom";
 import '../../TenantAdmin/Module/FormBuilder/formBuilder.css';
@@ -24,15 +24,13 @@ import AdverseEventElement from '../../TenantAdmin/Module/Elements/AdverseEventE
 import ConcomittantMedicationElement from '../../TenantAdmin/Module/Elements/ConcomittantMedicationElement/concomittantMedicationElement.js';
 import { withTranslation } from "react-i18next";
 import { useAutoSaveSubjectMutation, useSetSubjectSdvMutation } from '../../../store/services/Subject';
-import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 import SubjectComment from './Comp/SubjectComment';
 import SubjectMissingData from './Comp/SubjectMissingData';
 import { showToast } from '../../../store/toast/actions';
 import { SubjectMissingDataType } from './Comp/SubjectMissingDataType';
+import { SubjectDetailContext } from './SubjectDetail';
 
-function SubjectDetailElementList(props) {
-    const modalRef = useRef();
-    const [modalInf, setModalInf] = useState({});
+function SubjectDetailElementList(props) {    
     const [tenantId] = useState(props.TenantId);
     const [subjectVisitPageModuleId] = useState(0);
     const [studyId] = useState(props.StudyId);
@@ -41,9 +39,11 @@ function SubjectDetailElementList(props) {
     const navigate = useNavigate();
     const [isMissingData] = useState(props.IsMissingData);
     const [isSdv] = useState(props.IsSdv);
-  
+
+    const { modalRef, setModalInf } = useContext(SubjectDetailContext);
+
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
-    
+
     const AutoSave = async (id, value, type = 0) => {
         if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
             dispatch(startloading());
@@ -278,13 +278,6 @@ function SubjectDetailElementList(props) {
             <div className="row" style={{ marginLeft: 'unset' }}>              
                 {renderContent}
             </div>
-            <ModalComp
-                refs={modalRef}
-                title={modalInf.title}
-                body={modalInf.content}
-                isButton={modalInf.isButton}
-                buttonText={modalInf.isButton && modalInf.buttonText}
-            />
         </div>
     );
 }

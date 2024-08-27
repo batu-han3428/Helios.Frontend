@@ -664,5 +664,7 @@
   "Other reason": "Other reason",
   "Remove SDV": "Remove SDV",
   "Go to missing SDV": "Go to missing SDV",
-  "Switch to study": "Switch to study"
+  "Switch to study": "Switch to study",
+  "Do you want to mark all empty fields on this page as 'missing data' ?": "Do you want to mark all empty fields on this page as 'missing data' ?",
+  "There is no blank space to mark as missing data.": "There is no blank space to mark as missing data."
 }

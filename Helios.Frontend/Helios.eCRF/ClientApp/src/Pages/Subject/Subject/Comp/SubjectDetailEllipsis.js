@@ -7,7 +7,7 @@ export const SubjectDetailEllipsis = ({ items = [] }) => {
             <Dropdown
                 menu={{ items: items }}
                 trigger={['click']}
-                overlayStyle={{ zIndex: 1000001 }} 
+                overlayStyle={{ zIndex: '9999 !important' }} 
             >
                 <a onClick={(e) => { e.stopPropagation(); e.preventDefault(); }}>
                     <Space>

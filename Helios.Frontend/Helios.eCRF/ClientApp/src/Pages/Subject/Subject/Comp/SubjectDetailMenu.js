@@ -1,13 +1,19 @@
 ﻿import PropTypes from 'prop-types';
-import React, { useEffect } from "react";
+import React, { useEffect, useContext } from "react";
 import { withTranslation } from "react-i18next";
 import { Menu, Tooltip } from 'antd';
 import { UserOutlined, LockOutlined, BulbOutlined, FolderOutlined, FileOutlined } from '@ant-design/icons';
 import { SubjectDetailEllipsis } from './SubjectDetailEllipsis';
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { SubjectDetailContext } from '../SubjectDetail';
+import SubjectMissingData from './SubjectMissingData';
+import Swal from 'sweetalert2';
 
 const SubjectDetailMenu = props => {
     const navigate = useNavigate();
+
+    const { modalRef, setModalInf } = useContext(SubjectDetailContext);
 
     const CustomMenuHeader = () => {
         return (
@@ -33,29 +39,75 @@ const SubjectDetailMenu = props => {
         );
     }
 
-    const CustomMenuItem = ({ item }) => {
+    const CustomMenuItem = ({ item, state, pageId }) => {
+        const setMissingData = async (e) => {
+            e.stopPropagation();
+
+            const result = await Swal.fire({
+                title: props.t("Do you want to mark all empty fields on this page as 'missing data' ?"),
+                text: props.t("Do you confirm?"),
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3bbfad",
+                confirmButtonText: props.t("Yes"),
+                cancelButtonText: props.t("Cancel")
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    setModalInf({
+                        title: props.t('Select one of the reasons for the missing value'),
+                        content: <SubjectMissingData data={false} elementId={pageId} refs={modalRef} isPage={true} />,
+                        isButton: true,
+                        buttonText: props.t('Save'),
+                    });
+                    modalRef.current.tog_backdrop();
+                } catch (error) {
+                    Swal.fire({
+                        title: "",
+                        text: props.t("An unexpected error occurred."),
+                        icon: "error",
+                        confirmButtonText: props.t("Ok"),
+                    });
+                }
+            }
+        };
+
+        let items = [
+            {
+                key: '1',
+                label: <a>Kilitle</a>,
+                icon: <LockOutlined />
+            },
+            {
+                key: '3',
+                type: 'divider'
+            },
+            {
+                key: '2',
+                label: <a>Dondur</a>,
+                icon: <BulbOutlined />
+            }
+        ];
+        if (state === 2 && props.IsMissingData) {
+            items.push({
+                key: '4',
+                label: (
+                    <a onClick={setMissingData}>
+                        {props.t("Missing data")}
+                    </a>
+                ),
+                icon: <FontAwesomeIcon icon="fas fa-check-square" style={{ color: "#bf9ec9" }} />
+            });
+        }
+        
         return (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Tooltip title={item.title}>
                     <span style={{ width: '90%', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</span>
                 </Tooltip>
                 <div style={{ position: 'absolute', right: 15.5, overflow: 'hidden' }}>
-                    <SubjectDetailEllipsis items={[
-                        {
-                            key: '1',
-                            label: <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">Kilitle</a>,
-                            icon: <LockOutlined />
-                        },
-                        {
-                            key: '3',
-                            type: 'divider'
-                        },
-                        {
-                            key: '2',
-                            label: <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">Dondur</a>,
-                            icon: <BulbOutlined />
-                        },
-                    ]} />
+                    <SubjectDetailEllipsis items={items} />
                 </div>
             </div>
         );
@@ -65,13 +117,13 @@ const SubjectDetailMenu = props => {
         return data.map((item, index) => {
             return {
                 key: `sub${index + 1}`,
-                label: <CustomMenuItem item={item} />,
+                label: <CustomMenuItem item={item} state={1} />,
                 icon: <FolderOutlined />,
                 children: item.children.map((child, childIndex) => {
                     return {
                         id: child.id,
                         key: `${index + 1}-${childIndex + 1}`,
-                        label: <CustomMenuItem item={child} />,
+                        label: <CustomMenuItem item={child} pageId={child.id} state={2} />,
                         icon: <FileOutlined />,
                     };
                 })
