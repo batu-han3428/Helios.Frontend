@@ -13,7 +13,7 @@ import Swal from 'sweetalert2';
 const SubjectDetailMenu = props => {
     const navigate = useNavigate();
 
-    const { modalRef, setModalInf } = useContext(SubjectDetailContext);
+    const { modalRef, setModalInf, setSdv } = useContext(SubjectDetailContext);
 
     const CustomMenuHeader = () => {
         return (
@@ -73,6 +73,36 @@ const SubjectDetailMenu = props => {
             }
         };
 
+        const setSdvData = async (e) => {
+            e.stopPropagation();
+
+            const showConfirmButton = props.nonSdv.length > 0;
+
+            const result = await Swal.fire({
+                title: props.t("All data on this page will be SDV'ed."),
+                html: `<p>${props.t('Number of blank data that cannot be SDV :')} ${props.nonSdv.length}</p>${showConfirmButton ? props.t("Do you confirm?") : ''}`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3bbfad",
+                confirmButtonText: props.t("Yes"),
+                cancelButtonText: props.t("Cancel"),
+                showConfirmButton: showConfirmButton
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    setSdv(props.nonSdv.map(item => item.subjectVisitPageModuleElementId));
+                } catch (error) {
+                    Swal.fire({
+                        title: "",
+                        text: props.t("An unexpected error occurred."),
+                        icon: "error",
+                        confirmButtonText: props.t("Ok"),
+                    });
+                }
+            }
+        };
+
         let items = [
             {
                 key: '1',
@@ -89,7 +119,8 @@ const SubjectDetailMenu = props => {
                 icon: <BulbOutlined />
             }
         ];
-        if (state === 2 && props.IsMissingData) {
+
+        if (state === 2 && props.permissions.canMonitoringMarkAsNull) {
             items.push({
                 key: '4',
                 label: (
@@ -98,6 +129,18 @@ const SubjectDetailMenu = props => {
                     </a>
                 ),
                 icon: <FontAwesomeIcon icon="fas fa-check-square" style={{ color: "#bf9ec9" }} />
+            });
+        }
+
+        if (state === 2 && props.permissions.canMonitoringSdv) {
+            items.push({
+                key: '5',
+                label: (
+                    <a onClick={setSdvData}>
+                        {props.t("On-site SDV")}
+                    </a>
+                ),
+                icon: <FontAwesomeIcon icon="fa-solid fa-circle-check" style={{ color: "#3BBFAD" }} />
             });
         }
         

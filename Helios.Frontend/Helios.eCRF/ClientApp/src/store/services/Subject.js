@@ -128,9 +128,13 @@ export const SubjectApi = createApi({
             invalidatesTags: ['SubjectElement'],
         }),
         setSubjectSdv: builder.mutation({
-            query: (id) => ({
-                url: `/Subject/SetSubjectSdv?id=${id}`,
-                method: 'POST'
+            query: (ids) => ({
+                url: `/Subject/SetSubjectSdv`,
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(ids), 
             }),
             invalidatesTags: ['SubjectElement'],
         }),

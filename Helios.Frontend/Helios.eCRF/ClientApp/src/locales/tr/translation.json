@@ -514,5 +514,7 @@
   "Go to missing SDV": "Eksik SDV bul",
   "Switch to study": "Çalışmayı değiştir",
   "Do you want to mark all empty fields on this page as 'missing data' ?": "Bu sayfadaki tüm boş alanları 'eksik veri' olarak işaretlemek istiyor musunuz?",
-  "There is no blank space to mark as missing data.": "Eksik veri olarak işaretlenecek boşluk yok."
+  "There is no blank space to mark as missing data.": "Eksik veri olarak işaretlenecek boşluk yok.",
+  "All data on this page will be SDV'ed.": "Bu sayfadaki tüm veriler SDV'lenecektir.",
+  "Number of blank data that cannot be SDV :": "SDV yapılamayan boş veri sayısı :"
 }

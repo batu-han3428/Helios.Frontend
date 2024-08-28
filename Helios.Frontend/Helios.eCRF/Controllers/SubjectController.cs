@@ -196,13 +196,13 @@ namespace Helios.eCRF.Controllers
         /// <summary>
         /// Hasta sayfasında seçilen elementi sdv olarak işaretler
         /// </summary>
-        /// <param name="id">element id</param>
+        /// <param name="ids">elementlerin idleri</param>
         /// <returns>başarılı başarısız</returns>
         [HttpPost]
         [RoleAttribute(Roles.StudyUser)]
-        public async Task<IActionResult> SetSubjectSdv(Int64 id)
+        public async Task<IActionResult> SetSubjectSdv(List<Int64> ids)
         {
-            var result = await _subjectService.SetSubjectSdv(id);
+            var result = await _subjectService.SetSubjectSdv(ids);
             return Ok(result);
         }
     }

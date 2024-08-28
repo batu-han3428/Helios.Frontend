@@ -666,5 +666,7 @@
   "Go to missing SDV": "Go to missing SDV",
   "Switch to study": "Switch to study",
   "Do you want to mark all empty fields on this page as 'missing data' ?": "Do you want to mark all empty fields on this page as 'missing data' ?",
-  "There is no blank space to mark as missing data.": "There is no blank space to mark as missing data."
+  "There is no blank space to mark as missing data.": "There is no blank space to mark as missing data.",
+  "All data on this page will be SDV'ed.": "All data on this page will be SDV'ed.",
+  "Number of blank data that cannot be SDV :": "Number of blank data that cannot be SDV :"
 }

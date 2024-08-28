@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { showToast } from '../../../store/toast/actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
+import { useSetSubjectSdvMutation } from '../../../store/services/Subject';
 
 export const SubjectDetailContext = createContext();
 
@@ -209,14 +210,47 @@ const SubjectDetail = props => {
         setOpenMobileMenu(false);
     };
 
+    const nonSdvElementList = (elements) => {
+        const flattenElements = (elements) => {
+            let flatList = [];
+            elements.forEach((element) => {
+                flatList.push(element);
+                if (element.childElements && element.childElements.length > 0) {
+                    flatList = flatList.concat(flattenElements(element.childElements));
+                }
+            });
+            return flatList;
+        };
+        const filteredList = flattenElements(elements).filter(element => {
+            return ![1, 17, 14, 15, 16, 3, 7].includes(element.elementType)
+                && element.userValue !== ""
+                && element.sdv === false;
+        });
+        return filteredList;
+    };
+
+    const [setSubjectSdv] = useSetSubjectSdvMutation();
+
+    const setSdv = async (ids) => {
+        try {
+            dispatch(startloading());
+            const response = await setSubjectSdv(ids);
+            dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
+            dispatch(endloading());
+        } catch (e) {
+            dispatch(showToast(props.t('An unexpected error occurred.'), true, false));
+            dispatch(endloading());
+        }
+    };
+
     return (
         <React.Fragment>
-            <SubjectDetailContext.Provider value={{ modalRef, setModalInf }}>
+            <SubjectDetailContext.Provider value={{ modalRef, setModalInf, setSdv }}>
                 <div className="page-content" style={{ paddingBottom: 0, paddingLeft: 0 }}>
                     <div className="container-fluid" style={{ paddingLeft: 0 }}>
                     <Row gutter={16} >
                         <Col xs={0} sm={0} md={6} lg={6} xl={5}>
-                            <SubjectDetailMenu subjectNumber={subjectNumber} setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} IsMissingData={permissions.canMonitoringMarkAsNull} />
+                            <SubjectDetailMenu subjectNumber={subjectNumber} setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} permissions={permissions} nonSdv={nonSdvElementList(subjectElementList)} />
                         </Col>
                         <Col xs={1} sm={1} md={0} lg={0} xl={0}>
                             <Button style={{ position: "fixed", top: "80px", left: "10px", zIndex: "1000" }} onClick={showDrawer} shape="circle" icon={<MenuOutlined />} />

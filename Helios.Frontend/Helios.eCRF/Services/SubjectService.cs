@@ -617,11 +617,13 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<ApiResponse<dynamic>> SetSubjectSdv(Int64 id)
+        public async Task<ApiResponse<dynamic>> SetSubjectSdv(List<Int64> ids)
         {
             using (var client = CoreServiceClient)
             {
-                var req = new RestRequest($"CoreSubject/SetSubjectSdv?id={id}", Method.Post);
+                var req = new RestRequest("CoreSubject/SetSubjectSdv", Method.Post);
+                req.AddJsonBody(ids);
+                req.AddHeader("Content-Type", "application/json");
                 AddApiHeaders(req);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
