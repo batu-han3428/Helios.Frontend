@@ -23,7 +23,7 @@ import CalculationElement from '../../TenantAdmin/Module/Elements/CalculationEle
 import AdverseEventElement from '../../TenantAdmin/Module/Elements/AdverseEventElement/adverseEventElement.js';
 import ConcomittantMedicationElement from '../../TenantAdmin/Module/Elements/ConcomittantMedicationElement/concomittantMedicationElement.js';
 import { withTranslation } from "react-i18next";
-import { useAutoSaveSubjectMutation, useSetSubjectSdvMutation } from '../../../store/services/Subject';
+import { useAutoSaveSubjectMutation } from '../../../store/services/Subject';
 import SubjectComment from './Comp/SubjectComment';
 import SubjectMissingData from './Comp/SubjectMissingData';
 import { showToast } from '../../../store/toast/actions';
@@ -40,7 +40,7 @@ function SubjectDetailElementList(props) {
     const [isMissingData] = useState(props.IsMissingData);
     const [isSdv] = useState(props.IsSdv);
 
-    const { modalRef, setModalInf } = useContext(SubjectDetailContext);
+    const { modalRef, setModalInf, setSdv } = useContext(SubjectDetailContext);
 
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
 
@@ -123,15 +123,6 @@ function SubjectDetailElementList(props) {
         }
     }, [AutoSave, isDisable, studyId, tenantId, subjectVisitPageModuleId, isMissingData, isSdv, props.SdvInformation]);
 
-    const [setSubjectSdv] = useSetSubjectSdvMutation();
-
-    const setSdv = async (id) => {
-        dispatch(startloading());
-        const response = await setSubjectSdv(id);
-        dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
-        dispatch(endloading());
-    };
-
     const getItems = useCallback((param) => {
         const items = [
             {
@@ -173,7 +164,7 @@ function SubjectDetailElementList(props) {
         if (isSdv && ![1, 17, 14, 15, 16, 3, 7].includes(param.elementType) && param.userValue !== "") {
             items.splice(1, 0, {
                 key: '6',
-                label: <a onClick={() => { setSdv(param.subjectVisitPageModuleElementId); }}>{!param.sdv ? props.t('On-site SDV') : props.t('Remove SDV')}</a>,
+                label: <a onClick={() => { setSdv([param.subjectVisitPageModuleElementId]); }}>{!param.sdv ? props.t('On-site SDV') : props.t('Remove SDV')}</a>,
                 icon: <FontAwesomeIcon icon="fa-solid fa-circle-check" style={{ color: "#3BBFAD" }} />,
                 style: { color: "#3BBFAD" }
             });
@@ -188,7 +179,7 @@ function SubjectDetailElementList(props) {
         }
 
     }, [ClearData, navigate, props.t, isDisable, isMissingData, isSdv]);
-    
+
     const renderContent = useMemo(() => {
         return Array.isArray(props.ElementList) ? props.ElementList.map((item) => {
             const w = item.width === 0 ? 12 : item.width;
@@ -245,7 +236,7 @@ function SubjectDetailElementList(props) {
                                 }
                                 {(item.sdv && ![1, 17, 14, 15, 16, 3].includes(item.elementType)) &&
                                     <Tooltip title={props.t('Remove SDV')}>
-                                        <FontAwesomeIcon onClick={() => { if (item.elementType !== 7 && isSdv) setSdv(item.subjectVisitPageModuleElementId); }} icon="fa-solid fa-circle-check" style={{ color: "#3BBFAD", cursor: item.elementType !== 7 && isSdv ? "pointer" : "default", fontSize: '20px' }} />
+                                        <FontAwesomeIcon onClick={() => { if (item.elementType !== 7 && isSdv) setSdv([item.subjectVisitPageModuleElementId]); }} icon="fa-solid fa-circle-check" style={{ color: "#3BBFAD", cursor: item.elementType !== 7 && isSdv ? "pointer" : "default", fontSize: '20px' }} />
                                     </Tooltip>
                                 }
                             </div>
