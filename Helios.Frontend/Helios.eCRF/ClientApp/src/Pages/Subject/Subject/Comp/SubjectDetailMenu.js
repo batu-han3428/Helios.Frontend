@@ -80,7 +80,7 @@ const SubjectDetailMenu = props => {
 
             const result = await Swal.fire({
                 title: props.t("All data on this page will be SDV'ed."),
-                html: `<p>${props.t('Number of blank data that cannot be SDV :')} ${props.nonSdv.length}</p>${showConfirmButton ? props.t("Do you confirm?") : ''}`,
+                html: `<p style='color:red;'>${props.t('Number of blank data that cannot be SDV :')} ${props.nonSdv.length}</p>${showConfirmButton ? props.t("Do you confirm?") : ''}`,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3bbfad",
