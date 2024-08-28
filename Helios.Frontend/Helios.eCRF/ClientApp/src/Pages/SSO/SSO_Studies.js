@@ -12,7 +12,7 @@ import { API_BASE_URL } from "../../constants/endpoints";
 import { addStudy } from "../../store/actions";
 import { SearchOutlined } from '@ant-design/icons';
 import { Table } from 'antd';
-
+import { v4 as uuidv4 } from 'uuid';
 
 const SSO_Studies = props => {
 
@@ -177,7 +177,7 @@ const SSO_Studies = props => {
                                     ) : (
                                             <Table
                                                 columns={columns}
-                                                dataSource={filteredData}
+                                                dataSource={filteredData.map(item => ({ ...item, key: uuidv4() }))}
                                                 pagination={true}
                                                 scroll={{ x: 'max-content' }}
                                                 onRow={(record, rowIndex) => {

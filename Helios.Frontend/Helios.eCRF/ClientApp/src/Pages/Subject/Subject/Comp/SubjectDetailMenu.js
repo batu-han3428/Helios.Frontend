@@ -57,7 +57,7 @@ const SubjectDetailMenu = props => {
                 try {
                     setModalInf({
                         title: props.t('Select one of the reasons for the missing value'),
-                        content: <SubjectMissingData data={false} elementId={pageId} refs={modalRef} isPage={true} />,
+                        content: <SubjectMissingData data={false} elementId={pageId} refs={modalRef} isPage={true} subjectId={props.subjectId} />,
                         isButton: true,
                         buttonText: props.t('Save'),
                     });
