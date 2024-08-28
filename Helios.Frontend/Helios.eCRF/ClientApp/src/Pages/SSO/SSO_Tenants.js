@@ -164,6 +164,7 @@ const SSO_Tenants = props => {
                                                     }
                                                 }
                                             }}
+                                            rowKey={(record) => record.id}
                                         />
                                     )}
                                 </div>

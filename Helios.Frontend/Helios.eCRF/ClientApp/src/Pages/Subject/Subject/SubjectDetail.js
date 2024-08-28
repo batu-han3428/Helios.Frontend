@@ -1,6 +1,6 @@
 ﻿import PropTypes from 'prop-types';
 import { Alert } from "reactstrap";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, createContext } from "react";
 import { withTranslation } from "react-i18next";
 import { Row, Col, Button, Progress, Tag, Tooltip } from 'antd';
 import { MenuOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
@@ -15,6 +15,9 @@ import SubjectDetailElementList from './SubjectDetailElementList.js';
 import { useNavigate } from "react-router-dom";
 import { showToast } from '../../../store/toast/actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import ModalComp from '../../../components/Common/ModalComp/ModalComp';
+
+export const SubjectDetailContext = createContext();
 
 const SubjectDetail = props => {
 
@@ -23,6 +26,8 @@ const SubjectDetail = props => {
 
     const dispatch = useDispatch();
 
+    const modalRef = useRef();
+    const [modalInf, setModalInf] = useState({});
     const [selectedKeys, setSelectedKeys] = useState(['1-1']);
     const [openKeys, setOpenKeys] = useState([]);
     const [openSubMenuKeys, setOpenSubMenuKeys] = useState(['sub1']);
@@ -206,11 +211,12 @@ const SubjectDetail = props => {
 
     return (
         <React.Fragment>
-            <div className="page-content" style={{ paddingBottom: 0, paddingLeft: 0 }}>
-                <div className="container-fluid" style={{ paddingLeft: 0 }}>
+            <SubjectDetailContext.Provider value={{ modalRef, setModalInf }}>
+                <div className="page-content" style={{ paddingBottom: 0, paddingLeft: 0 }}>
+                    <div className="container-fluid" style={{ paddingLeft: 0 }}>
                     <Row gutter={16} >
                         <Col xs={0} sm={0} md={6} lg={6} xl={5}>
-                            <SubjectDetailMenu subjectNumber={subjectNumber} setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} />
+                            <SubjectDetailMenu subjectNumber={subjectNumber} setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} IsMissingData={permissions.canMonitoringMarkAsNull} />
                         </Col>
                         <Col xs={1} sm={1} md={0} lg={0} xl={0}>
                             <Button style={{ position: "fixed", top: "80px", left: "10px", zIndex: "1000" }} onClick={showDrawer} shape="circle" icon={<MenuOutlined />} />
@@ -272,6 +278,7 @@ const SubjectDetail = props => {
                                                 IsMissingData={permissions.canMonitoringMarkAsNull}
                                                 IsSdv={permissions.canMonitoringSdv}
                                                 SdvInformation={sdvInformation}
+                                                modalRef={modalRef}
                                             />
                                         </>
                                     )
@@ -281,7 +288,8 @@ const SubjectDetail = props => {
                         </Col>
                     </Row>
                 </div>
-            </div>
+                </div>
+            </SubjectDetailContext.Provider>
             <footer style={{ position: 'fixed', bottom: 0, right: 0, width: '100%', background: '#f1f1f1', padding: '10px', textAlign: 'right' }}>
                 <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                     <div style={{ display: isPrevButton ? 'inline-block' : 'none', marginRight: '10px' }}>
@@ -292,6 +300,13 @@ const SubjectDetail = props => {
                     </div>
                 </div>
             </footer>
+            <ModalComp
+                refs={modalRef}
+                title={modalInf.title}
+                body={modalInf.content}
+                isButton={modalInf.isButton}
+                buttonText={modalInf.isButton && modalInf.buttonText}
+            />
         </React.Fragment>
     )
 }

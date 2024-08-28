@@ -44,7 +44,7 @@
 }
 
 .ant-dropdown {
-    z-index: 1000001 !important;
+    z-index: 9999 !important;
 }
 
 .hidden-column {

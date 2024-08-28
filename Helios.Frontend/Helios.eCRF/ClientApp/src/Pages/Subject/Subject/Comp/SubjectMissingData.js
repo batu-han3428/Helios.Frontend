@@ -35,7 +35,7 @@ const SubjectMissingData = props => {
             if (comment !== "") {
                 values.reason = `${values.reason}_${comment}`;
             }
-            const response = await setSubjectMissingData({ elementId: props.elementId, value: values.reason });
+            const response = await setSubjectMissingData({ isPage: props.isPage, id: props.elementId, value: values.reason, subjectId: props.subjectId });
             if (response.data.isSuccess) {
                 dispatch(showToast(props.t(response.data.message), true, true));
                 dispatch(endloading());

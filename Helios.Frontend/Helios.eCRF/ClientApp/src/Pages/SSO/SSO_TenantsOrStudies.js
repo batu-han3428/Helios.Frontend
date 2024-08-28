@@ -65,14 +65,17 @@ const SSO_TenantsOrStudies = props => {
     const Data = [
         {
             id: 2,
+            key: 2,
             name: props.t('System admin')
         },
         {
             id: 3,
+            key: 3,
             name: props.t('Tenant admin')
         },
         {
             id: 4,
+            key: 4,
             name: props.t('Study')
         }
     ]
