@@ -224,6 +224,7 @@ const SubjectDetail = props => {
         const filteredList = flattenElements(elements).filter(element => {
             return ![1, 17, 14, 15, 16, 3, 7].includes(element.elementType)
                 && element.userValue !== ""
+                && element.userValue !== null
                 && element.sdv === false;
         });
         return filteredList;

@@ -161,7 +161,7 @@ function SubjectDetailElementList(props) {
             });
         }
 
-        if (isSdv && ![1, 17, 14, 15, 16, 3, 7].includes(param.elementType) && param.userValue !== "") {
+        if (isSdv && ![1, 17, 14, 15, 16, 3, 7].includes(param.elementType) && param.userValue !== "" && param.userValue !== null) {
             items.splice(1, 0, {
                 key: '6',
                 label: <a onClick={() => { setSdv([param.subjectVisitPageModuleElementId]); }}>{!param.sdv ? props.t('On-site SDV') : props.t('Remove SDV')}</a>,
