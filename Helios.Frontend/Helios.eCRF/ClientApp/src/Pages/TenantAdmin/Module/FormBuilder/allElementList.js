@@ -12,6 +12,7 @@ const elements = [
     { key: 11, name: 'Dropdown checklist', icon: 'ti-arrow-circle-down' },
     { key: 4, name: 'Numeric', icon: 'fas fa-sort-numeric-down' },
     { key: 8, name: 'Radio list', icon: 'ion ion-md-radio-button-on' },
+    { key: 18, name: 'Randomization', icon: 'fas fa-random' },
     { key: 13, name: 'Range slider', icon: 'fas fa-sliders-h' },
     { key: 15, name: 'Table', icon: 'fas fa-table' },
     { key: 2, name: 'Text', icon: 'fas fa-font' },

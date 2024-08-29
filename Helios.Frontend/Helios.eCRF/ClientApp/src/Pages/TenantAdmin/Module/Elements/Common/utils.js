@@ -34,6 +34,8 @@ export function GetElementNameByKey(props, key) {
             return props.t("Datagrid");
         case 17:
             return props.t("Adverse event");
+        case 18:
+            return props.t("Randomization");
         default:
     }
 }

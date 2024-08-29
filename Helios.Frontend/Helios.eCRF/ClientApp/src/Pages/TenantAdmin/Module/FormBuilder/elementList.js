@@ -27,6 +27,7 @@ import { GetElementNameByKey } from '../Elements/Common/utils.js';
 import { GetAllElementList } from './allElementList.js';
 import { API_BASE_URL } from '../../../../constants/endpoints';
 import { showToast } from '../../../../store/toast/actions.js';
+import RandomizationElement from '../Elements/RandomizationElement/RandomizationElement.js';
 
 function ElementList(props) {
     const baseUrl = props.FormType === 1 ? API_BASE_URL + "Module" : API_BASE_URL + "Study";
@@ -248,6 +249,9 @@ function ElementList(props) {
                     AdverseEventType={param.adverseEventType}
                     IsDisable={isDisable}
                 />
+            case 18:
+                return <RandomizationElement IsDisable={dsbl} IsFromDesign={true}
+                />;
             default:
                 return <TextElement
                     IsDisable={dsbl}

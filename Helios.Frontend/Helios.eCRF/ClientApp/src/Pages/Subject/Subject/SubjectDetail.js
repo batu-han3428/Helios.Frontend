@@ -76,7 +76,7 @@ const SubjectDetail = props => {
     
     function filterElements(elements) {
         return elements.reduce((acc, item) => {
-            if (![1, 17, 14, 15, 16, 3, 7].includes(item.elementType) && item.userValue !== "" && item.userValue !== null) {
+            if (![1, 17, 14, 15, 16, 3, 7, 18].includes(item.elementType) && item.userValue !== "" && item.userValue !== null) {
                 acc.push(item);
             }
             if (item.childElements && item.childElements.length > 0) {
@@ -222,7 +222,7 @@ const SubjectDetail = props => {
             return flatList;
         };
         const filteredList = flattenElements(elements).filter(element => {
-            return ![1, 17, 14, 15, 16, 3, 7].includes(element.elementType)
+            return ![1, 17, 14, 15, 16, 3, 7, 18].includes(element.elementType)
                 && element.userValue !== ""
                 && element.userValue !== null
                 && element.sdv === false;
