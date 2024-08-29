@@ -29,6 +29,7 @@ import SubjectMissingData from './Comp/SubjectMissingData';
 import { showToast } from '../../../store/toast/actions';
 import { SubjectMissingDataType } from './Comp/SubjectMissingDataType';
 import { SubjectDetailContext } from './SubjectDetail';
+import RandomizationElement from '../../TenantAdmin/Module/Elements/RandomizationElement/RandomizationElement';
 
 function SubjectDetailElementList(props) {    
     const [tenantId] = useState(props.TenantId);
@@ -118,6 +119,8 @@ function SubjectDetailElementList(props) {
                 return <DatagridElement {...commonProps} StudyId={studyId} FormType={0} TenantId={tenantId} ModuleId={subjectVisitPageModuleId} UserId={0} ColumnCount={param.columnCount} RowCount={param.rowCount} DatagridAndTableProperties={param.datagridAndTableProperties} ChildElementList={param.childElements} Dispatch={dispatch} IsFromDesign={false} />;
             case 17:
                 return <AdverseEventElement AdverseEventType={param.adverseEventType} IsDisable={isDisable} />;
+            case 18:
+                return <RandomizationElement {...commonProps} IsFromDesign={false} />;
             default:
                 return "";
         }
@@ -125,13 +128,6 @@ function SubjectDetailElementList(props) {
 
     const getItems = useCallback((param) => {
         const items = [
-            {
-                key: '1',
-                label: <a onClick={() => ClearData(param)}>{props.t("Clear data")}</a>,
-                icon: <FontAwesomeIcon icon="fas fa-ban" style={{ color: "#d85b40" }} />,
-                style: { color: "#d85b40" },
-                disabled: isDisable,
-            },
             {
                 key: '3',
                 label: <a onClick={() => { setModalInf({ title: param.elementName, content: <SubjectComment subjectElementId={param.subjectVisitPageModuleElementId} />, isButton: false }); modalRef.current.tog_backdrop(); }}>{props.t("Comments")}</a>,
@@ -152,7 +148,17 @@ function SubjectDetailElementList(props) {
             },
         ];
 
-        if (isMissingData && param.canMissing) {
+        if (![18].includes(param.elementType)) {
+            items.splice(0, 0, {
+                key: '1',
+                label: <a onClick={() => ClearData(param)}>{props.t("Clear data")}</a>,
+                icon: <FontAwesomeIcon icon="fas fa-ban" style={{ color: "#d85b40" }} />,
+                style: { color: "#d85b40" },
+                disabled: isDisable,
+            });
+        }
+
+        if (isMissingData && param.canMissing && ![18].includes(param.elementType)) {
             items.splice(1, 0, {
                 key: '2',
                 label: <a onClick={() => { setModalInf({ title: props.t('Select one of the reasons for the missing value'), content: <SubjectMissingData data={param.missingData && param.userValue} elementId={param.subjectVisitPageModuleElementId} refs={modalRef} />, isButton: true, buttonText: props.t('Save') }); modalRef.current.tog_backdrop(); }}>{props.t("Missing data")}</a>,
@@ -234,7 +240,7 @@ function SubjectDetailElementList(props) {
                                         );
                                     })()
                                 }
-                                {(item.sdv && ![1, 17, 14, 15, 16, 3].includes(item.elementType)) &&
+                                {(item.sdv && ![1, 17, 14, 15, 16, 3, 18].includes(item.elementType)) &&
                                     <Tooltip title={props.t('Remove SDV')}>
                                         <FontAwesomeIcon onClick={() => { if (item.elementType !== 7 && isSdv) setSdv([item.subjectVisitPageModuleElementId]); }} icon="fa-solid fa-circle-check" style={{ color: "#3BBFAD", cursor: item.elementType !== 7 && isSdv ? "pointer" : "default", fontSize: '20px' }} />
                                     </Tooltip>

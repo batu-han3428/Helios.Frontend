@@ -23,6 +23,7 @@ import { withTranslation } from "react-i18next";
 import { API_BASE_URL } from '../../../../constants/endpoints';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HiddenElement from '../Elements/HiddenElement/hiddenElement';
+import RandomizationElement from '../Elements/RandomizationElement/RandomizationElement';
 
 function Preview() {
     const [tenantId, setTenantId] = useState(0);
@@ -105,7 +106,6 @@ function Preview() {
     };
 
     const renderElementsSwitch = (param) => {
-        console.log(param)
         const commonProps = {
             HandleAutoSave: AutoSave,
             IsDependent: param.isDependent
@@ -239,6 +239,8 @@ function Preview() {
                     IsDisable={false}
                     {...commonProps}
                 />
+            case 18:
+                return <RandomizationElement {...commonProps} IsPreview={true} />;
             default:
                 return <TextElement
                     Id={param.id}
