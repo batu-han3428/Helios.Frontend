@@ -65,6 +65,22 @@ class DropdownCheckListElement extends Component {
         if (prevProps.Value !== this.props.Value) {
             this.setState({ selectedOption: this.props.Value });
         }
+        if (
+            prevProps.Value !== this.props.Value ||
+            prevProps.IsDisable !== this.props.IsDisable ||
+            prevProps.ElementOptions !== this.props.ElementOptions ||
+            prevProps.IsRequired !== this.props.IsRequired ||
+            prevProps.IsMissingItem !== this.props.IsMissingItem
+        ) {
+            this.setState({
+                id: this.props.Id,
+                isDisable: this.props.IsDisable,
+                orgElementOptions: this.props.ElementOptions !== undefined && this.props.ElementOptions !== null && this.props.ElementOptions !== "" ? JSON.parse(this.props.ElementOptions) : [],
+                Value: this.props.Value,
+                isRequired: this.props.IsRequired,
+                isMissingItem: this.props.IsMissingItem
+            });
+        }
     }
     render() {
         return (
@@ -72,7 +88,7 @@ class DropdownCheckListElement extends Component {
                 <Select
                     options={this.state.ElementOptions}
                     classNamePrefix="select2-selection"
-                    className={this.state.selectedOption !== null && this.state.isRequired && !this.state.isMissingItem ? 'input-normal' : 'input-error'}
+                    className={this.state.selectedOption === null && this.state.isRequired && !this.state.isMissingItem ? 'input-error' : 'input-normal'}
                     placeholder={this.props.t("Select")}
                     isMulti={true}
                     closeMenuOnSelect={false}

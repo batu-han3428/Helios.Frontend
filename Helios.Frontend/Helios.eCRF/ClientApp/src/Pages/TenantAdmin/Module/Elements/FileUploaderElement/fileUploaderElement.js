@@ -29,6 +29,17 @@ class FileUploaderElement extends Component {
         if (prevProps.Value !== this.props.Value) {
             this.setState({ selectedFile: this.props.file });
         }
+        if (
+            prevProps.IsDisable !== this.props.IsDisable ||
+            prevProps.IsRequired !== this.props.IsRequired ||
+            prevProps.IsMissingItem !== this.props.IsMissingItem
+        ) {
+            this.setState({
+                isDisable: this.props.IsDisable,
+                isRequired: this.props.IsRequired,
+                isMissingItem: this.props.IsMissingItem
+            });
+        }
     }
     handleUpload() {
         const { selectedFile } = this.state;
@@ -49,7 +60,7 @@ class FileUploaderElement extends Component {
     render() {      
         return (
             <div>
-                <input type="file" ref={this.fileInputRef} onChange={this.handleFileChange} disabled={this.state.isDisable} style={{ display: 'none' }} className={(this.state.selectedFile === null || this.state.selectedFile === undefined) && this.state.isRequired && !this.state.isMissingItem ? 'input-normal' : 'input-error'} />
+                <input type="file" ref={this.fileInputRef} onChange={this.handleFileChange} disabled={this.state.isDisable} style={{ display: 'none' }} className={(this.state.selectedFile === null || this.state.selectedFile === undefined) && this.state.isRequired && !this.state.isMissingItem ? 'input-error' : 'input-normal'} />
                 <button
                     type="button"
                     onClick={this.handleButtonClick}

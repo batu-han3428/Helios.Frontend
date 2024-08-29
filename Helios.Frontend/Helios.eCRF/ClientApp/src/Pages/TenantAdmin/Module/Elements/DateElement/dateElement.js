@@ -1,20 +1,5 @@
 import React, { Component } from 'react';
-import {
-    Button,
-    Card,
-    CardBody,
-    CardText,
-    CardTitle,
-    Col,
-    Collapse,
-    Container,
-    Nav,
-    NavItem,
-    NavLink,
-    Row,
-    TabContent,
-    TabPane,
-} from "reactstrap";
+import { Button, Row } from "reactstrap";
 import Select from "react-select";
 import { withTranslation } from "react-i18next";
 import "../Element.css";
@@ -193,6 +178,35 @@ class DateElement extends Component {
     componentDidUpdate(prevProps) {
         if (prevProps.Value !== this.props.Value && this.props.Value === "") {
             this.setState({ DaySelectedGroup: null, MonthSelectedGroup: null, YearSelectedGroup:null });
+        }
+        if (
+            prevProps.Value !== this.props.Value ||
+            prevProps.IsDisable !== this.props.IsDisable ||
+            prevProps.StartDay !== this.props.StartDay ||
+            prevProps.EndDay !== this.props.EndDay ||
+            prevProps.StartMonth !== this.props.StartMonth ||
+            prevProps.EndMonth !== this.props.EndMonth ||
+            prevProps.StartYear !== this.props.StartYear ||
+            prevProps.EndYear !== this.props.EndYear ||
+            prevProps.IsRequired !== this.props.IsRequired ||
+            prevProps.IsMissingItem !== this.props.IsMissingItem
+        ) {
+            this.setState({
+                id: this.props.Id,
+                isDisable: this.props.IsDisable === "" ? false : true,
+                AddTodayDate: this.props.AddTodayDate,
+                StartDay: this.props.StartDay,
+                EndDay: this.props.EndDay,
+                StartMonth: this.props.StartMonth,
+                EndMonth: this.props.EndMonth,
+                StartYear: this.props.StartYear,
+                EndYear: this.props.EndYear,
+                IsPreview: this.props.IsPreview,
+                Value: this.props.Value,
+                DefaultValue: this.props.DefaultValue,
+                isRequired: this.props.IsRequired,
+                isMissingItem: this.props.IsMissingItem
+            });
         }
     }
     handleSave() {

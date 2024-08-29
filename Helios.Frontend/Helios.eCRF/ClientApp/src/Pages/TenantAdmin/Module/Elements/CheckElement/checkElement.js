@@ -45,6 +45,21 @@ class CheckElement extends Component {
                 .map(option => option.tagValue);
             this.setState({ checkedOptions });
         }
+        if (
+            prevProps.IsDisable !== this.props.IsDisable ||
+            prevProps.Layout !== this.props.Layout ||
+            prevProps.ElementOptions !== this.props.ElementOptions ||
+            prevProps.IsRequired !== this.props.IsRequired ||
+            prevProps.IsMissingItem !== this.props.IsMissingItem
+        ) {
+            this.setState({
+                isDisable: this.props.IsDisable,
+                layout: this.props.Layout,
+                ElementOptions: this.props.ElementOptions !== undefined && this.props.ElementOptions !== null && this.props.ElementOptions !== "" ? JSON.parse(this.props.ElementOptions) : [],
+                isRequired: this.props.IsRequired,
+                isMissingItem: this.props.IsMissingItem
+            });
+        }
     }
 
     render() {

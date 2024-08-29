@@ -33,6 +33,22 @@ class RangeSliderElement extends Component {
         if (prevProps.Value !== this.props.Value) {
             this.setState({ horizontal: (this.props.Value === null || this.props.Value === undefined || this.props.Value === "") ? this.props.DefaultValue === "" || this.props.DefaultValue === null || this.props.DefaultValue === undefined ? 0 : parseInt(this.props.DefaultValue) : parseInt(this.props.Value) });
         }
+        if (
+            prevProps.IsDisable !== this.props.IsDisable ||
+            prevProps.LeftText !== this.props.LeftText ||
+            prevProps.RightText !== this.props.RightText ||
+            prevProps.IsRequired !== this.props.IsRequired ||
+            prevProps.IsMissingItem !== this.props.IsMissingItem) {
+            this.setState({
+                isDisable: this.props.IsDisable,
+                horizontalLabels: {
+                    0: this.props.LeftText,
+                    100: this.props.RightText
+                },
+                isRequired: this.props.IsRequired,
+                isMissingItem: this.props.IsMissingItem
+            });
+        }
     }
     handleAfterChange(value) {
         this.props.HandleAutoSave(this.state.id, this.state.horizontal.toString());
@@ -51,9 +67,9 @@ class RangeSliderElement extends Component {
                     getAriaValueText={this.state.horizontalLabels}
                     onChange={this.handleChangeHorizontal}
                     onAfterChange={this.handleAfterChange}
-                    disabled={this.state.isDisable}                  
+                    disabled={this.state.isDisable === "" ? false : true}                  
                     className="customSlider"
-                    trackClassName={this.state.horizontal !== 0 && this.state.isRequired && !this.state.isMissingItem ? 'customSlider-track' : 'customSlider-track input-error'}
+                    trackClassName={this.state.horizontal === 0 && this.state.isRequired && !this.state.isMissingItem ? 'customSlider-track input-error' : 'customSlider-track'}
                     thumbClassName="customSlider-thumb"
                 />
                 <div className='row'>
