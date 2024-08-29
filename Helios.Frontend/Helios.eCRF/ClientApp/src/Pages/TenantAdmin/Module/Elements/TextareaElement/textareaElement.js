@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Card, CardBody, Col, Container, Form, FormGroup, Input, InputGroup, Label, Row } from "reactstrap";
+import { Input } from "reactstrap";
 import "../Element.css";
 
 
@@ -24,8 +24,20 @@ class TextareaElement extends Component {
         this.setState({ Value: e.target.value });
     };
     componentDidUpdate(prevProps) {
-        if (prevProps.Value !== this.props.Value) {
-            this.setState({ Value: this.props.Value });
+        if (
+            prevProps.Value !== this.props.Value ||
+            prevProps.IsDisable !== this.props.IsDisable ||
+            prevProps.IsRequired !== this.props.IsRequired ||
+            prevProps.IsMissingItem !== this.props.IsMissingItem ||
+            prevProps.DefaultValue !== this.props.DefaultValue 
+        ) {
+            this.setState({
+                Value: this.props.Value,
+                isDisable: this.props.IsDisable,
+                isRequired: this.props.IsRequired,
+                isMissingItem: this.props.IsMissingItem,
+                defaultValue: this.props.DefaultValue
+            });
         }
     }
     handleBlur(e) {

@@ -38,8 +38,26 @@ class NumericElement extends Component {
         }
     }
     componentDidUpdate(prevProps) {
-        if (prevProps.Value !== this.props.Value) {
-            this.setState({ Value: this.props.Value });
+        if (
+            prevProps.Value !== this.props.Value ||
+            prevProps.IsDisable !== this.props.IsDisable ||
+            prevProps.Unit !== this.props.Unit ||
+            prevProps.Mask !== this.props.Mask ||
+            prevProps.LowerLimit !== this.props.LowerLimit ||
+            prevProps.UpperLimit !== this.props.UpperLimit ||
+            prevProps.IsRequired !== this.props.IsRequired ||
+            prevProps.IsMissingItem !== this.props.IsMissingItem
+        ) {
+            this.setState({
+                Value: this.props.Value,
+                isDisable: this.props.IsDisable,
+                Unit: this.props.Unit,
+                Mask: this.props.Mask,
+                LowerLimit: this.props.LowerLimit,
+                UpperLimit: this.props.UpperLimit,
+                isRequired: this.props.IsRequired,
+                isMissingItem: this.props.IsMissingItem
+            });
         }
     }
 

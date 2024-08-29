@@ -20,8 +20,18 @@ class TextElement extends Component {
         this.setState({ Value: e.target.value });
     };
     componentDidUpdate(prevProps) {
-        if (prevProps.Value !== this.props.Value) {
-            this.setState({ Value: this.props.Value });
+        if (
+            prevProps.Value !== this.props.Value ||
+            prevProps.IsDisable !== this.props.IsDisable ||
+            prevProps.IsRequired !== this.props.IsRequired ||
+            prevProps.IsMissingItem !== this.props.IsMissingItem
+        ) {
+            this.setState({
+                Value: this.props.Value,
+                isDisable: this.props.IsDisable,
+                isRequired: this.props.IsRequired,
+                isMissingItem: this.props.IsMissingItem
+            });
         }
     }
     handleBlur(e) {
