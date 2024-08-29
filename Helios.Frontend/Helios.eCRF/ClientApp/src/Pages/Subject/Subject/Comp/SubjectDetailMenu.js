@@ -2,7 +2,7 @@
 import React, { useEffect, useContext } from "react";
 import { withTranslation } from "react-i18next";
 import { Menu, Tooltip } from 'antd';
-import { UserOutlined, LockOutlined, BulbOutlined, FolderOutlined, FileOutlined } from '@ant-design/icons';
+import { FolderOutlined, FileOutlined } from '@ant-design/icons';
 import { SubjectDetailEllipsis } from './SubjectDetailEllipsis';
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -16,25 +16,50 @@ const SubjectDetailMenu = props => {
     const { modalRef, setModalInf, setSdv } = useContext(SubjectDetailContext);
 
     const CustomMenuHeader = () => {
+        let items = [];
+
+        if (props.permissions.canMonitoringPageLock) {
+            items.push({
+                key: '1',
+                label: (
+                    <a>
+                        {props.t("Lock")}
+                    </a>
+                ),
+                icon: <FontAwesomeIcon icon="fa-solid fa-lock" />
+            });
+        }
+
+        if (props.permissions.canMonitoringPageFreeze) {
+            items.push({
+                key: '2',
+                label: (
+                    <a>
+                        {props.t("Freeze")}
+                    </a>
+                ),
+                icon: <FontAwesomeIcon icon="fa-solid fa-snowflake" />
+            });
+        }
+
+        if (props.permissions.canMonitoringSeePageActionAudit) {
+            items.push({
+                key: '3',
+                label: (
+                    <a>
+                        {props.t("Audit trail")}
+                    </a>
+                ),
+                icon: <FontAwesomeIcon icon="fa-solid fa-clock" />
+            });
+        }
+
         return (
             <div className="subject-menu-header">
                 {props.subjectNumber}
-                <SubjectDetailEllipsis items={[
-                    {
-                        key: '1',
-                        label: <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">Kilitle</a>,
-                        icon: <LockOutlined />
-                    },
-                    {
-                        key: '3',
-                        type: 'divider'
-                    },
-                    {
-                        key: '2',
-                        label: <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">Dondur</a>,
-                        icon: <BulbOutlined />
-                    },
-                ]} />
+                {(props.permissions.canMonitoringPageLock || props.permissions.canMonitoringPageFreeze || props.permissions.canMonitoringSeePageActionAudit) &&
+                    <SubjectDetailEllipsis items={items} />
+                }
             </div>
         );
     }
@@ -103,22 +128,43 @@ const SubjectDetailMenu = props => {
             }
         };
 
-        let items = [
-            {
+        let items = [];
+
+        if (props.permissions.canMonitoringPageLock) {
+            items.push({
                 key: '1',
-                label: <a>Kilitle</a>,
-                icon: <LockOutlined />
-            },
-            {
-                key: '3',
-                type: 'divider'
-            },
-            {
+                label: (
+                    <a>
+                        {props.t("Lock")}
+                    </a>
+                ),
+                icon: <FontAwesomeIcon icon="fa-solid fa-lock" />
+            });
+        }
+
+        if (props.permissions.canMonitoringPageFreeze) {
+            items.push({
                 key: '2',
-                label: <a>Dondur</a>,
-                icon: <BulbOutlined />
-            }
-        ];
+                label: (
+                    <a>
+                        {props.t("Freeze")}
+                    </a>
+                ),
+                icon: <FontAwesomeIcon icon="fa-solid fa-snowflake" />
+            });
+        }
+
+        if (props.permissions.canMonitoringSeePageActionAudit) {
+            items.push({
+                key: '3',
+                label: (
+                    <a>
+                        {props.t("Audit trail")}
+                    </a>
+                ),
+                icon: <FontAwesomeIcon icon="fa-solid fa-clock" />
+            });
+        }
 
         if (state === 2 && props.permissions.canMonitoringMarkAsNull) {
             items.push({
@@ -149,9 +195,23 @@ const SubjectDetailMenu = props => {
                 <Tooltip title={item.title}>
                     <span style={{ width: '90%', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</span>
                 </Tooltip>
-                <div style={{ position: 'absolute', right: 15.5, overflow: 'hidden' }}>
-                    <SubjectDetailEllipsis items={items} />
-                </div>
+                {
+                    (
+                        (state === 2
+                         &&
+                            (props.permissions.canMonitoringSdv || props.permissions.canMonitoringMarkAsNull || props.permissions.canMonitoringPageLock || props.permissions.canMonitoringPageFreeze || props.permissions.canMonitoringSeePageActionAudit)
+                        )
+                        ||
+                        (state === 1
+                            &&
+                            (props.permissions.canMonitoringPageLock || props.permissions.canMonitoringPageFreeze || props.permissions.canMonitoringSeePageActionAudit)
+                        )
+                    )
+                    &&
+                    <div style={{ position: 'absolute', right: 15.5, overflow: 'hidden' }}>
+                        <SubjectDetailEllipsis items={items} />
+                    </div>
+               }
             </div>
         );
     };
@@ -184,7 +244,8 @@ const SubjectDetailMenu = props => {
             key: 'header',
             label: <CustomMenuHeader />,
             disabled: true,
-            icon: <UserOutlined />
+            icon: <FontAwesomeIcon icon="fa-solid fa-user" style={{ color: 'white' }} />,
+            className: 'subject-menu-header' 
         });
     }
 

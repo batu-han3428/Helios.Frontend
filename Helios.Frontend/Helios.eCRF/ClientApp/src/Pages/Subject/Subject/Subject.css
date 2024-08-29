@@ -1,8 +1,12 @@
 ﻿.subject-menu-header {
-    color: rgba(0, 0, 0, 0.88) !important;
+    color: white;
     display: flex;
     align-items: center;
     justify-content: space-between;
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-menu .ant-menu-item.subject-menu-header {
+    background-color: #6d6e70 !important;
 }
 
 .ant-menu-item-disabled > span > svg {
