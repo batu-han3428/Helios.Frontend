@@ -9,10 +9,12 @@ import { useLazyStudiesListGetQuery } from '../../store/services/SSO/SSO_Api';
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../store/loader/actions';
 import { API_BASE_URL } from "../../constants/endpoints";
-import { addStudy } from "../../store/actions";
+import { addStudy, loginuser } from "../../store/actions";
 import { SearchOutlined } from '@ant-design/icons';
 import { Table } from 'antd';
 import { v4 as uuidv4 } from 'uuid';
+import { setLocalStorage } from '../../helpers/local-storage/localStorageProcess';
+import { onLogin } from '../../helpers/Auth/useAuth';
 
 const SSO_Studies = props => {
 
@@ -90,8 +92,33 @@ const SSO_Studies = props => {
              
             });
     };
+    const updateJwt = (token, studyId) => {
+        const apiUrl = API_BASE_URL + `Account/UpdateJwt`;
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ studyId: studyId })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                setLocalStorage("accessToken", data.values.accessToken);
+                const result = onLogin();
+                dispatch(loginuser(result));
+                if (studyId !== 0) getStudy({ token: data.values.accessToken, studyId: studyId });
+            })
+            .catch(error => {
+            });
+    };
     const goToStudy = (studyId) => {
-        getStudy({ token: userInformation.token, studyId: studyId });
+        updateJwt(userInformation.token, studyId);
         navigate(`/subjectlist/${studyId}`);
     }
     const columns = [

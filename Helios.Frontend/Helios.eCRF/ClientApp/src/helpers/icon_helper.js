@@ -2,13 +2,13 @@
 
 export const SdvIconStatu = (sdv) => {   
     if (sdv === 1) {
-        return <i className="bi bi-check-circle-fill" style={{ color: '#3bbfad' }} title={i18n.t("SDV done")}></i>;
+        return { icon: <i className="bi bi-check-circle-fill" style={{ color: '#3bbfad', cursor: 'pointer' }}></i>, text: 'SDV done' };
     }
     else if (sdv === 2) {
-        return <i className="bi bi-check-circle-fill" style={{ color: '#ffc600' }} title={i18n.t("Partial SDV")}></i>;
+        return { icon: <i className="bi bi-check-circle-fill" style={{ color: '#ffc600', cursor: 'pointer' }}></i>, text: 'Partial SDV' };
     }
     else {
-        return <i className="bi bi-check-circle-fill" style={{ color: '#ffa16c' }} title={i18n.t("Ready for SDV")}></i>;
+        return { icon: <i className="bi bi-check-circle-fill" style={{ color: '#ffa16c', cursor: 'pointer' }}></i>, text: 'Ready for SDV' };
     }
 
 }
