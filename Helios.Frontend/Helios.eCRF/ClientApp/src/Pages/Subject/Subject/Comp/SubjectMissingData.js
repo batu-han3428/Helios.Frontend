@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types';
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import { useDispatch } from 'react-redux';
 import { endloading, startloading } from '../../../../store/loader/actions';
@@ -7,12 +7,16 @@ import { Form, Radio, Input } from 'antd';
 import { useSetSubjectMissingDataMutation } from '../../../../store/services/Subject';
 import { showToast } from '../../../../store/toast/actions';
 import { SubjectMissingDataType } from './SubjectMissingDataType';
+import SubjectChangeElementComment from '../Comp/SubjectChangeElementComment';
+import ModalComp from '../../../../components/Common/ModalComp/ModalComp';
 
 const SubjectMissingData = props => {
 
     const dispatch = useDispatch();
     const [selectedReason, setSelectedReason] = useState(null);
     const [form] = Form.useForm();
+    const [modalInf, setModalInf] = useState({});
+    const modalRef = useRef();
 
     useEffect(() => {
         if (props.data) {
@@ -34,16 +38,23 @@ const SubjectMissingData = props => {
             const comment = values.comment.trim();
             if (comment !== "") {
                 values.reason = `${values.reason}_${comment}`;
-            }
-            const response = await setSubjectMissingData({ elementId: props.elementId, value: values.reason });
-            if (response.data.isSuccess) {
-                dispatch(showToast(props.t(response.data.message), true, true));
+            }            
+            if (props.reasonForChange) {
                 dispatch(endloading());
-                props.refs.current.tog_backdrop();
-            } else {
-                dispatch(showToast(props.t(response.data.message), true, false));
-                dispatch(endloading());
+                setModalInf({ title: props.t("This study is adhering to Good Clinical Practice (GCP)!"), content: <SubjectChangeElementComment studyId={props.studyId} subjectId={props.subjectId} isMissingData={true} elementName={props.elementName} oldValue={props.oldValue} subjectElementId={props.elementId} value={values.reason} type={props.type} commentType='2' />, isButton: false }); modalRef.current.tog_backdrop();
             }
+            else {
+                const response = await setSubjectMissingData({ elementId: props.elementId, value: values.reason });
+                if (response.data.isSuccess) {
+                    dispatch(showToast(props.t(response.data.message), true, true));
+                    dispatch(endloading());
+                    props.refs.current.tog_backdrop();
+                } else {
+                    dispatch(showToast(props.t(response.data.message), true, false));
+                    dispatch(endloading());
+                }
+            }
+            
         } catch (error) {
             dispatch(showToast(props.t("An unexpected error occurred.", true, false)));
             dispatch(endloading());
@@ -70,35 +81,44 @@ const SubjectMissingData = props => {
     }, [submit, props]);
 
     return (
-        <Form
-            form={form}
-            onFinish={onFinish}
-            layout="vertical"
-        >
-            <Form.Item
-                name="reason"
-                label=""
-                rules={[{ required: true, message: props.t('Select one of the reasons for the missing value') }]}
+        <>
+            <Form
+                form={form}
+                onFinish={onFinish}
+                layout="vertical"
             >
-                <Radio.Group onChange={onReasonChange} style={{ display: 'flex', flexDirection: 'column' }}>
-                    {SubjectMissingDataType.map((item, i) => {
-                        return <Radio key={i} value={props.i18n.language === 'en' ? item.value[0] : item.value[1]}>{props.t(item.label)}</Radio>
-                    })};
-                </Radio.Group>
-            </Form.Item>
-            <Form.Item
-                name="comment"
-                label={props.t('Comment')}
-                rules={
-                    selectedReason === (props.i18n.language === 'en' ? '#Otherreason' : '#Diðerseçenek')
-                        ? [{ required: true, message: props.t('This field is required') }]
-                        : []
-                }
-                validateTrigger="onSubmit"
-            >
-                <Input.TextArea rows={4} />
-            </Form.Item>
-        </Form>
+                <Form.Item
+                    name="reason"
+                    label=""
+                    rules={[{ required: true, message: props.t('Select one of the reasons for the missing value') }]}
+                >
+                    <Radio.Group onChange={onReasonChange} style={{ display: 'flex', flexDirection: 'column' }}>
+                        {SubjectMissingDataType.map((item, i) => {
+                            return <Radio key={i} value={props.i18n.language === 'en' ? item.value[0] : item.value[1]}>{props.t(item.label)}</Radio>
+                        })};
+                    </Radio.Group>
+                </Form.Item>
+                <Form.Item
+                    name="comment"
+                    label={props.t('Comment')}
+                    rules={
+                        selectedReason === (props.i18n.language === 'en' ? '#Otherreason' : '#Diðerseçenek')
+                            ? [{ required: true, message: props.t('This field is required') }]
+                            : []
+                    }
+                    validateTrigger="onSubmit"
+                >
+                    <Input.TextArea rows={4} />
+                </Form.Item>
+            </Form>
+            <ModalComp
+                refs={modalRef}
+                title={modalInf.title}
+                body={modalInf.content}
+                isButton={modalInf.isButton}
+                buttonText={modalInf.isButton && modalInf.buttonText}
+            />
+        </>
     );
 };
 

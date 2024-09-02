@@ -511,5 +511,10 @@
   "UNK: Unknown": "UNK: Bilinmiyor",
   "Other reason": "Diğer seçenek",
   "Remove SDV": "SDV kaldır",
-  "Go to missing SDV": "Eksik SDV bul"
+  "Go to missing SDV": "Eksik SDV bul",
+  "This study is adhering to Good Clinical Practice (GCP)!": "Bu çalışma İyi Klinik Uygulamaları (İKU)'na uygundur!",
+  "Please, supply a reason for changing this field's value:": "Lütfen bu alanın değerini değiştirme nedenini belirtin:",
+  "Old value": "Eski değer",
+  "New value": "Yeni değer"
+
 }

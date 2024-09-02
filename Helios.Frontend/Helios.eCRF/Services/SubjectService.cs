@@ -207,6 +207,7 @@ namespace Helios.eCRF.Services
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreSubject/AutoSaveSubjectData", Method.Post);
+                AddApiHeaders(req);
                 req.AddJsonBody(model);
                 var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
                 return result.Data;
@@ -581,7 +582,20 @@ namespace Helios.eCRF.Services
                 return result;
             }
         }
-
+        public async Task<RestResponse<List<SubjectElementShortModel>>> GetRelationPageElementValues(Int64 subjectVisitPageModuleElementId, Int64 studyId, string? value, Int64 subjectId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/GetRelationPageElementValues", Method.Get);
+                req.AddParameter("subjectVisitPageModuleElementId", subjectVisitPageModuleElementId);
+                req.AddParameter("studyId", studyId);
+                req.AddParameter("value", value);
+                req.AddParameter("subjectId", subjectId);
+                req.AddParameter("subjectVisitPageModuleElementId", subjectVisitPageModuleElementId);
+                var result = await client.ExecuteAsync<List<SubjectElementShortModel>>(req);
+                return result;
+            }
+        }
         public async Task<ApiResponse<dynamic>> RemoveSubjectComment(Int64 id)
         {
             using (var client = CoreServiceClient)

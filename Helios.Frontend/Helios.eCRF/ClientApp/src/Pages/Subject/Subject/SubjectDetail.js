@@ -16,6 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { showToast } from '../../../store/toast/actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+
 const SubjectDetail = props => {
 
     const navigate = useNavigate();
@@ -36,7 +37,6 @@ const SubjectDetail = props => {
 
     const [currentPage, setCurrentPage] = useState(pageId);
 
-    const [permissions, setPermissions] = useState([]);
     const [triggerPermission, { data: permissionsData, errorPerm, isLoadingPerm }] = useLazyGetUserPermissionsQuery();
 
     useEffect(() => {
@@ -48,7 +48,6 @@ const SubjectDetail = props => {
 
     useEffect(() => {
         if (!errorPerm && !isLoadingPerm && permissionsData) {
-            setPermissions(permissionsData);
             setIsLoaded(true);
         }
     }, [permissionsData, errorPerm, isLoadingPerm]);
@@ -67,7 +66,7 @@ const SubjectDetail = props => {
             navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}/${subjectNumber}`);
         }
     };
-    
+
     function filterElements(elements) {
         return elements.reduce((acc, item) => {
             if (![1, 17, 14, 15, 16, 3, 7].includes(item.elementType) && item.userValue !== "" && item.userValue !== null) {
@@ -208,78 +207,85 @@ const SubjectDetail = props => {
         <React.Fragment>
             <div className="page-content" style={{ paddingBottom: 0, paddingLeft: 0 }}>
                 <div className="container-fluid" style={{ paddingLeft: 0 }}>
-                    <Row gutter={16} >
-                        <Col xs={0} sm={0} md={6} lg={6} xl={5}>
-                            <SubjectDetailMenu subjectNumber={subjectNumber} setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} />
-                        </Col>
-                        <Col xs={1} sm={1} md={0} lg={0} xl={0}>
-                            <Button style={{ position: "fixed", top: "80px", left: "10px", zIndex: "1000" }} onClick={showDrawer} shape="circle" icon={<MenuOutlined />} />
-                            <SubjectDetailDrawer onClose={onClose} openMobileMenu={openMobileMenu} content={<SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={true} studyId={studyId} subjectId={subjectId} />} />
-                        </Col>
-                        <Col xs={24} sm={24} md={18} lg={18} xl={19} >
-                            <div id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom: "100px", paddingLeft: '50px' }}>
-                                {!isLoading1 && !error1 && isLoaded && elementList && subjectElementList.length < 1 ?
-                                    (
-                                         <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            height: 'calc(100vh - 170px)'
-                                        }}>
-                                            <Alert color="warning" style={{ height: "50px" }}>
-                                                {props.t("There is no module on the page. Please contact the system administrator.")}
-                                            </Alert>
-                                        </div>
-                                    )
-                                    :
-                                    (
-                                        <>
-                                            {permissions.canMonitoringSdv &&
-                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 10px', position: 'sticky', top: 70, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', zIndex: 999 }}>
-                                                    <Tag color="#87d068">{sdvInformation.inf}</Tag>
-                                                    <Progress
-                                                        percent={sdvInformation.percent}
-                                                        status="active"
-                                                        strokeColor={{
-                                                            from: '#87D068',
-                                                            to: '#87d068',
-                                                        }}
-                                                        size="small"
-                                                        style={{width:'80%'}}
-                                                    />  
-                                                    {sdvInformation.percent !== 100 && 
-                                                        <Tooltip title={props.t('Go to missing SDV')}>
-                                                            <Button
-                                                                type="primary"
-                                                                shape="circle"
-                                                                size="small"
-                                                                icon={<FontAwesomeIcon icon="fa-solid fa-arrow-right" />}
-                                                                style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
-                                                                onClick={() => {
-                                                                    setSdvInformation(prevState => ({
-                                                                        ...prevState,
-                                                                        style: true
-                                                                    })); }}
-                                                            />
-                                                        </Tooltip>
-                                                    }
-                                                </div>
-                                            }
-                                            <SubjectDetailElementList
-                                                IsDisable={!permissions.canSubjectEdit}
-                                                StudyId={studyId}
-                                                ElementList={subjectElementList}
-                                                IsMissingData={permissions.canMonitoringMarkAsNull}
-                                                IsSdv={permissions.canMonitoringSdv}
-                                                SdvInformation={sdvInformation}
-                                            />
-                                        </>
-                                    )
-                                }
+                    {permissionsData ? (
+                        <Row gutter={16} >
+                            <Col xs={0} sm={0} md={6} lg={6} xl={5}>
+                                <SubjectDetailMenu subjectNumber={subjectNumber} setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} />
+                            </Col>
+                            <Col xs={1} sm={1} md={0} lg={0} xl={0}>
+                                <Button style={{ position: "fixed", top: "80px", left: "10px", zIndex: "1000" }} onClick={showDrawer} shape="circle" icon={<MenuOutlined />} />
+                                <SubjectDetailDrawer onClose={onClose} openMobileMenu={openMobileMenu} content={<SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={true} studyId={studyId} subjectId={subjectId} />} />
+                            </Col>
+                            <Col xs={24} sm={24} md={18} lg={18} xl={19} >
+                                <div id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom: "100px", paddingLeft: '50px' }}>
+                                    {!isLoading1 && !error1 && isLoaded && elementList && subjectElementList.length < 1 ?
+                                        (
+                                            <div style={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                height: 'calc(100vh - 170px)'
+                                            }}>
+                                                <Alert color="warning" style={{ height: "50px" }}>
+                                                    {props.t("There is no module on the page. Please contact the system administrator.")}
+                                                </Alert>
+                                            </div>
+                                        )
+                                        :
+                                        (
+                                            <>
 
-                            </div>
-                        </Col>
-                    </Row>
+                                                {
+                                                    permissionsData.canMonitoringSdv &&
+                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 10px', position: 'sticky', top: 70, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', zIndex: 999 }}>
+                                                        <Tag color="#87d068">{sdvInformation.inf}</Tag>
+                                                        <Progress
+                                                            percent={sdvInformation.percent}
+                                                            status="active"
+                                                            strokeColor={{
+                                                                from: '#87D068',
+                                                                to: '#87d068',
+                                                            }}
+                                                            size="small"
+                                                            style={{ width: '80%' }}
+                                                        />
+                                                        {sdvInformation.percent !== 100 &&
+                                                            <Tooltip title={props.t('Go to missing SDV')}>
+                                                                <Button
+                                                                    type="primary"
+                                                                    shape="circle"
+                                                                    size="small"
+                                                                    icon={<FontAwesomeIcon icon="fa-solid fa-arrow-right" />}
+                                                                    style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+                                                                    onClick={() => {
+                                                                        setSdvInformation(prevState => ({
+                                                                            ...prevState,
+                                                                            style: true
+                                                                        }));
+                                                                    }}
+                                                                />
+                                                            </Tooltip>
+                                                        }
+                                                    </div>
+                                                }
+                                                < SubjectDetailElementList
+                                                    IsDisable={!permissionsData.canSubjectEdit}
+                                                    StudyId={studyId}
+                                                    ElementList={subjectElementList}
+                                                    IsMissingData={permissionsData.canMonitoringMarkAsNull}
+                                                    IsSdv={permissionsData.canMonitoringSdv}
+                                                    SdvInformation={sdvInformation}
+                                                />
+                                            </>
+                                        )
+                                    }
+
+                                </div>
+                            </Col>
+                        </Row>
+                    ) : (
+                        <div></div>
+                    )}
                 </div>
             </div>
             <footer style={{ position: 'fixed', bottom: 0, right: 0, width: '100%', background: '#f1f1f1', padding: '10px', textAlign: 'right' }}>

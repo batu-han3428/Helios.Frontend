@@ -14,6 +14,8 @@ class NumericElement extends Component {
             LowerLimit: props.LowerLimit,
             UpperLimit: props.UpperLimit,
             Value: props.Value,
+            oldValue: props.Value,
+            elementName: props.ElementName,
             tooltipMessage: '',
             showTooltip: false,
             isRequired: props.IsRequired,
@@ -24,7 +26,7 @@ class NumericElement extends Component {
         this.handleBlur = this.handleBlur.bind(this);
         this.validateValue = this.validateValue.bind(this);
     }
-   
+ 
     handleChange(e) {
         let newValue = e.target.value;
         const regex = /^[0-9]*\.?[0-9]*$/;
@@ -78,7 +80,7 @@ class NumericElement extends Component {
             Value: value           
         });
 
-        this.props.HandleAutoSave(this.state.id, value);
+        this.props.HandleAutoSave(this.state.id, value, this.state.oldValue, this.state.elementName);
     }
 
     render() {
@@ -90,7 +92,7 @@ class NumericElement extends Component {
                     type="number"
                     step="0.01"
                     disabled={this.state.isDisable}
-                    value={this.state.Value}
+                    value={this.state.Value}                  
                     onChange={this.handleChange}
                     onBlur={this.handleBlur}
                     //min={this.state.LowerLimit}

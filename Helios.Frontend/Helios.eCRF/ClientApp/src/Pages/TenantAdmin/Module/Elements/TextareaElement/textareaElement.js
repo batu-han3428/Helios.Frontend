@@ -11,6 +11,8 @@ class TextareaElement extends Component {
             id: props.Id,
             isDisable: props.IsDisable,
             Value: props.Value,
+            oldValue: props.Value,
+            elementName: props.ElementName,
             defaultValue: props.DefaultValue,
             isRequired: props.IsRequired,
             isMissingItem: props.IsMissingItem
@@ -29,7 +31,7 @@ class TextareaElement extends Component {
         }
     }
     handleBlur(e) {
-        this.props.HandleAutoSave(this.state.id, e.target.value);
+        this.props.HandleAutoSave(this.state.id, e.target.value, this.state.oldValue, this.state.elementName);
     };
 
     render() {

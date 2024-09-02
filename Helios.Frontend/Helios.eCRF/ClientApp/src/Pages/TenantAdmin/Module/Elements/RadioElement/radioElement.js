@@ -14,6 +14,8 @@ class RadioElement extends Component {
             layout: props.Layout,
             ElementOptions: props.ElementOptions !== null && props.ElementOptions !== undefined && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
+            oldValue: props.Value,
+            elementName: props.ElementName,
             selectedOption: props.Value,
             isRequired: props.IsRequired,
             isMissingItem: props.IsMissingItem
@@ -24,7 +26,7 @@ class RadioElement extends Component {
 
     handleRadioChange = (value) => {
         this.setState({ selectedOption: value });
-        this.props.HandleAutoSave(this.state.id, value);
+        this.props.HandleAutoSave(this.state.id, value, this.state.oldValue, this.state.elementName);
     };
     componentDidUpdate(prevProps) {
         if (prevProps.Value !== this.props.Value) {

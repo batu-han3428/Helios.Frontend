@@ -12,6 +12,8 @@ class DropdownElement extends Component {
             isDisable: props.IsDisable,
             orgElementOptions: props.ElementOptions !== null && props.ElementOptions !== undefined && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
+            oldValue: props.Value,
+            elementName: props.ElementName,
             ElementOptions: [],
             selectedOption: null,
             isRequired: props.IsRequired,
@@ -48,7 +50,7 @@ class DropdownElement extends Component {
 
     handleChange = (selectedOption) => {
         this.setState({ selectedOption: selectedOption });
-        this.props.HandleAutoSave(this.state.id, selectedOption.value);
+        this.props.HandleAutoSave(this.state.id, selectedOption.value, this.state.oldValue, this.state.elementName);
     };
     componentDidUpdate(prevProps) {
         if (prevProps.Value !== this.props.Value) {

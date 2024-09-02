@@ -8,6 +8,8 @@ class TextElement extends Component {
             id: props.Id,
             isDisable: props.IsDisable,
             Value: props.Value === undefined ? "" : props.Value,
+            oldValue: props.Value,
+            elementName: props.ElementName,
             isRequired: props.IsRequired,
             isMissingItem: props.IsMissingItem
         }
@@ -25,7 +27,7 @@ class TextElement extends Component {
         }
     }
     handleBlur(e) {
-        this.props.HandleAutoSave(this.state.id, e.target.value);
+        this.props.HandleAutoSave(this.state.id, e.target.value,this.state.oldValue, this.state.elementName);
     };
 
     render() {

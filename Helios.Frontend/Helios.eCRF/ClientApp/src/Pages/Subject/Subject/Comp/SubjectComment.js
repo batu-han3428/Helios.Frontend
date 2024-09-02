@@ -69,7 +69,8 @@ const SubjectComment = props => {
             let data = {
                 id: 0,
                 elementId: props.subjectElementId,
-                comment: message
+                comment: message,
+                commentType:1,
             };
             if (id !== 0) data.id = id;
             const response = await setSubjectComment(data);

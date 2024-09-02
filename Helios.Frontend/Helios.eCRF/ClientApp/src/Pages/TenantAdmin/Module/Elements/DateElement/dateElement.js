@@ -35,6 +35,8 @@ class DateElement extends Component {
             EndYear: props.EndYear,
             IsPreview: props.IsPreview,
             Value: props.Value,
+            oldValue: props.Value,
+            elementName: props.ElementName,
             DefaultValue: props.DefaultValue,
             DayOptionGroup: [],
             DaySelectedGroup: null,
@@ -201,7 +203,7 @@ class DateElement extends Component {
             var month = this.state.MonthSelectedGroup.value < 10 && this.state.MonthSelectedGroup.label.toString().toLowerCase() !== "unk" ? '0' + this.state.MonthSelectedGroup.value : this.state.MonthSelectedGroup.label;
 
             var value = day + '.' + month + '.' + this.state.YearSelectedGroup.label;
-            this.props.HandleAutoSave(this.state.id, value);
+            this.props.HandleAutoSave(this.state.id, value, this.state.oldValue, this.state.elementName);
         }
     }
 

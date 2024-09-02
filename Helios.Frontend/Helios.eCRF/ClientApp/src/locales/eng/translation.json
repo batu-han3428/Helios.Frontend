@@ -663,5 +663,9 @@
   "UNK: Unknown": "UNK: Unknown",
   "Other reason": "Other reason",
   "Remove SDV": "Remove SDV",
-  "Go to missing SDV": "Go to missing SDV"
+  "Go to missing SDV": "Go to missing SDV",
+  "This study is adhering to Good Clinical Practice (GCP)!": "This study is adhering to Good Clinical Practice (GCP)!",
+  "Please, supply a reason for changing this field's value:": "Please, supply a reason for changing this field's value:",
+  "Old value": "Old value",
+  "New value": "New value"  
 }

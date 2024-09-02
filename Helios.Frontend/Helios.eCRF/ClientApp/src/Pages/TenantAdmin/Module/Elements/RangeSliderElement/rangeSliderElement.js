@@ -14,6 +14,8 @@ class RangeSliderElement extends Component {
                 0: props.LeftText,
                 100: props.RightText
             },
+            oldValue: props.Value,
+            elementName: props.ElementName,
             isRequired: props.IsRequired,
             isMissingItem: props.IsMissingItem
         }
@@ -35,7 +37,7 @@ class RangeSliderElement extends Component {
         }
     }
     handleAfterChange(value) {
-        this.props.HandleAutoSave(this.state.id, this.state.horizontal.toString());
+        this.props.HandleAutoSave(this.state.id, this.state.horizontal.toString(), this.state.oldValue, this.state.elementName);
     };
 
 

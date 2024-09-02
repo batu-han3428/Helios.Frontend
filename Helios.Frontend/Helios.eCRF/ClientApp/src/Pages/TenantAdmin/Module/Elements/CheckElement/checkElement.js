@@ -12,6 +12,8 @@ class CheckElement extends Component {
             checkedOptions: [],
             ElementOptions: props.ElementOptions !== undefined && props.ElementOptions !== null && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
+            oldValue: props.Value,
+            elementName: props.ElementName,
             isRequired: props.IsRequired,
             isMissingItem: props.IsMissingItem
         }
@@ -35,7 +37,7 @@ class CheckElement extends Component {
             : [...this.state.checkedOptions, value];
         this.setState({ checkedOptions });
         const val = checkedOptions.length > 0 ? JSON.stringify(checkedOptions) : "";
-        this.props.HandleAutoSave(this.state.id, val, 9);
+        this.props.HandleAutoSave(this.state.id, val, this.state.oldValue, this.state.elementName, 9);
     };
 
     componentDidUpdate(prevProps) {

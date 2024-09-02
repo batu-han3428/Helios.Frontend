@@ -134,6 +134,11 @@ export const SubjectApi = createApi({
             }),
             invalidatesTags: ['SubjectElement'],
         }),
+        getRelationPageElementList: builder.query({
+            query: (data) => `/Subject/GetRelationPageElementValues?subjectVisitPageModuleElementId=` + data.subjectVisitPageModuleElementId + '&studyId=' + data.studyId + '&value=' + data.value + '&subjectId=' + data.subjectId,
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0,          
+        }),
     }),
 });
 
@@ -166,5 +171,6 @@ export const { useSetSubjectCommentMutation } = SubjectApi;
 export const { useSetSubjectMissingDataMutation } = SubjectApi;
 
 export const { useSetSubjectSdvMutation } = SubjectApi;
+export const { useLazyGetRelationPageElementListQuery } = SubjectApi;
 
 export default SubjectApi;
