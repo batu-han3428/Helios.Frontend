@@ -629,5 +629,16 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
+
+        public async Task<RestResponse<List<SdvModel>>> GetSubjectSdvList()
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/GetSubjectSdvList", Method.Get);
+                AddApiHeaders(req);
+                var result = await client.ExecuteAsync<List<SdvModel>>(req);
+                return result;
+            }
+        }
     }
 }

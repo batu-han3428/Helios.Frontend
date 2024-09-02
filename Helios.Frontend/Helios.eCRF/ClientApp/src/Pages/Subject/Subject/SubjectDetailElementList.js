@@ -31,7 +31,7 @@ import { SubjectMissingDataType } from './Comp/SubjectMissingDataType';
 import { SubjectDetailContext } from './SubjectDetail';
 import RandomizationElement from '../../TenantAdmin/Module/Elements/RandomizationElement/RandomizationElement';
 
-function SubjectDetailElementList(props) {    
+const SubjectDetailElementList = (props) => {
     const [tenantId] = useState(props.TenantId);
     const [subjectVisitPageModuleId] = useState(0);
     const [studyId] = useState(props.StudyId);
@@ -41,7 +41,7 @@ function SubjectDetailElementList(props) {
     const [isMissingData] = useState(props.IsMissingData);
     const [isSdv] = useState(props.IsSdv);
 
-    const { modalRef, setModalInf, setSdv } = useContext(SubjectDetailContext);
+    const { modalRef, setModalInf, setSdv, elementRef } = useContext(SubjectDetailContext);
 
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
 
@@ -190,14 +190,14 @@ function SubjectDetailElementList(props) {
         return Array.isArray(props.ElementList) ? props.ElementList.map((item) => {
             const w = item.width === 0 ? 12 : item.width;
             const cls = "mb-6 col-md-" + w;
-      
+
             if (item.isHidden) {
                 return null;
             } else {
                 return (
                     <Row className={cls} key={item.subjectVisitPageModuleElementId} style={{ marginLeft: 'unset', boxShadow: props.SdvInformation && props.SdvInformation.style && props.SdvInformation.item === item.subjectVisitPageModuleElementId ? '0 0 15px rgba(0, 255, 0, 0.5)' : 'unset' }}>
                         <React.Fragment>
-                            <div style={{ marginBottom: '3px', marginTop: '10px', display: 'flex', alignItems: 'center' }}>
+                            <div style={{ marginBottom: '3px', marginTop: '10px', display: 'flex', alignItems: 'center' }} ref={elementRef}>
                                 <label style={{ marginRight: '5px', marginBottom: '0' }}>
                                     {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
                                     {item.elementType !== 1 && item.title}
@@ -207,7 +207,7 @@ function SubjectDetailElementList(props) {
                                 }
                                 {item.missingData &&
                                     (() => {
-                                        const splitValue = item.userValue.split('_');
+                                        const splitValue = (item.userValue !== null && item.userValue !== "") ? item.userValue.split('_') : "";
                                         const searchValue = splitValue.length > 1 ? splitValue[0] : item.userValue;
                                         const foundItem = SubjectMissingDataType.find(x => x.value.includes(searchValue));
                                         return (
@@ -231,7 +231,7 @@ function SubjectDetailElementList(props) {
                                                         marginRight: '5px'
                                                     }}
                                                     onClick={() => {
-                                                        if (isMissingData && item.canMissing) { 
+                                                        if (isMissingData && item.canMissing) {
                                                             setModalInf({ title: props.t('Select one of the reasons for the missing value'), content: <SubjectMissingData data={item.missingData && item.userValue} elementId={item.subjectVisitPageModuleElementId} refs={modalRef} />, isButton: true, buttonText: props.t('Save') }); modalRef.current.tog_backdrop();
                                                         }
                                                     }}
@@ -272,11 +272,11 @@ function SubjectDetailElementList(props) {
 
     return (
         <div>
-            <div className="row" style={{ marginLeft: 'unset' }}>              
+            <div className="row" style={{ marginLeft: 'unset' }}>
                 {renderContent}
             </div>
         </div>
     );
-}
+};
 
 export default withTranslation()(React.memo(SubjectDetailElementList));

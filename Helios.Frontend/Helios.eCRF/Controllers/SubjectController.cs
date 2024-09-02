@@ -205,5 +205,17 @@ namespace Helios.eCRF.Controllers
             var result = await _subjectService.SetSubjectSdv(ids);
             return Ok(result);
         }
+
+        /// <summary>
+        /// Giriş yapan kullanıcının merkez bilgisine göre hastaların sdv durumlarını listeler
+        /// </summary>
+        /// <returns>sdv listesi</returns>
+        [HttpGet]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> GetSubjectSdvList()
+        {
+            var result = await _subjectService.GetSubjectSdvList();
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
     }
 }

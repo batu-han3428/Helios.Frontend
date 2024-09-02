@@ -152,17 +152,17 @@ const userRoutes = [
     //study
     { path: "/studylist/:isLocked", component: <StudyList />, menuType: "admin", roles: ['TenantAdmin'] },
     { path: "/addstudy/:copyStudy", component: <AddOrUpdateStudy />, menuType: "admin", roles: ['TenantAdmin'] },
-    { path: "/visits/:studyId", component: <Study />, menuType: "study", roles: ['TenantAdmin'] },
-    { path: "/pdf", component: <Pdf />, menuType: "sso", roles: ['TenantAdmin', 'StudyUser']},
+    { path: "/visits/:studyId", component: <Study />, menuType: "tenantstudy", roles: ['TenantAdmin'] },
+    { path: "/pdf", component: <Pdf />, menuType: "study", roles: ['TenantAdmin', 'StudyUser']},
 
     //sites
-    { path: "/sites/:studyId", component: <Sites />, menuType: "study", roles: ['TenantAdmin'] },
+    { path: "/sites/:studyId", component: <Sites />, menuType: "tenantstudy", roles: ['TenantAdmin'] },
 
     //permissions
-    { path: "/permissions/:studyId", component: <Permission />, menuType: "study", roles: ['TenantAdmin'] },
+    { path: "/permissions/:studyId", component: <Permission />, menuType: "tenantstudy", roles: ['TenantAdmin'] },
 
     //users
-    { path: "/users/:studyId", component: <User />, menuType: "study", roles: ['TenantAdmin'] },
+    { path: "/users/:studyId", component: <User />, menuType: "tenantstudy", roles: ['TenantAdmin'] },
 
     //admin users
     { path: "/tenantusers", component: <TenantUsers />, menuType: "admin", roles: ['TenantAdmin'] },
@@ -173,8 +173,8 @@ const userRoutes = [
     { path: "/SSO-studies/:tenantId", component: <SSO_Studies />, menuType: "sso", roles: ['StudyUser', 'TenantAdmin'] },
 
     //E-mail template
-    { path: "/email-templates/:studyId", component: <EmailTemplateList />, menuType: "study", roles: ['TenantAdmin'] },
-    { path: "/set-email-templates/:studyId/:templateId?", component: <AddOrUpdateEmailTemplate />, menuType: "study", roles: ['TenantAdmin'] },
+    { path: "/email-templates/:studyId", component: <EmailTemplateList />, menuType: "tenantstudy", roles: ['TenantAdmin'] },
+    { path: "/set-email-templates/:studyId/:templateId?", component: <AddOrUpdateEmailTemplate />, menuType: "tenantstudy", roles: ['TenantAdmin'] },
 
     //Add system admin
     { path: "/add-system-admin", component: <ListSystemAdmin />, menuType: "superadmin", roles: ['SuperAdmin'] },
@@ -192,7 +192,7 @@ const userRoutes = [
     { path: "/dashboard", component: <Dashboard />, menuType: "admin", roles: ['TenantAdmin'] },
 
    //profile
-    { path: "/profile", component: <UserProfile />, menuType: ["admin", "StudyUser", "superadmin", "systemadmin", "sso", "study"], roles: ['StudyUser', 'TenantAdmin', 'SystemAdmin'] },
+    { path: "/profile", component: <UserProfile />, menuType: ["admin", "StudyUser", "superadmin", "systemadmin", "study", "tenantstudy"], roles: ['StudyUser', 'TenantAdmin', 'SystemAdmin'] },
 
   //Email
     { path: "/email-inbox", component: <EmailInbox />, menuType: "admin", roles: ['TenantAdmin'] },
@@ -206,11 +206,11 @@ const userRoutes = [
 
   // Icons
     { path: "/icons-dripicons", component: <IconDripicons />, menuType: "admin", roles: ['TenantAdmin'] },
-    { path: "/icons-materialdesign/:studyId", component: <IconMaterialdesign />, menuType: "study", roles: ['TenantAdmin'] },
-    { path: "/icons-fontawesome/:studyId", component: <IconFontawesome />, menuType: "study", roles: ['TenantAdmin'] },
-    { path: "/icons-ion/:studyId", component: <IconIon />, menuType: "study, roles: ['TenantAdmin']" },
-    { path: "/icons-themify/:studyId", component: <ThemifyIcon />, menuType: "study", roles: ['TenantAdmin'] },
-    { path: "/icons-typicons/:studyId", component: <TypiconsIcon />, menuType: "study", roles: ['TenantAdmin'] },
+    { path: "/icons-materialdesign/:studyId", component: <IconMaterialdesign />, menuType: "tenantstudy", roles: ['TenantAdmin'] },
+    { path: "/icons-fontawesome/:studyId", component: <IconFontawesome />, menuType: "tenantstudy", roles: ['TenantAdmin'] },
+    { path: "/icons-ion/:studyId", component: <IconIon />, menuType: "tenantstudy, roles: ['TenantAdmin']" },
+    { path: "/icons-themify/:studyId", component: <ThemifyIcon />, menuType: "tenantstudy", roles: ['TenantAdmin'] },
+    { path: "/icons-typicons/:studyId", component: <TypiconsIcon />, menuType: "tenantstudy", roles: ['TenantAdmin'] },
 
   // Tables
     { path: "/tables-basic", component: <BasicTables />, menuType: "admin", roles: ['TenantAdmin'] },
@@ -248,23 +248,23 @@ const userRoutes = [
     { path: "/ui-offcanvas", component: <UiOffcanvas />, menuType: "admin", roles: ['TenantAdmin'] },
 
     //Sdv
-    { path: "/sdv", component: <SdvList />, menuType: "sso", roles: ['StudyUser'] },
+    { path: "/sdv", component: <SdvList />, menuType: "study", roles: ['StudyUser'] },
     //Query
-    { path: "/query", component: <QueryList />, menuType: "sso", roles: ['StudyUser'] },
+    { path: "/query", component: <QueryList />, menuType: "study", roles: ['StudyUser'] },
     //Study documents
-    { path: "/studyDocuments", component: <StudyDocuments />, menuType: "sso", roles: ['StudyUser'] },
+    { path: "/studyDocuments", component: <StudyDocuments />, menuType: "study", roles: ['StudyUser'] },
     ////Medical coding
-    { path: "/medicalCoding", component: <MedicalCoding />, menuType: "sso", roles: ['StudyUser'] },
+    { path: "/medicalCoding", component: <MedicalCoding />, menuType: "study", roles: ['StudyUser'] },
     //Iwrs
-    { path: "/iwrs", component: <Iwrs />, menuType: "sso", roles: ['StudyUser'] },
+    { path: "/iwrs", component: <Iwrs />, menuType: "study", roles: ['StudyUser'] },
 
     //Subject
-    { path: "/subjectlist/:studyId", component: <SubjectList />, menuType: "sso", roles: ['StudyUser'] },
-    { path: "/subject-detail/:studyId/:pageId/:subjectId/:subjectNumber", component: <SubjectDetail />, menuType: "sso", roles: ['StudyUser'] },
+    { path: "/subjectlist/:studyId", component: <SubjectList />, menuType: "study", roles: ['StudyUser'] },
+    { path: "/subject-detail/:studyId/:pageId/:subjectId/:subjectNumber", component: <SubjectDetail />, menuType: "study", roles: ['StudyUser'] },
 
     // this route should be at the end of all other routes
     { path: "/", roles: ["TenantAdmin"], redirect: "/studylist/false", menuType: "admin" },
-    { path: "/", roles: ["StudyUser"], redirect: "/subjectlist", menuType: "sso" },
+    { path: "/", roles: ["StudyUser"], redirect: "/subjectlist", menuType: "study" },
     { path: "/", roles: ["SuperAdmin"], redirect: "/add-system-admin", menuType: "superadmin" },
     { path: "/", roles: ["SystemAdmin"], redirect: "/tenants", menuType: "systemadmin" },
 ];

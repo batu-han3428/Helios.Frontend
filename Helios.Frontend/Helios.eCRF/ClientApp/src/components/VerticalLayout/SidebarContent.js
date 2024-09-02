@@ -24,7 +24,7 @@ const MenuItem = ({ item, t, isDemoStudy, pageType }) => {
 
     const studyInformation = useSelector(state => state.rootReducer.Study);
 
-    const dynamicPath = pageType !== "study" ? item.to : item.to === "/" || item.to === "/invalid" ? item.to : `${item.to}/${studyInformation.studyId}`;
+    const dynamicPath = pageType !== "tenantstudy" ? item.to : item.to === "/" || item.to === "/invalid" ? item.to : `${item.to}/${studyInformation.studyId}`;
 
     const handleMenuItemClick = (event, item) => {
         event.preventDefault();
@@ -164,7 +164,7 @@ const SidebarContent = props => {
         removeActivation(items);
         for (let i = 0; i < items.length; ++i) {
             let itemPath = items[i].pathname;
-            if (props.pageType === "study") {
+            if (props.pageType === "tenantstudy") {
                 pathName = "/" + pathName.split("/")[1] + "/";
                 itemPath = "/" + itemPath.split("/")[1] + "/";
             }
@@ -214,7 +214,7 @@ const SidebarContent = props => {
       <SimpleBar style={{ maxHeight: "100%" }} ref={ref}>
         <div id="sidebar-menu">
           <ul className="metismenu list-unstyled" id="side-menu">
-            {props.pageType === 'study' && <li className="menu-title" style={{backgroundColor:"#6d6e70", color: "white !important", fontSize:"13px"}} ><FontAwesomeIcon style={{marginRight:"10px"}} icon="fa-solid fa-microscope" /> {studyInformation.studyName}</li> }
+            {props.pageType === 'tenantstudy' && <li className="menu-title" style={{backgroundColor:"#6d6e70", color: "white !important", fontSize:"13px"}} ><FontAwesomeIcon style={{marginRight:"10px"}} icon="fa-solid fa-microscope" /> {studyInformation.studyName}</li> }
             {items.map((item, index) => {
                 const hasIsDemoProperty = "isDemo" in item;
 
@@ -228,7 +228,7 @@ const SidebarContent = props => {
                 return (
                     <MenuItem
                         pageType={props.pageType}
-                        isDemoStudy={props.pageType === "study" ? studyInformation.isDemo : null}
+                        isDemoStudy={props.pageType === "tenantstudy" ? studyInformation.isDemo : null}
                         key={index}
                         item={item}
                         t={props.t}

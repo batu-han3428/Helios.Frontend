@@ -138,6 +138,11 @@ export const SubjectApi = createApi({
             }),
             invalidatesTags: ['SubjectElement'],
         }),
+        getSubjectSdvList: builder.query({
+            query: () => '/Subject/GetSubjectSdvList',
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0
+        }),
     }),
 });
 
@@ -170,5 +175,7 @@ export const { useSetSubjectCommentMutation } = SubjectApi;
 export const { useSetSubjectMissingDataMutation } = SubjectApi;
 
 export const { useSetSubjectSdvMutation } = SubjectApi;
+
+export const { useLazyGetSubjectSdvListQuery } = SubjectApi;
 
 export default SubjectApi;

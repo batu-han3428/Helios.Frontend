@@ -37,7 +37,7 @@
             icon: "fa-solid fa-user-plus"
         }
     ],
-    study: [
+    tenantstudy: [
         {
             label: "Admin page",
             to: "/",

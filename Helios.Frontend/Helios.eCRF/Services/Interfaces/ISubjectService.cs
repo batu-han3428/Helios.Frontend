@@ -23,5 +23,6 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> SetSubjectComment(SubjectCommentDTO dto);
         Task<ApiResponse<dynamic>> SetSubjectMissingData(SubjectMissingDataDTO dto);
         Task<ApiResponse<dynamic>> SetSubjectSdv(List<Int64> ids);
+        Task<RestResponse<List<SdvModel>>> GetSubjectSdvList();
     }
 }

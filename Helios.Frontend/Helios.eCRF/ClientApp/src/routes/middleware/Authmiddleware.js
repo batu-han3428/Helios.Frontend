@@ -49,7 +49,7 @@ const AuthMiddleware = (props) => {
     };
 
     const getStudy = async (result) => {
-        const apiUrl = API_BASE_URL + `Study/GetStudy/${studyId}`;
+        const apiUrl = API_BASE_URL + `Study/GetStudy/${studyId !== undefined ? studyId : result.studyId}`;
         fetch(apiUrl, {
             method: 'GET',
             headers: {
@@ -100,7 +100,7 @@ const AuthMiddleware = (props) => {
             );
         } else {
             pageType = userRoutes.find(route => route.roles && route.roles.some(role => result.roles.includes(role)) && route.path === Path)?.menuType ?? 'common';
-            Layout = pageType === layoutTypes.SSO ? SSOLayout : VerticalLayout;
+            Layout = pageType === layoutTypes.SSO || pageType === 'sso' ? SSOLayout : VerticalLayout;
             if (Path !== "/" && roles && !roles.some(role => result.roles.includes(role))) {
                 return (
                     <Navigate to={{ pathname: "/AccessDenied", state: { from: props.location } }} />
@@ -112,24 +112,28 @@ const AuthMiddleware = (props) => {
                 } else {
                     const matchedRoute1 = userRoutes.find(route => route.roles && route.roles.some(role => result.roles.includes(role)) && route.path === "/");
                     if (matchedRoute1 && matchedRoute1.roles[0] === "StudyUser") {
-                        matchedRoute = matchedRoute1.redirect + "/" + result.studyId[0];
+                        matchedRoute = matchedRoute1.redirect + "/" + (Array.isArray(result.studyId) ? result.studyId[0] : result.studyId);
                     }
                     else if (matchedRoute1) {
                         matchedRoute = matchedRoute1.redirect;
                     } 
                 }
-                if (pageType !== "study" && result.studyId !== "") {
+                if (pageType !== "tenantstudy" && result.studyId !== "" && matchedRoute === '/SSO-tenants-or-studies') {
                     updateJwt(user, 0);
                 }
             }
-            if (pageType === "study") {
+            if (pageType === "tenantstudy") {
                 fetchData(result);
                 if (error) {
                     return (
                         <Navigate to={{ pathname: "/AccessDenied", state: { from: props.location } }} />
                     );
                 }
-            } else {
+            }
+            else if (pageType === "study" && matchedRoute !== "/SSO-tenants-or-studies") {
+                getStudy(result);
+            }
+            else {
                 Promise.resolve().then(() => {
                     dispatch(resetStudy());
                 });

@@ -7,12 +7,11 @@ import { MenuOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
 import SubjectDetailMenu from './Comp/SubjectDetailMenu';
 import './Subject.css';
 import SubjectDetailDrawer from './Comp/SubjectDetailDrawer';
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useLazyGetSubjectDetailMenuQuery, useGetSubjectElementListQuery, useLazyGetUserPermissionsQuery } from '../../../store/services/Subject';
 import { endloading, startloading } from '../../../store/loader/actions';
 import { useDispatch } from "react-redux";
 import SubjectDetailElementList from './SubjectDetailElementList.js';
-import { useNavigate } from "react-router-dom";
 import { showToast } from '../../../store/toast/actions';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ModalComp from '../../../components/Common/ModalComp/ModalComp';
@@ -27,6 +26,9 @@ const SubjectDetail = props => {
 
     const dispatch = useDispatch();
 
+    const location = useLocation();
+
+    const elementRef = useRef(null);
     const modalRef = useRef();
     const [modalInf, setModalInf] = useState({});
     const [selectedKeys, setSelectedKeys] = useState(['1-1']);
@@ -73,10 +75,29 @@ const SubjectDetail = props => {
             navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}/${subjectNumber}`);
         }
     };
-    
+
+    const scrollToElement = () => {
+        if (elementRef.current) {
+            elementRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+    };
+
+    useEffect(() => {
+        const { showSdvElement } = location.state || {};
+        if (sdvInformation.style && sdvInformation.item) {
+            scrollToElement();
+        }
+        else if (showSdvElement && sdvInformation.item) {
+            setSdvInformation(prevState => ({
+                ...prevState,
+                style: true
+            }));
+        }
+    }, [sdvInformation.style, sdvInformation.item]);
+
     function filterElements(elements) {
         return elements.reduce((acc, item) => {
-            if (![1, 17, 14, 15, 16, 3, 7, 18].includes(item.elementType) && item.userValue !== "" && item.userValue !== null) {
+            if (![1, 17, 14, 15, 16, 3, 18].includes(item.elementType) && item.userValue !== "" && item.userValue !== null) {
                 acc.push(item);
             }
             if (item.childElements && item.childElements.length > 0) {
@@ -246,7 +267,7 @@ const SubjectDetail = props => {
 
     return (
         <React.Fragment>
-            <SubjectDetailContext.Provider value={{ modalRef, setModalInf, setSdv }}>
+            <SubjectDetailContext.Provider value={{ modalRef, setModalInf, setSdv, elementRef }}>
                 <div className="page-content" style={{ paddingBottom: 0, paddingLeft: 0 }}>
                     <div className="container-fluid" style={{ paddingLeft: 0 }}>
                     <Row gutter={16} >
@@ -313,7 +334,6 @@ const SubjectDetail = props => {
                                                 IsMissingData={permissions.canMonitoringMarkAsNull}
                                                 IsSdv={permissions.canMonitoringSdv}
                                                 SdvInformation={sdvInformation}
-                                                modalRef={modalRef}
                                             />
                                         </>
                                     )

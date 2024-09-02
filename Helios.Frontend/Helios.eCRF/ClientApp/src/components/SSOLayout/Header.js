@@ -14,7 +14,7 @@ import logoheliosImg from "../../assets/images/helios-logo.png";
 import logoheliossmImg from "../../assets/images/helios-sm-logo.png";
 import { useUserPermissionsListGetQuery } from '../../store/services/Permissions';
 import { useStudyGetQuery } from '../../store/services/Study';
-
+import { useSelector } from "react-redux";
 //i18n
 import { withTranslation } from "react-i18next";
 
@@ -33,9 +33,16 @@ const Header = props => {
     const [search, setsearch] = useState(false);
     const [singlebtn, setSinglebtn] = useState(false);
 
+    const studyInformation = useSelector(state => state.rootReducer.Study);
+
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
-    const newstudyId = studyId === undefined ? 0 : studyId;
+    const [newstudyId, setNewStudyId] = useState(0);
+
+    useEffect(() => {
+        setNewStudyId((studyInformation.studyId !== undefined && studyInformation.studyId !== "") ? studyInformation.studyId : studyId !== undefined ? studyId : 0);
+    }, [studyInformation.studyId, studyId]);
+
     
     const { data: permissionData, isLoading, isError, refetch } = useUserPermissionsListGetQuery(newstudyId, { refetchOnMountOrArgChange: true });
     useEffect(() => {
@@ -135,7 +142,7 @@ const Header = props => {
                             {!isLoading && !isError && permissionData && (
                                 <>
                                     {permissionData.canSubjectView && (
-                                        <Link to={`/subjectlist/${studyId}`} className="" onClick={() => handleClick('subject')} >
+                                        <Link to={`/subjectlist/${studyId !== undefined ? studyId : studyInformation.studyId}`} className="" onClick={() => handleClick('subject')} >
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.subject ? 'underline' : 'none', backgroundColor: clickedLinks.subject ? 'white' : '', marginRight: '30px' }}>{props.t("Subject")}</label>
                                         </Link>
                                     )
