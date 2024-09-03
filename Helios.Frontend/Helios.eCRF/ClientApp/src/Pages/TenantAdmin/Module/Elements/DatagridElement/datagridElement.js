@@ -25,6 +25,7 @@ class DatagridElement extends Component {
             userId: props.UserId,
             isDisable: props.IsDisable,
             isMissingData: props.IsMissingData,
+            isAuditTrail: props.IsAuditTrail,
             isSdv: props.IsSdv,
             sdvInformation: props.SdvInformation,
             columnCount: props.ColumnCount,
@@ -152,6 +153,7 @@ class DatagridElement extends Component {
             prevProps.UserId !== this.props.UserId ||
             prevProps.IsDisable !== this.props.IsDisable ||
             prevProps.IsMissingData !== this.props.IsMissingData ||
+            prevProps.IsAuditTrail !== this.props.IsAuditTrail ||
             prevProps.IsSdv !== this.props.IsSdv ||
             prevProps.SdvInformation !== this.props.SdvInformation ||
             prevProps.ColumnCount !== this.props.ColumnCount ||
@@ -169,6 +171,7 @@ class DatagridElement extends Component {
                 userId: this.props.UserId,
                 isDisable: this.props.IsDisable,
                 isMissingData: this.props.IsMissingData,
+                isAuditTrail: this.props.IsAuditTrail,
                 isSdv: this.props.IsSdv,
                 sdvInformation: this.props.SdvInformation,
                 columnCount: this.props.ColumnCount,
@@ -193,7 +196,7 @@ class DatagridElement extends Component {
         var result = false;
         var cld = [];
         this.state.childElementList.forEach(item => {
-            if (this.state.isDisable) {
+            if (this.state.IsFromDesign) {
                 if (item.columnIndex === colIndex + 1) {
                     result = true;
                     cld.push(item);
@@ -218,7 +221,7 @@ class DatagridElement extends Component {
         }
         else {
             if (result) {
-                elements = <SubjectDetailElementList SdvInformation={this.state.sdvInformation} IsSdv={this.state.isSdv} IsMissingData={this.state.isMissingData} TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
+                elements = <SubjectDetailElementList SdvInformation={this.state.sdvInformation} IsSdv={this.state.isSdv} IsMissingData={this.state.isMissingData} IsAuditTrail={this.state.isAuditTrail} TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
             }
             else {
                 return "";

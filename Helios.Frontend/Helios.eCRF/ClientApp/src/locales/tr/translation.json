@@ -516,10 +516,14 @@
   "Do you want to mark all empty fields on this page as 'missing data' ?": "Bu sayfadaki tüm boş alanları 'eksik veri' olarak işaretlemek istiyor musunuz?",
   "There is no blank space to mark as missing data.": "Eksik veri olarak işaretlenecek boşluk yok.",
   "All data on this page will be SDV'ed.": "Bu sayfadaki tüm veriler SDV'lenecektir.",
-  "Number of blank data that cannot be SDV :": "SDV yapılamayan boş veri sayısı :",
   "This study is adhering to Good Clinical Practice (GCP)!": "Bu çalışma İyi Klinik Uygulamaları (İKU)'na uygundur!",
   "Please, supply a reason for changing this field's value:": "Lütfen bu alanın değerini değiştirme nedenini belirtin:",
   "Old value": "Eski değer",
-  "New value": "Yeni değer"
+  "New value": "Yeni değer",
+  "Number of blank data that cannot be SDV :": "SDV yapılamayan boş veri sayısı :",
+  "Fullname": "Ad-soyad",
+  "Previous data": "Önceki veri",
+  "New data": "Yeni veri",
+  "Audit trail date": "Değişikliklerin takibi tarihi"
 
 }
