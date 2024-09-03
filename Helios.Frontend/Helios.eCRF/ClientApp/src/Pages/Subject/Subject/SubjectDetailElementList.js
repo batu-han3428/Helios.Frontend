@@ -1,6 +1,6 @@
 ﻿import React, { useState, useContext, useCallback, useMemo } from 'react';
 import { Row } from "reactstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import '../../TenantAdmin/Module/FormBuilder/formBuilder.css';
 import { useDispatch } from "react-redux";
 import { startloading, endloading } from '../../../store/loader/actions';
@@ -25,6 +25,7 @@ import ConcomittantMedicationElement from '../../TenantAdmin/Module/Elements/Con
 import { withTranslation } from "react-i18next";
 import { useAutoSaveSubjectMutation } from '../../../store/services/Subject';
 import SubjectComment from './Comp/SubjectComment';
+import SubjectChangeElementComment from './Comp/SubjectChangeElementComment';
 import SubjectMissingData from './Comp/SubjectMissingData';
 import { showToast } from '../../../store/toast/actions';
 import { SubjectMissingDataType } from './Comp/SubjectMissingDataType';
@@ -32,9 +33,15 @@ import { SubjectDetailContext } from './SubjectDetail';
 import RandomizationElement from '../../TenantAdmin/Module/Elements/RandomizationElement/RandomizationElement';
 
 const SubjectDetailElementList = (props) => {
+import { useStudyGetQuery } from '../../../store/services/Study';
+
+function SubjectDetailElementList(props) {
+    const modalRef = useRef();
+    const [modalInf, setModalInf] = useState({});
     const [tenantId] = useState(props.TenantId);
     const [subjectVisitPageModuleId] = useState(0);
     const [studyId] = useState(props.StudyId);
+    const { subjectId } = useParams();
     const [isDisable] = useState(props.IsDisable);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -43,17 +50,28 @@ const SubjectDetailElementList = (props) => {
 
     const { modalRef, setModalInf, setSdv, elementRef } = useContext(SubjectDetailContext);
 
+
+
     const [autoSaveSubject] = useAutoSaveSubjectMutation();
 
-    const AutoSave = async (id, value, type = 0) => {
+
+    const { data: studyData, isLoadingStudy, isErrorStudy } = useStudyGetQuery(studyId);
+
+   
+    const AutoSave = async (id, value, oldValue = "", elementName = "", type = 0) => {
         if (value !== undefined && value !== null && (value !== "" || type === 9 || type === 11)) {
             dispatch(startloading());
-            const response = await autoSaveSubject({
-                Id: id,
-                Value: value,
-                Type: type
-            });
-            dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
+            if (studyData.reasonForChange && type !== 7 && type !== 12 && type !== 14 && type !== 17) {
+                setModalInf({ title: props.t("This study is adhering to Good Clinical Practice (GCP)!"), content: <SubjectChangeElementComment studyId={studyId} subjectId={subjectId} isMissingData={false} elementName={elementName} oldValue={oldValue} subjectElementId={id} value={value} type={String(type)} commentType='2' />, isButton: false }); modalRef.current.tog_backdrop();
+            } else {
+                const response = await autoSaveSubject({
+                    Id: id,
+                    Value: value,
+                    ElementName: "",
+                    Type: type
+                });
+                dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
+            }
             dispatch(endloading());
         }
     }
@@ -72,6 +90,7 @@ const SubjectDetailElementList = (props) => {
         const dsbl = isDisable ? "disabled" : "";
         const commonProps = {
             Id: param.subjectVisitPageModuleElementId,
+            ElementName: param.elementName,
             StudyVisitPageModuleElementId: param.studyVisitPageModuleElementId,
             SubjectVisitPageModuleId: param.subjectVisitPageModuleId,
             Value: param.missingData ? "" : (param.userValue ?? ""),
@@ -135,6 +154,8 @@ const SubjectDetailElementList = (props) => {
                 style: { color: "#8BB9EE" },
             },
             {
+
+
                 key: '4',
                 label: <a onClick={() => navigate('')}>{props.t("Audit trail")}</a>,
                 icon: <FontAwesomeIcon icon="fas fa-directions" style={{ color: "#5b626b" }} />,
@@ -161,7 +182,7 @@ const SubjectDetailElementList = (props) => {
         if (isMissingData && param.canMissing && ![18].includes(param.elementType)) {
             items.splice(1, 0, {
                 key: '2',
-                label: <a onClick={() => { setModalInf({ title: props.t('Select one of the reasons for the missing value'), content: <SubjectMissingData data={param.missingData && param.userValue} elementId={param.subjectVisitPageModuleElementId} refs={modalRef} />, isButton: true, buttonText: props.t('Save') }); modalRef.current.tog_backdrop(); }}>{props.t("Missing data")}</a>,
+                label: <a onClick={() => { setModalInf({ title: props.t('Select one of the reasons for the missing value'), content: <SubjectMissingData studyId={studyId} subjectId={subjectId} data={param.missingData && param.userValue} elementId={param.subjectVisitPageModuleElementId} reasonForChange={studyData.reasonForChange} elementName={param.elementName} oldValue={param.userValue} type={String(param.elementType)} refs={modalRef} />, isButton: true, buttonText: props.t('Save') }); modalRef.current.tog_backdrop(); }}>{props.t("Missing data")}</a>,
                 icon: <FontAwesomeIcon icon="fas fa-check-square" style={{ color: "#bf9ec9" }} />,
                 style: { color: "#bf9ec9" }
             });
@@ -208,7 +229,7 @@ const SubjectDetailElementList = (props) => {
                                 {item.missingData &&
                                     (() => {
                                         const splitValue = (item.userValue !== null && item.userValue !== "") ? item.userValue.split('_') : "";
-                                        const searchValue = splitValue.length > 1 ? splitValue[0] : item.userValue;
+                                        const searchValue = splitValue != null ? (splitValue.length > 1 ? splitValue[0] : item.userValue) : splitValue;
                                         const foundItem = SubjectMissingDataType.find(x => x.value.includes(searchValue));
                                         return (
                                             <Tooltip title={foundItem && props.t(foundItem.label)}>

@@ -143,6 +143,11 @@ export const SubjectApi = createApi({
             refetchOnMountOrArgChange: true,
             keepUnusedDataFor: 0
         }),
+        getRelationPageElementList: builder.query({
+            query: (data) => `/Subject/GetRelationPageElementValues?subjectVisitPageModuleElementId=` + data.subjectVisitPageModuleElementId + '&studyId=' + data.studyId + '&value=' + data.value + '&subjectId=' + data.subjectId,
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0,          
+        }),
     }),
 });
 
@@ -177,5 +182,6 @@ export const { useSetSubjectMissingDataMutation } = SubjectApi;
 export const { useSetSubjectSdvMutation } = SubjectApi;
 
 export const { useLazyGetSubjectSdvListQuery } = SubjectApi;
+export const { useLazyGetRelationPageElementListQuery } = SubjectApi;
 
 export default SubjectApi;

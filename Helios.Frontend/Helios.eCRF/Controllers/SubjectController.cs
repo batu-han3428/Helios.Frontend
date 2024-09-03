@@ -155,6 +155,18 @@ namespace Helios.eCRF.Controllers
         }
 
         /// <summary>
+        /// hastanın ilgili elementine bağlı relation verilerini çekiyor
+        /// </summary>
+        /// <param name="subjectVisitPageModuleElementId">hasta element id</param>
+        /// <returns>yorumlar</returns>
+        [HttpGet]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> GetRelationPageElementValues(Int64 subjectVisitPageModuleElementId,Int64 studyId, string? value, Int64 subjectId)
+        {
+            var result = await _subjectService.GetRelationPageElementValues(subjectVisitPageModuleElementId,studyId,value,subjectId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+        /// <summary>
         /// hastanın elementindeki seçili yorumu siler
         /// </summary>
         /// <param name="id">yorum id</param>

@@ -40,7 +40,6 @@ const SubjectList = props => {
     const [showArchivedSubjects, setShowArchivedSubjects] = useState(false);
     const [subjectId, setSubjectId] = useState(0);
     const [data, setData] = useState([]);
-    const [permissions, setPermissions] = useState([]);
     const [filteredInfo, setFilteredInfo] = useState({});
     const [searchsubjectNumberText, setSearchsubjectNumberText] = useState('');
     const [studyUserSiteData, setStudyUserSiteData] = useState({});
@@ -68,7 +67,6 @@ const SubjectList = props => {
                 return;
             }
             setView(true);
-            setPermissions(permissionsData);         
             optionGroup(studyId);
             getStudy(studyId);
             triggerSubjectList({ studyId: studyId, showArchivedSubjects: showArchivedSubjects });
@@ -88,7 +86,7 @@ const SubjectList = props => {
                         updatedAt: formatDate(item.updatedAt),
                         sdv: SdvIconStatu(2),
                         query: QueryIconStatu(1),
-                        actions: getActions(item, permissions),
+                        actions: getActions(item, permissionsData),
                         key: uuidv4()
                     };
                 });
@@ -111,7 +109,7 @@ const SubjectList = props => {
             setData(newData);
             dispatch(endloading());
         }
-    }, [subjectsData, error, isLoading, permissions]);
+    }, [subjectsData, error, isLoading, permissionsData]);
 
     const goToSubjectDetail = (studyId, pageId, subjectId, subjectNumber) => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}/${subjectNumber}`);
@@ -337,21 +335,21 @@ const SubjectList = props => {
         }
 
         columns.push(...commonColumns.slice(1, 3));
+        if (permissionsData) {
+            if (permissionsData.canSubjectRandomize || permissionsData.canSubjectViewRandomization) {
+                columns.push(commonColumns[4]);
+            }
 
-        if (permissions.canSubjectRandomize || permissions.canSubjectViewRandomization) {
-            columns.push(commonColumns[4]);
+            if (permissionsData.canMonitoringQueryView) {
+                columns.push(commonColumns[5]);
+            }
+
+            if (permissionsData.canMonitoringSdv || permissionsData.canMonitoringVerification || permissionsData.canMonitoringRemoteSdv) {
+                columns.push(commonColumns[6]);
+            }
+
         }
-
-        if (permissions.canMonitoringQueryView) {
-            columns.push(commonColumns[5]);
-        }
-
-        if (permissions.canMonitoringSdv || permissions.canMonitoringVerification || permissions.canMonitoringRemoteSdv) {
-            columns.push(commonColumns[6]);
-        }
-
         columns.push(commonColumns[3]);
-
     } else {
         columns.push({
             title: props.t('Country'),
@@ -400,16 +398,18 @@ const SubjectList = props => {
 
         columns.push(...commonColumns.slice(1, 3));
 
-        if (permissions.canSubjectRandomize || permissions.canSubjectViewRandomization) {
-            columns.push(commonColumns[4]);
-        }
+        if (permissionsData) {
+            if (permissionsData.canSubjectRandomize || permissionsData.canSubjectViewRandomization) {
+                columns.push(commonColumns[4]);
+            }
 
-        if (permissions.canMonitoringQueryView) {
-            columns.push(commonColumns[5]);
-        }
+            if (permissionsData.canMonitoringQueryView) {
+                columns.push(commonColumns[5]);
+            }
 
-        if (permissions.canMonitoringSdv || permissions.canMonitoringVerification || permissions.canMonitoringRemoteSdv) {
-            columns.push(commonColumns[6]);
+            if (permissionsData.canMonitoringSdv || permissionsData.canMonitoringVerification || permissionsData.canMonitoringRemoteSdv) {
+                columns.push(commonColumns[6]);
+            }
         }
 
         columns.push(commonColumns[3]);
@@ -500,7 +500,7 @@ const SubjectList = props => {
                             <Row>
                                 <Col className="col-12">
                                     <div style={{ display: 'inline-block', float: 'left' }} className="col-md-6">
-                                        {permissions.canSubjectArchive &&
+                                        {permissionsData.canSubjectArchive &&
                                             <>
                                                 <input
                                                     type="checkbox"
@@ -512,7 +512,7 @@ const SubjectList = props => {
                                             </>
                                         }
                                     </div>
-                                    {permissions.canSubjectAdd &&
+                                    {permissionsData.canSubjectAdd &&
                                         <div style={{ display: 'inline-block', float: 'right', marginBottom: '5px' }} className="col-md-6" onClick={handleClick}>
                                             <div style={{ float: 'right' }}>
                                                 <Typography.Text strong style={{ marginRight: '8px', cursor: 'pointer' }}>{props.t('Add new subject')}</Typography.Text>

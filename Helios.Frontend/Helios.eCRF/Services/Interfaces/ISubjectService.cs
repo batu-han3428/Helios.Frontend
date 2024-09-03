@@ -19,6 +19,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> DeleteOrArchiveSubject(SubjectArchiveOrDeleteModel model);
         Task<RestResponse<byte[]>> GetSubjectVisitAnnotatedCrf(Int64 subjectId);
         Task<RestResponse<List<SubjectCommentModel>>> GetSubjectComments(Int64 subjectElementId);
+        Task<RestResponse<List<SubjectElementShortModel>>> GetRelationPageElementValues(Int64 subjectVisitPageModuleElementId, Int64 studyId, string value, Int64 subjectId);
         Task<ApiResponse<dynamic>> RemoveSubjectComment(Int64 id);
         Task<ApiResponse<dynamic>> SetSubjectComment(SubjectCommentDTO dto);
         Task<ApiResponse<dynamic>> SetSubjectMissingData(SubjectMissingDataDTO dto);

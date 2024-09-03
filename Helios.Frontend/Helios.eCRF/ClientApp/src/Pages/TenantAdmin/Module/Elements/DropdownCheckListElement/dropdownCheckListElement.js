@@ -13,6 +13,8 @@ class DropdownCheckListElement extends Component {
             isDisable: props.IsDisable,
             orgElementOptions: props.ElementOptions !== undefined && props.ElementOptions !== null && props.ElementOptions !== "" ? JSON.parse(props.ElementOptions) : [],
             Value: props.Value,
+            oldValue: props.Value,
+            elementName: props.ElementName,
             ElementOptions: [],
             selectedOption: null,
             isRequired: props.IsRequired,
@@ -59,7 +61,7 @@ class DropdownCheckListElement extends Component {
 
         var val = JSON.stringify(finalVal).slice(1, JSON.stringify(finalVal).length - 1);
 
-        this.props.HandleAutoSave(this.state.id, val, 11);
+        this.props.HandleAutoSave(this.state.id, val, this.state.oldValue, this.state.elementName, 11);
     };
     componentDidUpdate(prevProps) {
         if (prevProps.Value !== this.props.Value) {
