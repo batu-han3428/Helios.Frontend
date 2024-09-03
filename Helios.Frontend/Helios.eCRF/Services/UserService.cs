@@ -1210,6 +1210,16 @@ namespace Helios.eCRF.Services
         #endregion
 
         #region SSO
+        private async Task<RestResponse<int>> GetSuperAdminCount(Int64 userId)
+        {
+            using (var client = AuthServiceClient)
+            {
+                var req = new RestRequest("AuthAccount/GetSuperAdminCount", Method.Get);
+                req.AddParameter("userId", userId);
+                var result = await client.ExecuteAsync<int>(req);
+                return result;
+            }
+        }
         private async Task<RestResponse<int>> GetUserTenantCount(Int64 userId)
         {
             using (var client = AuthServiceClient)
@@ -1245,6 +1255,17 @@ namespace Helios.eCRF.Services
         {
             RestRequest restRequest = new RestRequest();
 
+            var superAdminCount = await GetSuperAdminCount(userId);
+
+            if (!superAdminCount.IsSuccessful && superAdminCount.Data == null)
+            {
+                return new RestResponse<SSOModel>(restRequest)
+                {
+                    Data = null,
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
+            }
+
             var tenantCount = await GetUserTenantCount(userId);
 
             if (!tenantCount.IsSuccessful && tenantCount.Data == null)
@@ -1278,7 +1299,7 @@ namespace Helios.eCRF.Services
 
             return new RestResponse<SSOModel>(restRequest)
             {
-                Data = new SSOModel { SystemCount = systemCount.Data, TenantCount = tenantCount.Data, StudyCount = studyCount.Data },
+                Data = new SSOModel {SuperAdminCount=superAdminCount.Data, SystemCount = systemCount.Data, TenantCount = tenantCount.Data, StudyCount = studyCount.Data },
                 StatusCode = HttpStatusCode.OK
             };
         }

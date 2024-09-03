@@ -26,7 +26,7 @@ const SSO_TenantsOrStudies = props => {
 
     const navigate = useNavigate();
 
-    const [tsCount, setTsCount] = useState({ tenantCount: 0, studyCount: 0 });
+    const [tsCount, setTsCount] = useState({ superAdminCount:0, systemCount: 0, tenantCount: 0, studyCount: 0 });
 
     const [trigger, { data, isLoading, isError }] = useLazyTenantOrStudytGetQuery();
 
@@ -55,7 +55,10 @@ const SSO_TenantsOrStudies = props => {
     }, [data, isLoading, isError]);
 
     const goToTenants = (role) => {
-        if (role === 2) {
+        if (role===1) {
+            navigate(`/add-system-admin`);
+        }
+        else if (role === 2) {
             navigate(`/tenants`);
         }
         else {
@@ -64,6 +67,10 @@ const SSO_TenantsOrStudies = props => {
 
     }
     const Data = [
+        {
+            id: 1,
+            name: props.t('Super admin')
+        },
         {
             id: 2,
             name: props.t('System admin')
@@ -99,14 +106,17 @@ const SSO_TenantsOrStudies = props => {
             }
         },
     ]
-    if (tsCount.systemCount && tsCount.systemCount > 0) {
+    if (tsCount.superAdminCount && tsCount.superAdminCount > 0) {
         filteredData.push(Data[0]);
     }
-    if (((tsCount.tenantCount && tsCount.tenantCount > 1) || (tsCount.studyCount && tsCount.studyCount > 0 && tsCount.tenantCount && tsCount.tenantCount > 0))) {
+    if (tsCount.systemCount && tsCount.systemCount > 0) {
         filteredData.push(Data[1]);
     }
-    if (((tsCount.studyCount && tsCount.studyCount > 1) || (tsCount.tenantCount && tsCount.tenantCount > 0 && tsCount.studyCount && tsCount.studyCount > 0))) {
+    if (((tsCount.tenantCount && tsCount.tenantCount > 1) || (tsCount.studyCount && tsCount.studyCount > 0 && tsCount.tenantCount && tsCount.tenantCount > 0))) {
         filteredData.push(Data[2]);
+    }
+    if (((tsCount.studyCount && tsCount.studyCount > 1) || (tsCount.tenantCount && tsCount.tenantCount > 0 && tsCount.studyCount && tsCount.studyCount > 0))) {
+        filteredData.push(Data[3]);
     }
     return (
         <div className="page-content">
