@@ -30,6 +30,7 @@ import { showToast } from '../../../store/toast/actions';
 import { SubjectMissingDataType } from './Comp/SubjectMissingDataType';
 import { SubjectDetailContext } from './SubjectDetail';
 import RandomizationElement from '../../TenantAdmin/Module/Elements/RandomizationElement/RandomizationElement';
+import SubjectAuditTrail from './Comp/SubjectAuditTrail';
 
 const SubjectDetailElementList = (props) => {
     const [tenantId] = useState(props.TenantId);
@@ -40,6 +41,7 @@ const SubjectDetailElementList = (props) => {
     const navigate = useNavigate();
     const [isMissingData] = useState(props.IsMissingData);
     const [isSdv] = useState(props.IsSdv);
+    const [isAuditTrail] = useState(props.IsAuditTrail);
 
     const { modalRef, setModalInf, setSdv, elementRef } = useContext(SubjectDetailContext);
 
@@ -80,6 +82,7 @@ const SubjectDetailElementList = (props) => {
             HandleAutoSave: AutoSave,
             IsMissingData: isMissingData,
             IsSdv: isSdv,
+            IsAuditTrail: isAuditTrail,
             SdvInformation: props.SdvInformation,
             IsMissingItem: param.missingData
         };
@@ -124,7 +127,7 @@ const SubjectDetailElementList = (props) => {
             default:
                 return "";
         }
-    }, [AutoSave, isDisable, studyId, tenantId, subjectVisitPageModuleId, isMissingData, isSdv, props.SdvInformation]);
+    }, [AutoSave, isDisable, studyId, tenantId, subjectVisitPageModuleId, isMissingData, isSdv, isAuditTrail, props.SdvInformation]);
 
     const getItems = useCallback((param) => {
         const items = [
@@ -135,18 +138,21 @@ const SubjectDetailElementList = (props) => {
                 style: { color: "#8BB9EE" },
             },
             {
-                key: '4',
-                label: <a onClick={() => navigate('')}>{props.t("Audit trail")}</a>,
-                icon: <FontAwesomeIcon icon="fas fa-directions" style={{ color: "#5b626b" }} />,
-                style: { color: "#5b626b" },
-            },
-            {
                 key: '5',
                 label: <a onClick={() => navigate('')}>{props.t("Query")}</a>,
                 icon: <FontAwesomeIcon icon="fas fa-exclamation" style={{ color: "#ffa16c" }} />,
                 style: { color: "#ffa16c" },
             },
         ];
+
+        if (isAuditTrail) {
+            items.splice(1, 0, {
+                key: '4',
+                label: <a onClick={() => { setModalInf({ title: param.elementName, content: <SubjectAuditTrail />, isButton: false }); modalRef.current.tog_backdrop(); }}>{props.t("Audit trail")}</a>,
+                icon: <FontAwesomeIcon icon="fas fa-directions" style={{ color: "#5b626b" }} />,
+                style: { color: "#5b626b" }
+            });
+        }
 
         if (![18].includes(param.elementType)) {
             items.splice(0, 0, {
@@ -184,7 +190,7 @@ const SubjectDetailElementList = (props) => {
             return { items };
         }
 
-    }, [ClearData, navigate, props.t, isDisable, isMissingData, isSdv]);
+    }, [ClearData, navigate, props.t, isDisable, isMissingData, isSdv, isAuditTrail]);
 
     const renderContent = useMemo(() => {
         return Array.isArray(props.ElementList) ? props.ElementList.map((item) => {

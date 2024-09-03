@@ -668,5 +668,9 @@
   "Do you want to mark all empty fields on this page as 'missing data' ?": "Do you want to mark all empty fields on this page as 'missing data' ?",
   "There is no blank space to mark as missing data.": "There is no blank space to mark as missing data.",
   "All data on this page will be SDV'ed.": "All data on this page will be SDV'ed.",
-  "Number of blank data that cannot be SDV :": "Number of blank data that cannot be SDV :"
+  "Number of blank data that cannot be SDV :": "Number of blank data that cannot be SDV :",
+  "Fullname": "Fullname",
+  "Previous data": "Previous data",
+  "New data": "New data",
+  "Audit trail date": "Audit trail date"
 }

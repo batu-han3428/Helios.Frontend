@@ -516,5 +516,9 @@
   "Do you want to mark all empty fields on this page as 'missing data' ?": "Bu sayfadaki tüm boş alanları 'eksik veri' olarak işaretlemek istiyor musunuz?",
   "There is no blank space to mark as missing data.": "Eksik veri olarak işaretlenecek boşluk yok.",
   "All data on this page will be SDV'ed.": "Bu sayfadaki tüm veriler SDV'lenecektir.",
-  "Number of blank data that cannot be SDV :": "SDV yapılamayan boş veri sayısı :"
+  "Number of blank data that cannot be SDV :": "SDV yapılamayan boş veri sayısı :",
+  "Fullname": "Ad-soyad",
+  "Previous data": "Önceki veri",
+  "New data": "Yeni veri",
+  "Audit trail date": "Değişikliklerin takibi tarihi"
 }

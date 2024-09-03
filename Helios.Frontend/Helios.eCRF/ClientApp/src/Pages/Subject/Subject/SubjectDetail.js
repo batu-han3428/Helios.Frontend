@@ -334,6 +334,7 @@ const SubjectDetail = props => {
                                                 IsMissingData={permissions.canMonitoringMarkAsNull}
                                                 IsSdv={permissions.canMonitoringSdv}
                                                 SdvInformation={sdvInformation}
+                                                IsAuditTrail={permissions.canMonitoringInputAuditTrail}
                                             />
                                         </>
                                     )
