@@ -84,7 +84,6 @@ const AddOrUpdateStudy = props => {
             copyStudyId: apiStudyData ? apiStudyData.copyStudyId : 0,
             copyStudy: copyStudy,
             studyname: apiStudyData ? apiStudyData.studyName : '',
-            studylink: apiStudyData ? apiStudyData.studyLink : '',
             protocolcode: apiStudyData ? apiStudyData.protocolCode : '',
             studylanguage: apiStudyData ? apiStudyData.studyLanguage : 0,
             description: apiStudyData ? apiStudyData.description : '',
@@ -96,10 +95,7 @@ const AddOrUpdateStudy = props => {
         validationSchema: Yup.object().shape({
             studyname: Yup.string().required(
                 props.t("This field is required")
-            ),
-            studylink: Yup.string().required(
-                props.t("This field is required")
-            ),
+            ),           
             copyStudyId: Yup.string().when('copyStudy', {
                 is: (value) => value === "true",
                 then: (schema) => schema.required('This field is required'),
@@ -237,27 +233,7 @@ return (
                                         {validationType.touched.studyname && validationType.errors.studyname ? (
                                             <FormFeedback type="invalid">{validationType.errors.studyname}</FormFeedback>
                                         ) : null}
-                                    </div>
-                                    <div className="mb-3">
-                                        <Label className="form-label">{props.t("Study link")}</Label>
-                                        <Input
-                                            name="studylink"
-                                            placeholder={props.t("Study link")}
-                                            type="text"
-                                            onChange={validationType.handleChange}
-                                            onBlur={(e) => {
-                                                validationType.handleBlur(e);
-                                                validationType.submitForm();
-                                            }}
-                                            value={validationType.values.studylink || ""}
-                                            invalid={
-                                                validationType.touched.studylink && validationType.errors.studylink ? true : false
-                                            }
-                                        />
-                                        {validationType.touched.studylink && validationType.errors.studylink ? (
-                                            <FormFeedback type="invalid">{validationType.errors.studylink}</FormFeedback>
-                                        ) : null}
-                                    </div>
+                                    </div>                                  
                                     <div className="mb-3">
                                         <Label>{props.t("Protocol code")}</Label>
                                         <Input

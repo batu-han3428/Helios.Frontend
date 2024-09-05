@@ -8,7 +8,6 @@ const study = {
     studyId: '',
     equivalentStudyId: '',
     studyName: '',
-    studyLink: '',
     isDemo: false,
     protocolCode: '',
     studyLanguage: 0,
@@ -26,8 +25,7 @@ const studyReducer = (state = study, action) => {
             return state = {
                 studyId: action.payload.study.id,
                 equivalentStudyId: action.payload.study.equivalentStudyId,
-                studyName: action.payload.study.studyName,
-                studyLink: action.payload.study.studyLink,
+                studyName: action.payload.study.studyName,             
                 isDemo: action.payload.study.isDemo,
                 protocolCode: action.payload.study.protocolCode,
                 studyLanguage: action.payload.study.studyLanguage,
