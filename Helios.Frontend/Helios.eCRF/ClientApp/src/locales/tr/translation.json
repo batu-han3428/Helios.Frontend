@@ -524,6 +524,11 @@
   "Fullname": "Ad-soyad",
   "Previous data": "Önceki veri",
   "New data": "Yeni veri",
-  "Audit trail date": "Değişikliklerin takibi tarihi"
+  "Audit trail date": "Değişikliklerin takibi tarihi",
+  "Add a tenant admin": "Abonelik için yönetici ekle",
+  "Active user": "Aktif kullanıcı",
+  "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.": "İlgili abonelik için kullanıcı ekleme limitiniz dolmuştur. Lütfen sistem yöneticisi ile iletişime geçiniz. ",
+  "To create a new password, please click on the 'Forgot your password ?' text on the screen and create a new password with the help of the e-mail you receive.": "Lütfen yeni şifre oluşturmak için ekranda bulunan 'Parolanızı mı unuttunuz ?' yazısına tıklayıp gelen e-posta yardımı ile yeni şifre oluşturunuz.",
+  "You are no longer actively studying in our system. We are very sorry about that :( If you think there is a problem, please contact the system administrator.": "Artık sistemimizde aktif bir çalışmanız yoktur. Bunun için çok üzgünüz :(  Bir sorun olduğunu düşünüyorsanız, lütfen sistem yöneticisi ile iletişime geçiniz."
 
 }

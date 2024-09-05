@@ -357,7 +357,17 @@ namespace Helios.eCRF.Controllers
             var result = await _userService.ActivePassiveStudyUser(studyUserModel);
             return Ok(result);
         }
-
+        /// <summary>
+        /// seçili mailin bütün hesaplarını aktif veya pasif hale getirir
+        /// </summary>
+        /// <param name="authUserId">kullanıcı bilgileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        public async Task<IActionResult> ActivePassiveByAuthUserId(Int64 authUserId, Int64 tenantId)
+        {
+            var result = await _userService.ActivePassiveByAuthUserId(authUserId,tenantId);
+            return Ok(result);
+        }
 
         /// <summary>
         /// seçili kullanıcıları aktif veya pasif hale getirir
@@ -535,7 +545,17 @@ namespace Helios.eCRF.Controllers
             var result = await _userService.GetTenantAndSystemAdminUserList(id);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
-
+        /// <summary>
+        /// tenant admin kullanıcılarını listeler
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>kullanıcılar</returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetTenantAdminUserList(Int64 id)
+        {
+            var result = await _userService.GetTenantAdminUserList(id);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
 
         /// <summary>
         /// seçili tenant admin ve system adminleri siler
@@ -558,6 +578,18 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> TenantAndSystemAdminActivePassive(TenantAndSystemAdminDTO tenantAndSystemAdminDTO)
         {
             var result = await _userService.TenantAndSystemAdminActivePassive(tenantAndSystemAdminDTO);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// seçili tenant admin aktif/pasif durumunu ayarlar
+        /// </summary>
+        /// <param name="tenantAndSystemAdminDTO">kullanıcı bilgileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        public async Task<IActionResult> TenantAdminActivePassive(TenantAndSystemAdminDTO tenantAndSystemAdminDTO)
+        {
+            var result = await _userService.TenantAdminActivePassive(tenantAndSystemAdminDTO);
             return Ok(result);
         }
         #endregion

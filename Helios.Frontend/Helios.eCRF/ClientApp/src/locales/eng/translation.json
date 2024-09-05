@@ -676,5 +676,10 @@
   "Fullname": "Fullname",
   "Previous data": "Previous data",
   "New data": "New data",
-  "Audit trail date": "Audit trail date"
+  "Audit trail date": "Audit trail date",
+  "Add a tenant admin": "Add a tenant admin",
+  "Active user": "Active user",
+  "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.": "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.",
+  "To create a new password, please click on the 'Forgot your password ?' text on the screen and create a new password with the help of the e-mail you receive.": "To create a new password, please click on the 'Forgot your password ?' text on the screen and create a new password with the help of the e-mail you receive.",
+  "You are no longer actively studying in our system. We are very sorry about that :( If you think there is a problem, please contact the system administrator.": "You are no longer actively studying in our system. We are very sorry about that :(  If you think there is a problem, please contact the system administrator."
 }

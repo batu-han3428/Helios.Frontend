@@ -5,10 +5,10 @@ import { Row, Col, Button, Card, CardBody, Dropdown, DropdownToggle, DropdownMen
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Table,Input } from 'antd';
 import ModalComp from "../../../components/Common/ModalComp/ModalComp";
-import AddOrUpdateTenantAndSystemAdmin from "./AddOrUpdateTenantAndSystemAdmin";
+import AddOrUpdateTenantAdmin from "./AddOrUpdateTenantAdmin";
 import { useSelector, useDispatch } from 'react-redux';
 import { useSystemAdminResetPasswordMutation } from '../../../store/services/SystemAdmin/SystemAdmin';
-import { useLazyUserListGetQuery, useUserActivePassiveMutation } from '../../../store/services/SystemAdmin/Users/SystemUsers';
+import { useLazyUserTenantAdminListGetQuery, useTenantAdminActivePassiveMutation } from '../../../store/services/SystemAdmin/Users/SystemUsers';
 import { startloading, endloading } from '../../../store/loader/actions';
 import Swal from 'sweetalert2';
 import { countryNumber } from "../../../helpers/phonenumber_helper";
@@ -43,7 +43,7 @@ const ListTenantAndSystemAdmin = props => {
 
 
     const addSystemAdmin = () => {
-        setModalContent(<AddOrUpdateTenantAndSystemAdmin isAdd={true} userId={userInformation.userId} refs={modalContentRef} />);
+        setModalContent(<AddOrUpdateTenantAdmin isAdd={true} userControl={true} userId={userInformation.userId} refs={modalContentRef} />);
         setModalTitle(props.t("Add an admin"));
         setModalButtonText(props.t("Save"));
         modalRef.current.tog_backdrop();
@@ -54,7 +54,7 @@ const ListTenantAndSystemAdmin = props => {
             dispatch(showToast(props.t("Please activate the account first and then try this process again."), true, false));
             return;
         }
-        setModalContent(<AddOrUpdateTenantAndSystemAdmin isAdd={false} userData={item} userId={userInformation.userId} refs={modalContentRef} />);
+        setModalContent(<AddOrUpdateTenantAdmin isAdd={false} userControl={false} userData={item} userId={userInformation.userId} refs={modalContentRef} />);
         setModalTitle(props.t("Update"));
         setModalButtonText(props.t("Update"));
         modalRef.current.tog_backdrop();
@@ -144,6 +144,11 @@ const ListTenantAndSystemAdmin = props => {
                 dataIndex: 'isActive',
                 sorter: (a, b) => a.isActive.localeCompare(b.isActive),
                 sortDirections: ['ascend', 'descend'],
+                render: (text, record) => (
+                    <span style={{ color: record.isActive === props.t("Active") ? 'green' : 'red' }}>
+                        {record.isActive}
+                    </span>
+                ),
             },
             {
                 title: props.t('Phone number'),
@@ -244,7 +249,7 @@ const ListTenantAndSystemAdmin = props => {
         return tenantsDropdown;
     }
 
-    const [trigger, { data: usersData, error, isLoading }] = useLazyUserListGetQuery();
+    const [trigger, { data: usersData, error, isLoading }] = useLazyUserTenantAdminListGetQuery();
 
     useEffect(() => {
         if (userInformation.userId) {
@@ -312,7 +317,7 @@ const ListTenantAndSystemAdmin = props => {
         }
     }
 
-    const [userActivePassive] = useUserActivePassiveMutation();
+    const [userActivePassive] = useTenantAdminActivePassiveMutation();
 
     const activePassiveUser = (item) => {
         Swal.fire({
@@ -418,7 +423,7 @@ const ListTenantAndSystemAdmin = props => {
                     <div className="page-title-box">
                         <Row className="align-items-center" style={{ borderBottom: "1px solid black", paddingBottom: "5px" }}>
                             <Col md={8}>
-                                <h6 className="page-title">{props.t("Add an admin")}</h6>
+                                <h6 className="page-title">{props.t("Add a tenant admin")}</h6>
                             </Col>
                             <Col md="4">
                                 <div className="float-end d-none d-md-block" style={{ marginLeft: "10px" }}>

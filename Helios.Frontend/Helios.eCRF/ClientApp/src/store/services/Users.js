@@ -90,7 +90,15 @@ export const UsersApi = createApi({
         userGetHasRole: builder.query({
             query: (studyId) => `/User/GetHasRole/${studyId}`,
             providesTags: ['User'],
-        }),            
+        }),      
+        userActivePassiveByAuthUserId: builder.mutation({
+            query: (data) => ({
+                url: `/User/ActivePassiveByAuthUserId?authUserId=${data.authUserId}&tenantId=${data.tenantId}`,
+                method: 'POST',
+               
+            }),
+            invalidatesTags: ['User'],
+        }),
        
     }),
 });
@@ -114,3 +122,4 @@ export const { useUserResetPasswordMutation } = UsersApi;
 export const { useUserProfileEditMutation } = UsersApi;
 export const { useUserProfileChangePasswordMutation } = UsersApi;
 export const { useUserGetHasRoleQuery } = UsersApi;
+export const { useUserActivePassiveByAuthUserIdMutation } = UsersApi;

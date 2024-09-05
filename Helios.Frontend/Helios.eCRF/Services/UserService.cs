@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using RestSharp;
 using System.Net;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Helios.eCRF.Services
 {
@@ -143,7 +144,7 @@ namespace Helios.eCRF.Services
                                         ActiveStudies = (count != null) ? count.ActiveStudies + " / " + aTenants.StudyLimit : "0 / " + (aTenants.StudyLimit != null ? aTenants.StudyLimit : "0"),
                                         CreatedAt = aTenants.CreatedAt,
                                         UpdatedAt = aTenants.UpdatedAt,
-                                        UserLimit=aTenants.UserLimit==null? "-" :aTenants.UserLimit,
+                                        UserLimit = aTenants.UserLimit == null ? "-" : aTenants.UserLimit,
                                     }).ToList();
 
                         return new RestResponse<List<TenantModel>>(restRequest)
@@ -315,7 +316,7 @@ namespace Helios.eCRF.Services
                 return result;
             }
         }
-        
+
         public async Task<RestResponse<List<UserRoleModel>>> GetRoleUsers(Int64 roleId)
         {
             RestRequest restRequest = new RestRequest();
@@ -407,9 +408,10 @@ namespace Helios.eCRF.Services
 
             if (userIdsRole.Data.Count > 0)
             {
-                var result = await GetUserList(userIdsRole.Data.Select(x=>x.Id).ToList());
+                var result = await GetUserList(userIdsRole.Data.Select(x => x.Id).ToList());
 
-                if (result.IsSuccessful && result.Data != null && result.Data.Count > 0) {
+                if (result.IsSuccessful && result.Data != null && result.Data.Count > 0)
+                {
                     try
                     {
                         var data = result.Data.Join(userIdsRole.Data, aspNetUser => aspNetUser.Id, studyUser => studyUser.Id, (aspNetUser, studyUser) =>
@@ -419,7 +421,8 @@ namespace Helios.eCRF.Services
                                         Name = aspNetUser.Name + " " + aspNetUser.LastName
                                     }).ToList();
 
-                        return new RestResponse<List<UserRoleModel>>(restRequest){
+                        return new RestResponse<List<UserRoleModel>>(restRequest)
+                        {
                             Data = data,
                             StatusCode = HttpStatusCode.OK
                         };
@@ -597,7 +600,7 @@ namespace Helios.eCRF.Services
                     {
                         var req2 = new RestRequest("AdminUser/AddStudyUserRole", Method.Post);
                         req2.AddJsonBody(studyUserModel);
-                        var result2 = await client2.ExecuteAsync<ApiResponse<StudyUserDTO>>(req2);                      
+                        var result2 = await client2.ExecuteAsync<ApiResponse<StudyUserDTO>>(req2);
                     }
                 }
                 return result.Data;
@@ -708,7 +711,8 @@ namespace Helios.eCRF.Services
                             AuthUserId = user.Id,
                             Name = user.Name,
                             LastName = user.LastName,
-                            Email = user.Email
+                            Email = user.Email,
+                            PhoneNumber = user.PhoneNumber,
                         }
                     };
                 }
@@ -766,9 +770,18 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
-
-        public async Task<ApiResponse<dynamic>> ActivePassiveStudyUsers(StudyUserModel studyUserModel)
+        public async Task<ApiResponse<dynamic>> ActivePassiveByAuthUserId(Int64 authUserId, Int64 tenantId)
         {
+            using (var client = CoreServiceClient)
+            {
+          
+                var req = new RestRequest($"CoreUser/ActivePassiveByAuthUserId?authUserId={authUserId}&tenantId={tenantId}", Method.Post);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+        public async Task<ApiResponse<dynamic>> ActivePassiveStudyUsers(StudyUserModel studyUserModel)
+        {            
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreUser/ActivePassiveStudyUsers", Method.Post);
@@ -799,7 +812,7 @@ namespace Helios.eCRF.Services
                 return result.Data;
             }
         }
-        
+
         public async Task<ApiResponse<DeleteStudyUserDTO>> DeleteStudyUser(StudyUserModel studyUserModel)
         {
             var result = await DeleteCoreStudyUser(studyUserModel);
@@ -835,7 +848,16 @@ namespace Helios.eCRF.Services
         #endregion
 
         #region Tenant user
-
+        private async Task<RestResponse<int>> GetTenantUserLimit(Int64 tenantId)
+        {
+            using (var client = AuthServiceClient)
+            {
+                var req = new RestRequest("AuthAccount/GetTenantUserLimit", Method.Get);
+                req.AddParameter("tenantId", tenantId);
+                var result = await client.ExecuteAsync<int>(req);
+                return result;
+            }
+        }
         private async Task<RestResponse<List<TenantUserDTO>>> GetTenantUsers(Int64 tenantId)
         {
             using (var client = CoreServiceClient)
@@ -847,15 +869,17 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<RestResponse<List<TenantUserDTO>>> GetTenantUserList(Int64 tenantId)
+        public async Task<RestResponse<TenantUserListDTO>> GetTenantUserList(Int64 tenantId)
         {
             RestRequest restRequest = new RestRequest();
 
             var tenantUsers = await GetTenantUsers(tenantId);
 
+            var tenantUserLimit = await GetTenantUserLimit(tenantId);
+
             if (!tenantUsers.IsSuccessful && tenantUsers.Data == null)
             {
-                return new RestResponse<List<TenantUserDTO>>(restRequest)
+                return new RestResponse<TenantUserListDTO>(restRequest)
                 {
                     Data = null,
                     StatusCode = HttpStatusCode.InternalServerError
@@ -880,21 +904,26 @@ namespace Helios.eCRF.Services
                                                                 LastName = aspNetUser.LastName,
                                                                 IsActive = tenantUser.IsActive,
                                                                 Email = aspNetUser.Email,
-                                                                UserRoleName=tenantUser.UserRoleName,
+                                                                UserRoleName = tenantUser.UserRoleName,
                                                                 StudyName = tenantUser.StudyName,
                                                                 StudyDemoLive = tenantUser.StudyDemoLive,
                                                                 CreatedOn = tenantUser.CreatedOn,
                                                                 LastUpdatedOn = tenantUser.LastUpdatedOn
                                                             }).ToList();
 
-                        return new RestResponse<List<TenantUserDTO>>(restRequest) { 
-                            Data = data,
+                        TenantUserListDTO tenantUserListDTO = new TenantUserListDTO();
+                        tenantUserListDTO.TenantUserList = data;
+                        tenantUserListDTO.TenantUserLimit = tenantUserLimit.Data;
+
+                        return new RestResponse<TenantUserListDTO>(restRequest)
+                        {
+                            Data = tenantUserListDTO,
                             StatusCode = HttpStatusCode.OK
                         };
                     }
                     catch (Exception e)
                     {
-                        return new RestResponse<List<TenantUserDTO>>(restRequest)
+                        return new RestResponse<TenantUserListDTO>(restRequest)
                         {
                             Data = null,
                             StatusCode = HttpStatusCode.InternalServerError
@@ -903,16 +932,25 @@ namespace Helios.eCRF.Services
                 }
                 else
                 {
-                    return new RestResponse<List<TenantUserDTO>>(restRequest)
+                    TenantUserListDTO tenantUserListDTO = new TenantUserListDTO();
+                    tenantUserListDTO.TenantUserList = null;
+                    tenantUserListDTO.TenantUserLimit = tenantUserLimit.Data;
+                    return new RestResponse<TenantUserListDTO>(restRequest)
                     {
-                        Data = null,
+                        Data = tenantUserListDTO,
                         StatusCode = HttpStatusCode.InternalServerError
                     };
                 }
             }
             else
             {
-                return tenantUsers;
+                TenantUserListDTO tenantUserListDTO = new TenantUserListDTO();
+                tenantUserListDTO.TenantUserList = tenantUsers.Data;
+                tenantUserListDTO.TenantUserLimit = tenantUserLimit.Data;
+                return new RestResponse<TenantUserListDTO>(restRequest)
+                {
+                    Data = tenantUserListDTO,
+                };
             }
         }
 
@@ -926,7 +964,7 @@ namespace Helios.eCRF.Services
                 LastName = tenantUserModel.LastName
             });
         }
- 
+
         #endregion
 
         #region System Admin User
@@ -1109,7 +1147,7 @@ namespace Helios.eCRF.Services
             return result;
         }
 
-        private async Task<ApiResponse<dynamic>> TenantAdminActivePassive(TenantAndSystemAdminDTO tenantAndSystemAdminDTO)
+        public async Task<ApiResponse<dynamic>> TenantAdminActivePassive(TenantAndSystemAdminDTO tenantAndSystemAdminDTO)
         {
             using (var client = AuthServiceClient)
             {
@@ -1158,9 +1196,30 @@ namespace Helios.eCRF.Services
                 return result;
             }
         }
+
+        public async Task<RestResponse<List<SystemUserModel>>> GetTenantAdminUserList(Int64 id)
+        {
+            using (var client = AuthServiceClient)
+            {
+                var req = new RestRequest("AdminUser/GetTenantAdminUserList", Method.Get);
+                req.AddParameter("id", id);
+                var result = await client.ExecuteAsync<List<SystemUserModel>>(req);
+                return result;
+            }
+        }
         #endregion
 
         #region SSO
+        private async Task<RestResponse<int>> GetSuperAdminCount(Int64 userId)
+        {
+            using (var client = AuthServiceClient)
+            {
+                var req = new RestRequest("AuthAccount/GetSuperAdminCount", Method.Get);
+                req.AddParameter("userId", userId);
+                var result = await client.ExecuteAsync<int>(req);
+                return result;
+            }
+        }
         private async Task<RestResponse<int>> GetUserTenantCount(Int64 userId)
         {
             using (var client = AuthServiceClient)
@@ -1196,6 +1255,17 @@ namespace Helios.eCRF.Services
         {
             RestRequest restRequest = new RestRequest();
 
+            var superAdminCount = await GetSuperAdminCount(userId);
+
+            if (!superAdminCount.IsSuccessful && superAdminCount.Data == null)
+            {
+                return new RestResponse<SSOModel>(restRequest)
+                {
+                    Data = null,
+                    StatusCode = HttpStatusCode.InternalServerError
+                };
+            }
+
             var tenantCount = await GetUserTenantCount(userId);
 
             if (!tenantCount.IsSuccessful && tenantCount.Data == null)
@@ -1229,7 +1299,7 @@ namespace Helios.eCRF.Services
 
             return new RestResponse<SSOModel>(restRequest)
             {
-                Data = new SSOModel {SystemCount=systemCount.Data, TenantCount = tenantCount.Data, StudyCount = studyCount.Data},
+                Data = new SSOModel {SuperAdminCount=superAdminCount.Data, SystemCount = systemCount.Data, TenantCount = tenantCount.Data, StudyCount = studyCount.Data },
                 StatusCode = HttpStatusCode.OK
             };
         }
@@ -1264,7 +1334,7 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreUser/GetUserTenantList", Method.Get);
                 req.AddParameter("userId", userId);
                 var result = await client.ExecuteAsync<List<Int64>>(req);
-                
+
                 if (result.IsSuccessful)
                 {
                     return await GetTenantsList(result.Data);

@@ -29,12 +29,13 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> SetStudyUser(StudyUserModel studyUserModel);
         Task<ApiResponse<dynamic>> ActivePassiveStudyUser(StudyUserModel studyUserModel);
         Task<ApiResponse<dynamic>> ActivePassiveStudyUsers(StudyUserModel studyUserModel);
+        Task<ApiResponse<dynamic>> ActivePassiveByAuthUserId(Int64 authUserId, Int64 tenantId);
         Task<ApiResponse<DeleteStudyUserDTO>> DeleteStudyUser(StudyUserModel studyUserModel);
         Task<ApiResponse<dynamic>> UserResetPassword(StudyUserModel model);
         Task<ApiResponse<dynamic>> UserProfileChangePassword(ResetUserProfileViewModel model);
         Task<ApiResponse<StudyUserDTO>> GetStudyUser(string email, Int64 studyId);
         Task<RestResponse<List<UserPermissionDTO>>> GetRoleList(Int64 studyId);
-        Task<RestResponse<List<TenantUserDTO>>> GetTenantUserList(Int64 tenantId);
+        Task<RestResponse<TenantUserListDTO>> GetTenantUserList(Int64 tenantId);
         Task<ApiResponse<dynamic>> SetTenantUser(TenantUserModel studyUserModel);
         Task<RestResponse<SSOModel>> GetTenantOrStudy(Int64 userId);
         Task<List<SSOUserTenantModel>> GetUserTenantList(Int64 userId, Roles role);
@@ -52,8 +53,10 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> SetSystemAdminAndTenantAdminUser(SystemAdminDTO systemAdminDTO);
         Task<ApiResponse<dynamic>> SetAspNetUser(AspNetUserDTO model);
         Task<RestResponse<List<SystemUserModel>>> GetTenantAndSystemAdminUserList(Int64 id);
+        Task<RestResponse<List<SystemUserModel>>> GetTenantAdminUserList(Int64 id);
         Task<RestResponse<List<TenantModel>>> GetAuthTenantList();
         Task<ApiResponse<dynamic>> TenantAndSystemAdminDelete(TenantAndSystemAdminDTO tenantAndSystemAdminDTO);
         Task<ApiResponse<dynamic>> TenantAndSystemAdminActivePassive(TenantAndSystemAdminDTO tenantAndSystemAdminDTO);
+        Task<ApiResponse<dynamic>> TenantAdminActivePassive(TenantAndSystemAdminDTO tenantAndSystemAdminDTO);
     }
 }

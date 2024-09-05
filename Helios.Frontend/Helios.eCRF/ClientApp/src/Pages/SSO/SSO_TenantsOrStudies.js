@@ -7,9 +7,10 @@ import { useLazyTenantOrStudytGetQuery } from '../../store/services/SSO/SSO_Api'
 import { useSelector, useDispatch } from 'react-redux';
 import { startloading, endloading } from '../../store/loader/actions';
 import { useNavigate, Link } from "react-router-dom";
-import { Button, ConfigProvider,Table } from 'antd';
+import { Button, ConfigProvider, Table } from 'antd';
 import { TinyColor } from '@ctrl/tinycolor';
 import { SearchOutlined } from '@ant-design/icons';
+import myImage from '../../../src/assets/images/gezegen.jpg';
 
 
 const SSO_TenantsOrStudies = props => {
@@ -25,7 +26,7 @@ const SSO_TenantsOrStudies = props => {
 
     const navigate = useNavigate();
 
-    const [tsCount, setTsCount] = useState({ tenantCount: 0, studyCount: 0 });
+    const [tsCount, setTsCount] = useState({ superAdminCount:0, systemCount: 0, tenantCount: 0, studyCount: 0 });
 
     const [trigger, { data, isLoading, isError }] = useLazyTenantOrStudytGetQuery();
 
@@ -54,15 +55,22 @@ const SSO_TenantsOrStudies = props => {
     }, [data, isLoading, isError]);
 
     const goToTenants = (role) => {
-        if (role===2) {
+        if (role===1) {
+            navigate(`/add-system-admin`);
+        }
+        else if (role === 2) {
             navigate(`/tenants`);
         }
         else {
             navigate(`/SSO-tenants/${role}`);
         }
-       
+
     }
     const Data = [
+        {
+            id: 1,
+            name: props.t('Super admin')
+        },
         {
             id: 2,
             key: 2,
@@ -82,12 +90,12 @@ const SSO_TenantsOrStudies = props => {
     const columns = [
         {
             title: props.t('Account name'),
-            dataIndex: 'name',  
+            dataIndex: 'name',
             sorter: (a, b) => a.name.localeCompare(b.name),
             sortDirections: ['ascend', 'descend'],
             onFilter: (value, record) => String(record.studyName).toLowerCase().includes(value.toLowerCase()),
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-        },      
+        },
         {
             title: props.t('Action'),
             dataIndex: 'actions',
@@ -101,14 +109,17 @@ const SSO_TenantsOrStudies = props => {
             }
         },
     ]
-    if (tsCount.systemCount && tsCount.systemCount > 0) {
+    if (tsCount.superAdminCount && tsCount.superAdminCount > 0) {
         filteredData.push(Data[0]);
     }
-    if (((tsCount.tenantCount && tsCount.tenantCount > 1) || (tsCount.studyCount && tsCount.studyCount > 0 && tsCount.tenantCount && tsCount.tenantCount > 0))) {
+    if (tsCount.systemCount && tsCount.systemCount > 0) {
         filteredData.push(Data[1]);
     }
-    if (((tsCount.studyCount && tsCount.studyCount > 1) || (tsCount.tenantCount && tsCount.tenantCount > 0 && tsCount.studyCount && tsCount.studyCount > 0))) {
+    if (((tsCount.tenantCount && tsCount.tenantCount > 1) || (tsCount.studyCount && tsCount.studyCount > 0 && tsCount.tenantCount && tsCount.tenantCount > 0))) {
         filteredData.push(Data[2]);
+    }
+    if (((tsCount.studyCount && tsCount.studyCount > 1) || (tsCount.tenantCount && tsCount.tenantCount > 0 && tsCount.studyCount && tsCount.studyCount > 0))) {
+        filteredData.push(Data[3]);
     }
     return (
         <div className="page-content">
@@ -122,11 +133,15 @@ const SSO_TenantsOrStudies = props => {
                                 </div>
                             </CardHeader>
                             <CardBody>
-                                <div style={{  flexWrap: "wrap", justifyContent: "center" }}>
+                                <div style={{ flexWrap: "wrap", justifyContent: "center" }}>
                                     {!isLoading && !isError && tsCount.studyCount < 1 && tsCount.tenantCount < 1 ? (
-                                        <Alert color="warning" style={{ height: "50px" }}>
-                                            {props.t("You do not have an active tenant, if you think there is an error, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
-                                        </Alert>
+                                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                                            <Alert color="warning" style={{ height: "50px" }}>
+                                                {props.t("You are no longer actively studying in our system. We are very sorry about that :( If you think there is a problem, please contact the system administrator.")} <Link to="/ContactUs"> {props.t("Contact us")}</Link>
+                                            </Alert>
+                                            <img src={myImage} alt="Warning Icon" style={{ height: "450px", width: "450px", marginRight: "10px" }} />
+                                        </div>
+
                                     ) : (
 
                                         <Table

@@ -31,7 +31,7 @@ const ListSystemAdmin = props => {
 
 
     const addSystemAdmin = () => {
-        setModalContent(<AddOrUpdateSystemAdmin isAdd={true} userId={userInformation.userId} refs={modalContentRef} />);
+        setModalContent(<AddOrUpdateSystemAdmin isAdd={true} userId={userInformation.userId} userControl={true} refs={modalContentRef} />);
         setModalTitle(props.t("Add a system admin"));
         setModalButtonText(props.t("Save"));
         modalRef.current.tog_backdrop();
@@ -41,8 +41,8 @@ const ListSystemAdmin = props => {
         if (!item.isActive) {
             dispatch(showToast(props.t("Please activate the account first and then try this process again."), true, false));
             return;
-        }       
-        setModalContent(<AddOrUpdateSystemAdmin isAdd={false} userData={item} userId={userInformation.userId} refs={modalContentRef} />);
+        }
+        setModalContent(<AddOrUpdateSystemAdmin isAdd={false} userData={item} userId={userInformation.userId} userControl={false} refs={modalContentRef} />);
         setModalTitle(props.t("Update"));
         setModalButtonText(props.t("Update"));
         modalRef.current.tog_backdrop();
@@ -84,6 +84,11 @@ const ListSystemAdmin = props => {
                 dataIndex: 'isActive',
                 sorter: (a, b) => a.isActive.localeCompare(b.isActive),
                 sortDirections: ['ascend', 'descend'],
+                render: (text, record) => (
+                    <span style={{ color: record.isActive === props.t("Active") ? 'green' : 'red' }}>
+                        {record.isActive}
+                    </span>
+                ),
             },
             {
                 title: props.t('Phone number'),
