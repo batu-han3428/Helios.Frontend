@@ -5,6 +5,7 @@ import { withTranslation } from "react-i18next";
 import { Row, Col, Button, Progress, Tag, Tooltip } from 'antd';
 import { MenuOutlined, RightOutlined, LeftOutlined } from '@ant-design/icons';
 import SubjectDetailMenu from './Comp/SubjectDetailMenu';
+import SubjectMultiList from './SubjectMultiList';
 import './Subject.css';
 import SubjectDetailDrawer from './Comp/SubjectDetailDrawer';
 import { useParams } from "react-router-dom";
@@ -20,9 +21,8 @@ import ModalComp from '../../../components/Common/ModalComp/ModalComp';
 export const SubjectDetailContext = createContext();
 
 const SubjectDetail = props => {
-
     const navigate = useNavigate();
-    const { studyId, pageId, subjectId, subjectNumber } = useParams();
+    const { studyId, pageId, subjectId, subjectNumber, isMultiForm, rowIndex } = useParams();
 
     const dispatch = useDispatch();
 
@@ -35,13 +35,13 @@ const SubjectDetail = props => {
     const [leftMenuData, setLeftMenuData] = useState([]);
     const [subjectElementList, setSubjectElementList] = useState([]);
     const [sdvInformation, setSdvInformation] = useState({});
+    const [permissions, setPermissions] = useState([]);
+    const [isLoaded, setIsLoaded] = useState(false);
+    const [isPrevButton, setIsPrevButton] = useState(true);
+    const [isNextButton, setIsNextButton] = useState(true);
 
     const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery();
-    const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId });
-
-    const [currentPage, setCurrentPage] = useState(pageId);
-
-    const [permissions, setPermissions] = useState([]);
+    const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId, rowIndex: rowIndex });
     const [triggerPermission, { data: permissionsData, errorPerm, isLoadingPerm }] = useLazyGetUserPermissionsQuery();
 
     useEffect(() => {
@@ -49,7 +49,6 @@ const SubjectDetail = props => {
             triggerPermission(studyId);
         }
     }, [studyId])
-    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
         if (!errorPerm && !isLoadingPerm && permissionsData) {
@@ -59,20 +58,56 @@ const SubjectDetail = props => {
     }, [permissionsData, errorPerm, isLoadingPerm]);
 
     const goToNextPage = () => {
-        const nextPage = Number(pageId) + 1;
-        setCurrentPage(nextPage);
-        navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}/${subjectNumber}`);
+        var next = 0;
 
+        for (var i = 0; i < leftMenuData.length; i++) {
+
+            var children = leftMenuData[i].children;
+
+            for (var c = 0; c < children.length; c++) {
+
+                if (children[c].id === Number(pageId) && children[c + 1].id !== undefined)
+                    next = children[c + 1].id;
+            }
+        };
+
+        navigate(`/subject-detail/${studyId}/${next}/${subjectId}/${subjectNumber}/${isMultiForm}/${rowIndex}`);
     };
 
     const goToPreviousPage = () => {
-        if (currentPage > 1) {
-            const nextPage = Number(pageId) - 1;
-            setCurrentPage(nextPage);
-            navigate(`/subject-detail/${studyId}/${nextPage}/${subjectId}/${subjectNumber}`);
-        }
+        var prev = 0;
+
+        for (var i = 0; i < leftMenuData.length; i++) {
+
+            var children = leftMenuData[i].children;
+
+            for (var c = 0; c < children.length; c++) {
+
+                if (children[c].id === Number(pageId) && children[c - 1].id !== undefined)
+                    prev = children[c - 1].id;
+            }
+        };
+
+        navigate(`/subject-detail/${studyId}/${prev}/${subjectId}/${subjectNumber}/${isMultiForm}/${rowIndex}`);
     };
-    
+
+    const goToSubjectDetail = () => {
+        var pgId = 0;
+
+        for (var i = 0; i < leftMenuData.length; i++) {
+
+            var children = leftMenuData[i].children;
+
+            for (var c = 0; c < children.length; c++) {
+
+                if (children[c].id === Number(pageId))
+                    pgId = leftMenuData[i].id;
+            }
+        };
+
+        navigate(`/subject-detail/${studyId}/${pgId}/${subjectId}/${subjectNumber}/${true}/${0}`);
+    };
+
     function filterElements(elements) {
         return elements.reduce((acc, item) => {
             if (![1, 17, 14, 15, 16, 3, 7].includes(item.elementType) && item.userValue !== "" && item.userValue !== null) {
@@ -156,8 +191,6 @@ const SubjectDetail = props => {
         return null;
     };
 
-    const [isPrevButton, setIsPrevButton] = useState(true);
-    const [isNextButton, setIsNextButton] = useState(true);
 
     const setPrevNextButton = (data, id) => {
         const result = findPageIdInChildren(data, parseInt(id, 10));
@@ -214,92 +247,113 @@ const SubjectDetail = props => {
             <SubjectDetailContext.Provider value={{ modalRef, setModalInf }}>
                 <div className="page-content" style={{ paddingBottom: 0, paddingLeft: 0 }}>
                     <div className="container-fluid" style={{ paddingLeft: 0 }}>
-                    <Row gutter={16} >
-                        <Col xs={0} sm={0} md={6} lg={6} xl={5}>
-                            <SubjectDetailMenu subjectNumber={subjectNumber} setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} IsMissingData={permissions.canMonitoringMarkAsNull} />
-                        </Col>
-                        <Col xs={1} sm={1} md={0} lg={0} xl={0}>
-                            <Button style={{ position: "fixed", top: "80px", left: "10px", zIndex: "1000" }} onClick={showDrawer} shape="circle" icon={<MenuOutlined />} />
-                            <SubjectDetailDrawer onClose={onClose} openMobileMenu={openMobileMenu} content={<SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={true} studyId={studyId} subjectId={subjectId} />} />
-                        </Col>
-                        <Col xs={24} sm={24} md={18} lg={18} xl={19} >
-                            <div id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom: "100px", paddingLeft: '50px' }}>
-                                {!isLoading1 && !error1 && isLoaded && elementList && subjectElementList.length < 1 ?
-                                    (
-                                         <div style={{
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            height: 'calc(100vh - 170px)'
-                                        }}>
-                                            <Alert color="warning" style={{ height: "50px" }}>
-                                                {props.t("There is no module on the page. Please contact the system administrator.")}
-                                            </Alert>
+                        <Row gutter={16} >
+                            <Col xs={0} sm={0} md={6} lg={6} xl={5}>
+                                <SubjectDetailMenu subjectNumber={subjectNumber} setPrevNextButton={setPrevNextButton} pageId={pageId} data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={false} studyId={studyId} subjectId={subjectId} IsMissingData={permissions.canMonitoringMarkAsNull} rowIndex={rowIndex} />
+                            </Col>
+                            <Col xs={1} sm={1} md={0} lg={0} xl={0}>
+                                <Button style={{ position: "fixed", top: "80px", left: "10px", zIndex: "1000" }} onClick={showDrawer} shape="circle" icon={<MenuOutlined />} />
+                                <SubjectDetailDrawer onClose={onClose} openMobileMenu={openMobileMenu} content={<SubjectDetailMenu data={leftMenuData} openSubMenuKeys={openSubMenuKeys} setOpenSubMenuKeys={setOpenSubMenuKeys} openKeys={openKeys} setOpenKeys={setOpenKeys} selectedKeys={selectedKeys} setSelectedKeys={setSelectedKeys} isMobil={true} studyId={studyId} subjectId={subjectId} />} />
+                            </Col>
+                            <Col xs={24} sm={24} md={18} lg={18} xl={19} >
+                                <div id="myDiv" style={{ minHeight: "calc(100vh - 70px)", paddingBottom: "100px", paddingLeft: '50px' }}>
+                                    {rowIndex > 0 &&
+                                        <div>
+                                            <div style={{ float: "left" }}>
+                                                <Button color="success" className='mt-1' onClick={goToSubjectDetail }>{props.t("Go to list")}</Button>
+                                            </div>
+                                            <div style={{ float: "right" }}>
+                                                {props.t("Form No") + ": " + rowIndex + ".0"}
+                                            </div>
                                         </div>
-                                    )
-                                    :
-                                    (
-                                        <>
-                                            {permissions.canMonitoringSdv &&
-                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 10px', position: 'sticky', top: 70, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', zIndex: 999 }}>
-                                                    <Tag color="#87d068">{sdvInformation.inf}</Tag>
-                                                    <Progress
-                                                        percent={sdvInformation.percent}
-                                                        status="active"
-                                                        strokeColor={{
-                                                            from: '#87D068',
-                                                            to: '#87d068',
-                                                        }}
-                                                        size="small"
-                                                        style={{width:'80%'}}
-                                                    />  
-                                                    {sdvInformation.percent !== 100 && 
-                                                        <Tooltip title={props.t('Go to missing SDV')}>
-                                                            <Button
-                                                                type="primary"
-                                                                shape="circle"
-                                                                size="small"
-                                                                icon={<FontAwesomeIcon icon="fa-solid fa-arrow-right" />}
-                                                                style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
-                                                                onClick={() => {
-                                                                    setSdvInformation(prevState => ({
-                                                                        ...prevState,
-                                                                        style: true
-                                                                    })); }}
-                                                            />
-                                                        </Tooltip>
-                                                    }
-                                                </div>
-                                            }
-                                            <SubjectDetailElementList
-                                                IsDisable={!permissions.canSubjectEdit}
-                                                StudyId={studyId}
-                                                ElementList={subjectElementList}
-                                                IsMissingData={permissions.canMonitoringMarkAsNull}
-                                                IsSdv={permissions.canMonitoringSdv}
-                                                SdvInformation={sdvInformation}
-                                                modalRef={modalRef}
-                                            />
-                                        </>
-                                    )
-                                }
+                                    }
+                                    {!isLoading1 && !error1 && isLoaded && elementList && isMultiForm === "false" && subjectElementList.length < 1 ?
+                                        (
+                                            <div style={{
+                                                display: 'flex',
+                                                justifyContent: 'center',
+                                                alignItems: 'center',
+                                                height: 'calc(100vh - 170px)'
+                                            }}>
+                                                <Alert color="warning" style={{ height: "50px" }}>
+                                                    {props.t("There is no module on the page. Please contact the system administrator.")}
+                                                </Alert>
+                                            </div>
+                                        )
+                                        :
+                                        (
+                                            <>
+                                                {permissions.canMonitoringSdv &&
+                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 10px', position: 'sticky', top: 70, boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)', zIndex: 999 }}>
+                                                        <Tag color="#87d068">{sdvInformation.inf}</Tag>
+                                                        <Progress
+                                                            percent={sdvInformation.percent}
+                                                            status="active"
+                                                            strokeColor={{
+                                                                from: '#87D068',
+                                                                to: '#87d068',
+                                                            }}
+                                                            size="small"
+                                                            style={{ width: '80%' }}
+                                                        />
+                                                        {sdvInformation.percent !== 100 &&
+                                                            <Tooltip title={props.t('Go to missing SDV')}>
+                                                                <Button
+                                                                    type="primary"
+                                                                    shape="circle"
+                                                                    size="small"
+                                                                    icon={<FontAwesomeIcon icon="fa-solid fa-arrow-right" />}
+                                                                    style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+                                                                    onClick={() => {
+                                                                        setSdvInformation(prevState => ({
+                                                                            ...prevState,
+                                                                            style: true
+                                                                        }));
+                                                                    }}
+                                                                />
+                                                            </Tooltip>
+                                                        }
+                                                    </div>
+                                                }
+                                                {isMultiForm === "false" &&
+                                                    <SubjectDetailElementList
+                                                        IsDisable={!permissions.canSubjectEdit}
+                                                        StudyId={studyId}
+                                                        ElementList={subjectElementList}
+                                                        IsMissingData={permissions.canMonitoringMarkAsNull}
+                                                        IsSdv={permissions.canMonitoringSdv}
+                                                        SdvInformation={sdvInformation}
+                                                        modalRef={modalRef}
+                                                    />
+                                                }
+                                                {isMultiForm === "true" && <SubjectMultiList
+                                                    studyId={studyId}
+                                                    subjectId={subjectId}
+                                                    pageId={pageId}
+                                                    subjectNumber={subjectNumber}
+                                                />}
+                                            </>
+                                        )
+                                    }
 
-                            </div>
-                        </Col>
-                    </Row>
-                </div>
+                                </div>
+                            </Col>
+                        </Row>
+                    </div>
                 </div>
             </SubjectDetailContext.Provider>
-            <footer style={{ position: 'fixed', bottom: 0, right: 0, width: '100%', background: '#f1f1f1', padding: '10px', textAlign: 'right' }}>
-                <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-                    <div style={{ display: isPrevButton ? 'inline-block' : 'none', marginRight: '10px' }}>
-                        <Button className="btn btn-outline-dark waves-effect waves-light" onClick={goToPreviousPage} icon={<LeftOutlined />}>{props.t("Previous page")}</Button>
+            {isMultiForm === "false" &&
+                <footer style={{ position: 'fixed', bottom: 0, right: 0, width: '100%', background: '#f1f1f1', padding: '10px', textAlign: 'right' }}>
+                    <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+                        <div style={{ display: isPrevButton ? 'inline-block' : 'none', marginRight: '10px' }}>
+                            <Button className="btn btn-outline-dark waves-effect waves-light" onClick={goToPreviousPage} icon={<LeftOutlined />}>{props.t("Previous page")}</Button>
+                        </div>
+                        <div style={{ display: isNextButton ? 'inline-block' : 'none' }}>
+                            <Button className="btn btn-outline-dark waves-effect waves-light" onClick={goToNextPage}>{props.t("Next page")}<RightOutlined /></Button>
+                        </div>
                     </div>
-                    <div style={{ display: isNextButton ? 'inline-block' : 'none' }}>
-                        <Button className="btn btn-outline-dark waves-effect waves-light" onClick={goToNextPage}>{props.t("Next page")}<RightOutlined /></Button>
-                    </div>
-                </div>
-            </footer>
+                </footer>
+            }
             <ModalComp
                 refs={modalRef}
                 title={modalInf.title}

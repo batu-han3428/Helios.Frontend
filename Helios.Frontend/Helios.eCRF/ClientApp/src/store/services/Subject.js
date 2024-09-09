@@ -42,7 +42,7 @@ export const SubjectApi = createApi({
             providesTags: ['SubjectDetailMenu'],
         }),
         getSubjectElementList: builder.query({
-            query: (data) => '/Subject/GetSubjectElementList?subjectId=' + data.subjectId + '&subjectVisitModulePageId=' + data.pageId,
+            query: (data) => '/Subject/GetSubjectElementList?subjectId=' + data.subjectId + '&subjectVisitModulePageId=' + data.pageId + '&rowIndex=' + data.rowIndex,
             refetchOnMountOrArgChange: true,
             keepUnusedDataFor: 0,
             providesTags: ['SubjectElement'],
@@ -134,6 +134,26 @@ export const SubjectApi = createApi({
             }),
             invalidatesTags: ['SubjectElement'],
         }),
+        getSubjectMultiList: builder.query({
+            query: (data) => `/Subject/GetSubjectMultiList/${data.subjectId}/${data.studyVisitId}/${data.showArchivedMulties}`,
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0,
+            providesTags: ['SubjectMulti'],
+        }),
+        AddSubjectMultiForm: builder.mutation({
+            query: (data) => ({
+                url: `/Subject/AddSubjectMultiForm?subjectId=${data.subjectId}&studyVisitId=${data.studyVisitId}`,
+                method: 'POST',
+            }),
+            invalidatesTags: ['SubjectMulti'],
+        }),
+        DeleteOrArchiveSubjectMultiForm: builder.mutation({
+            query: (data) => ({
+                url: `/Subject/DeleteOrArchiveSubjectMultiForm?subjectId=${data.subjectId}&subjectVisitId=${data.subjectVisitId}&rowIndex=${data.rowIndex}&isArchived=${data.isArchived}&unArchive=${data.unArchive}&comment=${data.comment}`,
+                method: 'POST',
+            }),
+            invalidatesTags: ['Subject'],
+        })
     }),
 });
 
@@ -166,5 +186,11 @@ export const { useSetSubjectCommentMutation } = SubjectApi;
 export const { useSetSubjectMissingDataMutation } = SubjectApi;
 
 export const { useSetSubjectSdvMutation } = SubjectApi;
+
+export const { useLazyGetSubjectMultiListQuery } = SubjectApi;
+
+export const { useAddSubjectMultiFormMutation } = SubjectApi;
+
+export const { useDeleteOrArchiveSubjectMultiFormMutation } = SubjectApi;
 
 export default SubjectApi;

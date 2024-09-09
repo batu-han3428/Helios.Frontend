@@ -666,5 +666,18 @@
   "Go to missing SDV": "Go to missing SDV",
   "Switch to study": "Switch to study",
   "Do you want to mark all empty fields on this page as 'missing data' ?": "Do you want to mark all empty fields on this page as 'missing data' ?",
-  "There is no blank space to mark as missing data.": "There is no blank space to mark as missing data."
+  "There is no blank space to mark as missing data.": "There is no blank space to mark as missing data.",
+  "Form Name": "Form Name",
+  "Form No": "Form No",
+  "Show archived forms": "Show archived forms",
+  "Add new form": "Add new form",
+  "Multi form list": "Multi form list",
+  "You will add a new form": "You will add a new form",
+  "Status": "Status",
+  "Form Status": "Form Status",
+  "Go to form": "Go to form",
+  "This form will be deleted": "This form will be deleted.",
+  "This form will be archived": "This form will be archived.",
+  "This form will be unarchived": "This form will be unarchived.",
+  "Go to list": "Go to list"
 }

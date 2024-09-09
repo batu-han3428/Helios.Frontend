@@ -514,5 +514,18 @@
   "Go to missing SDV": "Eksik SDV bul",
   "Switch to study": "Çalışmayı değiştir",
   "Do you want to mark all empty fields on this page as 'missing data' ?": "Bu sayfadaki tüm boş alanları 'eksik veri' olarak işaretlemek istiyor musunuz?",
-  "There is no blank space to mark as missing data.": "Eksik veri olarak işaretlenecek boşluk yok."
+  "There is no blank space to mark as missing data.": "Eksik veri olarak işaretlenecek boşluk yok.",
+  "Form Name": "Form Adı",
+  "Form No": "Form No",
+  "Show archived forms": "Arşivlenmiş formları göster",
+  "Add new form": "Yeni form ekle",
+  "Multi form list": "Multi form listesi",
+  "You will add a new form": "Yeni form ekleyeceksiniz.",
+  "Status": "Durum",
+  "Form Status": "Form durumları",
+  "Go to form": "Forma git",
+  "This form will be deleted.": "Bu form silinecektir.",
+  "This form will be archived.": "Bu form arşivlenecektir.",
+  "This form will be unarchived.": "Bu form arşivden çıkarılacaktır.",
+  "Go to list": "Listeye geri dön"
 }

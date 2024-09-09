@@ -2,7 +2,7 @@
 import React, { useEffect, useContext } from "react";
 import { withTranslation } from "react-i18next";
 import { Menu, Tooltip } from 'antd';
-import { UserOutlined, LockOutlined, BulbOutlined, FolderOutlined, FileOutlined } from '@ant-design/icons';
+import { UserOutlined, LockOutlined, BulbOutlined, FolderOutlined, FileOutlined, MenuOutlined } from '@ant-design/icons';
 import { SubjectDetailEllipsis } from './SubjectDetailEllipsis';
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,7 +12,6 @@ import Swal from 'sweetalert2';
 
 const SubjectDetailMenu = props => {
     const navigate = useNavigate();
-
     const { modalRef, setModalInf } = useContext(SubjectDetailContext);
 
     const CustomMenuHeader = () => {
@@ -39,7 +38,7 @@ const SubjectDetailMenu = props => {
         );
     }
 
-    const CustomMenuItem = ({ item, state, pageId }) => {
+    const CustomMenuItem = ({ item, state, pageId, type = 1 }) => {
         const setMissingData = async (e) => {
             e.stopPropagation();
 
@@ -89,6 +88,7 @@ const SubjectDetailMenu = props => {
                 icon: <BulbOutlined />
             }
         ];
+
         if (state === 2 && props.IsMissingData) {
             items.push({
                 key: '4',
@@ -100,34 +100,83 @@ const SubjectDetailMenu = props => {
                 icon: <FontAwesomeIcon icon="fas fa-check-square" style={{ color: "#bf9ec9" }} />
             });
         }
-        
+
+        if (type === 1) {
+            return (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Tooltip title={item.title}>
+                        <span style={{ width: '90%', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</span>
+                    </Tooltip>
+                    <div style={{ position: 'absolute', right: 15.5, overflow: 'hidden' }}>
+                        <SubjectDetailEllipsis items={items} />
+                    </div>
+                </div>
+            );
+        }
+        else {
+            return (
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Tooltip title={item.title}>
+                        <span style={{ width: '90%', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</span>
+                    </Tooltip>
+                </div>
+            );
+        }
+    };
+
+    const CustomMultiMenuItem = ({ item }) => {
         return (
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                 <Tooltip title={item.title}>
                     <span style={{ width: '90%', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.title}</span>
                 </Tooltip>
-                <div style={{ position: 'absolute', right: 15.5, overflow: 'hidden' }}>
-                    <SubjectDetailEllipsis items={items} />
-                </div>
             </div>
         );
     };
 
     const convertDataToItems = (data) => {
         return data.map((item, index) => {
-            return {
-                key: `sub${index + 1}`,
-                label: <CustomMenuItem item={item} state={1} />,
-                icon: <FolderOutlined />,
-                children: item.children.map((child, childIndex) => {
+            if (item.type === 1 || (props.rowIndex > 0 && item.type === 2)) {
+                let children = item.children.map((child, childIndex) => {
                     return {
                         id: child.id,
-                        key: `${index + 1}-${childIndex + 1}`,
+                        key: `${index + 1}-${childIndex + 1}-${item.id}-${item.type}`,
                         label: <CustomMenuItem item={child} pageId={child.id} state={2} />,
                         icon: <FileOutlined />,
                     };
-                })
-            };
+                });
+
+                if (props.rowIndex > 0 && item.type === 2) {
+                    children.unshift({
+                        key: "",
+                        label: (
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', pointerEvents: 'none' }}>
+                                <Tooltip title={props.t("Form No") + ":" + props.rowIndex + ".0"}>
+                                    <span style={{ width: '90%', display: 'inline-block', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {props.t("Form No") + ": " + props.rowIndex + ".0"}
+                                    </span>
+                                </Tooltip>
+                            </div>
+                        ),
+                        children: null
+                    });
+                }
+
+
+                return {
+                    key: `sub${index + 1}`,
+                    label: <CustomMenuItem item={item} state={1} type={item.type} />,
+                    icon: item.type === 1 ? <FolderOutlined /> : <MenuOutlined />,
+                    children: children 
+                };
+            } else {
+                return {
+                    key: `sub${index + 1}-${item.id}`,
+                    label: <CustomMultiMenuItem item={item} state={1} />,
+                    icon: <MenuOutlined />,
+                    children: null
+                };
+            }
         });
     };
 
@@ -160,6 +209,7 @@ const SubjectDetailMenu = props => {
         }
         return null;
     };
+
     const findMenuItemPathById = (items, id, path = []) => {
         for (let i = 0; i < items.length; i++) {
             const item = items[i];
@@ -188,15 +238,26 @@ const SubjectDetailMenu = props => {
     }, [props.data, props.pageId]);
 
     const onClick = (e) => {
-        const parentKey = findParentKey(e.key, items);
-        if (parentKey) {
-            const newOpenKeys = props.openKeys.includes(parentKey) ? [] : [parentKey];
-            props.setOpenKeys(newOpenKeys);
-            const parentItem = items.find(item => item.key === parentKey);
-            const pageId = parentItem.children.find(child => child.key === e.key).id;
-            navigate(`/subject-detail/${props.studyId}/${pageId}/${props.subjectId}/${props.subjectNumber}`);
+        if (e.key !== '') {
+            const parentKey = findParentKey(e.key, items);
+            const key = (e.key).split('-');
+            var isVisit = key[0].includes("sub");
+            var rowIndex = key.length > 2 && key[3] === "1" ? 0 : props.rowIndex;
+
+            if (parentKey && !isVisit) {
+                const newOpenKeys = props.openKeys.includes(parentKey) ? [] : [parentKey];
+                props.setOpenKeys(newOpenKeys);
+                const parentItem = items.find(item => item.key === parentKey);
+                const pageId = parentItem.children.find(child => child.key === e.key).id;
+
+                navigate(`/subject-detail/${props.studyId}/${pageId}/${props.subjectId}/${props.subjectNumber}/${false}/${rowIndex}`);
+            }
+            else {
+                navigate(`/subject-detail/${props.studyId}/${key[1]}/${props.subjectId}/${props.subjectNumber}/${true}/${rowIndex}`);
+            }
+
+            props.setSelectedKeys(e.key);
         }
-        props.setSelectedKeys(e.key);
     };
 
     const handleSubMenuOpenChange = (keys) => {

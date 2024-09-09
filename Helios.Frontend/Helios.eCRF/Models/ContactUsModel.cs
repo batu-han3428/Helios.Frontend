@@ -1,5 +1,4 @@
-﻿using MassTransit.Futures.Contracts;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
 
 namespace Helios.eCRF.Models
