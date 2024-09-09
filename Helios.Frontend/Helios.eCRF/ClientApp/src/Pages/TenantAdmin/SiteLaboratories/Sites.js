@@ -27,12 +27,34 @@ const Sites = props => {
     const [skip, setSkip] = useState(true);
     const [tableData, setTableData] = useState([]);
     const [siteId, setSiteId] = useState(0);
-
     const dispatch = useDispatch();
 
     const { data: apiData, apiError, apiIsLoading } = useSiteGetQuery(siteId, {
         skip, refetchOnMountOrArgChange: true
     });
+    const [triggerSites, resultSites] = useLazySiteListGetQuery();
+    const { data: siteData, error, isLoading } = resultSites;
+
+    useEffect(() => {
+        dispatch(startloading());
+        if (!isLoading && !error && siteData) {
+            const updatedSiteData = siteData.map(item => {
+                return {
+                    ...item,
+                    updatedAt: formatDate(item.updatedAt),
+                    actions: getActions(item.id)
+                };
+            });
+            setTableData(updatedSiteData);
+            extractUniqueValues(updatedSiteData);
+            dispatch(endloading());
+        } else if (!isLoading && error) {
+            dispatch(endloading());
+            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
+        } else {
+            dispatch(endloading());
+        }
+    }, [siteData, error, isLoading]);
 
     const siteUpdate = (id) => {
         dispatch(startloading());
@@ -109,9 +131,31 @@ const Sites = props => {
         const actions = (
             <div className="icon-container">
                 <div title={props.t("Update")} className="icon icon-update" onClick={() => { siteUpdate(id) }}></div>
-                <div title={props.t("Delete")} className="icon icon-delete" onClick={() => { siteDeleteHandle(id) } }></div>
+                <div title={props.t("Delete")} className="icon icon-delete" onClick={() => { siteDeleteHandle(id) }}></div>
             </div>);
         return actions;
+    };
+    const [filteredInfo, setFilteredInfo] = useState({});
+    const handleChange = (pagination, filters) => {
+        setFilteredInfo(filters);
+    };
+    const [uniqueValues, setUniqueValues] = useState({
+        siteFullNames: [],
+        codes: [],
+        countryCodes: []
+    });
+
+    const extractUniqueValues = (data) => {
+        const siteFullNames = [...new Set(data.map(item => item.siteFullName))];
+        const codes = [...new Set(data.map(item => item.code))];
+        const countryCodes = [...new Set(data.map(item => item.countryCode))];
+
+        setUniqueValues({
+            siteFullNames,
+            codes,
+            countryCodes,
+
+        });
     };
 
     const data = {
@@ -121,18 +165,27 @@ const Sites = props => {
                 dataIndex: 'siteFullName',
                 sorter: (a, b) => a.siteFullName.localeCompare(b.siteFullName),
                 sortDirections: ['ascend', 'descend'],
+                filters: uniqueValues.siteFullNames.map(item => ({ text: item, value: item })),
+                filteredValue: filteredInfo.siteFullName || null,
+                onFilter: (value, record) => record.siteFullName === value,
             },
             {
                 title: props.t('Site no'),
                 dataIndex: 'code',
                 sorter: (a, b) => a.code.localeCompare(b.code),
                 sortDirections: ['ascend', 'descend'],
+                filters: uniqueValues.codes.map(item => ({ text: item, value: item })),
+                filteredValue: filteredInfo.code || null,
+                onFilter: (value, record) => record.code === value,
             },
             {
                 title: props.t('Country code'),
                 dataIndex: 'countryCode',
                 sorter: (a, b) => a.countryCode.localeCompare(b.countryCode),
                 sortDirections: ['ascend', 'descend'],
+                filters: uniqueValues.countryCodes.map(item => ({ text: item, value: item })),
+                filteredValue: filteredInfo.countryCode || null,
+                onFilter: (value, record) => record.countryCode === value,
             },
             {
                 title: props.t('Country'),
@@ -159,10 +212,9 @@ const Sites = props => {
             },
         ],
         rows: tableData
-    }   
-    
-    const [triggerSites, resultSites] = useLazySiteListGetQuery();
-    const { data: siteData, error, isLoading } = resultSites;
+    }
+
+
 
     useEffect(() => {
         if (studyInformation.studyId) {
@@ -170,25 +222,7 @@ const Sites = props => {
         }
     }, [studyInformation.studyId])
 
-    useEffect(() => {
-        dispatch(startloading());
-        if (!isLoading && !error && siteData) {
-            const updatedSiteData = siteData.map(item => {
-                return {
-                    ...item,
-                    updatedAt: formatDate(item.updatedAt),
-                    actions: getActions(item.id)
-                };
-            });
-            setTableData(updatedSiteData);
-            dispatch(endloading());
-        } else if (!isLoading && error) {
-            dispatch(endloading());
-            dispatch(showToast(props.t("An unexpected error occurred."), true, false));
-        }else {
-            dispatch(endloading());
-        }
-    }, [siteData, error, isLoading]);
+
 
     const [siteSaveOrUpdate] = useSiteSaveOrUpdateMutation();
 
@@ -269,8 +303,8 @@ const Sites = props => {
                                                 item.updatedAt,
                                             ])
                                         },
-                                        studyInformation.studyName + " - " + props.t("Site list"),
-                                        studyInformation.studyName + " - " + props.t("Site list")
+                                            studyInformation.studyName + " - " + props.t("Site list"),
+                                            studyInformation.studyName + " - " + props.t("Site list")
                                         )}
                                     >
                                         <FontAwesomeIcon icon="fa-solid fa-download" /> {props.t("Excel Download")}
@@ -280,7 +314,7 @@ const Sites = props => {
                                         className="btn btn-success waves-effect waves-light"
                                         type="button"
                                         onClick={() => modalRef.current.tog_backdrop()}
-                                        style={{marginLeft:"10px"} }
+                                        style={{ marginLeft: "10px" }}
                                     >
                                         <FontAwesomeIcon icon="fa-solid fa-plus" /> {props.t("Add a site")}
                                     </Button>
@@ -291,15 +325,19 @@ const Sites = props => {
                     <Row>
                         <Col className="col-12">
                             <Card>
-                                <CardBody>                                  
-                               
-                                   
-                                    <Table
-                                        dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
-                                        columns={data.columns}
-                                        pagination={true}
-                                        scroll={{ x: 'max-content' }}
-                                    />
+                                <CardBody>
+                                    {siteData ? (
+
+                                        <Table
+                                            dataSource={data.rows.map(item => ({ ...item, key: item.id }))}
+                                            columns={data.columns}
+                                            pagination={true}
+                                            onChange={handleChange}
+                                            scroll={{ x: 'max-content' }}
+                                        />
+                                    ) : (
+                                        <p>Loading...</p>
+                                    )}
                                 </CardBody>
                             </Card>
                         </Col>
@@ -411,7 +449,7 @@ const Sites = props => {
                 }
                 resetValue={resetValue}
                 handle={() => validationType.handleSubmit()}
-                buttonText={siteId === 0 ? props.t("Save") : props.t("Update") }
+                buttonText={siteId === 0 ? props.t("Save") : props.t("Update")}
             />
         </React.Fragment>
     );
