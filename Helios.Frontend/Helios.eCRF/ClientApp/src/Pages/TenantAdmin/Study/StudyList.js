@@ -104,13 +104,7 @@ const StudyList = props => {
                 );
             },
             filterIcon: filtered => <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />,
-        },
-        {
-            title: props.t('Study link'),
-            dataIndex: 'studyLink',
-            sorter: (a, b) => a.studyLink.localeCompare(b.studyLink),
-            sortDirections: ['ascend', 'descend']
-        },
+        },       
         {
             title: props.t('Protocol code'),
             dataIndex: 'protocolCode',
