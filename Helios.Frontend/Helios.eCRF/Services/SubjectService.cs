@@ -148,13 +148,14 @@ namespace Helios.eCRF.Services
             }
         }
 
-        public async Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId)
+        public async Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId, int rowIndex)
         {
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreSubject/GetSubjectElementList", Method.Get);
                 req.AddParameter("subjectId", subjectId);
                 req.AddParameter("pageId", subjectVisitModulePageId);
+                req.AddParameter("rowIndex", rowIndex);
                 var result = await client.ExecuteAsync<List<SubjectElementModel>>(req);
 
                 if (result.IsSuccessful && result.Data.Count > 0)
@@ -644,6 +645,31 @@ namespace Helios.eCRF.Services
             }
         }
 
+        public async Task<RestResponse<List<SubjectMultiDTO>>> GetSubjectMultiList(Int64 subjectId, Int64 studyVisitId, bool showArchivedMulties)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/GetSubjectMultiList", Method.Get);
+                req.AddParameter("subjectId", subjectId);
+                req.AddParameter("studyVisitId", studyVisitId);
+                req.AddParameter("showArchivedMulties", showArchivedMulties);
+                var result = await client.ExecuteAsync<List<SubjectMultiDTO>>(req);
+                return result;
+            }
+
+        }
+
+        public async Task<ApiResponse<dynamic>> AddSubjectMultiForm(Int64 subjectId, Int64 studyVisitId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest($"CoreSubject/AddSubjectMultiForm?subjectId={subjectId}&studyVisitId={studyVisitId}", Method.Post);
+                AddApiHeaders(req);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
         public async Task<RestResponse<List<SdvModel>>> GetSubjectSdvList()
         {
             using (var client = CoreServiceClient)
@@ -652,6 +678,32 @@ namespace Helios.eCRF.Services
                 AddApiHeaders(req);
                 var result = await client.ExecuteAsync<List<SdvModel>>(req);
                 return result;
+            }
+        }
+        
+        public async Task<ApiResponse<dynamic>> DeleteOrArchiveSubjectMultiForm(SubjectMultiFormArchiveOrDeleteModel model, bool unArchive)
+        {
+            if (!unArchive)
+            {
+                using (var client = CoreServiceClient)
+                {
+                    var req = new RestRequest($"CoreSubject/DeleteOrArchiveSubjectMultiForm", Method.Post);
+                    AddApiHeaders(req);
+                    req.AddJsonBody(model);
+                    var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                    return result.Data;
+                }
+            }
+            else
+            {
+                using (var client = CoreServiceClient)
+                {
+                    var req = new RestRequest($"CoreSubject/UnArchiveSubjectMultiForm", Method.Post);
+                    AddApiHeaders(req);
+                    req.AddJsonBody(model);
+                    var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                    return result.Data;
+                }
             }
         }
     }

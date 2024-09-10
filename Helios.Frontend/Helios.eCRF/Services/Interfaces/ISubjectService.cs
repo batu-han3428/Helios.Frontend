@@ -11,7 +11,7 @@ namespace Helios.eCRF.Services.Interfaces
         Task<RestResponse<List<SiteModel>>> GetSites(Int64 studyId);
         Task<UserPermissionModel> GetUserPermissions(Int64 studyId);
         Task<List<SubjectDetailMenuModel>> GetSubjectDetailMenu(Int64 studyId, Int64 subjectId);
-        Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId);
+        Task<RestResponse<List<SubjectElementModel>>> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId, int rowIndex);
         Task<ApiResponse<dynamic>> AutoSaveSubjectData(SubjectElementShortModel model);
         Task<ApiResponse<dynamic>> AddDatagridSubjectElements(Int64 datagridId);
         Task<ApiResponse<dynamic>> RemoveDatagridSubjectElements(DatagridRemoveDTO dto);
@@ -25,5 +25,9 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> SetSubjectMissingData(SubjectMissingDataDTO dto);
         Task<ApiResponse<dynamic>> SetSubjectSdv(List<Int64> ids);
         Task<RestResponse<List<SdvModel>>> GetSubjectSdvList();
+        Task<ApiResponse<dynamic>> SetSubjectSdv(Int64 id);
+        Task<RestResponse<List<SubjectMultiDTO>>> GetSubjectMultiList(Int64 subjectId, Int64 pageId, bool showArchivedMulties);
+        Task<ApiResponse<dynamic>> AddSubjectMultiForm(Int64 subjectId, Int64 pageId);
+        Task<ApiResponse<dynamic>> DeleteOrArchiveSubjectMultiForm(SubjectMultiFormArchiveOrDeleteModel model, bool unArchive);
     }
 }

@@ -74,9 +74,9 @@ namespace Helios.eCRF.Controllers
         /// <returns>hasta element listesi</returns>
         [HttpGet]
         [RoleAttribute(Roles.StudyUser)]
-        public async Task<IActionResult> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId)
+        public async Task<IActionResult> GetSubjectElementList(Int64 subjectId, Int64 subjectVisitModulePageId, int rowIndex)
         {
-            var result = await _subjectService.GetSubjectElementList(subjectId, subjectVisitModulePageId);
+            var result = await _subjectService.GetSubjectElementList(subjectId, subjectVisitModulePageId, rowIndex);
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
@@ -228,6 +228,61 @@ namespace Helios.eCRF.Controllers
         {
             var result = await _subjectService.GetSubjectSdvList();
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
+        /// <summary>
+        /// Hastanın multi form listesini çeker
+        /// </summary>
+        /// <param name="subjectId">hasta id</param>
+        /// <param name="studyVisitId">vizit sayfa id</param>
+        /// <param name="showArchivedMulties">arşivlenmişleri göstersin mi</param>
+        /// <returns>hasta multi form listesi</returns>
+        [HttpGet("{subjectId}/{studyVisitId}/{showArchivedMulties}")]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> GetSubjectMultiList(Int64 subjectId, Int64 studyVisitId, bool showArchivedMulties)
+        {
+            var result = await _subjectService.GetSubjectMultiList(subjectId, studyVisitId, showArchivedMulties);
+
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
+        /// <summary>
+        /// Hastaya yeni multi form eklenir
+        /// </summary>
+        /// <param name="subjectId">hasta id</param>
+        /// <param name="studyVisitId">vizit sayfa id</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> AddSubjectMultiForm(Int64 subjectId, Int64 studyVisitId)
+        {
+            var result = await _subjectService.AddSubjectMultiForm(subjectId, studyVisitId);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Hastaya multi form siler
+        /// </summary>
+        /// <param name="subjectId">hasta id</param>
+        /// <param name="subjectVisitId">vizit sayfa id</param>
+        /// <param name="rowIndex">vizit row index</param>
+        /// <param name="isArchived">archive olacak mi?</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> DeleteOrArchiveSubjectMultiForm(Int64 subjectId, Int64 subjectVisitId, int rowIndex, bool isArchived, bool unArchive, string comment)
+        {
+            var model = new SubjectMultiFormArchiveOrDeleteModel
+            {
+                SubjectId = subjectId,
+                SubjectVisitId = subjectVisitId,
+                RowIndex = rowIndex,
+                IsArchived = isArchived,
+                Comment = comment
+            };
+
+            var result = await _subjectService.DeleteOrArchiveSubjectMultiForm(model, unArchive);
+            return Ok(result);
         }
     }
 }

@@ -142,6 +142,7 @@ import Iwrs from "../Pages/Iwrs/Iwrs";
 //Subject
 import SubjectList from "../Pages/Subject/Subject/SubjectList";
 import SubjectDetail from "../Pages/Subject/Subject/SubjectDetail";
+import SubjectMultiList from "../Pages/Subject/Subject/SubjectMultiList";
 
 const userRoutes = [
 
@@ -262,7 +263,8 @@ const userRoutes = [
 
     //Subject
     { path: "/subjectlist/:studyId", component: <SubjectList />, menuType: "study", roles: ['StudyUser'] },
-    { path: "/subject-detail/:studyId/:pageId/:subjectId/:subjectNumber", component: <SubjectDetail />, menuType: "study", roles: ['StudyUser'] },
+    { path: "/subject-detail/:studyId/:pageId/:subjectId/:subjectNumber/:isMultiForm/:rowIndex", component: <SubjectDetail />, menuType: "study", roles: ['StudyUser'] },
+    { path: "/subject-multi-forms/:studyId/:subjectId/:pageId/:subjectNumber", component: <SubjectMultiList />, menuType: "study", roles: ['StudyUser'] },
 
     // this route should be at the end of all other routes
     { path: "/", roles: ["TenantAdmin"], redirect: "/studylist/false", menuType: "admin" },

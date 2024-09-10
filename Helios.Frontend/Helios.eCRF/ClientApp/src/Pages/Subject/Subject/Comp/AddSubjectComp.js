@@ -60,7 +60,7 @@ const AddSubjectComp = props => {
                     if (retVal.addedById > 0) message = message.replace("{n}", retVal.addedById);
                     dispatch(showToast(message, true, true));
                     props.refs.current.tog_backdrop();
-                    navigate(`/subject-detail/${retVal.studyId}/${retVal.firstPageId}/${retVal.id}/${retVal.subjectNumber}`);
+                    navigate(`/subject-detail/${retVal.studyId}/${retVal.firstPageId}/${retVal.id}/${retVal.subjectNumber}/${false}/${0}`);
                 } else {
                     Swal.fire({
                         title: "",

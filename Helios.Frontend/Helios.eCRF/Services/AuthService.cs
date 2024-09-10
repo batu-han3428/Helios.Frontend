@@ -2,7 +2,6 @@
 using Helios.eCRF.Models;
 using Helios.eCRF.Services.Base;
 using Helios.eCRF.Services.Interfaces;
-using MassTransit;
 using RestSharp;
 
 namespace Helios.eCRF.Services

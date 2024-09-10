@@ -25,9 +25,11 @@ import { useParams } from "react-router-dom";
 const { TextArea } = Input;
 
 const SubjectList = props => {
-    const {studyId} = useParams();
+    const { studyId } = useParams();
     const modalRef = useRef();
     const modalRefDel = useRef();
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [modalTitle, setModalTitle] = useState("");
     const [modalButtonText, setModalButtonText] = useState("");
     const [modalContent, setModalContent] = useState(null);
@@ -43,15 +45,16 @@ const SubjectList = props => {
     const [filteredInfo, setFilteredInfo] = useState({});
     const [searchsubjectNumberText, setSearchsubjectNumberText] = useState('');
     const [studyUserSiteData, setStudyUserSiteData] = useState({});
+    const [view, setView] = useState(false);
+    const [textError, setTextError] = useState("");
+    const [unArchive, setUnArchive] = useState("");
     const columns = [];
     const [addingSubject] = useAddSubjectMutation();
     const [deleteOrArchiveSubject] = useDeleteOrArchiveSubjectMutation();
     const [triggerPermission, { data: permissionsData, errorPerm, isLoadingPerm }] = useLazyGetUserPermissionsQuery();
     const [triggerSubjectList, { data: subjectsData, error, isLoading }] = useLazyGetSubjectListQuery();
     const [trigger, { data: studyUserSitesData, errorSite, isLoadingSite }] = useLazyStudyUserSitesGetQuery();
-    const [view, setView] = useState(false);
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const [triggerCrf, { data: annotatedData, error: errorCrf, isLoading: isLoadingCrf }] = useLazySubjectVisitAnnotatedCrfGetQuery();
 
     useEffect(() => {
         dispatch(startloading());
@@ -61,12 +64,13 @@ const SubjectList = props => {
     }, [studyId, dispatch]);
 
     useEffect(() => {
-        if (!errorPerm && !isLoadingPerm && permissionsData) {      
+        if (!errorPerm && !isLoadingPerm && permissionsData) {
             if (!permissionsData.canSubjectView) {
                 navigate('/AccessDenied', { state: { from: props.location } });
                 return;
             }
             setView(true);
+            setPermissions(permissionsData);
             optionGroup(studyId);
             getStudy(studyId);
             triggerSubjectList({ studyId: studyId, showArchivedSubjects: showArchivedSubjects });
@@ -112,10 +116,9 @@ const SubjectList = props => {
     }, [subjectsData, error, isLoading, permissionsData]);
 
     const goToSubjectDetail = (studyId, pageId, subjectId, subjectNumber) => {
-        navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}/${subjectNumber}`);
+        navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}/${subjectNumber}/${false}/${0}`);
     };
-    
-    const [triggerCrf, { data: annotatedData, error: errorCrf, isLoading: isLoadingCrf }] = useLazySubjectVisitAnnotatedCrfGetQuery();
+
 
     useEffect(() => {
         if (annotatedData && !errorCrf && !isLoadingCrf) {
@@ -127,6 +130,24 @@ const SubjectList = props => {
             dispatch(endloading());
         }
     }, [annotatedData])
+
+    useEffect(() => {
+        if (props.authUserId && studyId) {
+            trigger({ authUserId: props.authUserId, studyId: studyId });
+        }
+    }, [props.authUserId, studyId]);
+
+    useEffect(() => {
+        if (!isLoadingSite && !errorSite && studyUserSitesData) {
+            setStudyUserSiteData(studyUserSitesData);
+        }
+    }, [studyUserSitesData, errorSite, isLoadingSite]);
+
+    useEffect(() => {
+        if (subjectId && isArchived !== "" && unArchive !== "") {
+            handleDeleteOrArchiveSubmit();
+        }
+    }, [subjectId, isArchived, unArchive]);
 
     const getActions = (item, permissions) => {
         const actions = (
@@ -145,7 +166,7 @@ const SubjectList = props => {
                             <div
                                 title={props.t("Unarchive")}
                                 className="ti-back-left"
-                                onClick={() => toggleDeleteModal(item.id, subjectNumber, false, true)}
+                                onClick={() => toggleUnArchive(item.id,true, true)}
                             ></div>
                         )}
                     </>
@@ -173,8 +194,31 @@ const SubjectList = props => {
         setIsDelete(isDeleted);
         setSubjectNumber(subjectNumber);
         setIsArchived(unarchive);
+        setUnArchive(unArchive);
         modalRefDel.current.tog_backdrop();
     }
+
+    const toggleUnArchive = (id, isArchived, unArchive) => {
+        Swal.fire({
+            title: props.t("This form will be unarchived"),
+            text: props.t("Do you confirm?"),
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3bbfad",
+            confirmButtonText: props.t("Yes"),
+            cancelButtonText: props.t("Cancel"),
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                dispatch(startloading());
+                setSubjectId(id);
+                setIsArchived(isArchived);
+                setUnArchive(unArchive);
+                setComment("a");
+            } else {
+                return false;
+            }
+        });
+    };
 
     const handleChangeComment = (e) => {
         setComment(e.target.value)
@@ -189,26 +233,26 @@ const SubjectList = props => {
         fetch(API_BASE_URL + 'Subject/GetSites?studyId=' + id, {
             method: 'GET',
         })
-        .then(response => response.json())
-        .then(data => {
-            setselectSites(data);
-        })
-        .catch(error => {
+            .then(response => response.json())
+            .then(data => {
+                setselectSites(data);
+            })
+            .catch(error => {
 
-        });
+            });
     };
 
     const getStudy = (id) => {
         fetch(API_BASE_URL + 'Subject/GetStudyAskSubjectInitial?studyId=' + id, {
             method: 'GET',
         })
-        .then(response => response.json())
-        .then(data => {
-            setAskSubjectInitial(data);
-        })
-        .catch(error => {
+            .then(response => response.json())
+            .then(data => {
+                setAskSubjectInitial(data);
+            })
+            .catch(error => {
 
-        });
+            });
     };
 
     const addSubject = (site) => {
@@ -427,20 +471,8 @@ const SubjectList = props => {
         }
     };
 
-    useEffect(() => {
-        if (props.authUserId && studyId) {
-            trigger({ authUserId: props.authUserId, studyId: studyId });
-        }
-    }, [props.authUserId, studyId]);
-
-    useEffect(() => {
-        if (!isLoadingSite && !errorSite && studyUserSitesData) {
-            setStudyUserSiteData(studyUserSitesData);
-        }
-    }, [studyUserSitesData, errorSite, isLoadingSite]);
-
     const handleDeleteOrArchiveSubmit = async () => {
-        if (comment == null || comment.trim() === "") {
+        if (!unArchive && (comment == null || comment.trim() === "")) {
             setTextError(props.t("This field is required"));
             return;
         }
@@ -459,8 +491,12 @@ const SubjectList = props => {
             if (response.data !== undefined) {
                 if (response.data.isSuccess) {
                     dispatch(showToast(props.t(response.data.message), true, true));
-                    modalRefDel.current.tog_backdrop();
-                    setComment("");
+
+                    if (!unArchive) {
+                        modalRefDel.current.tog_backdrop();
+                        setComment("");
+                    }
+
                     dispatch(endloading());
                 } else {
                     dispatch(showToast(props.t(response.data.message), true, false));
@@ -474,8 +510,6 @@ const SubjectList = props => {
         setShowArchivedSubjects(e.target.checked);
     }
 
-    const [textError, setTextError] = useState("");
-
     const handleBlur = () => {
         if (comment.trim() === "") {
             setTextError(props.t("This field is required"));
@@ -486,7 +520,7 @@ const SubjectList = props => {
     document.title = props.t('Subject list');
     return (
         <React.Fragment>
-            {!isLoading && !error && subjectsData !== null &&               
+            {!isLoading && !error && subjectsData !== null &&
                 <div className="page-content">
                     <div className="container-fluid">
                         {view && <>

@@ -514,7 +514,6 @@
   "Go to missing SDV": "Eksik SDV bul",
   "Switch to study": "Çalışmayı değiştir",
   "Do you want to mark all empty fields on this page as 'missing data' ?": "Bu sayfadaki tüm boş alanları 'eksik veri' olarak işaretlemek istiyor musunuz?",
-  "There is no blank space to mark as missing data.": "Eksik veri olarak işaretlenecek boşluk yok.",
   "All data on this page will be SDV'ed.": "Bu sayfadaki tüm veriler SDV'lenecektir.",
   "This study is adhering to Good Clinical Practice (GCP)!": "Bu çalışma İyi Klinik Uygulamaları (İKU)'na uygundur!",
   "Please, supply a reason for changing this field's value:": "Lütfen bu alanın değerini değiştirme nedenini belirtin:",
@@ -529,6 +528,20 @@
   "Active user": "Aktif kullanıcı",
   "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.": "İlgili abonelik için kullanıcı ekleme limitiniz dolmuştur. Lütfen sistem yöneticisi ile iletişime geçiniz. ",
   "To create a new password, please click on the 'Forgot your password ?' text on the screen and create a new password with the help of the e-mail you receive.": "Lütfen yeni şifre oluşturmak için ekranda bulunan 'Parolanızı mı unuttunuz ?' yazısına tıklayıp gelen e-posta yardımı ile yeni şifre oluşturunuz.",
-  "You are no longer actively studying in our system. We are very sorry about that :( If you think there is a problem, please contact the system administrator.": "Artık sistemimizde aktif bir çalışmanız yoktur. Bunun için çok üzgünüz :(  Bir sorun olduğunu düşünüyorsanız, lütfen sistem yöneticisi ile iletişime geçiniz."
+  "You are no longer actively studying in our system. We are very sorry about that :( If you think there is a problem, please contact the system administrator.": "Artık sistemimizde aktif bir çalışmanız yoktur. Bunun için çok üzgünüz :(  Bir sorun olduğunu düşünüyorsanız, lütfen sistem yöneticisi ile iletişime geçiniz.",
+  "There is no blank space to mark as missing data.": "Eksik veri olarak işaretlenecek boşluk yok.",
+  "Form Name": "Form Adı",
+  "Form No": "Form No",
+  "Show archived forms": "Arşivlenmiş formları göster",
+  "Add new form": "Yeni form ekle",
+  "Multi form list": "Multi form listesi",
+  "You will add a new form": "Yeni form ekleyeceksiniz.",
+  "Status": "Durum",
+  "Form Status": "Form durumları",
+  "Go to form": "Forma git",
+  "This form will be deleted.": "Bu form silinecektir.",
+  "This form will be archived.": "Bu form arşivlenecektir.",
+  "This form will be unarchived.": "Bu form arşivden çıkarılacaktır.",
+  "Go to list": "Listeye geri dön"
 
 }
