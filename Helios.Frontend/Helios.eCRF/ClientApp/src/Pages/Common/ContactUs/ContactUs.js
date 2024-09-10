@@ -1,26 +1,15 @@
-﻿import React, { useRef } from "react";
-import {
-    Row,
-    Col,
-    Form,
-    Label,
-    Input,
-    FormFeedback,
-    Button
-} from "reactstrap";
+﻿import React from "react";
+import { Row, Col, Form, Label, Input, FormFeedback, Button } from "reactstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { useContactUsPostMutation } from "../../../store/services/ContactUs";
-import ToastComp from '../../../components/Common/ToastComp/ToastComp';
 import { useDispatch } from "react-redux";
 import { startloading, endloading } from "../../../store/loader/actions";
 import { withTranslation } from "react-i18next";
-
+import { showToast } from "../../../store/toast/actions";
 
 const ContactUs = (props) => {
     document.title = "Contact Us Page | Veltrix - React Admin & Dashboard Template";
-
-    const toastRef = useRef();
 
     const dispatch = useDispatch();
 
@@ -55,20 +44,8 @@ const ContactUs = (props) => {
         onSubmit: async (values) => {
             dispatch(startloading());
             const response = await contactUsPost(values);
-
-            if (response.data.isSuccess) {
-                dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: true
-                });
-            } else {
-                dispatch(endloading());
-                toastRef.current.setToast({
-                    message: props.t(response.data.message),
-                    stateToast: false
-                });
-            }
+            dispatch(endloading());
+            dispatch(showToast(props.t(response.data.message), true, response.data.isSuccess));
         }
     });
 
@@ -230,9 +207,6 @@ const ContactUs = (props) => {
                     </Row>
                 </div>
             </div>
-            <ToastComp
-                ref={toastRef}
-            />
         </React.Fragment>
     );
 };

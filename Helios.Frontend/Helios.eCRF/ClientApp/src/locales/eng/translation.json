@@ -675,7 +675,6 @@
   "Fullname": "Fullname",
   "Previous data": "Previous data",
   "New data": "New data",
-  "Audit trail date": "Audit trail date",
   "Add a tenant admin": "Add a tenant admin",
   "Active user": "Active user",
   "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.": "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.",
@@ -694,5 +693,15 @@
   "This form will be deleted": "This form will be deleted.",
   "This form will be archived": "This form will be archived.",
   "This form will be unarchived": "This form will be unarchived.",
-  "Go to list": "Go to list"
+  "Go to list": "Go to list",
+  "Audit trail date": "Audit trail date",
+  "Close query": "Close query",
+  "Query no": "Query no",
+  "Query status": "Query status",
+  "Query is closed": "Query is closed",
+  "Go to element": "Go to element",
+  "This query will be closed.": "This query will be closed.",
+  "You have open queries!": "You have open queries!",
+  "Go to queries": "Go to queries",
+  "No query for this field!": "No query for this field!"
 }

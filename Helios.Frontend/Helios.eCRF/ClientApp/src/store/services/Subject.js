@@ -22,7 +22,7 @@ export const SubjectApi = createApi({
             refetchOnMountOrArgChange: true,
             keepUnusedDataFor: 0,
             providesTags: ['Subject'],
-        }),           
+        }),
         getUserPermissions: builder.query({
             query: (studyId) => `/User/GetUserPermissions/${studyId}`,
             providesTags: ['Permissions'],
@@ -134,7 +134,7 @@ export const SubjectApi = createApi({
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(ids), 
+                body: JSON.stringify(ids),
             }),
             invalidatesTags: ['SubjectElement'],
         }),
@@ -146,9 +146,8 @@ export const SubjectApi = createApi({
         getRelationPageElementList: builder.query({
             query: (data) => `/Subject/GetRelationPageElementValues?subjectVisitPageModuleElementId=` + data.subjectVisitPageModuleElementId + '&studyId=' + data.studyId + '&value=' + data.value + '&subjectId=' + data.subjectId,
             refetchOnMountOrArgChange: true,
-            keepUnusedDataFor: 0,          
+            keepUnusedDataFor: 0,
         }),
-    //}),
         getSubjectMultiList: builder.query({
             query: (data) => `/Subject/GetSubjectMultiList/${data.subjectId}/${data.studyVisitId}/${data.showArchivedMulties}`,
             refetchOnMountOrArgChange: true,
@@ -168,7 +167,26 @@ export const SubjectApi = createApi({
                 method: 'POST',
             }),
             invalidatesTags: ['Subject'],
-        })
+        }),
+        setSubjectQuery: builder.mutation({
+            query: (values) => ({
+                url: '/Subject/SetSubjectQuery',
+                method: 'POST',
+                body: values,
+            }),
+            invalidatesTags: ['Query', 'SubjectElement'],
+        }),
+        getSubjectQueries: builder.query({
+            query: (subjectElementId) => `/Subject/GetSubjectQueries/${subjectElementId}`,
+            providesTags: ['Query'],
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0
+        }),
+        getSubjectQueryList: builder.query({
+            query: () => '/Subject/GetSubjectQueryList',
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0
+        }),
     }),
 });
 
@@ -211,5 +229,11 @@ export const { useLazyGetSubjectMultiListQuery } = SubjectApi;
 export const { useAddSubjectMultiFormMutation } = SubjectApi;
 
 export const { useDeleteOrArchiveSubjectMultiFormMutation } = SubjectApi;
+
+export const { useSetSubjectQueryMutation } = SubjectApi;
+
+export const { useLazyGetSubjectQueriesQuery } = SubjectApi;
+
+export const { useLazyGetSubjectQueryListQuery } = SubjectApi;
 
 export default SubjectApi;

@@ -29,7 +29,8 @@ const SubjectDetail = props => {
 
     const location = useLocation();
 
-    const elementRef = useRef(null);
+    const sdvElementRef = useRef(null);
+    const queryElementRef = useRef(null);
     const modalRef = useRef();
     const [modalInf, setModalInf] = useState({});
     const [selectedKeys, setSelectedKeys] = useState(['1-1']);
@@ -39,6 +40,7 @@ const SubjectDetail = props => {
     const [leftMenuData, setLeftMenuData] = useState([]);
     const [subjectElementList, setSubjectElementList] = useState([]);
     const [sdvInformation, setSdvInformation] = useState({});
+    const [queryInformation, setQueryInformation] = useState({});
 
     const [trigger, { data: menuData, error, isLoading }] = useLazyGetSubjectDetailMenuQuery();
     const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId });
@@ -53,6 +55,9 @@ const SubjectDetail = props => {
     const { data: elementList, error1, isLoading1 } = useGetSubjectElementListQuery({ subjectId: subjectId, pageId: pageId, rowIndex: rowIndex });
     const [triggerPermission, { data: permissionsData, errorPerm, isLoadingPerm }] = useLazyGetUserPermissionsQuery();
 
+    const [permissions, setPermissions] = useState([]);
+    const [triggerPermission, { data: permissionsData, errorPerm, isLoadingPerm }] = useLazyGetUserPermissionsQuery();
+
     useEffect(() => {
         if (studyId) {
             triggerPermission(studyId);
@@ -61,6 +66,7 @@ const SubjectDetail = props => {
 
     useEffect(() => {
         if (!errorPerm && !isLoadingPerm && permissionsData) {
+            setPermissions(permissionsData);
             setIsLoaded(true);
         }
     }, [permissionsData, errorPerm, isLoadingPerm]);
@@ -116,16 +122,18 @@ const SubjectDetail = props => {
         navigate(`/subject-detail/${studyId}/${pgId}/${subjectId}/${subjectNumber}/${true}/${0}`);
     };
 
-    const scrollToElement = () => {
-        if (elementRef.current) {
-            elementRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    const scrollToElement = (s) => {
+        if (s === 1 && sdvElementRef.current) {
+            sdvElementRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+        } else if (s === 2 && queryElementRef.current) {
+            queryElementRef.current.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
         }
     };
 
     useEffect(() => {
         const { showSdvElement } = location.state || {};
         if (sdvInformation.style && sdvInformation.item) {
-            scrollToElement();
+            scrollToElement(1);
         }
         else if (showSdvElement && sdvInformation.item) {
             setSdvInformation(prevState => ({
@@ -135,6 +143,14 @@ const SubjectDetail = props => {
         }
     }, [sdvInformation.style, sdvInformation.item]);
 
+    const { showQueryElement, queryElementId } = location.state || {};
+
+    useEffect(() => {
+        if (showQueryElement && queryElementId) {
+            setQueryInformation({ style: true, item: queryElementId });
+            scrollToElement(2);
+        }
+    }, [showQueryElement, queryElementId]);
 
     function filterElements(elements) {
         return elements.reduce((acc, item) => {
@@ -306,7 +322,7 @@ const SubjectDetail = props => {
 
     return (
         <React.Fragment>
-            <SubjectDetailContext.Provider value={{ modalRef, setModalInf, setSdv, elementRef }}>
+            <SubjectDetailContext.Provider value={{ modalRef, setModalInf, setSdv, sdvElementRef, queryElementRef }}>
                 <div className="page-content" style={{ paddingBottom: 0, paddingLeft: 0 }}>
                     <div className="container-fluid" style={{ paddingLeft: 0 }}>
                     {permissionsData ? (
@@ -383,9 +399,8 @@ const SubjectDetail = props => {
                                                         }
                                                     </div>
                                                 }
-                                                {isMultiForm === "false" &&
-                                                    <SubjectDetailElementList
-                                                        IsDisable={!permissions.canSubjectEdit}
+                                                <SubjectDetailElementList
+                                                    IsDisable={!permissionsData.canSubjectEdit}
                                                     StudyId={studyId}
                                                     ElementList={subjectElementList}
                                                     //IsMissingData={permissionsData.canMonitoringMarkAsNull}
@@ -394,8 +409,11 @@ const SubjectDetail = props => {
                                                         IsSdv={permissions.canMonitoringSdv}
                                                     SdvInformation={sdvInformation}
                                                         SdvInformation={sdvInformation}
+                                                    QueryInformation={queryInformation}
                                                     IsAuditTrail={permissions.canMonitoringInputAuditTrail}
                                                         modalRef={modalRef}
+                                                    IsOpenQuery={permissions.canMonitoringOpenQuery}
+                                                    IsAnswerQuery={permissions.canMonitoringAnswerQuery}
                                                 />
                                                    // />
                                                 }
@@ -437,6 +455,7 @@ const SubjectDetail = props => {
                 body={modalInf.content}
                 isButton={modalInf.isButton}
                 buttonText={modalInf.isButton && modalInf.buttonText}
+                bodyStyle={modalInf.style && modalInf.style}
             />
         </React.Fragment>
     )

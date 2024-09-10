@@ -523,7 +523,6 @@
   "Fullname": "Ad-soyad",
   "Previous data": "Önceki veri",
   "New data": "Yeni veri",
-  "Audit trail date": "Değişikliklerin takibi tarihi",
   "Add a tenant admin": "Abonelik için yönetici ekle",
   "Active user": "Aktif kullanıcı",
   "Your user adding limit for the relevant tenant has been reached. Please contact the system administrator.": "İlgili abonelik için kullanıcı ekleme limitiniz dolmuştur. Lütfen sistem yöneticisi ile iletişime geçiniz. ",
@@ -542,6 +541,15 @@
   "This form will be deleted.": "Bu form silinecektir.",
   "This form will be archived.": "Bu form arşivlenecektir.",
   "This form will be unarchived.": "Bu form arşivden çıkarılacaktır.",
-  "Go to list": "Listeye geri dön"
-
+  "Go to list": "Listeye geri dön",
+  "Audit trail date": "Değişikliklerin takibi tarihi",
+  "Close query": "Sorguyu kapat",
+  "Query no": "Sorgu numarası",
+  "Query status": "Sorgu durumu",
+  "Query is closed": "Sorgu kapatıldı",
+  "Go to element": "Öğeye git",
+  "This query will be closed.": "Bu sorgu kapatılacaktır.",
+  "You have open queries!": "Açık sorgularınız var!",
+  "Go to queries": "Sorgulara git",
+  "No query for this field!": "Bu alan için sorgu yoktur!"
 }

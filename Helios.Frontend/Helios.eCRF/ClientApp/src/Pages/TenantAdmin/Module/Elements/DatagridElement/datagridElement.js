@@ -26,8 +26,11 @@ class DatagridElement extends Component {
             isDisable: props.IsDisable,
             isMissingData: props.IsMissingData,
             isAuditTrail: props.IsAuditTrail,
+            isOpenQuery: props.IsOpenQuery,
+            isAnswerQuery: props.IsAnswerQuery,
             isSdv: props.IsSdv,
             sdvInformation: props.SdvInformation,
+            queryInformation: props.QueryInformation,
             columnCount: props.ColumnCount,
             rowCount: props.RowCount > 0 && props.RowCount !== undefined ? props.RowCount : 1,
             FormType: props.FormType,
@@ -154,8 +157,11 @@ class DatagridElement extends Component {
             prevProps.IsDisable !== this.props.IsDisable ||
             prevProps.IsMissingData !== this.props.IsMissingData ||
             prevProps.IsAuditTrail !== this.props.IsAuditTrail ||
+            prevProps.IsOpenQuery !== this.props.IsOpenQuery ||
+            prevProps.IsAnswerQuery !== this.props.IsAnswerQuery ||
             prevProps.IsSdv !== this.props.IsSdv ||
             prevProps.SdvInformation !== this.props.SdvInformation ||
+            prevProps.QueryInformation !== this.props.QueryInformation ||
             prevProps.ColumnCount !== this.props.ColumnCount ||
             prevProps.RowCount !== this.props.RowCount ||
             prevProps.FormType !== this.props.FormType ||
@@ -172,8 +178,11 @@ class DatagridElement extends Component {
                 isDisable: this.props.IsDisable,
                 isMissingData: this.props.IsMissingData,
                 isAuditTrail: this.props.IsAuditTrail,
+                isOpenQuery: this.props.IsOpenQuery,
+                isAnswerQuery: this.props.IsAnswerQuery,
                 isSdv: this.props.IsSdv,
                 sdvInformation: this.props.SdvInformation,
+                queryInformation: this.props.QueryInformation,
                 columnCount: this.props.ColumnCount,
                 rowCount: this.props.RowCount > 0 && this.props.RowCount !== undefined ? this.props.RowCount : 1,
                 FormType: this.props.FormType,
@@ -221,7 +230,7 @@ class DatagridElement extends Component {
         }
         else {
             if (result) {
-                elements = <SubjectDetailElementList SdvInformation={this.state.sdvInformation} IsSdv={this.state.isSdv} IsMissingData={this.state.isMissingData} IsAuditTrail={this.state.isAuditTrail} TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
+                elements = <SubjectDetailElementList QueryInformation={this.state.queryInformation} SdvInformation={this.state.sdvInformation} IsSdv={this.state.isSdv} IsMissingData={this.state.isMissingData} IsAuditTrail={this.state.isAuditTrail} IsOpenQuery={this.state.isOpenQuery} IsAnswerQuery={this.state.isAnswerQuery} TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} DataGridRowId={this.state.dataGridRowId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
             }
             else {
                 return "";

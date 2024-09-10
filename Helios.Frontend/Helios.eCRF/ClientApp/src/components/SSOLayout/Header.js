@@ -147,7 +147,7 @@ const Header = props => {
                                         </Link>
                                     )
                                     }
-                                    {permissionData.canMonitoringQueryView && (
+                                    {(permissionData.canMonitoringAnswerQuery || permissionData.canMonitoringOpenQuery) && (
                                         <Link to="/query" className="" onClick={() => handleClick('query')} >
                                             <label style={{ color: "#757575", textDecoration: clickedLinks.query ? 'underline' : 'none', backgroundColor: clickedLinks.query ? 'white' : '', marginRight: '30px' }}>{props.t("Query")}</label>
                                         </Link>

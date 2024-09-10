@@ -23,7 +23,6 @@ namespace Helios.eCRF.Services.Interfaces
         Task<RestResponse<List<UserPermissionDTO>>> GetPermissionRoleList(Int64 studyId);
         Task<ApiResponse<dynamic>> SetPermission(StudyUserRolePermissionDTO dto);
         Task<UserPermissionModel> GetUserPermissions(Int64 studyId);
-        Task<RestResponse<PermissionListModel>> GetUserPermissionsList(Int64 studyId);
         Task<RestResponse<bool>> GetHasRole(Int64 studyId);   
         Task<RestResponse<List<StudyUserDTO>>> GetStudyUserList(Int64 studyId);
         Task<ApiResponse<dynamic>> SetStudyUser(StudyUserModel studyUserModel);

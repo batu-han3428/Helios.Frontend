@@ -42,7 +42,7 @@ class DropdownCheckListElement extends Component {
             var finalVal = [];
             this.state.ElementOptions.map(item => {
                 spl.map(sp => {
-                    if (item.value.toString() === sp)
+                    if (item.value !== undefined && item.value.toString() === sp)
                         finalVal.push(item);
                 });
             });
