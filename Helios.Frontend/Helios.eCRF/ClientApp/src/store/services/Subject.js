@@ -148,6 +148,25 @@ export const SubjectApi = createApi({
             refetchOnMountOrArgChange: true,
             keepUnusedDataFor: 0,          
         }),
+        setSubjectQuery: builder.mutation({
+            query: (values) => ({
+                url: '/Subject/SetSubjectQuery',
+                method: 'POST',
+                body: values,
+            }),
+            invalidatesTags: ['Query', 'SubjectElement'],
+        }),
+        getSubjectQueries: builder.query({
+            query: (subjectElementId) => `/Subject/GetSubjectQueries/${subjectElementId}`,
+            providesTags: ['Query'],
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0
+        }),
+        getSubjectQueryList: builder.query({
+            query: () => '/Subject/GetSubjectQueryList',
+            refetchOnMountOrArgChange: true,
+            keepUnusedDataFor: 0
+        }),
     }),
 });
 
@@ -182,6 +201,13 @@ export const { useSetSubjectMissingDataMutation } = SubjectApi;
 export const { useSetSubjectSdvMutation } = SubjectApi;
 
 export const { useLazyGetSubjectSdvListQuery } = SubjectApi;
+
 export const { useLazyGetRelationPageElementListQuery } = SubjectApi;
+
+export const { useSetSubjectQueryMutation } = SubjectApi;
+
+export const { useLazyGetSubjectQueriesQuery } = SubjectApi;
+
+export const { useLazyGetSubjectQueryListQuery } = SubjectApi;
 
 export default SubjectApi;

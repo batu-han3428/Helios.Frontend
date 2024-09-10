@@ -6,7 +6,7 @@ namespace Helios.eCRF.Services.Interfaces
 {
     public interface ISubjectService
     {
-        Task<RestResponse<List<SubjectDTO>>> GetSubjectList(Int64 studyId, bool showArchivedSubjects);
+        Task<RestResponse<List<SubjectListModel>>> GetSubjectList(Int64 studyId, bool showArchivedSubjects);
         Task<ApiResponse<dynamic>> AddSubject(SubjectDTO subject);
         Task<RestResponse<List<SiteModel>>> GetSites(Int64 studyId);
         Task<UserPermissionModel> GetUserPermissions(Int64 studyId);
@@ -25,5 +25,8 @@ namespace Helios.eCRF.Services.Interfaces
         Task<ApiResponse<dynamic>> SetSubjectMissingData(SubjectMissingDataDTO dto);
         Task<ApiResponse<dynamic>> SetSubjectSdv(List<Int64> ids);
         Task<RestResponse<List<SdvModel>>> GetSubjectSdvList();
+        Task<ApiResponse<dynamic>> SetSubjectQuery(SubjectQueryDTO dto);
+        Task<RestResponse<List<SubjectQueryModel>>> GetSubjectQueries(Int64 subjectElementId);
+        Task<RestResponse<List<QueryListModel>>> GetSubjectQueryList();
     }
 }

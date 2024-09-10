@@ -41,8 +41,9 @@ class DropdownCheckListElement extends Component {
         if (spl != null) {
             var finalVal = [];
             this.state.ElementOptions.map(item => {
+                console.log(item)
                 spl.map(sp => {
-                    if (item.value.toString() === sp)
+                    if (item.value !== undefined && item.value.toString() === sp)
                         finalVal.push(item);
                 });
             });

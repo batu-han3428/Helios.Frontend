@@ -3,9 +3,16 @@ import { Modal, ModalHeader, ModalBody, ModalFooter, Button } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import PropTypes from 'prop-types';
 
-const ModalComp = ({ title, body, resetValue = null, handle, buttonText, t, refs, size = "xl", isButton = true }) => {
+const ModalComp = ({ title, body, resetValue = null, handle, buttonText, t, refs, size = "xl", isButton = true, bodyStyle = {} }) => {
 
+    const [modalTitle, setModalTitle] = useState(title);
     const [modal_backdrop, setmodal_backdrop] = useState(false);
+
+    useEffect(() => {
+        if (modal_backdrop) {
+            setModalTitle(title);
+        }
+    }, [title, modal_backdrop]);
 
     useEffect(() => {
         if (!modal_backdrop) {
@@ -38,14 +45,17 @@ const ModalComp = ({ title, body, resetValue = null, handle, buttonText, t, refs
 
     useImperativeHandle(refs, () => ({
         tog_backdrop: tog_backdrop,
+        setModalTitle: (newTitle) => {
+            setModalTitle(newTitle);
+        }
     }), [tog_backdrop]);
 
     return (
         <Modal isOpen={modal_backdrop} toggle={tog_backdrop} backdrop={false} size={size} ref={refs}>
             <ModalHeader className="mt-0" toggle={tog_backdrop}>
-                {title}
+                {modalTitle}
             </ModalHeader>
-            <ModalBody>{body && React.cloneElement(body, { onToggleModal: tog_backdrop })}</ModalBody>
+            <ModalBody style={bodyStyle}>{body && React.cloneElement(body, { onToggleModal: tog_backdrop })}</ModalBody>
             <ModalFooter>
                 <Button color="light" onClick={tog_backdrop}>
                     {t('Close')}

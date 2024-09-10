@@ -30,17 +30,6 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> GetSubjectList(Int64 studyId, bool showArchivedSubjects)
         {
             var result = await _subjectService.GetSubjectList(studyId, showArchivedSubjects);
-            var addedByIds = result.Data.Select(x => x.AddedById).Distinct().ToList();
-            var users = await _userService.GetUserList(addedByIds);
-
-            foreach (var user in result.Data)
-            {
-                var addedby = users.Data.FirstOrDefault(x => x.Id == user.AddedById);
-
-                user.AddedByName = addedby.Name + ' ' + addedby.LastName;
-
-            }
-
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
 
@@ -227,6 +216,44 @@ namespace Helios.eCRF.Controllers
         public async Task<IActionResult> GetSubjectSdvList()
         {
             var result = await _subjectService.GetSubjectSdvList();
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
+        /// <summary>
+        /// hasta sayfasındaki elementin sorgu işlemini gerçekleştirir
+        /// </summary>
+        /// <param name="dto">sorgu bilgileri</param>
+        /// <returns>başarılı başarısız</returns>
+        [HttpPost]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> SetSubjectQuery(SubjectQueryDTO dto)
+        {
+            var result = await _subjectService.SetSubjectQuery(dto);
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// hasta sayfasındaki elementin sorgularını listeler
+        /// </summary>
+        /// <param name="subjectElementId">element id</param>
+        /// <returns>sorgu listesi</returns>
+        [HttpGet("{subjectElementId}")]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> GetSubjectQueries(Int64 subjectElementId)
+        {
+            var result = await _subjectService.GetSubjectQueries(subjectElementId);
+            return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
+        }
+
+        /// <summary>
+        /// sorguları listeler
+        /// </summary>
+        /// <returns>sorgu listesi</returns>
+        [HttpGet]
+        [RoleAttribute(Roles.StudyUser)]
+        public async Task<IActionResult> GetSubjectQueryList()
+        {
+            var result = await _subjectService.GetSubjectQueryList();
             return new ObjectResult(result.Data) { StatusCode = (int)result.StatusCode };
         }
     }

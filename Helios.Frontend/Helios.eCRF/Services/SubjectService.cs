@@ -18,20 +18,18 @@ namespace Helios.eCRF.Services
         {
         }
 
-        public async Task<RestResponse<List<SubjectDTO>>> GetSubjectList(Int64 studyId, bool showArchivedSubjects)
+        public async Task<RestResponse<List<SubjectListModel>>> GetSubjectList(Int64 studyId, bool showArchivedSubjects)
         {
-            var dto = new SubjectListFilterDTO()
-            {
-                StudyId = studyId,
-                UserId = UserId,
-                ShowArchivedSubjects = showArchivedSubjects,
-            };
-
             using (var client = CoreServiceClient)
             {
                 var req = new RestRequest("CoreSubject/GetSubjectList", Method.Get);
-                req.AddJsonBody(dto);
-                var result = await client.ExecuteAsync<List<SubjectDTO>>(req);
+                req.AddJsonBody(new SubjectListFilterDTO()
+                {
+                    StudyId = studyId,
+                    UserId = UserId,
+                    ShowArchivedSubjects = showArchivedSubjects,
+                });
+                var result = await client.ExecuteAsync<List<SubjectListModel>>(req);
                 return result;
             }
         }      
@@ -582,6 +580,7 @@ namespace Helios.eCRF.Services
                 return result;
             }
         }
+
         public async Task<RestResponse<List<SubjectElementShortModel>>> GetRelationPageElementValues(Int64 subjectVisitPageModuleElementId, Int64 studyId, string? value, Int64 subjectId)
         {
             using (var client = CoreServiceClient)
@@ -596,6 +595,7 @@ namespace Helios.eCRF.Services
                 return result;
             }
         }
+
         public async Task<ApiResponse<dynamic>> RemoveSubjectComment(Int64 id)
         {
             using (var client = CoreServiceClient)
@@ -651,6 +651,40 @@ namespace Helios.eCRF.Services
                 var req = new RestRequest("CoreSubject/GetSubjectSdvList", Method.Get);
                 AddApiHeaders(req);
                 var result = await client.ExecuteAsync<List<SdvModel>>(req);
+                return result;
+            }
+        }
+
+        public async Task<ApiResponse<dynamic>> SetSubjectQuery(SubjectQueryDTO dto)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/SetSubjectQuery", Method.Post);
+                AddApiHeaders(req);
+                req.AddJsonBody(dto);
+                var result = await client.ExecuteAsync<ApiResponse<dynamic>>(req);
+                return result.Data;
+            }
+        }
+
+        public async Task<RestResponse<List<SubjectQueryModel>>> GetSubjectQueries(Int64 subjectElementId)
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/GetSubjectQueries", Method.Get);
+                req.AddParameter("subjectElementId", subjectElementId);
+                var result = await client.ExecuteAsync<List<SubjectQueryModel>>(req);
+                return result;
+            }
+        }
+
+        public async Task<RestResponse<List<QueryListModel>>> GetSubjectQueryList()
+        {
+            using (var client = CoreServiceClient)
+            {
+                var req = new RestRequest("CoreSubject/GetSubjectQueryList", Method.Get);
+                AddApiHeaders(req);
+                var result = await client.ExecuteAsync<List<QueryListModel>>(req);
                 return result;
             }
         }

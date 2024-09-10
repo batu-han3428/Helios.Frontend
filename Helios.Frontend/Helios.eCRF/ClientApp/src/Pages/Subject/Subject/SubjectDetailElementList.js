@@ -33,20 +33,24 @@ import { SubjectDetailContext } from './SubjectDetail';
 import RandomizationElement from '../../TenantAdmin/Module/Elements/RandomizationElement/RandomizationElement';
 import SubjectAuditTrail from './Comp/SubjectAuditTrail';
 import { useStudyGetQuery } from '../../../store/services/Study';
+import SubjectQuery from './Comp/SubjectQuery';
+import { QueryIconStatu } from '../../../helpers/icon_helper';
 
 const SubjectDetailElementList = (props) => {
         const [tenantId] = useState(props.TenantId);
         const [subjectVisitPageModuleId] = useState(0);
         const [studyId] = useState(props.StudyId);
-        const { subjectId } = useParams();
+        const { subjectId, subjectNumber } = useParams();
         const [isDisable] = useState(props.IsDisable);
         const dispatch = useDispatch();
         const navigate = useNavigate();
         const [isMissingData] = useState(props.IsMissingData);
         const [isSdv] = useState(props.IsSdv);
         const [isAuditTrail] = useState(props.IsAuditTrail);
+        const [isOpenQuery] = useState(props.IsOpenQuery);
+        const [isAnswerQuery] = useState(props.IsAnswerQuery);
 
-        const { modalRef, setModalInf, setSdv, elementRef } = useContext(SubjectDetailContext);
+        const { modalRef, setModalInf, setSdv, sdvElementRef, queryElementRef } = useContext(SubjectDetailContext);
 
         const [autoSaveSubject] = useAutoSaveSubjectMutation();
 
@@ -94,7 +98,10 @@ const SubjectDetailElementList = (props) => {
                 IsMissingData: isMissingData,
                 IsSdv: isSdv,
                 IsAuditTrail: isAuditTrail,
+                IsOpenQuery: isOpenQuery,
+                IsAnswerQuery: isAnswerQuery,
                 SdvInformation: props.SdvInformation,
+                QueryInformation: props.QueryInformation,
                 IsMissingItem: param.missingData
             };
 
@@ -138,7 +145,7 @@ const SubjectDetailElementList = (props) => {
                 default:
                     return "";
             }
-        }, [AutoSave, isDisable, studyId, tenantId, subjectVisitPageModuleId, isMissingData, isSdv, isAuditTrail, props.SdvInformation]);
+        }, [AutoSave, isDisable, studyId, tenantId, subjectVisitPageModuleId, isMissingData, isSdv, isAuditTrail, isOpenQuery, isAnswerQuery, props.SdvInformation, props.QueryInformation]);
 
         const getItems = useCallback((param) => {
             const items = [
@@ -147,14 +154,17 @@ const SubjectDetailElementList = (props) => {
                     label: <a onClick={() => { setModalInf({ title: param.elementName, content: <SubjectComment subjectElementId={param.subjectVisitPageModuleElementId} />, isButton: false }); modalRef.current.tog_backdrop(); }}>{props.t("Comments")}</a>,
                     icon: <FontAwesomeIcon icon="fas fa-comment" style={{ color: "#8BB9EE" }} />,
                     style: { color: "#8BB9EE" },
-                },
-                {
+                }
+            ];     
+
+            if ((isOpenQuery || isAnswerQuery) && ![1, 17, 14, 15, 16, 3, 7].includes(param.elementType)) {
+                items.splice(1, 0, {
                     key: '5',
-                    label: <a onClick={() => navigate('')}>{props.t("Query")}</a>,
+                    label: <a onClick={() => { setModalInf({ content: <SubjectQuery subjectId={subjectId} permissions={{ openQuery: isOpenQuery, answerQuery: isAnswerQuery }} commentType={param.commentType} subjectNumber={subjectNumber} refs={modalRef} currentData={{ elementName: param.elementName, value: param.userValue }} subjectElementId={param.subjectVisitPageModuleElementId} />, isButton: false, style: { padding: '0' } }); modalRef.current.tog_backdrop(); }}>{props.t("Query")}</a>,
                     icon: <FontAwesomeIcon icon="fas fa-exclamation" style={{ color: "#ffa16c" }} />,
                     style: { color: "#ffa16c" },
-                },
-            ];
+                });
+            }
 
             if (isAuditTrail) {
                 items.splice(1, 0, {
@@ -201,7 +211,7 @@ const SubjectDetailElementList = (props) => {
                 return { items };
             }
 
-        }, [ClearData, navigate, props.t, isDisable, isMissingData, isSdv, isAuditTrail]);
+        }, [ClearData, navigate, props.t, isDisable, isMissingData, isSdv, isAuditTrail, isOpenQuery, isAnswerQuery]);
 
         const renderContent = useMemo(() => {
             return Array.isArray(props.ElementList) ? props.ElementList.map((item) => {
@@ -212,15 +222,21 @@ const SubjectDetailElementList = (props) => {
                     return null;
                 } else {
                     return (
-                        <Row className={cls} key={item.subjectVisitPageModuleElementId} style={{ marginLeft: 'unset', boxShadow: props.SdvInformation && props.SdvInformation.style && props.SdvInformation.item === item.subjectVisitPageModuleElementId ? '0 0 15px rgba(0, 255, 0, 0.5)' : 'unset' }}>
+                        <Row className={cls} key={item.subjectVisitPageModuleElementId} style={{ marginLeft: 'unset', boxShadow: props.SdvInformation && props.SdvInformation.style && props.SdvInformation.item === item.subjectVisitPageModuleElementId ? '0 0 15px rgba(0, 255, 0, 0.5)' : props.QueryInformation && props.QueryInformation.style && props.QueryInformation.item === item.subjectVisitPageModuleElementId ? '0 0 15px rgba(209, 151, 159, 1)' : 'unset' }}>
                             <React.Fragment>
-                                <div style={{ marginBottom: '3px', marginTop: '10px', display: 'flex', alignItems: 'center' }} ref={elementRef}>
+                                <div style={{ marginBottom: '3px', marginTop: '10px', display: 'flex', alignItems: 'center' }}
+                                    ref={
+                                        (
+                                            (props.SdvInformation && props.SdvInformation.style && props.SdvInformation.item === item.subjectVisitPageModuleElementId) ? sdvElementRef : (props.QueryInformation && props.QueryInformation.style && props.QueryInformation.item === item.subjectVisitPageModuleElementId) ? queryElementRef : null)
+                                        }>
                                     <label style={{ marginRight: '5px', marginBottom: '0' }}>
                                         {item.isRequired && (<span style={{ color: 'red' }}>*&nbsp;</span>)}
                                         {item.elementType !== 1 && item.title}
                                     </label>
                                     {(![1, 3].includes(item.elementType) && item.isComment) &&
-                                        <FontAwesomeIcon onClick={() => { setModalInf({ title: item.elementName, content: <SubjectComment subjectElementId={item.subjectVisitPageModuleElementId} />, isButton: false }); modalRef.current.tog_backdrop(); }} icon="fa-solid fa-comment" style={{ color: "#8bb9ee", marginRight: '5px', cursor: 'pointer', fontSize: '20px' }} />
+                                        <Tooltip title={props.t('Comments')}>
+                                            <FontAwesomeIcon onClick={() => { setModalInf({ title: item.elementName, content: <SubjectComment subjectElementId={item.subjectVisitPageModuleElementId} />, isButton: false }); modalRef.current.tog_backdrop(); }} icon="fa-solid fa-comment" style={{ color: "#8bb9ee", marginRight: '5px', cursor: 'pointer', fontSize: '20px' }} />
+                                        </Tooltip>
                                     }
                                     {item.missingData &&
                                         (() => {
@@ -259,8 +275,18 @@ const SubjectDetailElementList = (props) => {
                                     }
                                     {(item.sdv && ![1, 17, 14, 15, 16, 3, 18].includes(item.elementType)) &&
                                         <Tooltip title={props.t('Remove SDV')}>
-                                            <FontAwesomeIcon onClick={() => { if (item.elementType !== 7 && isSdv) setSdv([item.subjectVisitPageModuleElementId]); }} icon="fa-solid fa-circle-check" style={{ color: "#3BBFAD", cursor: item.elementType !== 7 && isSdv ? "pointer" : "default", fontSize: '20px' }} />
+                                            <FontAwesomeIcon onClick={() => { if (item.elementType !== 7 && isSdv) setSdv([item.subjectVisitPageModuleElementId]); }} icon="fa-solid fa-circle-check" style={{ color: "#3BBFAD", cursor: item.elementType !== 7 && isSdv ? "pointer" : "default", fontSize: '20px', marginRight: '5px' }} />
                                         </Tooltip>
+                                    }
+                                    {(item.query && item.commentType !== 3) &&
+                                        (() => {
+                                            const iconInf = QueryIconStatu(item.commentType, (isAnswerQuery || isOpenQuery));
+                                            return (
+                                                <Tooltip title={props.t(iconInf.text)}>
+                                                    <span onClick={() => { if (isAnswerQuery || isOpenQuery) { setModalInf({ content: <SubjectQuery subjectId={subjectId} permissions={{ openQuery: isOpenQuery, answerQuery: isAnswerQuery }} commentType={item.commentType} subjectNumber={subjectNumber} refs={modalRef} currentData={{ elementName: item.elementName, value: item.userValue }} subjectElementId={item.subjectVisitPageModuleElementId} />, isButton: false, style: { padding: '0' } }); modalRef.current.tog_backdrop(); } }}>{iconInf.icon}</span>
+                                                </Tooltip>
+                                            );
+                                        })()
                                     }
                                 </div>
                                 <Row>
@@ -285,7 +311,7 @@ const SubjectDetailElementList = (props) => {
                     );
                 }
             }) : null;
-        }, [props.ElementList, renderElementsSwitch, getItems, props.SdvInformation]);
+        }, [props.ElementList, renderElementsSwitch, getItems, props.SdvInformation, isAnswerQuery, isOpenQuery]);
 
         return (
             <div>

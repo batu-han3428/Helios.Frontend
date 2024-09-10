@@ -26,8 +26,11 @@ class TableElement extends Component {
             isDisable: props.IsDisable,
             isMissingData: props.IsMissingData,
             isAuditTrail: props.IsAuditTrail,
+            isOpenQuery: props.IsOpenQuery,
+            isAnswerQuery: props.IsAnswerQuery,
             isSdv: props.IsSdv,
             sdvInformation: props.SdvInformation,
+            queryInformation: props.QueryInformation,
             columnCount: props.ColumnCount,
             rowCount: props.RowCount,
             FormType: props.FormType,
@@ -103,6 +106,11 @@ class TableElement extends Component {
                 { sdvInformation: this.props.SdvInformation }
             );
         }
+        if (this.props.QueryInformation !== prevProps.QueryInformation) {
+            this.setState(
+                { queryInformation: this.props.QueryInformation }
+            );
+        }   
     }
     togglePropertiesModal = () => {
         this.setState(prevState => ({
@@ -130,7 +138,7 @@ class TableElement extends Component {
         }
         else {
             if (result) {
-                return <SubjectDetailElementList SdvInformation={this.state.sdvInformation} IsSdv={this.state.isSdv} IsMissingData={this.state.isMissingData} IsAuditTrail={this.state.isAuditTrail} TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
+                return <SubjectDetailElementList QueryInformation={this.state.queryInformation} SdvInformation={this.state.sdvInformation} IsSdv={this.state.isSdv} IsMissingData={this.state.isMissingData} IsAuditTrail={this.state.isAuditTrail} IsOpenQuery={this.state.isOpenQuery} IsAnswerQuery={this.state.isAnswerQuery} TenantId={this.state.TenantId} StudyId={this.state.studyId} ModuleId={this.state.moduleId} ElementList={cld} IsDisable={this.state.isDisable !== "" ? true : false} />;
             }
             else {
                 return "";

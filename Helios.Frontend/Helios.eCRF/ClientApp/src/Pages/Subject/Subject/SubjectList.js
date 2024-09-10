@@ -1,10 +1,10 @@
 ﻿import PropTypes from 'prop-types';
 import React, { useEffect, useState, useRef } from "react";
 import { withTranslation } from "react-i18next";
-import { Table, Row, Col, Typography, Input } from 'antd';
+import { Table, Row, Col, Typography, Input, Tooltip, Alert } from 'antd';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button, Label } from 'reactstrap';
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from 'sweetalert2';
 import { formatDate } from "../../../helpers/format_date";
 import { SdvIconStatu, QueryIconStatu } from "../../../helpers/icon_helper";
@@ -20,7 +20,6 @@ import "./Subject.css";
 import { v4 as uuidv4 } from 'uuid';
 import AddSubjectComp from './Comp/AddSubjectComp';
 import { showToast } from '../../../store/toast/actions';
-import { useParams } from "react-router-dom";
 
 const { TextArea } = Input;
 
@@ -80,36 +79,27 @@ const SubjectList = props => {
             const newData = { ...data };
             if (subjectsData !== null) {
                 const updatedSubjectsData = subjectsData.map(item => {
+                    const sdvIcon = SdvIconStatu(item.sdvStatus);
+                    const queryIcon = QueryIconStatu(item.queryStatus);
                     return {
                         ...item,
                         createdAt: formatDate(item.createdAt),
                         updatedAt: formatDate(item.updatedAt),
-                        sdv: SdvIconStatu(2),
-                        query: QueryIconStatu(1),
+                        sdv: <Tooltip title={props.t(sdvIcon.text)}>{sdvIcon.icon}</Tooltip>,
+                        query: <Tooltip title={props.t(queryIcon.text)}>{queryIcon.icon}</Tooltip>,
                         actions: getActions(item, permissionsData),
                         key: uuidv4()
                     };
                 });
                 newData.subjectList = updatedSubjectsData;
             }
-            newData.hasQuery = subjectsData.hasQuery;
-            newData.hasSdv = subjectsData.hasSdv;
-            newData.hasRandomizasyon = subjectsData.hasRandomizasyon;
-            newData.hasRole = subjectsData.hasRole;
             setData(newData);
             dispatch(endloading());
         }
         else if (error && !isLoading) {
-            const newData = { ...data };
-            newData.hasQuery = false;
-            newData.hasSdv = false;
-            newData.hasRandomizasyon = false;
-            newData.hasRole = false;
-            newData.subjectList = null;
-            setData(newData);
             dispatch(endloading());
         }
-    }, [subjectsData, error, isLoading, permissionsData]);
+    }, [subjectsData, error, isLoading, permissionsData, props.t]);
 
     const goToSubjectDetail = (studyId, pageId, subjectId, subjectNumber) => {
         navigate(`/subject-detail/${studyId}/${pageId}/${subjectId}/${subjectNumber}`);
@@ -340,7 +330,7 @@ const SubjectList = props => {
                 columns.push(commonColumns[4]);
             }
 
-            if (permissionsData.canMonitoringQueryView) {
+            if (permissionsData.canMonitoringOpenQuery || permissionsData.canMonitoringAnswerQuery) {
                 columns.push(commonColumns[5]);
             }
 
@@ -403,7 +393,7 @@ const SubjectList = props => {
                 columns.push(commonColumns[4]);
             }
 
-            if (permissionsData.canMonitoringQueryView) {
+            if (permissionsData.canMonitoringOpenQuery || permissionsData.canMonitoringAnswerQuery) {
                 columns.push(commonColumns[5]);
             }
 
@@ -483,6 +473,7 @@ const SubjectList = props => {
             setTextError("");
         }
     };
+    console.log(data.subjectList)
     document.title = props.t('Subject list');
     return (
         <React.Fragment>
@@ -497,7 +488,17 @@ const SubjectList = props => {
                                     </Col>
                                 </Row>
                             </div>
-                            <Row>
+                            <Row>                             
+                                {(data.subjectList && data.subjectList.length > 0 && data.subjectList.reduce((sum, subject) => sum + (subject.openQueries || 0), 0) >= 10) &&
+                                    <Col className="col-12" style={{padding: '10px 0'}}>
+                                        <Alert message={props.t('You have open queries!')} type="warning" showIcon action={
+                                            <span style={{ fontWeight: 'bold', color: '#768A9D', cursor: 'pointer' }} onClick={() => navigate(`/query`)}>
+                                                {props.t('Go to queries')}
+                                                <FontAwesomeIcon icon="fa-solid fa-arrow-right" style={{ marginLeft: '8px', verticalAlign: 'middle' }} />
+                                            </span>
+                                        } />
+                                    </Col>
+                                }
                                 <Col className="col-12">
                                     <div style={{ display: 'inline-block', float: 'left' }} className="col-md-6">
                                         {permissionsData.canSubjectArchive &&
