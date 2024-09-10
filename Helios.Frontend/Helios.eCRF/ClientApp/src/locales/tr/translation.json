@@ -532,5 +532,6 @@
   "Go to element": "Öğeye git",
   "This query will be closed.": "Bu sorgu kapatılacaktır.",
   "You have open queries!": "Açık sorgularınız var!",
-  "Go to queries": "Sorgulara git"
+  "Go to queries": "Sorgulara git",
+  "No query for this field!": "Bu alan için sorgu yoktur!"
 }

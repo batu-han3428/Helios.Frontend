@@ -684,5 +684,6 @@
   "Go to element": "Go to element",
   "This query will be closed.": "This query will be closed.",
   "You have open queries!": "You have open queries!",
-  "Go to queries": "Go to queries"
+  "Go to queries": "Go to queries",
+  "No query for this field!": "No query for this field!"
 }

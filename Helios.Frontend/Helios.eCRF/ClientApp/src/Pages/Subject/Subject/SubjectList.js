@@ -473,7 +473,6 @@ const SubjectList = props => {
             setTextError("");
         }
     };
-    console.log(data.subjectList)
     document.title = props.t('Subject list');
     return (
         <React.Fragment>

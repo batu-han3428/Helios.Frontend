@@ -290,7 +290,7 @@ const SubjectQuery = props => {
                 ))
                 :
                 (
-                    <MessageList.Content>{props.t("No comment for this field !")}</MessageList.Content>
+                    <MessageList.Content style={{display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%'}}>{props.t("No query for this field!")}</MessageList.Content>
                 )}
             </MessageList>
             <MessageInput
