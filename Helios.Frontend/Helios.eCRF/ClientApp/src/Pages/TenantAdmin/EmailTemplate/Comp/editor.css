@@ -1,0 +1,13 @@
+﻿.custom-toolbar-class {
+    flex-direction: row-reverse !important;
+    justify-content: flex-end !important;
+}
+
+.custom-editor-class{
+    min-height:200px !important;
+}
+
+.rdw-image-modal {
+    overflow-y: auto;
+    height: 300px;
+}

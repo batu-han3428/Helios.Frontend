@@ -1,0 +1,28 @@
+﻿.row-visit-background-color {
+    background-color: #cfd1d2 !important;
+}
+
+.row-page-background-color {
+    background-color: #f1f1f2 !important;
+}
+
+.row-module-background-color {
+    background-color: white !important;
+}
+
+.deleted-row {
+    text-decoration: line-through;
+    color: red;
+}
+.ant-table-thead > tr > th {
+    background-color: #6d6e70 !important;
+    color: white !important;
+}
+
+.ant-table-column-sorter-inner {
+    color: white !important;
+}
+
+.anticon-search {
+    color: white !important;
+}

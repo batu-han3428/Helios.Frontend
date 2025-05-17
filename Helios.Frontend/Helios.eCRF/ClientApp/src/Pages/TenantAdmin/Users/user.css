@@ -1,0 +1,12 @@
+﻿.dropdown-menu {
+    transform: none;
+    border-radius: 0;
+    width: max-content;
+    left: 0;
+    padding: 5px 10px;
+    text-align: start;
+    max-height: 200px;
+    overflow: auto;
+    max-width: 350px;
+    z-index: 1111111111 !important;
+}

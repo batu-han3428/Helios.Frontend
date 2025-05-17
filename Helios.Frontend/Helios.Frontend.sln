@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34408.163
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Helios.eCRF", "Helios.eCRF\Helios.eCRF.csproj", "{40B9AC48-9601-4E5A-961A-543308D15674}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{A82C2581-AF4F-4159-9C90-7CCEB37B1248}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Config", "Config", "{F2333E58-AFFE-4605-98BA-DF42EC91EC67}"
+	ProjectSection(SolutionItems) = preProject
+		..\README.md = ..\README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{40B9AC48-9601-4E5A-961A-543308D15674}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{40B9AC48-9601-4E5A-961A-543308D15674}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{40B9AC48-9601-4E5A-961A-543308D15674}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{40B9AC48-9601-4E5A-961A-543308D15674}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A82C2581-AF4F-4159-9C90-7CCEB37B1248}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A82C2581-AF4F-4159-9C90-7CCEB37B1248}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A82C2581-AF4F-4159-9C90-7CCEB37B1248}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A82C2581-AF4F-4159-9C90-7CCEB37B1248}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {14667623-B989-4732-89AF-C7E712234477}
+	EndGlobalSection
+EndGlobal

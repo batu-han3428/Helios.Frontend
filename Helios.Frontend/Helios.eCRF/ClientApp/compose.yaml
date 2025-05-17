@@ -1,0 +1,7 @@
+﻿services:
+  frontend:
+    build:
+      context: .
+    container_name: frontend
+    ports:
+      - "80:80"

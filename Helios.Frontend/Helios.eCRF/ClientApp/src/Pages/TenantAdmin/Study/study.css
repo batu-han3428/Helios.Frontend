@@ -1,0 +1,13 @@
+﻿.studylist-card-table > .ant-card-body {
+    padding: 0 !important;
+}
+.ant-table-thead > tr > th {
+    background-color: #6d6e70 !important; 
+    color: white !important;
+}
+   .ant-table-column-sorter-inner {
+        color: white !important;
+    }
+.anticon-search {
+    color: white !important;
+}

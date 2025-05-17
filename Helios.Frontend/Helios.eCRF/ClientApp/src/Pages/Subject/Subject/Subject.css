@@ -1,0 +1,89 @@
+﻿.subject-menu-header {
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+:where(.css-dev-only-do-not-override-zg0ahe).ant-menu .ant-menu-item.subject-menu-header {
+    background-color: #6d6e70 !important;
+}
+
+.ant-menu-item-disabled > span > svg {
+    color: rgba(0, 0, 0, 0.88) !important;
+}
+
+.menu-container {
+    border: 1px solid #ddd;
+    height: calc(100vh - 70px);
+    z-index: 1000 !important;
+    overflow-y: auto !important;
+    position: fixed !important;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+    .menu-container {
+        max-width: 200px;
+    }
+}
+
+@media (min-width: 992px) and (max-width: 1439px) {
+    .menu-container {
+        max-width: 250px;
+    }
+}
+
+@media (min-width: 1440px) {
+    .menu-container {
+        max-width: 300px;
+    }
+}
+
+.subject-mobil-drawer .ant-drawer-body{
+    padding:0 !important;
+}
+
+.ant-drawer {
+    z-index: 1000000 !important;
+}
+
+.ant-dropdown {
+    z-index: 9999 !important;
+}
+
+.hidden-column {
+    display: none;
+}
+.center-align {
+    text-align: center;
+}
+.divider {
+    border-top: 1px solid #000; 
+    margin: 20px 0;
+}
+
+.close-button {
+    color: rgb(110, 169, 215);
+    cursor: pointer;
+    font-size: 17.472px;
+}
+
+.close-button:hover {
+    color: #A8CBE7;
+}
+
+.align-center {
+    align-self: center;
+}
+
+.outgoing-message .cs-message__content {
+    background-color: #f8efd0;
+}
+
+.incoming-message .cs-message__content, .cs-message-input__content-editor-wrapper, .cs-message-input__content-editor {
+    background-color: #eaebec;
+}
+
+.cs-button--send {
+    color: #ffc603;
+}

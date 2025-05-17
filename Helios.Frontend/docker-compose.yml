@@ -1,0 +1,69 @@
+version: '3.4'
+
+services:
+
+
+  # helios.core:
+  #   image:  medcase.azurecr.io/helios/helios-core:v0.0.3
+  #   ports:
+  #     - "3500:8080"
+  #     - "3501:3501"
+  #   networks:
+  #     v3network:
+  #       aliases:
+  #         - core
+
+  # helios.authentication:
+  #   image: medcase.azurecr.io/helios/helios-auth:v0.0.3
+  #   ports:
+  #       - "8080:8080"
+  #       - "8081:8081"
+  #   environment:
+  #     - AppConfig__RabbitMQCrf=rabbitmq://rabbitmq:5672/
+  #     - AppConfig__RabbitMQUserName=guest
+  #     - AppConfig__RabbitMQPassword=guest
+  #   networks:
+  #     v3network:
+  #       aliases:
+  #         - authentication
+
+  helios.ecrf:
+    image: ${DOCKER_REGISTRY-}heliosecrf
+    build:
+      context: .
+      dockerfile: Helios.eCRF/Dockerfile
+    ports:
+       - "3300:3300"
+       - "3301:3301"
+    environment:
+      - Redis__Host=redis.cache
+      - Redis__Password=heliosredis
+    networks:
+      - v3network
+
+
+  # redis_image:
+  #   image: redis
+  #   container_name: redis.cache
+  #   command: redis-server --requirepass heliosredis
+  #   ports:
+  #     - 6380:6380
+  #   networks:
+  #     - v3network
+
+  # rabbitmq:
+  #   image: rabbitmq:3-management-alpine
+  #   ports:
+  #   - 5672:5672
+  #   - 15672:15672
+  #   networks:
+  #   - v3network
+  #   volumes:
+  #   - ./volume/rabbitmq:/data
+
+volumes:
+  data-volume:
+
+networks:
+  v3network:
+     name: v3network
